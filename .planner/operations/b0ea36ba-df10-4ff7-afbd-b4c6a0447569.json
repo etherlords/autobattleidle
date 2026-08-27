@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b0ea36ba-df10-4ff7-afbd-b4c6a0447569",
+  "operation": "claim.acquire",
+  "state": "committed",
+  "createdAt": "2026-08-27T21:56:26.011Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/PROGRESS.md.planner-tmp-b0ea36ba-df10-4ff7-afbd-b4c6a0447569"
+    }
+  ],
+  "committedAt": "2026-08-27T21:56:26.029Z"
+}

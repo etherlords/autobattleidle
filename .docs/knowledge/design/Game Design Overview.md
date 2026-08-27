@@ -58,6 +58,14 @@ timeline visualization; no second manual event database is introduced.
 
 
 
+
+
+
+
+- [[operations/Release and Deployment Operations|Release and Deployment Operations]]
+- [[decisions/V1 Scope Decisions|V1 Scope Decisions]]
+- [[architecture/Technical Architecture|Technical Architecture]]
+- [[reference/Project Knowledge Map|Project Knowledge Map]]
 - [[design/UI, Persistence, and QA|UI, Persistence, and QA]]
 - [[design/Economy and Upgrade Curves|Economy and Upgrade Curves]]
 - [[design/Enemy Tiers and Boss Cadence|Enemy Tiers and Boss Cadence]]

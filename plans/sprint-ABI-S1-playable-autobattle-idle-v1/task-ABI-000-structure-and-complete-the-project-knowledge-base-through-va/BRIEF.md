@@ -4,8 +4,8 @@ id: ABI-000
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 9
+status: Done
 sprintId: ABI-S1
 dependencies: []
 requiredGates:
@@ -26,7 +26,7 @@ Structure and complete the project knowledge base through Vault
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Done
 
 ## Acceptance criteria
 
@@ -44,6 +44,10 @@ Structure and complete the project knowledge base through Vault
 ## Related knowledge
 
 - AUTOBATTLEIDLE-DOC-20260827-A7F881
+- AUTOBATTLEIDLE-DOC-20260827-584401
+- AUTOBATTLEIDLE-DOC-20260827-A798F2
+- AUTOBATTLEIDLE-DOC-20260827-A7FD1F
+- AUTOBATTLEIDLE-DOC-20260827-85CBFC
 
 ## Constraints
 

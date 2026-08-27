@@ -45,3 +45,9 @@ Each task records short timestamped high-level events in `PROGRESS.md`, includin
 checkpoint, review result, QA result, return-to-implementation reason, and close. Review and QA details
 remain in their dedicated artifacts. Final release QA includes reload persistence, malformed save recovery,
 long-running progression, input behavior, responsive layout, and the deployed GitHub Pages build.
+
+## Related
+
+
+- [[quality/Testing Strategy|Testing Strategy]]
+- [[architecture/Persistence Contract|Persistence Contract]]

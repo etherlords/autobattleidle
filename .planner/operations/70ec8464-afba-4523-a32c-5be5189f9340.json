@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "70ec8464-afba-4523-a32c-5be5189f9340",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-27T22:11:29.465Z",
+  "itemId": "ABI-000",
+  "idempotencyKey": "abi-000-to-independent-qa-01a04534",
+  "requestFingerprint": "993aaa889fbb21c6b2956a42fb8ddf37b66cfabf62a8d62da9a94a0d8819fdad",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/BRIEF.md.planner-tmp-70ec8464-afba-4523-a32c-5be5189f9340-0",
+      "beforeHash": "3abad7fb057486453cbac99979e0d3a1cc4e94be001802e50ca4a0d0b7ea76e0",
+      "afterHash": "abdb287d0b4d22bbee4b211695c8cb1eedf953492ffc04c06bd2f1844f182bb4"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va/PROGRESS.md.planner-tmp-70ec8464-afba-4523-a32c-5be5189f9340-1",
+      "beforeHash": "b5a250d428b681fd980562828ae44050039a4695d2e1ef7c35f4657655f5c183",
+      "afterHash": "88ccc982924f02687aecf270813a6aad3b5ca8084fc8638b38e900b993b9b93d"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-70ec8464-afba-4523-a32c-5be5189f9340-2",
+      "beforeHash": "060232a97007f5c771f64086942416f85fe1ce95dacff9fbc4060cb3e4f18afc",
+      "afterHash": "c312aa507b5438b8304563e919321681c80876f225c19fc41655371bb2553b5f"
+    }
+  ],
+  "committedAt": "2026-08-27T22:11:29.490Z"
+}
