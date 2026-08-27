@@ -18,12 +18,16 @@ Vault knowledge, and completed dependencies may have changed since the sprint wa
    Markdown fallback in `planner_progress_append` after confirming `planner_doctor` needs no recovery.
 5. Initialize or refine the step-by-step managed plan only through `planner_execution_plan_update`.
    Append a `preflight-ready` event. Do not delegate code until every step has an owner and proof.
-6. Delegate bounded implementation to `autobattle_worker`.
-7. Worker self-checks and records tool usage, direct file reads, elapsed time, and rework plus a short
+6. Immediately before delegating implementation, call `planner_task_advance` to move `Ready` to
+   `In Progress` with the exact live task revision and preflight/plan evidence, then read back canonical
+   state. A preflight-ready event may exist while a task remains Ready; that is a warning, not permission
+   to delegate.
+7. Delegate bounded implementation to `autobattle_worker` only after that readback confirms `In Progress`.
+8. Worker self-checks and records tool usage, direct file reads, elapsed time, and rework plus a short
    progress event. These are pilot cost proxies, not a claim of exact token savings.
-8. Delegate independent review to `autobattle_reviewer`.
-9. After review passes, delegate acceptance proof to `autobattle_qa`.
-10. Manager maps evidence to acceptance, advances/closes through Planner, then commits code, plans, and
+9. Delegate independent review to `autobattle_reviewer`.
+10. After review passes, delegate acceptance proof to `autobattle_qa`.
+11. Manager maps evidence to acceptance, advances/closes through Planner, then commits code, plans, and
    Vault documentation together.
 
 On a failed gate, preserve the finding in its canonical Planner artifact, return the task to the same
@@ -48,3 +52,10 @@ Each worker final response also lists: Planner tools used, Vault tools used, exp
 why, direct files read, elapsed time, review/QA returns, commands/evidence, and blockers. These records
 are the source for the final project timeline and the tool-assisted pilot report. Exact token savings
 require a separate paired baseline run; never infer them from this single implementation.
+
+## Checkpoint commits and Pages proof
+
+- Never commit a knowingly broken state or every small editing step. An intermediate commit is allowed only after implementation self-check passes or after a distinct review/QA repair set has a fresh green check; tiny tasks need no intermediate checkpoint.
+- After all required gates, the manager creates one task-closure checkpoint with the coherent code, plans, Vault docs, and evidence for that task only. Do not mix unrelated dirty state.
+- Push every closed ABI task's coherent commits to `main`, then wait for GitHub Pages, verify the deployed public URL, and save the run/deployment receipt in task verification/reporting. A Pages failure blocks the checkpoint; do not rewrite history or begin the next task.
+- Commit subjects use the repository module prefix such as `[ABI]` and omit internal task or file identifiers.

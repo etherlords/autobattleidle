@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "2ec24bdb-9bd1-4396-bc4c-6d48327f37b7",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-27T23:15:38.739Z",
+  "itemId": "ABI-001",
+  "idempotencyKey": "abi001-favicon-repair-review-to-qa-20260828",
+  "requestFingerprint": "2b0ae972de662ccb5f67f33fe8a724e74a70ee7782880da2fd0b2ac1ac48fd65",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md.planner-tmp-2ec24bdb-9bd1-4396-bc4c-6d48327f37b7-0",
+      "beforeHash": "7f1cd740d78c249d593661965a07e7fdb66cbf1fa53ce8305b10a63bba4465a8",
+      "afterHash": "9767e33395449d3e92993f9507346e976bfb0cbaf48ae3d932ad85294960b49a"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md.planner-tmp-2ec24bdb-9bd1-4396-bc4c-6d48327f37b7-1",
+      "beforeHash": "1465ef01f243ea02e76755feb693bcc91ba7ad0e6bb733f812afb0819bb4f8cc",
+      "afterHash": "76ad7cfc7014d9230db3b0d0bd458a4171e75e734e86c16ea03aad8b276df2fe"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-2ec24bdb-9bd1-4396-bc4c-6d48327f37b7-2",
+      "beforeHash": "7c3f6dc626954a0bccb25702c6c7771f04d6c8881f12f7c952e97b3f5825edac",
+      "afterHash": "3be3be85e6c5ea39c77a37d17331cffae69807e5daab6244fb8b28edff22b231"
+    }
+  ],
+  "committedAt": "2026-08-27T23:15:38.753Z"
+}

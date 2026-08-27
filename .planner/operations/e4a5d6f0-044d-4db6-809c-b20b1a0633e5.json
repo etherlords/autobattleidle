@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e4a5d6f0-044d-4db6-809c-b20b1a0633e5",
+  "operation": "claim.acquire",
+  "state": "committed",
+  "createdAt": "2026-08-27T22:47:32.447Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md.planner-tmp-e4a5d6f0-044d-4db6-809c-b20b1a0633e5"
+    }
+  ],
+  "committedAt": "2026-08-27T22:47:32.458Z"
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c7211a6c-58ba-4e48-85e2-f7193053f5ee",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-27T23:15:22.472Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md.planner-tmp-c7211a6c-58ba-4e48-85e2-f7193053f5ee"
+    }
+  ],
+  "committedAt": "2026-08-27T23:15:22.482Z"
+}

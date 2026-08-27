@@ -1,21 +1,46 @@
 :root {
-  color: #e5e7eb;
-  background: #111827;
+  color: #eef7ff;
+  background: #07121f;
   font-family: Inter, system-ui, sans-serif;
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
 }
 
 body {
-  display: grid;
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  place-items: center;
 }
 
 #app {
-  max-width: 42rem;
-  padding: 2rem;
-  text-align: center;
+  display: grid;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.battlefield {
+  grid-area: 1 / 1;
+  min-height: 100vh;
+}
+.battlefield-canvas {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+.hud {
+  align-self: end;
+  background: linear-gradient(transparent, rgb(3 9 15 / 92%));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  grid-area: 1 / 1;
+  padding: 4rem 1.5rem 1.5rem;
+  pointer-events: none;
+}
+.hud h1 {
+  flex-basis: 100%;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin: 0;
+}
+.hud p {
+  margin: 0;
 }

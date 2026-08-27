@@ -8,6 +8,7 @@ pnpm-lock.yaml
 .codex
 .docs
 .planner
+.playwright-cli
 plans
 planner-bootstrap.request.json
 vault.config.json
