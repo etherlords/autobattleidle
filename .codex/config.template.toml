@@ -26,4 +26,5 @@ required = true
 
 [mcp_servers.vault.env]
 VAULT_CONFIG = "__VAULT_CONFIG__"
-QMD_FORCE_CPU = "1"
+QMD_LLAMA_GPU = "vulkan"
+GGML_VK_VISIBLE_DEVICES = "0"

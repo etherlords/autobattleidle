@@ -14,7 +14,8 @@
     }
   },
   "cacheDir": "./.vault-cache",
-  "embeddingDevice": "cpu",
+  "embeddingDevice": "vulkan",
+  "embeddingAdapter": 0,
   "freshness": {
     "mode": "strict",
     "watch": true,
