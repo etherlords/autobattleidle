@@ -21,8 +21,16 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS — independent read-only QA found no defects; no QA repair cycle was used.
 
 ## Evidence
 
-_Pending._
+- `pnpm vitest run src/domain/combat.test.ts`: 1 file, 7/7 passed, 0.973s wall.
+- `pnpm check`: ESLint, Prettier, Vitest 2 files/8 tests, TypeScript, and Vite build passed, 4.909s wall.
+- The only build output was the existing greater-than-500KB chunk advisory.
+- One central attack path serves manual and automatic inputs; explicit unlock and cooldown guard automatic commands.
+- Bounded armor damage, exactly 2x critical damage, atomic death/reward/next-spawn, and stale enemy-ID duplicate protection passed.
+- Encounter grades, boss cadence, seeded elite modifier, automatic slow, and unaffected manual attacks passed deterministically.
+- Domain imports no DOM or Three.js modules; no ABI-003+ production path changed.
+- Browser QA was omitted because ABI-002 is pure domain-only work with no browser/UI acceptance.
+- QA used read-only shell reads/checks and made no code, Planner, Vault, Git, dependency, or `.playwright-cli` mutation.
