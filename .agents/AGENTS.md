@@ -4,6 +4,10 @@ The root Codex task is the manager. It does not spawn a recursive manager.
 
 ## Flow
 
+Sprint kickoff defines only task order, dependencies, and coarse acceptance. Detailed implementation
+planning is deliberately just-in-time: repeat the preflight below before every task, because code,
+Vault knowledge, and completed dependencies may have changed since the sprint was created.
+
 1. `planner_get_current`, then `planner_next_task`.
 2. Claim only a ready, unclaimed task through Planner; never bypass dependencies. The claim reserves
    the task for preparation; it does not authorize implementation yet.
@@ -15,7 +19,8 @@ The root Codex task is the manager. It does not spawn a recursive manager.
 5. Initialize or refine the step-by-step managed plan only through `planner_execution_plan_update`.
    Append a `preflight-ready` event. Do not delegate code until every step has an owner and proof.
 6. Delegate bounded implementation to `autobattle_worker`.
-7. Worker self-checks and records tool usage plus a short progress event.
+7. Worker self-checks and records tool usage, direct file reads, elapsed time, and rework plus a short
+   progress event. These are pilot cost proxies, not a claim of exact token savings.
 8. Delegate independent review to `autobattle_reviewer`.
 9. After review passes, delegate acceptance proof to `autobattle_qa`.
 10. Manager maps evidence to acceptance, advances/closes through Planner, then commits code, plans, and
@@ -40,4 +45,6 @@ Append short UTC events through Planner, not direct status edits:
 `EVENT <claim|preflight-ready|checkpoint|review-pass|review-fail|qa-pass|qa-fail|returned|closed> — actor — summary`
 
 Each worker final response also lists: Planner tools used, Vault tools used, expected tools not used and
-why, commands/evidence, and blockers. These records are the source for the final project timeline.
+why, direct files read, elapsed time, review/QA returns, commands/evidence, and blockers. These records
+are the source for the final project timeline and the tool-assisted pilot report. Exact token savings
+require a separate paired baseline run; never infer them from this single implementation.
