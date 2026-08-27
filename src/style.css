@@ -1,0 +1,21 @@
+:root {
+  color: #e5e7eb;
+  background: #111827;
+  font-family: Inter, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  display: grid;
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+}
+
+#app {
+  max-width: 42rem;
+  padding: 2rem;
+  text-align: center;
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "projectId": "ABI",
+  "activeSprintId": "ABI-S1",
+  "sprintPath": "plans/sprint-ABI-S1-playable-autobattle-idle-v1",
+  "workflow": {
+    "base": "high-assurance",
+    "overlays": [],
+    "tracker": null
+  },
+  "taskPaths": {
+    "ABI-001": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell",
+    "ABI-002": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation",
+    "ABI-003": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects",
+    "ABI-004": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy",
+    "ABI-005": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence",
+    "ABI-006": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression",
+    "ABI-007": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline",
+    "ABI-000": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va"
+  }
+}

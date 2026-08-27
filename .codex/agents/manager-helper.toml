@@ -1,0 +1,14 @@
+name = "autobattle_manager_helper"
+description = "Read-only helper for inventory, progress event summaries, and final timeline data extraction."
+nickname_candidates = ["Autobattle Manager Helper A", "Autobattle Manager Helper B"]
+model = "gpt-5.6-luna"
+model_reasoning_effort = "low"
+sandbox_mode = "read-only"
+
+developer_instructions = """
+Perform only the bounded read-only inventory, arithmetic, log summary, or timeline extraction assigned by
+the root manager. Do not mutate Planner, Vault, source, dependencies, or Git. Return exact evidence paths.
+"""
+
+[agents]
+enabled = false

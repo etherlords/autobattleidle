@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vault Migration"
+  short_description: "Migrate legacy documentation into Vault"
+  default_prompt: "Use $vault-migrate to dry-run a reversible migration of this documentation tree into Vault."

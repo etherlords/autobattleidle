@@ -1,0 +1,64 @@
+---
+vaultFormat: 1
+project: autobattleidle
+vaultId: AUTOBATTLEIDLE-DOC-20260827-A7F881
+kind: architecture
+status: active
+summary: >-
+  Canonical product goal, architecture boundaries, release acceptance, and
+  delivery evidence.
+tags:
+  - overview
+  - architecture
+  - release
+---
+# Game Design Overview
+
+## Summary
+
+Canonical product goal, architecture boundaries, release acceptance, and delivery evidence.
+
+## Product goal
+
+Deliver a small browser game that reaches a stable, endlessly playable loop: fight, earn coins,
+buy upgrades, defeat a boss, and continue into a harder cycle. The first release must work without
+an account or backend and remain playable after a reload.
+
+## Player promise
+
+- The current target and the result of every attack are immediately understandable.
+- Clicking is always useful; automation reduces effort without disabling manual play.
+- Every enemy defeat advances either purchasing power or boss progress.
+- Progress is deterministic enough to test, while critical hits and rewards add readable variance.
+
+## Technical boundaries
+
+- `src/domain`: deterministic simulation and balance formulas; no DOM or Three.js imports.
+- `src/game`: Three.js presentation and animation driven by domain snapshots.
+- `src/ui`: DOM HUD, upgrade controls, accessible text, and input routing.
+- `src/persistence`: versioned localStorage save/load with validation and safe reset.
+- `src/app`: composition root and frame/update scheduling.
+
+The game uses primitives and lightweight effects; no asset pipeline is required for V1.
+
+## Release acceptance
+
+The game starts in a browser, supports click and automatic attacks, shows enemy grades and bosses,
+persists progress, survives malformed saves, continues beyond the first boss, and passes review plus
+independent QA without known blocking defects.
+
+## Delivery evidence
+
+Planner `PROGRESS.md` records concise high-level events for every task. `REVIEW.md`, `QA.md`, and
+`VERIFICATION.md` remain canonical gate evidence. These records will later generate a project
+timeline visualization; no second manual event database is introduced.
+
+## Related
+
+
+
+
+- [[design/UI, Persistence, and QA|UI, Persistence, and QA]]
+- [[design/Economy and Upgrade Curves|Economy and Upgrade Curves]]
+- [[design/Enemy Tiers and Boss Cadence|Enemy Tiers and Boss Cadence]]
+- [[design/Combat Loop|Combat Loop]]

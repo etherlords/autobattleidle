@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f987c800-28e0-404d-ba18-15e1e6cbbb8a",
+  "operation": "sprint.bootstrap",
+  "state": "committed",
+  "createdAt": "2026-08-27T21:21:46.090Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-0"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-1"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-2"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-3"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-4"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-5"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-6"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-7"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-8"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-9"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-10"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-11"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-12"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-13"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-14"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-15"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-16"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-17"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-18"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-19"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-20"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-21"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-22"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-23"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-24"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-25"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-26"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-27"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-28"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-29"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-30"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-31"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-32"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-33"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-34"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-35"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-36"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-37"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-38"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-39"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-40"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-41"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/BRIEF.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-42"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/ANALYSIS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-43"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/IMPLEMENTATION-GUIDE.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-44"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/PROGRESS.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-45"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/REVIEW.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-46"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/QA.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-47"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/VERIFICATION.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-48"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-PLAN.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-PLAN.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-49"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-50"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-f987c800-28e0-404d-ba18-15e1e6cbbb8a-51"
+    }
+  ],
+  "committedAt": "2026-08-27T21:21:46.291Z"
+}

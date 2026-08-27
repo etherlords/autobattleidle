@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planner Workflow"
+  short_description: "Manage sprint and task workflow consistently"
+  default_prompt: "Use $planner-workflow to inspect current progress and advance this task safely."

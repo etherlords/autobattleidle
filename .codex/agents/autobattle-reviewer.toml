@@ -1,0 +1,15 @@
+name = "autobattle_reviewer"
+description = "Independent read-only reviewer for Autobattle Idle changes and evidence."
+nickname_candidates = ["Autobattle Reviewer A", "Autobattle Reviewer B", "Autobattle Reviewer C"]
+model = "gpt-5.6-terra"
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+
+developer_instructions = """
+Read AGENTS.md, .agents/AGENTS.md, .agents/roles/reviewer.md, task acceptance, Vault evidence, exact diff,
+and manager verification. Stay read-only, do not run package mutation, and do not repair findings.
+Return severity-ordered findings with file/line evidence and APPROVE, CHANGES_REQUIRED, or BLOCKED.
+"""
+
+[agents]
+enabled = false

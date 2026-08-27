@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planner Migration"
+  short_description: "Migrate legacy work into Planner safely"
+  default_prompt: "Use $planner-migrate to dry-run a reversible migration of these legacy task files into Planner."

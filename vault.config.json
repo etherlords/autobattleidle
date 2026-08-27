@@ -1,0 +1,24 @@
+{
+  "vaults": {
+    "autobattleidle": {
+      "root": ".docs/knowledge",
+      "pattern": "**/*.md",
+      "ignore": [
+        ".obsidian/**",
+        ".trash/**",
+        ".vault-cache/**",
+        "**/*.vault-lock"
+      ],
+      "writable": true,
+      "storageMode": "embedded"
+    }
+  },
+  "cacheDir": "./.vault-cache",
+  "embeddingDevice": "cpu",
+  "freshness": {
+    "mode": "strict",
+    "watch": true,
+    "debounceMs": 500,
+    "maxWaitMs": 30000
+  }
+}

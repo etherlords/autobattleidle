@@ -1,0 +1,190 @@
+{
+  "kind": "planner-sprint-bootstrap-request",
+  "schemaVersion": 1,
+  "project": {
+    "id": "ABI",
+    "profile": "high-assurance"
+  },
+  "sprint": {
+    "id": "ABI-S1",
+    "title": "Playable Autobattle Idle V1",
+    "goal": "Deliver a stable endlessly playable browser build with persisted progression and complete agent lifecycle evidence"
+  },
+  "tasks": [
+    {
+      "localKey": "documentation-architecture",
+      "id": "ABI-000",
+      "title": "Structure and complete the project knowledge base through Vault",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "The seed corpus is audited for missing rules, contradictions, edge cases, and unclear ownership",
+        "Articles are organized into an evidence-backed non-flat taxonomy covering design, technical architecture, decisions, quality, and operations",
+        "Tech stack, architecture, persistence contract, decision log, release acceptance, testing strategy, deployment, and glossary knowledge are present or deliberately linked to an authoritative owner",
+        "All create, update, move, and link mutations use Vault tools with optimistic hashes rather than hand-edited frontmatter",
+        "vault_doctor and graph export report no unresolved links or format errors",
+        "PROGRESS records Vault tools used, expected tools not used and why, review, QA, and close events"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A7F881"
+      ],
+      "executionSteps": [
+        {
+          "id": "audit",
+          "title": "Audit seed articles and retrieve related evidence"
+        },
+        {
+          "id": "taxonomy",
+          "title": "Propose and apply a maintainable knowledge taxonomy"
+        },
+        {
+          "id": "gaps",
+          "title": "Create or expand missing authoritative articles"
+        },
+        {
+          "id": "graph",
+          "title": "Build links and verify backlinks and graph health"
+        },
+        {
+          "id": "evidence",
+          "title": "Record tool usage, review, QA, and migration guidance"
+        }
+      ]
+    },
+    {
+      "localKey": "architecture-shell",
+      "id": "ABI-001",
+      "title": "Establish architecture and playable application shell",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": [
+        "documentation-architecture"
+      ],
+      "acceptanceCriteria": [
+        "The Vite application starts and owns one clear composition root",
+        "Domain, Three.js, DOM UI, persistence, and app boundaries match the Vault architecture",
+        "Resize and teardown paths do not leak listeners or render loops",
+        "Focused tests and pnpm check pass",
+        "PROGRESS records claim, checkpoint, tool usage, review, QA, and close events"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A7F881",
+        "AUTOBATTLEIDLE-DOC-20260827-85CBFC"
+      ]
+    },
+    {
+      "localKey": "combat-simulation",
+      "id": "ABI-002",
+      "title": "Implement deterministic combat and reward simulation",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": ["architecture-shell"],
+      "acceptanceCriteria": [
+        "Manual and scheduled automatic attacks share one deterministic command path",
+        "Damage, critical hits, armor, death, reward, and encounter advancement follow the Vault rules",
+        "A death grants its reward exactly once",
+        "Pure unit tests cover state transitions and edge cases",
+        "Planner lifecycle and task tool-use evidence are complete"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-584401"
+      ]
+    },
+    {
+      "localKey": "three-presentation",
+      "id": "ABI-003",
+      "title": "Build Three.js battlefield, enemy grades, and bounded effects",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": ["combat-simulation"],
+      "acceptanceCriteria": [
+        "Player and enemy are visually separated and all four grades are recognizable",
+        "Spawn, hit, death, and boss feedback are visible without changing simulation outcomes",
+        "Grade +2 modifiers and boss identity are not conveyed by color alone",
+        "Long sessions do not accumulate scene objects, listeners, or animation handles",
+        "Independent review and browser QA evidence are recorded"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A7FD1F",
+        "AUTOBATTLEIDLE-DOC-20260827-584401"
+      ]
+    },
+    {
+      "localKey": "hud-upgrades",
+      "id": "ABI-004",
+      "title": "Implement HUD, click input, and upgrade economy",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": ["combat-simulation"],
+      "acceptanceCriteria": [
+        "HUD shows health, encounter grade, modifier, currency, rewards, and attack feedback",
+        "Pointer and keyboard activation execute exactly one manual attack per activation",
+        "All five upgrade paths enforce costs, prerequisites, caps, and disabled reasons",
+        "Auto-attack slow never reduces manual click attacks",
+        "Desktop and narrow layouts remain usable and accessible"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A798F2",
+        "AUTOBATTLEIDLE-DOC-20260827-85CBFC"
+      ]
+    },
+    {
+      "localKey": "persistence",
+      "id": "ABI-005",
+      "title": "Add versioned localStorage progress persistence",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": ["combat-simulation", "hud-upgrades"],
+      "acceptanceCriteria": [
+        "Meaningful progress survives reload through a versioned localStorage payload",
+        "Unknown or malformed saves recover to a playable new game without crashing",
+        "Writes are bounded and never persist derived Three.js or DOM state",
+        "A confirmed reset clears saved progress",
+        "Unit and browser reload evidence cover save, restore, corruption, and reset"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-85CBFC"
+      ]
+    },
+    {
+      "localKey": "balance-infinite",
+      "id": "ABI-006",
+      "title": "Tune boss cadence and prove endless progression",
+      "type": "task",
+      "priority": "normal",
+      "dependsOn": ["three-presentation", "hud-upgrades", "persistence"],
+      "acceptanceCriteria": [
+        "A deterministic simulator reports time, purchases, attacks, and currency for several bosses",
+        "The first unattended boss target is approximately ten minutes with later targets increasing",
+        "The player cannot buy every upgrade before the first boss under the reference strategy",
+        "Progression formulas continue beyond handcrafted content without numeric instability",
+        "Balance constants and measured evidence are documented and tested"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A7FD1F",
+        "AUTOBATTLEIDLE-DOC-20260827-A798F2"
+      ]
+    },
+    {
+      "localKey": "release-proof",
+      "id": "ABI-007",
+      "title": "Complete release QA, GitHub Pages proof, and project timeline",
+      "type": "task",
+      "priority": "high",
+      "dependsOn": ["balance-infinite"],
+      "acceptanceCriteria": [
+        "pnpm check passes from a clean dependency state",
+        "A real browser run proves combat, upgrades, grades, bosses, persistence, reset, and responsive layout",
+        "The GitHub Pages build is deployed and playable without blocking console errors",
+        "The game remains stable during a bounded long-run scenario and continues past multiple bosses",
+        "Planner evidence produces a user-facing visualization of project progress and gate outcomes"
+      ],
+      "relatedKnowledge": [
+        "AUTOBATTLEIDLE-DOC-20260827-A7F881",
+        "AUTOBATTLEIDLE-DOC-20260827-85CBFC"
+      ]
+    }
+  ],
+  "dryRun": true
+}

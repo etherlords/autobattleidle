@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.release/
+.codex/config.toml
+.planner/planner-install.json
+.tools/vault-runtime/
+.tools/planner-runtime/
+.vault-cache/
+.planner-cache/
+.trash/
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

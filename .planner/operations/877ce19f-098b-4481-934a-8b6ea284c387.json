@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "877ce19f-098b-4481-934a-8b6ea284c387",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-27T21:22:59.190Z",
+  "itemId": "ABI-001",
+  "idempotencyKey": "abi-gate-code-on-docs-v1",
+  "requestFingerprint": "0efdea3f4603ab27dddbbc8d76339fcd1baa54be34be79d9ec2e6f0b91c6a558",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/BRIEF.md.planner-tmp-877ce19f-098b-4481-934a-8b6ea284c387-0",
+      "beforeHash": "68a38aded8c910f1abc832f732b5d1e322abef0f2e209d7317d4bb9748a3c491",
+      "afterHash": "79f8bee9ee3773feb72ee5db654290a1292ea4a3301c74742e6c13900c90d81c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-877ce19f-098b-4481-934a-8b6ea284c387-1",
+      "beforeHash": "3735b044be32d4ac8640ed749433d201a8a2f3367870e9175ca8600c23f671c7",
+      "afterHash": "932e6dfc9974e9e06bef99ff82504cba7bec9a6eaea58ec757b8879bdae236a5"
+    }
+  ],
+  "committedAt": "2026-08-27T21:22:59.200Z"
+}

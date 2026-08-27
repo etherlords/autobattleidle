@@ -1,0 +1,13 @@
+dist
+node_modules
+.release
+.vault-cache
+.trash
+pnpm-lock.yaml
+.agents
+.codex
+.docs
+.planner
+plans
+planner-bootstrap.request.json
+vault.config.json

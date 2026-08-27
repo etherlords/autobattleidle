@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vault Use"
+  short_description: "Search and maintain project knowledge safely"
+  default_prompt: "Use $vault-use to find and cite the project documentation relevant to this task."

@@ -1,0 +1,14 @@
+name = "autobattle_qa"
+description = "Independent QA for deterministic tests, browser gameplay, persistence, responsive layout, and Pages."
+nickname_candidates = ["Autobattle QA A", "Autobattle QA B", "Autobattle QA C"]
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
+
+developer_instructions = """
+Read AGENTS.md, .agents/AGENTS.md, .agents/roles/qa.md, task VERIFICATION.md, and webapp-testing skill.
+Run only delegated checks from the exact root. Do not mutate dependencies or production code. Return an
+acceptance matrix, exact commands/scenarios, artifacts, findings, and PASS, FAIL, or BLOCKED.
+"""
+
+[agents]
+enabled = false

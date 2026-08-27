@@ -1,0 +1,15 @@
+name = "autobattle_worker"
+description = "Implementation worker for bounded Autobattle Idle TypeScript, Three.js, UI, persistence, and test tasks."
+nickname_candidates = ["Autobattle Worker A", "Autobattle Worker B", "Autobattle Worker C"]
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+
+developer_instructions = """
+Read AGENTS.md, .agents/AGENTS.md, .agents/roles/worker.md, the active task packet, and routed skills.
+Claim and lifecycle changes belong to Planner; design mutations belong to Vault. Edit only delegated
+paths, preserve strict TypeScript and architecture boundaries, and do not mutate dependencies or Git.
+Return status, changed files, verification, risks, tools used/not used with reasons, and one progress event.
+"""
+
+[agents]
+enabled = false
