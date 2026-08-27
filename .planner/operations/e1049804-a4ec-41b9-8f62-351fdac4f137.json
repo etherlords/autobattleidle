@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e1049804-a4ec-41b9-8f62-351fdac4f137",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-27T23:29:26.007Z",
+  "itemId": "ABI-001",
+  "idempotencyKey": "abi001-plan-manager-closure-complete-20260828",
+  "requestFingerprint": "14b659dfa0e75c9903a9b0b7a55b5e409726ccb2717773ef240b15e6f834fd72",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-001-establish-architecture-and-playable-application-shell/PROGRESS.md.planner-tmp-e1049804-a4ec-41b9-8f62-351fdac4f137-0",
+      "beforeHash": "efdb7bc9a8e22ab067b4987e66369545e61f89a98be35fc8b40ff56c5b5a4d5e",
+      "afterHash": "17426f71798472568c3d2f0dd4ed3febbb64770604468b5d2be416fe6018d055"
+    }
+  ],
+  "committedAt": "2026-08-27T23:29:26.018Z"
+}

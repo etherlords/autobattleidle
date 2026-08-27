@@ -53,11 +53,24 @@ requiredGates:
 
 ## Publication receipt
 
-Pending the coherent `main` push. Record GitHub Pages run, deployment verdict, and public URL here before
-final task closure.
+- Intermediate coherent checkpoint: `a9085868c7920683e09639889b6fed25e87bc8c2`, pushed to `main` and
+  confirmed equal to `origin/main` before deployment verification.
+- CI run `33126165369`: PASS. GitHub Pages deployment run
+  [`33126165455`](https://github.com/etherlords/autobattleidle/actions/runs/33126165455): PASS (deploy job
+  `98704726916`).
+- Public deployment [`https://etherlords.github.io/autobattleidle/`](https://etherlords.github.io/autobattleidle/)
+  returned HTTP 200; the response contains the application title and favicon reference.
+
+## Independent closure audit
+
+APPROVE — independent `autobattle_closure_signer`, no P0-P3 findings. The signer re-read canonical Planner
+state (`Ready for Manager`, revision 11, no open dependencies), all gate evidence, complete source scope,
+`HEAD == origin/main == a9085868c7920683e09639889b6fed25e87bc8c2`, CI/Pages receipts, and public app/favicon
+HTTP 200 proof. It confirmed no ABI-002..ABI-007 paths changed and `.playwright-cli/` remains untracked and
+unstaged. This independent signature satisfies the high-assurance closure-actor separation.
 
 ## Sign-off
 
 - Reviewer: PASS after one workflow-policy repair (`evt-0d239bfd-985c-48e9-a63d-ed76af8ad046`)
 - QA: PASS after one favicon repair (`evt-f3770de2-b238-4d5a-9de6-09a3ca38e967`)
-- Manager close: pending publication and Pages receipt
+- Manager close: PASS — first coherent push and Pages receipt verified; final evidence checkpoint follows

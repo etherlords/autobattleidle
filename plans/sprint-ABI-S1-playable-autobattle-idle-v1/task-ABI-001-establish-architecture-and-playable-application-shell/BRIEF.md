@@ -4,8 +4,8 @@ id: ABI-001
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 11
-status: Ready for Manager
+revision: 12
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-000
@@ -27,7 +27,7 @@ Establish architecture and playable application shell
 
 - Type: task
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 

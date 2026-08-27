@@ -4,8 +4,8 @@ id: ABI-001
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 33
-status: Ready for Manager
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies: []
 requiredGates:
@@ -20,16 +20,16 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 33
-- Last update: Verification passed; task is ready for final manager closure, coherent checkpoint/push, and Pages proof.
+- Status: Done
+- Revision: 36
+- Last update: All required gates PASS; canonical ABI-001 closure approved with coherent push and Pages verification.
 
 ## Execution plan
 
 - [x] architecture-contract: Manager freezes ABI-001 contract; proof: analysis and guide
 - [x] application-shell: Worker implements app shell and self-check; proof: tests and pnpm check
 - [x] independent-gates: Reviewer and QA evaluate independently; proof: review and QA artifacts
-- [~] manager-closure: Manager verifies, closes, commits, pushes, and proves Pages
+- [x] manager-closure: Manager verifies, closes, commits, pushes, and proves Pages
 
 ## Events
 
@@ -561,3 +561,57 @@ requiredGates:
 - To status: Ready for Manager
 - Evidence:
   - verification PASS evt-faae7a07-3bbb-4b9d-9325-0cfab1e3dbfa
+
+### evt-65a39bf5-3560-4e51-b93a-efbeea36323c
+
+- Timestamp: 2026-08-27T23:29:16.018Z
+- Actor: autobattle_closure_signer
+- Operation: gate.record
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: PASS — independent closure signer approved final manager closure: all gates, coherent push, CI/Pages, public deployment, scope, and artifact hygiene verified with no P0-P3 findings.
+- Idempotency key: abi001-independent-closure-signature-20260828
+- Request fingerprint: 2ddd5d81f1f06021d79e0c9a7ab9d1dcabbdd607d68658e39bf3b32a29b80333
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md Independent closure audit
+  - Commit a9085868c7920683e09639889b6fed25e87bc8c2 equals origin/main
+  - CI 33126165369 PASS; Pages 33126165455 PASS; job 98704726916
+  - https://etherlords.github.io/autobattleidle/ and /favicon.svg HTTP 200
+  - No ABI-002..ABI-007 path changes; .playwright-cli untracked/unstaged
+
+### evt-ca00b98b-755f-40b9-af22-0dfaf70e1cb6
+
+- Timestamp: 2026-08-27T23:29:26.006Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Independent closure signature and Pages proof complete the managed plan.
+- Idempotency key: abi001-plan-manager-closure-complete-20260828
+- Request fingerprint: 14b659dfa0e75c9903a9b0b7a55b5e409726ccb2717773ef240b15e6f834fd72
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - manager-closure PASS evt-65a39bf5-3560-4e51-b93a-efbeea36323c
+
+### evt-3cfb5cda-a722-4bc3-92a1-eaf1f9d34b06
+
+- Timestamp: 2026-08-27T23:29:26.699Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: All required gates PASS; canonical ABI-001 closure approved with coherent push and Pages verification.
+- Idempotency key: abi001-lifecycle-manager-to-done-20260828
+- Request fingerprint: 1702c7c2303384e9f7609d1ecf46e62e8b7de759511f65669cbb9f582c9f3702
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - implementation self-check PASS
+  - independent review PASS after one repair
+  - independent QA PASS after one repair
+  - verification PASS
+  - independent manager-closure signature PASS
