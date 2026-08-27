@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "3d44ac5e-f4c3-457f-ab97-547de73c9fe9",
+  "operation": "claim.release",
+  "state": "committed",
+  "createdAt": "2026-08-27T23:57:15.243Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-002-implement-deterministic-combat-and-reward-simulation/PROGRESS.md.planner-tmp-3d44ac5e-f4c3-457f-ab97-547de73c9fe9"
+    }
+  ],
+  "committedAt": "2026-08-27T23:57:15.259Z"
+}

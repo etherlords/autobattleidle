@@ -4,8 +4,8 @@ id: ABI-002
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 7
-status: Ready for Manager
+revision: 8
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-001
@@ -27,7 +27,7 @@ Implement deterministic combat and reward simulation
 
 - Type: task
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 

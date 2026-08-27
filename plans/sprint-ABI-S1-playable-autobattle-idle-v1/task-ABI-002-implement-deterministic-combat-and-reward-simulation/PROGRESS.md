@@ -4,8 +4,8 @@ id: ABI-002
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: Ready for Manager
+revision: 35
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-001
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 30
-- Last update: Begin coherent checkpoint, publication, CI/Pages, and public URL proof.
+- Status: Done
+- Revision: 35
+- Last update: Released task claim: Release completed ABI-002 manager lease after Done checkpoint.
 
 ## Execution plan
 
@@ -31,7 +31,7 @@ requiredGates:
 - [x] domain-implementation: Implementation owner builds deterministic combat/reward domain and self-check; proof: focused tests and pnpm check
 - [x] independent-review: Independent Reviewer evaluates correctness and scope; proof: REVIEW.md and review gate
 - [x] independent-qa: Independent QA verifies acceptance; proof: QA.md, focused tests, pnpm check
-- [~] manager-closure: Manager verifies evidence, closes task, commits, pushes, and proves CI/Pages/public URL
+- [x] manager-closure: Manager verifies evidence, closes task, commits, pushes, and proves CI/Pages/public URL
 
 ## Events
 
@@ -546,3 +546,100 @@ requiredGates:
 - Evidence:
   - Task Ready for Manager revision 7
   - All pre-publication gates passed
+
+### evt-3cec6dc0-6a1f-4e4c-aade-6fd31ef1a8e3
+
+- Timestamp: 2026-08-27T23:56:31.103Z
+- Actor: manager-root
+- Operation: progress.append
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: EVENT checkpoint — manager-root — functional checkpoint 610f208 published; CI, Pages, and public URL verified.
+- Idempotency key: abi-002-publication-receipt-20260828
+- Evidence:
+  - Commit 610f208b8513e1f350ed4b01245e23abe60e4a37 pushed to origin/main.
+  - CI run 33127933135: completed success; check job 98710418379 success.
+  - Pages run 33127933128: completed success; deploy job 98710418985 success in 30s.
+  - https://etherlords.github.io/autobattleidle/ returned HTTP 200, text/html, title Etherlords Autobattle Idle, and an entry script; request 485ms.
+  - Tool report: routine Planner start used get_current then next_task; exact tasks_list and doctor were justified only by next_task returning null despite ABI-002 dependency-ready. No activity_list, workflow_get, tracker sync, or ABI-003 selection.
+  - Tool report: bounded Planner execution context only; exact Vault IDs first; one semantic hybrid query for unknown shared-path concept; vault_status supplied Vulkan proof. Exact documentation rg fallback was needed because hybrid response omitted device metadata.
+  - Direct artifact fallbacks: ANALYSIS.md, IMPLEMENTATION-GUIDE.md, REVIEW.md, QA.md, VERIFICATION.md because Planner exposes lifecycle/gates but no section-write tool; healthy doctor showed no recovery.
+  - Elapsed through publication about 21 min: implementation 4 min plus 2 min repair; manager preflight/overhead about 5 min; Planner/Vault calls about 1 min active tool time; review about 7 min across fail/re-review; QA about 2 min including read/report with checks under 6s; CI/Pages/public wait about 1 min. No exact token-savings claim.
+  - .playwright-cli remained untracked and excluded.
+
+### evt-7c77e1d3-8790-4f51-a644-647c4e7f2d29
+
+- Timestamp: 2026-08-27T23:56:38.836Z
+- Actor: manager-root
+- Operation: gate.record
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Manager closure passed after coherent publication, CI, Pages, public URL, and evidence verification.
+- Idempotency key: abi-002-manager-closure-pass-20260828
+- Request fingerprint: a77d3003e6ad2374f7006937914083289fee383250cc15f3f6c8c8ef3f2cddb4
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Commit 610f208 pushed to main
+  - CI 33127933135 success
+  - Pages 33127933128 success
+  - Public URL HTTP 200 with expected title and entry script
+  - All implementation/review/QA/verification gates passed
+  - No .playwright-cli or ABI-003+ artifacts included
+
+### evt-e7c16f16-e79b-4e8d-ab7f-1950dc1f4c54
+
+- Timestamp: 2026-08-27T23:56:44.612Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Manager closure complete: committed, pushed, CI/Pages/public URL proved.
+- Idempotency key: abi-002-manager-step-complete-20260828
+- Request fingerprint: 38c8658ae223640664d85b4917eecb0b8398d185ff4ddeb5b0bfde84a992c8cc
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - 610f208
+  - CI 33127933135 success
+  - Pages 33127933128 success
+  - Public URL HTTP 200
+
+### evt-5fff0d6d-6765-4baa-ad78-d5dab3c7d80c
+
+- Timestamp: 2026-08-27T23:56:54.795Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: Close ABI-002 after all gates, coherent publication, CI, Pages, and public URL proof.
+- Idempotency key: abi-002-done-20260828
+- Request fingerprint: 2fffc44121ee8185d59e1e8588557c3f211b45b9e0d86f74a8b6126f333dab10
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All managed plan steps complete
+  - implementation-self-check pass
+  - independent-review pass after one bounded repair
+  - independent-qa pass without repair
+  - verification pass
+  - manager-closure pass
+  - 610f208 published; CI and Pages success
+
+### evt-1afe6a7a-c075-409c-9264-7e5de9c0cbc7
+
+- Timestamp: 2026-08-27T23:57:15.242Z
+- Actor: manager-root
+- Operation: claim.release
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Released task claim: Release completed ABI-002 manager lease after Done checkpoint.
+- Idempotency key: abi-002-claim-release-20260828
+- Request fingerprint: bb081fe8dd6d5fa67433e19f4f06799ff5119b7763c517692919db7774fa5b1e
+- Agent ID: manager-root
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-002 manager lease after Done checkpoint.
+- Branch: main
+- Evidence:
+  - None
