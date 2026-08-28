@@ -4,7 +4,7 @@ id: ABI-S1
 artifact: sprint-board
 project: ABI
 profile: high-assurance
-revision: 142
+revision: 144
 status: Active
 sourceRevisions:
   ABI-001: 12
@@ -23,7 +23,7 @@ sourceRevisions:
   ABI-013: 15
   ABI-014: 2
   ABI-008-FIX: 12
-  ABI-015: 12
+  ABI-015: 14
   ABI-016: 2
   ABI-017: 1
   ABI-018: 2
@@ -44,7 +44,7 @@ sourceRevisions:
 | ABI-018 | Blocked | ABI-015, ABI-017 | high |
 | ABI-017 | Blocked | ABI-015 | normal |
 | ABI-016 | Blocked | ABI-015 | high |
-| ABI-015 | In QA | ABI-008, ABI-009, ABI-013 | critical |
+| ABI-015 | Done | ABI-008, ABI-009, ABI-013 | critical |
 | ABI-008-FIX | Done | ABI-008 | high |
 | ABI-014 | Blocked | ABI-013, ABI-015 | high |
 | ABI-013 | Done | ABI-005, ABI-006 | critical |

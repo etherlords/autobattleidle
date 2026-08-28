@@ -4,8 +4,8 @@ id: ABI-015
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 12
-status: In QA
+revision: 14
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-008
@@ -29,7 +29,7 @@ Establish enforceable architecture boundaries and refactor core modules
 
 - Type: task
 - Priority: critical
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

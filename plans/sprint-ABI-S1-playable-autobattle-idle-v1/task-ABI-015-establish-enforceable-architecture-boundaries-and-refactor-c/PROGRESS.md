@@ -4,8 +4,8 @@ id: ABI-015
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 170
-status: In QA
+revision: 175
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-008
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 170
-- Last update: Fresh independent desktop/narrow visual and behavior QA passed with no P0-P2
+- Status: Done
+- Revision: 175
+- Last update: Released task claim: Release completed ABI-015 after published verification and Manager closure
 
 ## Execution plan
 
@@ -2882,3 +2882,104 @@ requiredGates:
   - QA.md
   - pnpm check 38/38
   - canvas 1; DOM 52->52; zero console errors
+
+### evt-e1cf263f-3205-4aa4-a039-ed8cf3d30584
+
+- Timestamp: 2026-08-28T22:15:37.008Z
+- Actor: manager-root-verification
+- Operation: gate.record
+- Prior revision: 170
+- Resulting revision: 171
+- Summary: Exact-SHA CI, Pages, deployed behavior, Vault, Planner, and root verification passed for implementation checkpoint
+- Idempotency key: abi015-exact-sha-verification-pass-20260829
+- Request fingerprint: d39157211ae472195fff2ebdf19642c446cf606743a78a9a8abca3bbd8a16f65
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - commit 1f2b4c46d713f8d97f86469638656ab6a3f8c422
+  - CI run 33215871495 success
+  - Pages run 33215871501 success
+  - public HTTP 200 asset index-BH0E2XzI.js
+  - deployed HP 140->139 and Manual hit event
+  - deployed dialog focus and 390px framing PASS
+  - VERIFICATION.md
+  - Vault doctor 0 findings; index fresh
+  - Planner doctor no recovery required
+
+### evt-f852feff-0d3d-44c4-89f1-5e665024fd98
+
+- Timestamp: 2026-08-28T22:15:44.281Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 171
+- Resulting revision: 172
+- Summary: Independent gates and exact-SHA verification passed; ready for Manager root audit and closure
+- Idempotency key: abi015-ready-for-manager-after-verification-20260829
+- Request fingerprint: 03eda5b36de70d07c3a13359eb289ae5d4f847bf5989278a417c57317f2d0bab
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - VERIFICATION.md
+
+### evt-1becb84d-4707-4fd9-a3c6-1ca5e6bbd52f
+
+- Timestamp: 2026-08-28T22:16:20.073Z
+- Actor: manager-root-closure
+- Operation: gate.record
+- Prior revision: 172
+- Resulting revision: 173
+- Summary: Manager root audit PASS: architecture, behavior parity, independent gates, exact-SHA release, Vault sync, Planner recovery, and next-task boundaries verified
+- Idempotency key: abi015-manager-closure-pass-20260829
+- Request fingerprint: 2ce2c851a40bfe880a23fec1d5a0648f8c0a64063673c3b2e99d7f1e52bffce8
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - pnpm check PASS 7 files 38 tests
+  - git diff --check PASS
+  - implementation commit 1f2b4c46d713f8d97f86469638656ab6a3f8c422 pushed
+  - CI 33215871495 success; Pages 33215871501 success
+  - deployed behavior proof PASS
+  - Vault doctor 0 findings and index fresh
+  - Planner doctor healthy and recovery not required
+  - no unresolved P0-P2
+  - ABI-016/010/012/014 implementation untouched
+
+### evt-cb5ae7e8-8797-4d37-8df9-f4b6a24cdcea
+
+- Timestamp: 2026-08-28T22:16:27.333Z
+- Actor: manager-root-closure
+- Operation: task.advance
+- Prior revision: 173
+- Resulting revision: 174
+- Summary: Close ABI-015 after all required gates, exact-SHA deployment, deployed proof, and root audit passed
+- Idempotency key: abi015-done-after-manager-closure-20260829
+- Request fingerprint: 2dc69736a43516c6c1ce4d24a86c5f7d28df2e1b6571b57bc4276fd747ba6a4c
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - manager-closure PASS
+  - no unresolved P0-P2
+
+### evt-567c7f68-4257-4597-9159-d1c9e93c0ace
+
+- Timestamp: 2026-08-28T22:16:42.789Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 174
+- Resulting revision: 175
+- Summary: Released task claim: Release completed ABI-015 after published verification and Manager closure
+- Idempotency key: abi015-release-completed-claim-20260829
+- Request fingerprint: 7b516a0f43e8ba9fe5f71b5e820d9fc1baf937857e2992cf4a32a6ce17d57479
+- Agent ID: root-manager
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-015 after published verification and Manager closure
+- Branch: main
+- Evidence:
+  - None
