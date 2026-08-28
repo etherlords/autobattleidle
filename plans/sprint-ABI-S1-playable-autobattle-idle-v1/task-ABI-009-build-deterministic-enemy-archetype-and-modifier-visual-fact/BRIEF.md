@@ -4,8 +4,8 @@ id: ABI-009
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In QA
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-003
@@ -27,7 +27,7 @@ Build deterministic enemy archetype and modifier visual factory
 
 - Type: task
 - Priority: normal
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

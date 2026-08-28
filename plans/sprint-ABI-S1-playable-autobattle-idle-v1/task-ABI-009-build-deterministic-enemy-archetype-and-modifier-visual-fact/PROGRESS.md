@@ -4,8 +4,8 @@ id: ABI-009
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: In QA
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-003
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 30
-- Last update: EVENT checkpoint — manager-abi009 — reviewed/QA-passed publication candidate is green and ready for exact-SHA push.
+- Status: Done
+- Revision: 36
+- Last update: Released task claim: Release completed ABI-009 claim after canonical Done closure
 
 ## Execution plan
 
@@ -35,7 +35,7 @@ requiredGates:
 - [x] resource-lifecycle: Implementation owner: centralize object/material ownership and prove replacement, retirement and disposal remain bounded and idempotent
 - [x] factory-tests: Implementation owner: add deterministic composition/seed/recognition/cleanup tests and run focused tests plus pnpm check
 - [x] visual-gates: Independent Reviewer and browser QA: inspect architecture and capture desktop/narrow evidence for every archetype, modifier, boss and long-run resource bound
-- [~] visual-delivery: Manager: update Vault receipts, commit/push, wait CI/Pages, repeat public visual/resource proof, and close
+- [x] visual-delivery: Manager: update Vault receipts, commit/push, wait CI/Pages, repeat public visual/resource proof, and close
 
 ## Events
 
@@ -579,3 +579,121 @@ requiredGates:
   - Vault doctor 0 errors/0 warnings
   - excluded .playwright-cli remains unstaged
   - QA gallery replay artifact renamed .txt and receipt formatted so repository checks remain green
+
+### evt-2589f8c3-614e-4be2-a34a-817e5128b5a4
+
+- Timestamp: 2026-08-28T19:09:48.150Z
+- Actor: release-verifier-abi009
+- Operation: gate.record
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: PASS — exact-SHA CI/Pages, public desktop/narrow behavior, asset parity, local checks, review, QA, and Vault sync satisfy ABI-009 acceptance.
+- Idempotency key: abi009-verification-pass-20260829
+- Request fingerprint: 3d84f2e85f63309c24b4bdbdc5e714a804c9540aba93af5d8d1e0fedf58fd848
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - commit 7c523e11f8a8c694df8feda7b2dd255d403a8c9f pushed to origin/main
+  - CI 33202118424 success; Pages 33202118481 success
+  - public https://etherlords.github.io/autobattleidle/ desktop 140->139 and narrow reload 139->138; one manual-hit event each
+  - console errors/warnings 0; no failed observed requests; 390px no overflow
+  - deployed/local JS and CSS SHA-256 parity
+  - VERIFICATION.md exact Planner readback revision 4
+  - pnpm check 23/23 PASS
+  - Vault A7FD1F 30443e0c... doctor 0/0
+  - implementation-self-check, independent-review, independent-qa PASS
+
+### evt-0644abe9-f71f-4be5-a02f-a026cb701901
+
+- Timestamp: 2026-08-28T19:09:55.530Z
+- Actor: release-verifier-abi009
+- Operation: execution_plan.update
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Publication and verification complete; exact-SHA CI/Pages and public desktop/narrow proof passed.
+- Idempotency key: abi009-delivery-complete-20260829
+- Request fingerprint: 41e03181d983539c6c46106f299d3e8a1078d52f0537a8c4919c73fc984af231
+- Action: set_state
+- Step ID: visual-delivery
+- State: complete
+- Evidence:
+  - verification PASS evt-2589f8c3-614e-4be2-a34a-817e5128b5a4
+  - all nine managed steps complete
+  - deployed receipt and screenshots recorded
+  - root .playwright-cli remains excluded
+
+### evt-f7bc9c33-a5b9-4a3e-ab5f-f0c39871d682
+
+- Timestamp: 2026-08-28T19:10:02.392Z
+- Actor: release-verifier-abi009
+- Operation: task.advance
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: All ABI-009 implementation, review, QA, publication, and verification evidence passed; ready for Manager closure.
+- Idempotency key: abi009-ready-manager-after-verification-20260829
+- Request fingerprint: 343d3c44c9d25fc37b3f0760f2bd76bfaa28708efc134a93f79f383eb34dc7e4
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification PASS evt-2589f8c3-614e-4be2-a34a-817e5128b5a4
+  - all nine managed steps complete
+  - exact-SHA CI/Pages success
+  - public functional and asset-parity proof
+  - no unresolved P0-P2
+
+### evt-647b81b9-06a5-4913-b154-802756430ad0
+
+- Timestamp: 2026-08-28T19:10:20.722Z
+- Actor: manager-closure-abi009
+- Operation: gate.record
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: PASS — ABI-009 has complete scope, independent gates, exact-SHA publication, deployed proof, accepted Vault semantics, no unresolved P0-P2, and later tasks remain untouched.
+- Idempotency key: abi009-manager-closure-pass-20260829
+- Request fingerprint: 0c61113fdf12f6f3e772fe60f511698c70c2678f566f30531e00fbec1e9aab18
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - task Ready for Manager revision 5 after canonical EBUSY readback
+  - all nine plan steps complete
+  - verification PASS evt-2589f8c3-614e-4be2-a34a-817e5128b5a4
+  - CI 33202118424 and Pages 33202118481 success for 7c523e11...
+  - public desktop/narrow proof and asset parity
+  - review PASS; QA PASS; pnpm check PASS
+  - ABI-010 and ABI-014 unmodified/unclaimed; root .playwright-cli excluded
+
+### evt-cb51b4f4-6377-47a3-b6d7-1aaf992fdbd1
+
+- Timestamp: 2026-08-28T19:10:29.690Z
+- Actor: manager-closure-abi009
+- Operation: task.advance
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Close ABI-009 after verified exact-SHA publication and accepted independent gates.
+- Idempotency key: abi009-done-20260829
+- Request fingerprint: 662e048d2885725804cf36cdfc16f15c29feba0b1c8680f727734dbc9653c225
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS evt-647b81b9-06a5-4913-b154-802756430ad0
+  - verification PASS evt-2589f8c3-614e-4be2-a34a-817e5128b5a4
+  - all acceptance criteria mapped in VERIFICATION.md
+  - no unresolved P0-P2
+  - next-task safety preserved
+
+### evt-6df4b926-2ecd-4bee-be6f-35fb66f678a0
+
+- Timestamp: 2026-08-28T19:11:09.249Z
+- Actor: manager-abi009
+- Operation: claim.release
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Released task claim: Release completed ABI-009 claim after canonical Done closure
+- Idempotency key: abi009-release-after-done-20260829
+- Request fingerprint: 682ec6a77829684331664456c2f1a6e2b3bce9efd4fd5f3f384fcafea44dafce
+- Agent ID: manager-abi009
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-009 claim after canonical Done closure
+- Branch: main
+- Evidence:
+  - None
