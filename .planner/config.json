@@ -20,6 +20,8 @@
     "ABI-008": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay",
     "ABI-009": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact",
     "ABI-010": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter",
-    "ABI-011": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-011-add-bounded-combat-death-reward-boss-and-golden-bug-effects"
+    "ABI-011": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-011-add-bounded-combat-death-reward-boss-and-golden-bug-effects",
+    "ABI-012": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud",
+    "ABI-013": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p"
   }
 }

@@ -43,24 +43,21 @@ selection, accidental double attack, page scroll, or layout growth.
 
 ## Persistence
 
-Progress is stored in `localStorage` after meaningful state changes with a short debounce and on page
-hide. The payload has a schema version and contains only canonical simulation state. Load validates every
-field, applies migrations for supported older versions, and falls back to a safe new game for malformed or
-unsupported data without crashing. A user-confirmed reset removes the save.
+Progress is stored in `localStorage` after meaningful state changes with a short debounce and on page hide. The payload has a schema version and contains only canonical simulation state.
 
-Offline elapsed-time rewards are deferred from V1 unless implementation and QA prove a bounded formula;
-ordinary saved progress must still resume exactly.
+Every task preflight classifies persistence impact as `no schema change`, `compatible extension`, or `schema migration`. A task with no schema change must still prove that the supported historical save fixtures load without semantic progress loss. A task that changes the shape or meaning of saved data ships the version bump, the next-version migration adapter, source and target fixtures, and load -> migrate -> save -> reload proof in the same delivery.
+
+Supported older versions never silently reset. Load validates the source shape, migrates step by step, validates the current shape, and reconstructs derived values through the domain. Malformed data and unsupported future versions fall back safely without crashing. A user-confirmed reset remains the only ordinary path that intentionally removes valid progress.
+
+Offline elapsed-time rewards are deferred from V1 unless implementation and QA prove a bounded formula; ordinary saved progress must still resume exactly.
 
 ## Delivery lifecycle
 
-Every task follows `implement -> independent review -> independent QA -> manager close`. A failed gate
-returns concrete findings to the implementation owner; one new independent gate run follows the fix.
-There is no unbounded review/QA loop.
+Every task follows `implement -> independent review -> independent QA -> manager close`. A failed gate returns concrete findings to the implementation owner; one new independent gate run follows the fix. There is no unbounded review/QA loop.
 
-Each task records short timestamped high-level events in `PROGRESS.md`, including claim, implementation
-checkpoint, review result, QA result, return-to-implementation reason, and close. Review and QA details
-remain in their dedicated artifacts. Final release QA includes reload persistence, malformed save recovery,
-long-running progression, input behavior, responsive layout, and the deployed GitHub Pages build.
+The manager records the persistence-impact classification during preflight. Reviewer verifies that a feature did not bypass the save boundary; QA loads the oldest supported fixture affected by the task and proves semantic progress after reload. When a schema changed, QA also proves the migrated current-version payload survives a second reload. These checks are required even when persistence is not the feature's main UI surface.
+
+Each task records short timestamped high-level events in `PROGRESS.md`, including claim, implementation checkpoint, review result, QA result, return-to-implementation reason, and close. Review and QA details remain in their dedicated artifacts. Final release QA includes reload persistence, malformed save recovery, long-running progression, input behavior, responsive layout, and the deployed GitHub Pages build.
 
 ## Related
 

@@ -42,6 +42,12 @@ feature is not yet wired into the application. For application/UI work, HTTP 200
 clean console, screenshots, and successful deployment are supporting evidence only; they never prove
 that combat, input, timers, persistence, upgrades, or progression work.
 
+Every task preflight must also classify persistence impact as `no schema change`, `compatible extension`,
+or `schema migration`. Even `no schema change` requires a supported historical-save load/reload regression.
+A changed save shape or meaning must ship its version bump, one-version-at-a-time migration, source and
+target fixtures, and deployed load -> migrate -> save -> reload proof in the same task. Valid supported
+older saves must never silently reset; only an explicit user reset may intentionally discard valid progress.
+
 On a failed gate, preserve the finding in its canonical Planner artifact, return the task to the same
 implementation owner, and run one new independent gate after fixes. Escalate to the user rather than
 cycling indefinitely.
