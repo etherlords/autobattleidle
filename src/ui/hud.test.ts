@@ -34,11 +34,8 @@ class FakeElement {
   }
 
   dispatch(type: string, detail: Partial<KeyboardEvent> = {}): void {
-    const event = { preventDefault: () => undefined, ...detail } as unknown as Event;
-    for (const listener of this.listeners.get(type) ?? []) {
-      if (typeof listener === "function") listener(event);
-      else listener.handleEvent(event);
-    }
+    const event = { preventDefault: () => undefined, ...detail, target: this } as unknown as Event;
+    dispatchListeners(this, type, event);
   }
 
   focus(): void {
@@ -63,6 +60,14 @@ class FakeElement {
     this.attributes.set(name, value);
   }
 }
+
+const dispatchListeners = (element: FakeElement, type: string, event: Event): void => {
+  for (const listener of element.listeners.get(type) ?? []) {
+    if (typeof listener === "function") listener(event);
+    else listener.handleEvent(event);
+  }
+  if (element.parent !== undefined) dispatchListeners(element.parent, type, event);
+};
 
 class FakeDocument extends FakeElement {
   activeElement: FakeElement | null = null;
@@ -112,7 +117,8 @@ describe("createHud", () => {
     expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(stylesheet).toContain("grid-auto-rows: 4.75rem;");
     expect(stylesheet).toContain("height: 100%;");
-    expect(stylesheet).toContain("text-overflow: ellipsis;");
+    expect(stylesheet).toContain("grid-template-rows: 1fr 1fr;");
+    expect(stylesheet).toContain(".upgrade-title,");
   });
 
   it("routes canvas input once and contains upgrades in an accessible modal", () => {
@@ -170,26 +176,46 @@ describe("createHud", () => {
 
     const launcher = element(host, "upgrades-launcher");
     const modal = element(host, "upgrades-modal");
+    const dialog = element(host, "upgrades-dialog");
     const close = element(host, "upgrades-close");
     const upgradeButtons = element(host, "upgrades").children;
     const reset = element(host, "reset-progress");
     const restore = element(host, "restore-progress");
+    expect(element(upgradeButtons[1] as FakeElement, "upgrade-title").textContent).toBe(
+      "Damage - 0",
+    );
+    expect(element(upgradeButtons[1] as FakeElement, "upgrade-price").textContent).toBe("2 coins");
+    expect(element(upgradeButtons[1] as FakeElement, "upgrade-title").textContent).not.toContain(
+      "Need",
+    );
+    expect(upgradeButtons[1]?.attributes.get("aria-label")).toContain("Need 45 coins");
     expect(upgradeButtons[0]?.title).toContain("A deliberately long upgrade label");
     expect(upgradeButtons[0]?.title).toContain("Requires a longer prerequisite");
     hud.render(snapshot);
+    document.dispatch("keydown", { key: "u", repeat: false });
+    expect(modal.hidden).toBe(false);
+    document.dispatch("keydown", { key: "u", repeat: true });
+    expect(modal.hidden).toBe(false);
+    document.dispatch("keydown", { key: "U", repeat: false });
+    expect(modal.hidden).toBe(true);
+    launcher.dispatch("click");
+    dialog.dispatch("pointerup");
+    expect(modal.hidden).toBe(false);
+    modal.dispatch("pointerup");
+    expect(modal.hidden).toBe(true);
     launcher.dispatch("click");
     expect(modal.hidden).toBe(false);
-    expect(close.focusCalls).toBe(1);
+    expect(close.focusCalls).toBeGreaterThan(0);
     close.dispatch("click");
     expect(modal.hidden).toBe(true);
-    expect(launcher.focusCalls).toBe(1);
+    expect(launcher.focusCalls).toBeGreaterThan(2);
     launcher.dispatch("click");
     document.activeElement = close;
     document.dispatch("keydown", { key: "Tab", shiftKey: true });
     expect(restore.focusCalls).toBe(1);
     document.dispatch("keydown", { key: "Escape" });
     expect(modal.hidden).toBe(true);
-    expect(launcher.focusCalls).toBe(2);
+    expect(launcher.focusCalls).toBeGreaterThan(3);
 
     upgradeButtons[0]?.dispatch("click");
     reset.dispatch("click");
@@ -209,6 +235,7 @@ describe("createHud", () => {
     expect(document.listeners.get("keydown")?.size ?? 0).toBe(0);
     document.dispatch("keydown", { key: "Escape" });
     document.dispatch("keydown", { key: "Tab" });
+    document.dispatch("keydown", { key: "u" });
     battlefield.dispatch("pointerup");
     battlefield.dispatch("keydown", { key: "Enter", repeat: false });
     launcher.dispatch("click");

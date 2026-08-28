@@ -154,12 +154,19 @@ body {
 }
 
 .upgrades button {
+  display: grid;
   font: inherit;
+  grid-template-rows: 1fr 1fr;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  overflow-wrap: anywhere;
   padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+
+.upgrade-title,
+.upgrade-price {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

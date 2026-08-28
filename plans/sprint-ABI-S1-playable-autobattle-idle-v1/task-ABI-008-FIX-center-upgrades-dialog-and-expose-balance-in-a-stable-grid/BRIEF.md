@@ -4,7 +4,7 @@ id: ABI-008-FIX
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 6
+revision: 10
 status: In QA
 sprintId: ABI-S1
 dependencies:
@@ -33,8 +33,10 @@ Center upgrades dialog and expose balance in a stable grid
 
 - [ ] Upgrades opens as a centered bounded dialog card over a translucent backdrop instead of rendering its content as a bottom strip across the viewport
 - [ ] The dialog visibly includes the current coin balance while the top battlefield HUD may be obscured
-- [ ] Upgrade actions use a clear responsive grid with larger controls whose width and layout do not change when labels, levels, costs, or disabled reasons change
-- [ ] Desktop and 390px browser QA prove the centered card stays in bounds, modal input cannot reach the battlefield, close and Escape restore focus, and the page has no overflow
+- [ ] Every upgrade action uses a fixed-size two-line layout: TITLE - LEVEL on the first line and PRICE coins on the second; dynamic disabled Need text is not shown visually, while the full disabled reason remains accessible
+- [ ] The U key toggles the upgrades modal open and closed without producing a battlefield attack, and closing restores focus to the Upgrades launcher
+- [ ] A pointer activation on the backdrop outside the dialog card closes the modal and restores launcher focus; pointer activation inside the card does not close or click through
+- [ ] Desktop and 390px browser QA prove the centered card stays in bounds, modal input cannot reach the battlefield, close/Escape/U/backdrop dismissal restore focus, stable button geometry, and no page overflow
 - [ ] Focused HUD tests and pnpm check pass; independent review, independent browser QA, commit, CI, Pages, and public exact-SHA proof are recorded
 
 ## Dependencies

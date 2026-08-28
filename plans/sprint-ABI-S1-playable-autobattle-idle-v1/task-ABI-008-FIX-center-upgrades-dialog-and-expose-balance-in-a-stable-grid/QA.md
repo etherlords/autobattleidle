@@ -33,3 +33,13 @@ PASS — fresh isolated local browser QA; no P0-P3 findings.
 - V2 reload preserved `138/140`; focused tests 12/12; `pnpm check` 20/20 plus build; console 0 errors/warnings.
 - Screenshots: `abi008-fix-local-desktop-initial.png`, `abi008-fix-local-desktop-modal.png`, `abi008-fix-local-desktop-reopen.png`, `abi008-fix-local-narrow-modal.png`.
 - QA made no source, Planner/Vault, dependency, Git, or `.playwright-cli` mutations. Public/deployed proof remains Manager-owned.
+
+### Run 2 — user-feedback revision
+
+- PASS: `output/playwright/abi008-fix-v2-local-qa-receipt.md`; no P0-P3 findings.
+- All six buttons had exactly two visible rows (`TITLE - LEVEL`, `PRICE coins`), no visible Need/reason, retained accessible disabled reasons, equal 76px desktop and 68px narrow heights.
+- Desktop card remained centered and two-column; 390x844 remained bounded, one-column and overflow-free; modal Coins matched HUD.
+- Real U opened/focused Close; repeated U closed/restored launcher with no attack. Card click stayed open; backdrop click closed/restored focus without HP/log change.
+- After close canvas `140 -> 139`, Enter `139 -> 138`, Space `138 -> 137`, exactly one event each. Reload retained `137/140` and hidden modal.
+- Console 0 errors/warnings; focused tests 12/12; `pnpm check` 20/20 plus build.
+- Screenshots: `abi008-fix-v2-local-desktop-initial.png`, `abi008-fix-v2-local-desktop-modal.png`, `abi008-fix-v2-local-narrow-modal.png`.

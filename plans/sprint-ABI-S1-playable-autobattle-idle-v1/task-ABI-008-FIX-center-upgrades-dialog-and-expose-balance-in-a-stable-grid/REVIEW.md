@@ -35,3 +35,11 @@ APPROVED — independent review run 2 after one bounded P2 repair; no P0-P3 find
 - APPROVED: fixed desktop/narrow grid rows, full-height buttons and ellipsis prevent dynamic strings from resizing the layout; the full action text remains the accessible name and `title`.
 - Centered bounded dialog, in-modal balance, native hidden semantics, focus/input/disposal behavior remain correct.
 - Independent focused Vitest 4/4 and `git diff --check 971212d --` passed; reviewer made no mutations.
+
+### Run 3
+
+- APPROVED after user-feedback revision; no P0-P3 findings in the full `d113abc...working-tree` diff.
+- Every action has exactly two fixed visual rows (`TITLE - LEVEL`, then `PRICE coins`); disabled reason is absent visually and retained in `aria-label`/`title`.
+- Global U/u toggle rejects repeats, cannot attack, restores launcher focus and disposes its listener. Backdrop dismissal is target-guarded, so card/control input neither closes nor leaks.
+- Native hidden behavior, Escape/Close and focus trap remain intact. Independent focused Vitest 4/4 and `git diff --check d113abc --` passed; reviewer made no mutations.
+- ABI-012 change is acceptance-only for future compact modal-balance and price formatting; no ABI-012 implementation was added.

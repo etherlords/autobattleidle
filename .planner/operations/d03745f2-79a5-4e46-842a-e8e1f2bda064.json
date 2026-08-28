@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d03745f2-79a5-4e46-842a-e8e1f2bda064",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T18:09:55.158Z",
+  "itemId": "ABI-008-FIX",
+  "idempotencyKey": "abi008-fix-cancel-candidate-delivery-v1",
+  "requestFingerprint": "688c21c41d3ff48e1a561143746e7ebcbacc51368ea02572fe61cf8a0bbfd45f",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md.planner-tmp-d03745f2-79a5-4e46-842a-e8e1f2bda064-0",
+      "beforeHash": "8a514cd1cda5f3a283cf25dd6a2936efc68fe480f6f3da96cbf8542786e52498",
+      "afterHash": "52fc2f66554cb93420bf0a29b0040eaf772c641c9eb6c72e670779fe390ebfba"
+    }
+  ],
+  "committedAt": "2026-08-28T18:09:55.172Z"
+}

@@ -4,7 +4,7 @@ id: ABI-008-FIX
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 28
+revision: 52
 status: In QA
 sprintId: ABI-S1
 dependencies:
@@ -22,8 +22,8 @@ requiredGates:
 ## Current state
 
 - Status: In QA
-- Revision: 28
-- Last update: Start candidate publication for exact-SHA CI, Pages, and deployed browser proof before verification and closure.
+- Revision: 52
+- Last update: Start corrected candidate publication after green run-3 review and v2 browser QA.
 
 ## Execution plan
 
@@ -31,8 +31,13 @@ requiredGates:
 - [x] self-check: Implementation owner: add the smallest DOM/CSS regression coverage and run focused tests plus pnpm check
 - [x] independent-review: Independent Reviewer: audit modal semantics, stable grid behavior, accessibility, and scope
 - [x] independent-qa: Independent QA: prove desktop and 390px modal layout, balance visibility, input blocking, focus restoration, and overflow safety
-- [~] delivery: Manager: record gates, commit/push, wait CI/Pages, repeat public exact-SHA proof, and close
+- [-] delivery: Manager: record gates, commit/push, wait CI/Pages, repeat public exact-SHA proof, and close
 - [x] review-repair-1: Implementation owner: freeze upgrade grid rows/button height, bound dynamic text overflow, add long-value regression, and rerun self-check
+- [x] two-line-actions: Implementation owner: render each fixed upgrade action as TITLE - LEVEL over PRICE coins, hide Need text visually, preserve accessible disabled reasons, and rerun full check
+- [x] modal-dismissal: Implementation owner: toggle the modal with U, close only on backdrop outside-card pointer activation, restore launcher focus, and prevent canvas leakage
+- [x] independent-review-3: Same independent Reviewer: re-audit two-line actions, accessible disabled reasons, U toggle, backdrop dismissal, cleanup and full follow-up diff
+- [x] independent-qa-2: Independent QA: freshly prove two-line visual actions, no visible Need, U toggle, backdrop/card dismissal, focus, input isolation and responsive geometry
+- [~] delivery-2: Manager: publish corrected candidate, require green CI/Pages, prove deployed v2 modal/input behavior, record verification, close and root-audit
 
 ## Events
 
@@ -499,3 +504,416 @@ requiredGates:
   - planner-gate:independent-review:pass
   - planner-gate:independent-qa:pass
   - output/playwright/abi008-fix-local-qa-receipt.md
+
+### evt-0604b193-074e-4a87-bae1-896e9ad027cb
+
+- Timestamp: 2026-08-28T18:09:48.147Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: EVENT returned — Manager — Candidate d113abc pushed, but CI 33197933439 failed only Prettier on the QA receipt; before retry, user refined upgrade buttons to two visual rows (TITLE - LEVEL / PRICE coins) with no visible Need text. Return to implementation and require fresh gates/new SHA.
+- Idempotency key: abi008-fix-user-layout-return-v1
+- Evidence:
+  - git:d113abc52eec3551c59db90ee787ec5d000efc0d
+  - github-actions:33197933439:failure
+  - src/ui/hud.ts
+  - src/style.css
+
+### evt-a1e4a639-26df-4f21-b5a3-bc0d1591e8ed
+
+- Timestamp: 2026-08-28T18:09:55.157Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Cancel the failed d113abc candidate delivery step; user layout revision requires new implementation, gates and SHA.
+- Idempotency key: abi008-fix-cancel-candidate-delivery-v1
+- Request fingerprint: 688c21c41d3ff48e1a561143746e7ebcbacc51368ea02572fe61cf8a0bbfd45f
+- Action: set_state
+- Step ID: delivery
+- State: cancelled
+- Reason: Cancel the failed d113abc candidate delivery step; user layout revision requires new implementation, gates and SHA.
+- Evidence:
+  - github-actions:33197933439:failure
+  - user-feedback:two-line-upgrade-actions
+
+### evt-e1ed9547-f92f-49ce-b7a3-a95fcc8ed629
+
+- Timestamp: 2026-08-28T18:10:06.822Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Return from QA for user-requested two-line upgrade action layout; previous candidate CI also failed receipt formatting.
+- Idempotency key: abi008-fix-qa-return-user-layout-v1
+- Request fingerprint: 193428cb1c8bcb2598e2e516f07d931170b12973aeb11198762cb389119dbc17
+- From status: In QA
+- To status: In Progress
+- Evidence:
+  - user-feedback:TITLE-LEVEL-and-PRICE-two-lines
+  - github-actions:33197933439:failure
+
+### evt-0a2125f5-4b9f-42c4-91ad-2e66ceac304d
+
+- Timestamp: 2026-08-28T18:10:13.401Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Add the user-requested two-line upgrade button revision and CI formatting repair.
+- Idempotency key: abi008-fix-add-two-line-actions-v1
+- Request fingerprint: b20cfc450c68e988f1f97d0749676bee1aa16b7d5232834f4c4a7dd509a53e32
+- Action: add
+- Step ID: two-line-actions
+- Evidence:
+  - src/ui/hud.ts
+  - src/style.css
+  - output/playwright/abi008-fix-local-qa-receipt.md
+
+### evt-ec61d6af-87b2-4062-bd9d-bfb26ace08cc
+
+- Timestamp: 2026-08-28T18:10:52.255Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Add explicit keyboard toggle and outside-click dismissal behavior from user feedback.
+- Idempotency key: abi008-fix-add-u-backdrop-step-v1
+- Request fingerprint: 3110187b674355415fa2905d606d36e176d7f21bbceabb100323ed09e51b8f12
+- Action: add
+- Step ID: modal-dismissal
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/BRIEF.md
+  - src/ui/hud.ts
+  - src/ui/hud.test.ts
+
+### evt-8d39595b-f742-4f15-998c-e9f5483d99a5
+
+- Timestamp: 2026-08-28T18:10:59.840Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: Begin the combined user-feedback implementation for two-line actions and modal U/backdrop dismissal.
+- Idempotency key: abi008-fix-two-line-start-v1
+- Request fingerprint: 538e767cface9d632305f1b4afae9aa202f17e835db5c7ff6a2809da4574bf93
+- Action: set_state
+- Step ID: two-line-actions
+- State: in_progress
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/BRIEF.md
+  - src/ui/hud.ts
+  - src/style.css
+
+### evt-d2986164-ca67-4a49-b22a-1dc2f16641cb
+
+- Timestamp: 2026-08-28T18:13:48.648Z
+- Actor: abi008-implementation
+- Operation: execution_plan.update
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Upgrade actions now render stable title-level and price rows; disabled reason remains accessible but not visual; full check passed.
+- Idempotency key: abi008-fix-two-line-complete-v1
+- Request fingerprint: 0041bbc7677dc4894200c8db4c294d3e8c6cb21ad2fd191b52155d49d84c41ac
+- Action: set_state
+- Step ID: two-line-actions
+- State: complete
+- Evidence:
+  - src/ui/hud.ts
+  - src/style.css
+  - src/ui/hud.test.ts
+  - command:pnpm check:20/20
+
+### evt-58eb4ba1-fc66-43df-960b-18ffb0fc5202
+
+- Timestamp: 2026-08-28T18:13:56.569Z
+- Actor: abi008-implementation
+- Operation: execution_plan.update
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Verify and complete U toggle, backdrop-only dismissal, focus restoration and cleanup.
+- Idempotency key: abi008-fix-modal-dismissal-start-v1
+- Request fingerprint: 7307e93eee33b423ff1e554abb63aa2b9868a7df200f4fe7d37a9e30ea3fd9c8
+- Action: set_state
+- Step ID: modal-dismissal
+- State: in_progress
+- Evidence:
+  - src/ui/hud.ts
+  - src/ui/hud.test.ts
+
+### evt-06964489-e183-42b3-8c69-f2a00a60a9b7
+
+- Timestamp: 2026-08-28T18:14:04.045Z
+- Actor: abi008-implementation
+- Operation: execution_plan.update
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: U/u toggles without repeat or attack; backdrop-only pointer closes, card input stays open, focus restores and listeners dispose.
+- Idempotency key: abi008-fix-modal-dismissal-complete-v1
+- Request fingerprint: f186adb51367cdb26dccf941f7787bcd3d8b83309c9d9f1fef98656236add330
+- Action: set_state
+- Step ID: modal-dismissal
+- State: complete
+- Evidence:
+  - src/ui/hud.ts
+  - src/ui/hud.test.ts
+  - test:focused-4/4
+
+### evt-04602cf8-fd04-47ba-9bd2-8fb4d919e6a3
+
+- Timestamp: 2026-08-28T18:14:10.592Z
+- Actor: abi008-implementation
+- Operation: gate.record
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Fresh self-check passed after two-line actions and U/backdrop controls: focused 4/4, pnpm check 20/20, build and diff hygiene.
+- Idempotency key: abi008-fix-selfcheck-two-line-u-v1
+- Request fingerprint: 285196f6bd285fbfb22a8690813ec1d233db7a458afe2e16a8a0940554f6ccb9
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - src/ui/hud.ts
+  - src/style.css
+  - src/ui/hud.test.ts
+  - command:pnpm check
+  - command:git diff --check
+
+### evt-cd842221-e430-4b05-99a8-22211adf45e0
+
+- Timestamp: 2026-08-28T18:14:22.273Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Add fresh review gate after user-requested behavior changes.
+- Idempotency key: abi008-fix-add-review3-v1
+- Request fingerprint: 7d9f6905bfced96b0b6415e1a0cee2182d62d93c99c11d8bae1b77c973e04a64
+- Action: add
+- Step ID: independent-review-3
+- Evidence:
+  - src/ui/hud.ts
+  - src/style.css
+  - src/ui/hud.test.ts
+
+### evt-76f0507d-4114-4a4e-911d-ee3ffbf219ad
+
+- Timestamp: 2026-08-28T18:14:31.126Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Two-line action layout and U/backdrop controls passed fresh implementation self-check; return to same independent Reviewer.
+- Idempotency key: abi008-fix-two-line-to-review-v1
+- Request fingerprint: 3bea25e8932af5851d6853f3a26e4fdd09cf2909ffbf07acec58ecaf4d3fb47b
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - planner-gate:implementation-self-check:pass
+  - src/ui/hud.ts
+  - src/style.css
+  - src/ui/hud.test.ts
+
+### evt-37788064-3c77-4986-b339-b4b1a85031a7
+
+- Timestamp: 2026-08-28T18:14:39.398Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Start fresh independent review of the user-feedback revision.
+- Idempotency key: abi008-fix-review3-start-v1
+- Request fingerprint: 035e70a8111e5abb513efd84b7745eef105be0692a8aaa218359ecd1b00d8942
+- Action: set_state
+- Step ID: independent-review-3
+- State: in_progress
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/BRIEF.md
+  - src/ui/hud.ts
+  - src/style.css
+  - src/ui/hud.test.ts
+
+### evt-8027a2f7-50a3-4348-91c2-cc05d5ceec2c
+
+- Timestamp: 2026-08-28T18:16:40.585Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: EVENT review-pass — abi008-review — Run 3 approved the two-line actions and U/backdrop controls with no P0-P3; REVIEW.md used documented narrow artifact fallback because Planner v1.1.1 has no review-section write tool.
+- Idempotency key: abi008-fix-review3-artifact-v1
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/REVIEW.md
+  - test:focused-vitest-4/4
+  - command:git diff --check d113abc
+
+### evt-30184ed9-fa33-4d01-a774-831b3a1d997b
+
+- Timestamp: 2026-08-28T18:16:48.790Z
+- Actor: abi008-review
+- Operation: execution_plan.update
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Fresh review run 3 approved with no P0-P3.
+- Idempotency key: abi008-fix-review3-complete-v1
+- Request fingerprint: 28eb404104ad078fe535552b6f301332f3b8352deb227bc4fdebd1b7b3c2cc2a
+- Action: set_state
+- Step ID: independent-review-3
+- State: complete
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/REVIEW.md
+  - test:focused-4/4
+
+### evt-c71ba5f6-04c3-4b5d-bbd6-3942f43a0b8a
+
+- Timestamp: 2026-08-28T18:17:17.382Z
+- Actor: abi008-review-run3
+- Operation: gate.record
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Run 3 approved two-line upgrade actions, accessible disabled reasons, U toggle, backdrop target guard and listener cleanup; no P0-P3.
+- Idempotency key: abi008-fix-review-run3-pass-v2
+- Request fingerprint: 0605535a6c1aa57b96a527327d49cf04e16c4e2f15a5c046becc99d492983f51
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/REVIEW.md
+  - test:focused-vitest-4/4
+  - command:git diff --check d113abc
+
+### evt-0befa850-3983-447f-98cf-9452b58e587b
+
+- Timestamp: 2026-08-28T18:17:24.110Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Fresh review run 3 passed after user-feedback revision; advance to new desktop/narrow browser QA.
+- Idempotency key: abi008-fix-review3-to-qa-v1
+- Request fingerprint: 597ef5dc88d9d528a87f144c27d07e1bdddd648fc010614901f0a56ab51523f4
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - planner-gate:independent-review:pass
+  - planner://work-item/ABI-008-FIX/artifact/REVIEW.md
+
+### evt-5719f6e9-1753-4a17-b90a-0b95fd747263
+
+- Timestamp: 2026-08-28T18:17:41.503Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Add a fresh browser QA gate for the user-feedback revision.
+- Idempotency key: abi008-fix-add-qa2-v1
+- Request fingerprint: 8921103a144f52f81d2ca29efd0ed85132f31722c210203167fc46cc9f950d1b
+- Action: add
+- Step ID: independent-qa-2
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/BRIEF.md
+  - src/ui/hud.ts
+  - src/style.css
+
+### evt-f38d32e7-0761-4b44-a154-5a1fce183c74
+
+- Timestamp: 2026-08-28T18:17:47.881Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Start fresh isolated desktop/narrow browser QA for two-line actions and modal U/backdrop controls.
+- Idempotency key: abi008-fix-qa2-start-v1
+- Request fingerprint: 90227e5575f8d9ebb884fdcbd6a76a816b352ee33c9945a8183ff3e9b35bdeaf
+- Action: set_state
+- Step ID: independent-qa-2
+- State: in_progress
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/BRIEF.md
+  - src/ui/hud.ts
+  - src/style.css
+
+### evt-8131b46d-c0fe-490d-a4a8-d41a26ba241d
+
+- Timestamp: 2026-08-28T18:22:55.173Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: EVENT qa-pass — abi008-qa-run2 — Fresh v2 desktop/narrow QA passed two-line actions, accessible reasons, U/backdrop controls, exact input, reload, overflow and console; QA.md used documented narrow artifact fallback because Planner v1.1.1 has no QA-section write tool.
+- Idempotency key: abi008-fix-qa2-artifact-v1
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/QA.md
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+  - output/playwright/abi008-fix-v2-local-desktop-modal.png
+  - output/playwright/abi008-fix-v2-local-narrow-modal.png
+
+### evt-7b5aa8c5-1c5f-4e6b-b9d2-19b9032dd6c1
+
+- Timestamp: 2026-08-28T18:23:02.612Z
+- Actor: abi008-qa-run2
+- Operation: execution_plan.update
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Fresh v2 browser QA passed with accurate artifact inventory and no P0-P3.
+- Idempotency key: abi008-fix-qa2-complete-v1
+- Request fingerprint: 8a7a58c5318045ca52bb739d6841ba99aee2e025ec1f94c9eab4d211f3d0d2cc
+- Action: set_state
+- Step ID: independent-qa-2
+- State: complete
+- Evidence:
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+  - test:focused-12/12
+  - command:pnpm check:20/20
+
+### evt-7adae2ca-6c31-440e-be26-461368abdab4
+
+- Timestamp: 2026-08-28T18:23:12.159Z
+- Actor: abi008-qa-run2
+- Operation: gate.record
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Fresh v2 QA passed two-line visual actions, accessible disabled reasons, U/backdrop semantics, exact pointer/keyboard input, persistence, responsive layout and console.
+- Idempotency key: abi008-fix-qa-run2-pass-v1
+- Request fingerprint: 94612e6e79bfb60901a593bafca757add7aed9fb0d133149de66100f0a15aa5e
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/QA.md
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+  - output/playwright/abi008-fix-v2-local-desktop-modal.png
+  - output/playwright/abi008-fix-v2-local-narrow-modal.png
+
+### evt-1522fa12-7949-4c0d-bac3-92f697bd87cc
+
+- Timestamp: 2026-08-28T18:23:20.360Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Add replacement delivery after the failed formatting-only candidate and user-feedback revision.
+- Idempotency key: abi008-fix-add-delivery2-v1
+- Request fingerprint: c7a0b9adbfdb9675e6f6b756fabc08f6f499de6e8225e3cf20d713a3f14aca76
+- Action: add
+- Step ID: delivery-2
+- Evidence:
+  - planner-gate:independent-review:pass
+  - planner-gate:independent-qa:pass
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+
+### evt-340581d2-2c4c-42b1-827d-b5e91ec1802d
+
+- Timestamp: 2026-08-28T18:23:27.017Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: Start corrected candidate publication after green run-3 review and v2 browser QA.
+- Idempotency key: abi008-fix-delivery2-start-v1
+- Request fingerprint: 896a2031cb6aed5480ac97b55b97f975df1fa72ab879ac183b49ef3b56ed6ed5
+- Action: set_state
+- Step ID: delivery-2
+- State: in_progress
+- Evidence:
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+  - command:pnpm check:20/20
+  - command:git diff --check

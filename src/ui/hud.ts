@@ -64,7 +64,15 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
 
   battlefield.tabIndex = 0;
   battlefield.setAttribute("aria-label", "Battlefield. Press Enter or Space to attack.");
-  const upgradeButtons = new Map<UpgradeId, { button: HTMLButtonElement; listener: () => void }>();
+  const upgradeButtons = new Map<
+    UpgradeId,
+    {
+      button: HTMLButtonElement;
+      listener: () => void;
+      price: HTMLSpanElement;
+      title: HTMLSpanElement;
+    }
+  >();
   let attackListener: (() => void) | undefined;
   let resetListener: (() => void) | undefined;
   let restoreListener: (() => void) | undefined;
@@ -113,10 +121,21 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
     document.addEventListener("keydown", modalKeydown);
     close.focus();
   };
+  const toggleModal = (event: KeyboardEvent): void => {
+    if (event.repeat || event.key.toLowerCase() !== "u") return;
+    event.preventDefault();
+    if (modal.hidden) openModal();
+    else closeModal();
+  };
+  const closeFromBackdrop = (event: PointerEvent): void => {
+    if (event.target === modal) closeModal();
+  };
   battlefield.addEventListener("pointerup", pointerAttack);
   battlefield.addEventListener("keydown", keyboardAttack);
+  document.addEventListener("keydown", toggleModal);
   launcher.addEventListener("click", openModal);
   close.addEventListener("click", closeModal);
+  modal.addEventListener("pointerup", closeFromBackdrop);
   resetButton.addEventListener("click", reset);
   restoreButton.addEventListener("click", restore);
   const render = (snapshot: BattleSnapshot): void => {
@@ -148,14 +167,21 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       if (entry === undefined) {
         const upgradeButton = document.createElement("button");
         upgradeButton.type = "button";
+        const title = document.createElement("span");
+        title.className = "upgrade-title";
+        const price = document.createElement("span");
+        price.className = "upgrade-price";
+        upgradeButton.append(title, price);
         const listener = (): void => upgradeListener?.(upgrade.id);
         upgradeButton.addEventListener("click", listener);
-        entry = { button: upgradeButton, listener };
+        entry = { button: upgradeButton, listener, price, title };
         upgradeButtons.set(upgrade.id, entry);
         upgrades.append(upgradeButton);
       }
-      const actionLabel = `${upgrade.label} Lv.${upgrade.level} · ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : ` · ${upgrade.disabledReason}`}`;
-      entry.button.textContent = actionLabel;
+      const actionLabel = `${upgrade.label} - ${upgrade.level}; ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : `; ${upgrade.disabledReason}`}`;
+      entry.title.textContent = `${upgrade.label} - ${upgrade.level}`;
+      entry.price.textContent = `${upgrade.cost} coins`;
+      entry.button.setAttribute("aria-label", actionLabel);
       entry.button.disabled = upgrade.disabledReason !== null;
       entry.button.title = actionLabel;
     }
@@ -189,8 +215,10 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       closeModal();
       battlefield.removeEventListener("pointerup", pointerAttack);
       battlefield.removeEventListener("keydown", keyboardAttack);
+      document.removeEventListener("keydown", toggleModal);
       launcher.removeEventListener("click", openModal);
       close.removeEventListener("click", closeModal);
+      modal.removeEventListener("pointerup", closeFromBackdrop);
       resetButton.removeEventListener("click", reset);
       restoreButton.removeEventListener("click", restore);
       for (const { button: upgradeButton, listener } of upgradeButtons.values())

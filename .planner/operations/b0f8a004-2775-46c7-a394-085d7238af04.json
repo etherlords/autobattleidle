@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b0f8a004-2775-46c7-a394-085d7238af04",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T18:17:17.384Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md.planner-tmp-b0f8a004-2775-46c7-a394-085d7238af04"
+    }
+  ],
+  "committedAt": "2026-08-28T18:17:17.403Z"
+}
