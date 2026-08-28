@@ -4,8 +4,8 @@ id: ABI-023
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 9
-status: Ready for Manager
+revision: 10
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -27,7 +27,7 @@ Correct ABI-015 with a concrete extensible Unit MVC and component architecture
 
 - Type: bug
 - Priority: critical
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 

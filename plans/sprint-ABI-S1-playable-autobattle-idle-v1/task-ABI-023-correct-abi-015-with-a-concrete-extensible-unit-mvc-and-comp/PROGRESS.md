@@ -4,8 +4,8 @@ id: ABI-023
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 79
-status: Ready for Manager
+revision: 83
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 79
-- Last update: Start coherent Git publication, exact-SHA CI/Pages proof, deployed smoke, and final root audit.
+- Status: Done
+- Revision: 83
+- Last update: Close ABI-023 after verified corrective architecture release.
 
 ## Execution plan
 
@@ -56,7 +56,7 @@ requiredGates:
 - [x] 27-extensibility-tests: Prove adding a fixture enemy family, modifier, view component, stat, and upgrade has one compiler-guided registration path and no switch edits
 - [x] 28-parity-tests: Prove exact deterministic combat, events, save fixtures, HUD interactions, visual seeds/cues/animations/object bounds, replacement, and disposal parity
 - [x] 29-review-qa: Run full pnpm check, independent architecture review, bounded repair/re-review, and real-browser desktop/narrow plus long-run resource/save QA
-- [~] 30-closure: Update Vault architecture, record Manager verification, publish coherent commit, wait exact-SHA CI/Pages, prove deployed behavior, and audit next-task safety
+- [x] 30-closure: Update Vault architecture, record Manager verification, publish coherent commit, wait exact-SHA CI/Pages, prove deployed behavior, and audit next-task safety
 
 ## Events
 
@@ -1420,3 +1420,71 @@ requiredGates:
 - State: in_progress
 - Evidence:
   - Vault synchronized; QA and verification passed; publication remains
+
+### evt-5fd77d6e-834e-4e89-82c7-00af4d748b47
+
+- Timestamp: 2026-08-28T23:26:25.680Z
+- Actor: manager-root
+- Operation: progress.append
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: Exact-SHA CI/Pages and deployed desktop/narrow behavior proof passed; root is clean and synchronized.
+- Idempotency key: abi023-publication-evidence-20260829-v1
+- Evidence:
+  - Implementation commit 7d8813839f87e44f89d28e87023d68ab331ab574 pushed to origin/main
+  - GitHub CI run 33220262629 success for exact SHA
+  - GitHub Pages run 33220262609 success for exact SHA
+  - https://etherlords.github.io/autobattleidle/ HTTP 200
+  - Deployed browser PASS desktop 1600x900 and 390x844: attack HP 140->138, modal focus/Escape, reload HP 138/140, console 0 errors/warnings
+  - git fetch origin then HEAD...origin/main = 0/0; root clean
+
+### evt-c8f75f68-3570-4ffe-9d77-aa06d413991e
+
+- Timestamp: 2026-08-28T23:26:34.401Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Closure publication and deployed proof completed.
+- Idempotency key: abi023-step30-complete-20260829-v1
+- Request fingerprint: 50ba3b1fdfd2c45a075b5eacde6ac88e317e5c645ccfe38624dcb6c2b990da01
+- Action: set_state
+- Step ID: 30-closure
+- State: complete
+- Evidence:
+  - Vault sync, commit/push, exact-SHA CI/Pages, deployed browser proof, and clean synchronized root completed
+
+### evt-745a746c-5ce5-4a17-8ece-61437728e980
+
+- Timestamp: 2026-08-28T23:26:42.269Z
+- Actor: manager-root
+- Operation: gate.record
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: Manager accepts ABI-023 corrective architecture implementation and release evidence.
+- Idempotency key: abi023-manager-closure-pass-20260829-v1
+- Request fingerprint: 5ac650996855c28149ff84f32565fc30ee012f3a93f43736b4668360debd9a75
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - All 30 execution steps complete
+  - Implementation 7d8813839f87e44f89d28e87023d68ab331ab574 published with exact-SHA CI and Pages success
+  - Deployed desktop/narrow smoke passed with persistence and console proof
+  - No unresolved P0-P3; ABI-016/010/012/014 and other follow-ups remain implementation-untouched and depend on ABI-023 where required
+
+### evt-57423682-c13f-49fc-912a-ed7c354e24a7
+
+- Timestamp: 2026-08-28T23:26:50.897Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 82
+- Resulting revision: 83
+- Summary: Close ABI-023 after verified corrective architecture release.
+- Idempotency key: abi023-to-done-20260829-v1
+- Request fingerprint: 9c24ae5fe4cc6e20be3b9297719ef319e0b7400955b360699273de6d2ac5d889
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required gates passed
+  - Exact-SHA release and deployed proof recorded
+  - Execution plan 30/30 complete
