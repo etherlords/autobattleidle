@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "44970bc6-b488-42c9-8230-ab6f19cd54ea",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T01:05:11.966Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-44970bc6-b488-42c9-8230-ab6f19cd54ea"
+    }
+  ],
+  "committedAt": "2026-08-28T01:05:11.980Z"
+}

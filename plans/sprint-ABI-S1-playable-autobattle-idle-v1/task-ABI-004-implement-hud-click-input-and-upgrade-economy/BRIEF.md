@@ -4,8 +4,8 @@ id: ABI-004
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Ready
+revision: 12
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-002
@@ -27,7 +27,7 @@ Implement HUD, click input, and upgrade economy
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 

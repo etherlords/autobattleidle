@@ -4,7 +4,9 @@ import {
   attack,
   COMBAT_BALANCE,
   createCombatState,
+  purchaseUpgrade,
   spawnEnemy,
+  upgradeCost,
   type AttackCommand,
   type CombatState,
 } from "./combat";
@@ -97,5 +99,46 @@ describe("combat simulation", () => {
     expect(early.event).toEqual({ type: "ignored" });
     expect(next.event).toMatchObject({ type: "hit" });
     expect(next.state.nextAutomaticAttackAtMs).toBe(2_000);
+  });
+
+  it("purchases the five upgrades atomically with prerequisites, caps, and geometric costs", () => {
+    const state = {
+      ...createCombatState({ ...player, damage: 1 }, 0, false),
+      coins: 10_000,
+    };
+    expect(purchaseUpgrade(state, "automatic-speed", 0).reason).toBe(
+      "Requires automatic attack unlock",
+    );
+    const unlocked = purchaseUpgrade(state, "automatic-unlock", 10).state;
+    expect(unlocked.nextAutomaticAttackAtMs).toBe(1_010);
+    const damage = purchaseUpgrade(unlocked, "damage", 10).state;
+    expect(damage.player.damage).toBe(2);
+    expect(upgradeCost(damage, "damage")).toBe(4);
+    const critical = purchaseUpgrade(damage, "critical-chance", 10).state;
+    const rewards = purchaseUpgrade(critical, "double-reward", 10).state;
+    const speed = purchaseUpgrade(rewards, "automatic-speed", 10).state;
+    expect(speed.player).toMatchObject({
+      automaticSpeedLevel: 1,
+      criticalChance: 0.1,
+      doubleRewardChance: 0.1,
+    });
+    expect(speed.nextAutomaticAttackAtMs).toBe(910);
+    const capped = { ...speed, player: { ...speed.player, criticalChance: 0.5 } };
+    expect(purchaseUpgrade(capped, "critical-chance", 10).reason).toBe("Maximum level reached");
+  });
+
+  it("reschedules slow elite automatic attacks after speed purchase without changing manual attacks", () => {
+    const state: CombatState = {
+      ...createCombatState({ ...player, automaticSpeedLevel: 0 }, 0, true),
+      coins: 100,
+      enemy: spawnEnemy(3, 0.8),
+      nextAutomaticAttackAtMs: 1_600,
+    };
+    const speed = purchaseUpgrade(state, "automatic-speed", 100).state;
+    const manual = attack(speed, command(speed, "manual", 100));
+
+    expect(speed.nextAutomaticAttackAtMs).toBe(1_500);
+    expect(manual.state.nextAutomaticAttackAtMs).toBe(1_500);
+    expect(manual.state.enemy.health).toBe(state.enemy.health - player.damage);
   });
 });

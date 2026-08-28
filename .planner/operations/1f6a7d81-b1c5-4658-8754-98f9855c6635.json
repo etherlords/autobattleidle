@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "1f6a7d81-b1c5-4658-8754-98f9855c6635",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T01:03:30.580Z",
+  "itemId": "ABI-004",
+  "idempotencyKey": "abi004-plan-acceptance-boundary-review-add-20260828",
+  "requestFingerprint": "13f5dee3e930e1ae460675b3b1964ba290e6911a9460fb73c517058cad3c54bb",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-1f6a7d81-b1c5-4658-8754-98f9855c6635-0",
+      "beforeHash": "508dd1e74618acff164f94b9862abe6fbf0e6bfb5dcbd44384123df3e3c68388",
+      "afterHash": "1bcea3f754a8535776adee359034a0fc67fa6b85f59ee47b258d6cfa3103e804"
+    }
+  ],
+  "committedAt": "2026-08-28T01:03:30.591Z"
+}

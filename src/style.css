@@ -27,13 +27,13 @@ body {
   width: 100%;
 }
 .hud {
-  align-self: end;
+  align-self: stretch;
   background: linear-gradient(transparent, rgb(3 9 15 / 92%));
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 1rem;
   grid-area: 1 / 1;
-  padding: 4rem 1.5rem 1.5rem;
+  padding: 1rem 1.5rem;
   pointer-events: none;
 }
 .hud h1 {
@@ -43,4 +43,83 @@ body {
 }
 .hud p {
   margin: 0;
+}
+.hud button {
+  pointer-events: auto;
+}
+.hud h2 {
+  flex-basis: 100%;
+  margin: 0;
+}
+.enemy-health {
+  background: #25120b;
+  border: 1px solid #f8d28b;
+  flex-basis: 100%;
+  height: 2rem;
+  overflow: hidden;
+  position: relative;
+}
+.enemy-health-fill {
+  background: #df653c;
+  height: 100%;
+  transition: width 120ms linear;
+}
+.enemy-health span {
+  inset: 0;
+  align-content: center;
+  position: absolute;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+  width: 100%;
+}
+.automatic-progress {
+  background: #162735;
+  border: 1px solid #75c7ff;
+  flex: 1 1 12rem;
+  height: 0.65rem;
+}
+.automatic-progress-fill {
+  background: #75c7ff;
+  height: 100%;
+  transition: width 40ms linear;
+}
+.manual-attack {
+  font: inherit;
+  font-weight: 700;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+}
+.upgrades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.upgrades button {
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+}
+.event-log {
+  align-self: end;
+  background: rgb(3 9 15 / 86%);
+  list-style: none;
+  margin: 0 0 0 auto;
+  max-width: 22rem;
+  padding: 0.5rem;
+}
+.event-log li {
+  margin: 0.2rem 0;
+}
+@media (max-width: 600px) {
+  .hud {
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  .event-log {
+    flex-basis: 100%;
+    margin-left: 0;
+    max-width: none;
+  }
+  .upgrades button {
+    flex: 1 1 10rem;
+  }
 }

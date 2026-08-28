@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "30683422-8c17-47ad-8b71-ed88111a316f",
+  "operation": "claim.renew",
+  "state": "committed",
+  "createdAt": "2026-08-28T00:56:23.659Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-30683422-8c17-47ad-8b71-ed88111a316f"
+    }
+  ],
+  "committedAt": "2026-08-28T00:56:23.673Z"
+}

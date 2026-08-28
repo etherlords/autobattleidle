@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c92ae02a-2a01-4a8e-bd75-f4ee895f69dd",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T00:35:52.343Z",
+  "itemId": "ABI-004",
+  "idempotencyKey": "abi004-step-review-start-20260828",
+  "requestFingerprint": "ca53d6f6f22b3917cffc81b4fcffdb11f0ec736a27e959a301db89812edf58d9",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-c92ae02a-2a01-4a8e-bd75-f4ee895f69dd-0",
+      "beforeHash": "35682a867f95f80771610ba94a841bdaff4d87a8f489e5b22423e2b5ff40d3d7",
+      "afterHash": "e228b4df5d78ca0dd5c0ef5c7798c236b5279232cf4fc37633f180764b6d3ee1"
+    }
+  ],
+  "committedAt": "2026-08-28T00:35:52.359Z"
+}

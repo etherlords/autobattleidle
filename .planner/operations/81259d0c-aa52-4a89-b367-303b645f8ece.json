@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "81259d0c-aa52-4a89-b367-303b645f8ece",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T01:01:57.169Z",
+  "itemId": "ABI-004",
+  "idempotencyKey": "abi004-plan-keyboard-evidence-correction-add-20260828",
+  "requestFingerprint": "4b7ce542e41a87558f6b83339ad48a0b01fdf93ae05e8fec568b8d3a19b9693f",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/PROGRESS.md.planner-tmp-81259d0c-aa52-4a89-b367-303b645f8ece-0",
+      "beforeHash": "26d884598a1d1a88fda96f6967671e136c60f1d18fbc34b1b69bddef8a8e2485",
+      "afterHash": "bfcaec8759228c2245364e87dafb5b239efd68a7f343c2b8576ff538b4b6d271"
+    }
+  ],
+  "committedAt": "2026-08-28T01:01:57.181Z"
+}

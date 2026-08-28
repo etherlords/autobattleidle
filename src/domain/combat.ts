@@ -1,5 +1,7 @@
 export const COMBAT_BALANCE = {
   automaticAttackIntervalMs: 1_000,
+  automaticAttackMinimumIntervalMs: 500,
+  automaticAttackSpeedStepMs: 100,
   bossInterval: 10,
   eliteAutomaticSlowMs: 500,
   baseEnemyHealth: 10,
@@ -23,10 +25,34 @@ export type CombatEnemy = {
 };
 
 export type CombatPlayer = {
+  readonly automaticSpeedLevel: number;
   readonly damage: number;
   readonly criticalChance: number;
   readonly doubleRewardChance: number;
 };
+
+export type UpgradeId =
+  "automatic-unlock" | "damage" | "critical-chance" | "double-reward" | "automatic-speed";
+
+export type UpgradeDefinition = {
+  readonly id: UpgradeId;
+  readonly label: string;
+  readonly maximumLevel: number;
+  readonly baseCost: number;
+};
+
+export type UpgradePurchase = {
+  readonly state: CombatState;
+  readonly reason: string | null;
+};
+
+export const UPGRADES: readonly UpgradeDefinition[] = [
+  { id: "automatic-unlock", label: "Unlock automatic attack", maximumLevel: 1, baseCost: 1 },
+  { id: "damage", label: "Damage", maximumLevel: 10, baseCost: 2 },
+  { id: "critical-chance", label: "Critical chance", maximumLevel: 5, baseCost: 3 },
+  { id: "double-reward", label: "Double reward chance", maximumLevel: 5, baseCost: 4 },
+  { id: "automatic-speed", label: "Automatic speed", maximumLevel: 5, baseCost: 5 },
+];
 
 export type CombatState = {
   readonly automaticUnlocked: boolean;
@@ -97,7 +123,8 @@ export const spawnEnemy = (encounter: number, eliteModifierRoll: number): Combat
 };
 
 export const createCombatState = (
-  player: CombatPlayer,
+  player: Omit<CombatPlayer, "automaticSpeedLevel"> &
+    Partial<Pick<CombatPlayer, "automaticSpeedLevel">>,
   firstEliteModifierRoll: number,
   automaticUnlocked: boolean,
 ): CombatState => ({
@@ -105,12 +132,82 @@ export const createCombatState = (
   coins: 0,
   enemy: spawnEnemy(1, firstEliteModifierRoll),
   nextAutomaticAttackAtMs: 0,
-  player,
+  player: { ...player, automaticSpeedLevel: player.automaticSpeedLevel ?? 0 },
 });
 
-const automaticInterval = (enemy: CombatEnemy): number =>
-  COMBAT_BALANCE.automaticAttackIntervalMs +
-  (enemy.modifier === "automatic-slow" ? COMBAT_BALANCE.eliteAutomaticSlowMs : 0);
+export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>
+  Math.max(
+    COMBAT_BALANCE.automaticAttackMinimumIntervalMs,
+    COMBAT_BALANCE.automaticAttackIntervalMs -
+      player.automaticSpeedLevel * COMBAT_BALANCE.automaticAttackSpeedStepMs,
+  ) + (enemy.modifier === "automatic-slow" ? COMBAT_BALANCE.eliteAutomaticSlowMs : 0);
+
+const definitionFor = (id: UpgradeId): UpgradeDefinition => {
+  const definition = UPGRADES.find((entry) => entry.id === id);
+  if (definition === undefined) throw new Error(`Unknown upgrade ${id}`);
+  return definition;
+};
+
+export const upgradeLevel = (state: CombatState, id: UpgradeId): number => {
+  if (id === "automatic-unlock") return state.automaticUnlocked ? 1 : 0;
+  if (id === "damage") return state.player.damage - 1;
+  if (id === "critical-chance") return Math.round(state.player.criticalChance * 10);
+  if (id === "double-reward") return Math.round(state.player.doubleRewardChance * 10);
+  return state.player.automaticSpeedLevel;
+};
+
+export const upgradeCost = (state: CombatState, id: UpgradeId): number => {
+  const definition = definitionFor(id);
+  return definition.baseCost * 2 ** upgradeLevel(state, id);
+};
+
+export const upgradeDisabledReason = (state: CombatState, id: UpgradeId): string | null => {
+  const definition = definitionFor(id);
+  if (id === "automatic-speed" && !state.automaticUnlocked) {
+    return "Requires automatic attack unlock";
+  }
+  if (upgradeLevel(state, id) >= definition.maximumLevel) return "Maximum level reached";
+  const cost = upgradeCost(state, id);
+  return state.coins < cost ? `Need ${cost} coins` : null;
+};
+
+export const purchaseUpgrade = (
+  state: CombatState,
+  id: UpgradeId,
+  atMs: number,
+): UpgradePurchase => {
+  const disabledReason = upgradeDisabledReason(state, id);
+  if (disabledReason !== null) return { reason: disabledReason, state };
+  const cost = upgradeCost(state, id);
+  if (state.coins < cost) return { reason: `Need ${cost} coins`, state };
+  const player =
+    id === "damage"
+      ? { ...state.player, damage: state.player.damage + 1 }
+      : id === "critical-chance"
+        ? { ...state.player, criticalChance: Math.min(0.5, state.player.criticalChance + 0.1) }
+        : id === "double-reward"
+          ? {
+              ...state.player,
+              doubleRewardChance: Math.min(0.5, state.player.doubleRewardChance + 0.1),
+            }
+          : id === "automatic-speed"
+            ? { ...state.player, automaticSpeedLevel: state.player.automaticSpeedLevel + 1 }
+            : state.player;
+  const automaticUnlocked = state.automaticUnlocked || id === "automatic-unlock";
+  return {
+    reason: null,
+    state: {
+      ...state,
+      automaticUnlocked,
+      coins: state.coins - cost,
+      nextAutomaticAttackAtMs:
+        id === "automatic-unlock" || id === "automatic-speed"
+          ? atMs + automaticInterval(state.enemy, player)
+          : state.nextAutomaticAttackAtMs,
+      player,
+    },
+  };
+};
 
 export const attack = (state: CombatState, command: AttackCommand): AttackResult => {
   if (
@@ -126,7 +223,7 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
   const health = Math.max(0, state.enemy.health - damage);
   const nextAutomaticAttackAtMs =
     command.source === "automatic"
-      ? command.atMs + automaticInterval(state.enemy)
+      ? command.atMs + automaticInterval(state.enemy, state.player)
       : state.nextAutomaticAttackAtMs;
 
   if (health > 0) {
