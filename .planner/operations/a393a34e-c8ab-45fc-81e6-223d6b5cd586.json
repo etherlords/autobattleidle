@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "operationId": "a393a34e-c8ab-45fc-81e6-223d6b5cd586",
+  "operation": "task.create",
+  "state": "committed",
+  "createdAt": "2026-08-28T14:17:19.280Z",
+  "itemId": "ABI-014",
+  "idempotencyKey": "abi-014-plan-starter-enemy-health-v1",
+  "requestFingerprint": "10f3fe1986ccad685f85982b058f9dbfcd183a9b228310180628b95f34f7066e",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-0",
+      "afterHash": "fe46da73dea4be68e6314851881bba607bf1628fc8186019c1240e89e5981c03"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/ANALYSIS.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-1",
+      "afterHash": "f3115c5ba61bdc9360e827f0b8f76cb48210bbc159ac1ce1ff52df8a5dca1293"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/IMPLEMENTATION-GUIDE.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-2",
+      "afterHash": "ebe463969423963a04103ca0918a490e7a8e32d38a5ee3f4dcce2ddd5b62e51d"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-3",
+      "afterHash": "4792f62c071c050c6a7b055cb4754f2d5bbcb477e2d715f2bf0460696a776b4e"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/REVIEW.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-4",
+      "afterHash": "ad0aaa22ea3a9842de90854f8ee33e4bf01a529ecf57f8cf80b88524a43e4628"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/QA.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-5",
+      "afterHash": "e035e16253c59e3962eb5f56c66f03f534a1319c87d73efd29441c54897f2558"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/VERIFICATION.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-6",
+      "afterHash": "71be98a6e8ca0527ab8febd2825fb59e87512a5fb9aa9da6411d77e271aaeaff"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-7",
+      "beforeHash": "95c7b2b3596ab1c72d56f9ffccecee39bce3200647998bc99c802e92a507d7ce",
+      "afterHash": "e3b4ffef1bcb2539d4fd0ca8c606b11ed8502ac909de97f1c71b7f8ba7c49331"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-a393a34e-c8ab-45fc-81e6-223d6b5cd586-8",
+      "beforeHash": "3965210bcace56976e7447256c94cd03c0d079a8539918c4a82ef9e9b54f6436",
+      "afterHash": "99abacf7394d485dccf6202ab4d55835d1fc9628839d55a4afa9bac5618740dc"
+    }
+  ],
+  "committedAt": "2026-08-28T14:17:19.321Z"
+}

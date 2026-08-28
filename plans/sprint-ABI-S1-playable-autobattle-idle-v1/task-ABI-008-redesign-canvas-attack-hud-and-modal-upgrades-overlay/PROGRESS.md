@@ -4,7 +4,7 @@ id: ABI-008
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Ready
-- Revision: 1
-- Last update: Bootstrapped
+- Revision: 2
+- Last update: Priority lowered critical to high so ABI-013 is next. planner_task_update committed revision 3 but duplicated structured values; after healthy doctor/no recovery, Manager used an exact BRIEF-only Markdown fallback. Before SHA-256 B842ED8797A0D905BABCD46FC58AB01D39F5BF157718FC956CBFD95DBFFEAFE9; after 5B7A78D1182783004BFF197BC007EF4914514546E82143D85E66C9AC2F4D128F. Planner bounded readback confirms one authoritative set: 7 criteria, dependencies ABI-004/ABI-005, related Vault IDs 85CBFC/584401/A7F881. One rejected no-op readback requested maxCharsPerArtifact=12000 above the 6000 limit; retry at 6000 succeeded.
 
 ## Execution plan
 
@@ -39,4 +39,17 @@ requiredGates:
 
 ## Events
 
-_No progress events recorded._
+### evt-e5c6078f-b9bd-4812-80ef-140315258d35
+
+- Timestamp: 2026-08-28T14:16:30.808Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 1
+- Resulting revision: 2
+- Summary: Priority lowered critical to high so ABI-013 is next. planner_task_update committed revision 3 but duplicated structured values; after healthy doctor/no recovery, Manager used an exact BRIEF-only Markdown fallback. Before SHA-256 B842ED8797A0D905BABCD46FC58AB01D39F5BF157718FC956CBFD95DBFFEAFE9; after 5B7A78D1182783004BFF197BC007EF4914514546E82143D85E66C9AC2F4D128F. Planner bounded readback confirms one authoritative set: 7 criteria, dependencies ABI-004/ABI-005, related Vault IDs 85CBFC/584401/A7F881. One rejected no-op readback requested maxCharsPerArtifact=12000 above the 6000 limit; retry at 6000 succeeded.
+- Idempotency key: abi-008-priority-normalization-fallback-v1
+- Evidence:
+  - planner://work-item/ABI-008/artifact/BRIEF.md
+  - planner_doctor healthy; recovery.required=false
+  - before:B842ED8797A0D905BABCD46FC58AB01D39F5BF157718FC956CBFD95DBFFEAFE9
+  - after:5B7A78D1182783004BFF197BC007EF4914514546E82143D85E66C9AC2F4D128F

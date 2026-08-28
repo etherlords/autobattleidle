@@ -4,7 +4,7 @@ id: ABI-008
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -27,13 +27,10 @@ Redesign canvas attack HUD and modal upgrades overlay
 ## Work item
 
 - Type: task
-- Priority: critical
+- Priority: high
 - Status: Ready
 
 ## Acceptance criteria
-
-- [ ] One accepted pointer activation on the battlefield canvas performs exactly one manual attack; the permanent Attack button is removed and Enter/Space remains an accessible exactly-once equivalent
-
 
 - [ ] One accepted pointer activation on the battlefield canvas performs exactly one manual attack; the permanent Attack button is removed and Enter/Space remains an accessible exactly-once equivalent
 - [ ] A fixed passive top overlay shows centered enemy name, a nearly viewport-width current/max HP bar, a 35-45% viewport-width automatic countdown bar, and coins below
@@ -48,14 +45,7 @@ Redesign canvas attack HUD and modal upgrades overlay
 - ABI-004
 - ABI-005
 
-
-- ABI-004
-- ABI-005
-
 ## Related knowledge
-
-- AUTOBATTLEIDLE-DOC-20260827-85CBFC
-
 
 - AUTOBATTLEIDLE-DOC-20260827-85CBFC
 - AUTOBATTLEIDLE-DOC-20260827-584401
