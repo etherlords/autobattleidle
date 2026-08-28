@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d25bf6b8-8c1e-42ec-ac80-a18d47f6b689",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T17:40:34.538Z",
+  "itemId": "ABI-008",
+  "idempotencyKey": "abi008-ready-manager-to-done-v1",
+  "requestFingerprint": "79783063c908eb10be716707e25eb8c5a80d1f2fc32f9b2b0ba4f619d84eb734",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/BRIEF.md.planner-tmp-d25bf6b8-8c1e-42ec-ac80-a18d47f6b689-0",
+      "beforeHash": "6901483632dfbd5b5505b4d5dcde3abc15cb865ad4e53672ee327f064ffa2180",
+      "afterHash": "3772f67376a7cb4a506b1abff1453bfe8e749d2e99cb6ace9ab261e1d895a051"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md.planner-tmp-d25bf6b8-8c1e-42ec-ac80-a18d47f6b689-1",
+      "beforeHash": "156cc4841ad9b7e099cecadca27510d7e1b94f448c9b7dc76947bfe4e90cb478",
+      "afterHash": "e8a94f2e6f9ef4f5efb3e01fa4c42c507ab597ae281327aaedc2fb18a99c5e6d"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-d25bf6b8-8c1e-42ec-ac80-a18d47f6b689-2",
+      "beforeHash": "b7a3822178db2a84c17a87483c10c3dd78fb4708f5d21b2b41c0ff8aaf6a5d56",
+      "afterHash": "961aa0707d0da3e0171f0495d42cc54362041bde38c4bd92432eebc9352f1ba2"
+    }
+  ],
+  "committedAt": "2026-08-28T17:40:34.576Z"
+}

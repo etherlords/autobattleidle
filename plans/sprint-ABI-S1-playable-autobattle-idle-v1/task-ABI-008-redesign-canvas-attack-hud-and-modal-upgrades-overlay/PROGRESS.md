@@ -4,8 +4,8 @@ id: ABI-008
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 44
-status: In QA
+revision: 51
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-004
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 44
-- Last update: Begin candidate checkpoint, CI/Pages, deployed exact-SHA proof, Planner verification/closure, and final root audit.
+- Status: Done
+- Revision: 51
+- Last update: Released task claim: Release completed ABI-008 manager lease and finish idle
 
 ## Execution plan
 
@@ -35,7 +35,7 @@ requiredGates:
 - [x] upgrade-modal: Implementation owner: replace always-visible upgrades with a lower-left launcher and accessible fixed modal with focus restore, Escape and disabled reasons
 - [x] ui-tests: Implementation owner: add exactly-once input, passive overlay, modal lifecycle, no-click-through and disposal tests; run focused tests and pnpm check
 - [x] independent-gates: Independent Reviewer and QA: audit ownership/accessibility and prove real pointer/keyboard/modal behavior at desktop and 390px narrow viewports
-- [~] ui-delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed layout/input scenarios, and close
+- [x] ui-delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed layout/input scenarios, and close
 
 ## Events
 
@@ -844,3 +844,141 @@ requiredGates:
   - gate:independent-qa=pass
   - pnpm-check:20/20
   - output/playwright/abi008-local-pass-qa-receipt.md
+
+### evt-1710d807-a627-46c5-86f4-72698b44f814
+
+- Timestamp: 2026-08-28T17:39:42.692Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: EVENT checkpoint — Manager — Candidate 817e2d7 pushed; exact-commit CI and Pages succeeded; deployed desktop/narrow pointer, keyboard, modal, layout, console, and public/local asset hashes passed. VERIFICATION.md and deployed receipt were written via explicit narrow Markdown/evidence fallback after healthy doctor/no recovery.
+- Idempotency key: abi008-candidate-deployed-pass-v1
+- Evidence:
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+  - ci-run:33195361604 success
+  - pages-run:33195361621 success
+  - https://etherlords.github.io/autobattleidle/
+  - output/playwright/abi008-deployed-qa-receipt.md
+  - planner://work-item/ABI-008/artifact/VERIFICATION.md
+  - asset-js-sha256:5b91ac9f46d8bbd0a9fde89488f22757db2c379bc3f8b37a9fcfe48fa2408bdc
+  - asset-css-sha256:aefbd10b56f44e0112bb463f6926002cccb5e2da7e4bde9879848da5a43eb6df
+
+### evt-9e71d7b5-d7a1-41b4-8095-c6784a67d52f
+
+- Timestamp: 2026-08-28T17:39:58.196Z
+- Actor: verification-abi008
+- Operation: gate.record
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: All seven acceptance criteria verified across focused/full checks, independent review/QA, exact-SHA CI/Pages, deployed desktop/narrow behavior, console, persistence regression, and asset hash equality.
+- Idempotency key: abi008-verification-pass-v1
+- Request fingerprint: d121b38de472e6b5a665d4fb7a367fdfb1cbfce3b364fd698b6dce2a5cd3809a
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-008/artifact/VERIFICATION.md
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+  - ci-run:33195361604
+  - pages-run:33195361621
+  - https://etherlords.github.io/autobattleidle/
+  - output/playwright/abi008-deployed-qa-receipt.md
+  - asset-hashes:match
+
+### evt-80fa9170-6804-4857-9abe-439e8635dfc1
+
+- Timestamp: 2026-08-28T17:40:06.098Z
+- Actor: verification-abi008
+- Operation: task.advance
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Verification passed with exact-SHA CI/Pages and deployed acceptance; hand ABI-008 to distinct Manager closure actor.
+- Idempotency key: abi008-qa-to-ready-manager-v1
+- Request fingerprint: a704f067c2f772b95e2379ea4bbf6dbfb467b5b28fdd2e4827147606269210ea
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - gate:verification=pass
+  - planner://work-item/ABI-008/artifact/VERIFICATION.md
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+
+### evt-e117e827-531d-4af6-b750-b15991e21094
+
+- Timestamp: 2026-08-28T17:40:16.802Z
+- Actor: manager-closure-abi008
+- Operation: gate.record
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Manager accepts ABI-008: scoped implementation, bounded repairs, all independent gates, exact-SHA CI/Pages, deployed proof, and publication evidence are complete with no unresolved P0-P3.
+- Idempotency key: abi008-manager-closure-gate-v1
+- Request fingerprint: 3813557cd326eff4c51e99349d79c24186caa761bf18369ae4753d2521233cbf
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - gate:implementation-self-check=pass
+  - gate:independent-review=pass
+  - gate:independent-qa=pass
+  - gate:verification=pass
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+  - ci-run:33195361604
+  - pages-run:33195361621
+  - planner://work-item/ABI-008/artifact/VERIFICATION.md
+
+### evt-32c8e5d4-d867-4907-8b68-92d90302ec7a
+
+- Timestamp: 2026-08-28T17:40:25.901Z
+- Actor: manager-closure-abi008
+- Operation: execution_plan.update
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Candidate checkpoint, push, CI/Pages, deployed public proof, verification, and Manager closure gates completed.
+- Idempotency key: abi008-ui-delivery-complete-v1
+- Request fingerprint: 879170afbb711cea2ea6b10d31208dc8083b9e67716ae4be06935ba0c2a06301
+- Action: set_state
+- Step ID: ui-delivery
+- State: complete
+- Evidence:
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+  - ci-run:33195361604 success
+  - pages-run:33195361621 success
+  - https://etherlords.github.io/autobattleidle/
+  - gate:verification=pass
+  - gate:manager-closure=pass
+
+### evt-8e2ab6a5-f0f7-4f3a-b936-d50209592cfc
+
+- Timestamp: 2026-08-28T17:40:34.521Z
+- Actor: manager-closure-abi008
+- Operation: task.advance
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Close ABI-008 after all managed steps and required gates passed, candidate exact-SHA publication succeeded, and deployed acceptance was verified.
+- Idempotency key: abi008-ready-manager-to-done-v1
+- Request fingerprint: 79783063c908eb10be716707e25eb8c5a80d1f2fc32f9b2b0ba4f619d84eb734
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - gate:manager-closure=pass
+  - gate:verification=pass
+  - execution-plan:8/8 complete
+  - commit:817e2d738fdbd4ba0cce3c59ada9debbce3091aa
+  - ci-run:33195361604
+  - pages-run:33195361621
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-3f4dc2b0-8877-437b-93cb-cb8a737148f1
+
+- Timestamp: 2026-08-28T17:41:01.416Z
+- Actor: manager-abi008
+- Operation: claim.release
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Released task claim: Release completed ABI-008 manager lease and finish idle
+- Idempotency key: abi008-manager-release-after-done-v1
+- Request fingerprint: 80d81aec72f8de082b4ef1fba621e389c61239fb69f9a2d05951139faa9a6b1d
+- Agent ID: manager-abi008
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-008 manager lease and finish idle
+- Branch: main
+- Evidence:
+  - None
