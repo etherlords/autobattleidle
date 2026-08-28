@@ -20,14 +20,21 @@ Enemy grade modifiers, infinite boss progression, timing targets, and presentati
 
 ## Enemy grades
 
-- `+0 Normal`: baseline health and reward.
-- `+1 Veteran`: increased health and reward, no special modifier.
-- `+2 Elite`: further increased health and reward plus one visible modifier selected from armor,
-  additional health, or automatic-attack slow. Click attacks ignore slow.
-- `+3 Boss`: appears every fixed encounter interval and marks completion of a progression cycle.
+Enemy presentation is composed from independent deterministic layers:
 
-Grade selection must be deterministic from encounter number except for an explicitly seeded elite
-modifier. The UI always shows grade, health, reward preview, and active modifier.
+1. an archetype body selected from a small body catalog;
+2. grade/boss silhouette, scale and non-color-only cues;
+3. one gameplay modifier attachment;
+4. seeded decorative ornaments chosen from several variants.
+
+The initial modifier catalog contains armor (shield plates or orbiting shields), vitality (larger body or
+pulsing core), automatic slow (time ring), and wealth (gold ornaments and increased reward). Warded
+(first-hit shield) and regenerating (bounded recovery) are candidates only when their domain rules and
+balance proof are implemented; visual-only modifiers must never imply nonexistent gameplay.
+
+Bosses use dedicated body families plus the same modifier layer. Decorative horns, fins, orbitals,
+satellites, scars and crown variants are seeded from enemy identity so reloads reproduce the same model.
+Color supports identity but silhouette, motion and attachments carry the primary cue.
 
 ## Boss cadence
 
@@ -40,6 +47,14 @@ measured envelope, not an exact promise for every player. Manual clicking should
 
 ## Presentation
 
-Enemies use distinct primitive silhouettes, scale, color, and a short spawn/hit/death animation. Bosses
-must be immediately recognizable without relying only on color. Effects remain bounded so long sessions
-do not accumulate objects or listeners.
+A single enemy-model factory composes body, grade, modifier and seeded decoration layers from an
+immutable snapshot. It must not own combat state or randomize differently on every render. Replacement
+and disposal are deterministic and bounded for long sessions.
+
+Normal enemies use the shared body catalog; bosses use dedicated bodies with larger silhouettes and
+boss cues. Armor, slow, vitality and wealth remain recognizable without relying only on color.
+Decorations provide variation without changing stats.
+
+A rare `Golden Bug` is a timed event enemy with a dedicated compact body and metallic gold material
+that reacts to scene lighting with readable highlights. Its event rules, timer, reward and escape path
+are separate from ordinary grade cadence.

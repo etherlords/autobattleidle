@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "4f865908-d304-416b-8020-5b08dac0de41",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T11:41:31.986Z",
+  "itemId": "ABI-008",
+  "idempotencyKey": "abi008-priority-critical-ui-first-20260828",
+  "requestFingerprint": "9c2f6e0df0edaecb871854aa903292e3082a8c4dbd08223a7b494d88672a2409",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/BRIEF.md.planner-tmp-4f865908-d304-416b-8020-5b08dac0de41-0",
+      "beforeHash": "39b4eb364c807af8c46cc105bc747b39fef053a8823a9c08dd67a41ef397cf98",
+      "afterHash": "a65e24d974b1e1c327e7a65d6187c358947e7e94d14d72934b42b059db79b338"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-4f865908-d304-416b-8020-5b08dac0de41-1",
+      "beforeHash": "90e8aef0866da60c2018ed9c99f9930b00bbe6902376f356ff40ee8e29c0eeea",
+      "afterHash": "5f76ffca738982d14e3cb08c495f312c05977a48dcab41a98167729dd828f2be"
+    }
+  ],
+  "committedAt": "2026-08-28T11:41:32.003Z"
+}

@@ -18,13 +18,28 @@ HUD ownership, localStorage contract, lifecycle gates, and release QA scope.
 
 ## HUD and input
 
-The battlefield keeps the player and enemy visually separated. A large enemy-status HUD spans the top of the viewport and shows the enemy name, encounter level, grade and active modifier. Its health bar visibly shrinks as damage is applied and contains the exact centered value in `current/max` form, for example `1000/1000`. The accessible name exposes the same values without relying on color.
+The battlefield canvas is the primary manual-attack target. One accepted pointer activation anywhere
+on the playable canvas issues exactly one manual attack; there is no permanent Attack button. Keyboard
+Enter/Space remains an accessible equivalent when the battlefield is focused. Manual input still
+bypasses and never resets the automatic cooldown.
 
-The automatic-attack HUD is separate from manual input. Before purchase it clearly shows that automatic attacks are locked. After unlock it shows a labeled countdown progress bar that drains from the full interval to zero, plus a live numeric countdown in seconds and milliseconds. At zero the scheduler issues one automatic attack and the bar restarts for the next interval. Manual pointer clicks and keyboard activation bypass this scheduler, execute exactly one immediate manual attack, and never reset or otherwise disturb the automatic cooldown.
+The HUD is a fixed overlay that does not participate in page layout. Enemy name is centered at the top;
+a nearly viewport-width current/max health bar sits directly below it; the automatic-attack bar follows
+at roughly 35-45% viewport width; coins appear below the bars. Health and automatic bars are display
+only: they are not clickable, draggable, selectable, or pointer targets. DOM progress elements are
+preferred over Three.js geometry because they preserve accessible names and exact numeric values.
 
-A compact bounded event log sits at the lower right. It records recent combat and economy feedback, including the coins granted for each kill. It retains only a small recent window, is readable on narrow layouts, and uses a polite live region so new rewards are announced without stealing focus.
+The bounded combat/reward log remains fixed at the lower right and never changes document height. The
+page itself must not expose vertical or horizontal scrollbars at supported desktop and narrow sizes.
 
-Currency, attack feedback, and upgrade controls remain DOM-owned. Controls expose accessible names, visible focus, disabled reasons, and readable contrast; Three.js owns only the animated battlefield. Desktop and common mobile widths must keep the enemy HUD, countdown, click target, and recent log usable without overlap.
+Upgrades are hidden by default. A fixed `Upgrades` launcher sits over the canvas near the lower left.
+Activating it opens a fixed modal above all content without reflowing the battlefield. The modal owns
+only its controls, explains costs and disabled reasons, traps/restores focus, closes by an explicit
+control and Escape, and does not turn the passive HUD into click targets.
+
+Overlay layering is explicit: passive HUD and log ignore pointer events; upgrade launcher/modal accept
+them; the remaining viewport routes pointer input to the canvas. Responsive QA proves no overlap,
+selection, accidental double attack, page scroll, or layout growth.
 
 ## Persistence
 

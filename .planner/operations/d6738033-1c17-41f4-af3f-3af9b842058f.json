@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d6738033-1c17-41f4-af3f-3af9b842058f",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T11:40:05.286Z",
+  "itemId": "ABI-007",
+  "idempotencyKey": "abi007-expand-release-matrix-new-ui-gameplay-visuals-20260828",
+  "requestFingerprint": "8771f49c8d6b6b3bcfafb65d228640187864bc06a2c7dd1e9bcfe3c9ac978d31",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/BRIEF.md.planner-tmp-d6738033-1c17-41f4-af3f-3af9b842058f-0",
+      "beforeHash": "636433795163ded76ba079474ebc55a12fc1a1c2dea96bfeae31e834586262d7",
+      "afterHash": "cf73c7b3fa4c42d1477e41e6c876b15e55f79f4fb728a194e7abe0d71c5b2e3b"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-d6738033-1c17-41f4-af3f-3af9b842058f-1",
+      "beforeHash": "01f3990c5608c92ae33d10a7abadde86de9e897de8c2cb69f10d041ffa654794",
+      "afterHash": "90e8aef0866da60c2018ed9c99f9930b00bbe6902376f356ff40ee8e29c0eeea"
+    }
+  ],
+  "committedAt": "2026-08-28T11:40:05.303Z"
+}

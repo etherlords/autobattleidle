@@ -16,6 +16,10 @@
     "ABI-005": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence",
     "ABI-006": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression",
     "ABI-007": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline",
-    "ABI-000": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va"
+    "ABI-000": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-000-structure-and-complete-the-project-knowledge-base-through-va",
+    "ABI-008": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay",
+    "ABI-009": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact",
+    "ABI-010": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter",
+    "ABI-011": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-011-add-bounded-combat-death-reward-boss-and-golden-bug-effects"
   }
 }
