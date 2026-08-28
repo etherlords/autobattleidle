@@ -4,8 +4,8 @@ id: ABI-014
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
-status: Blocked
+revision: 4
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-013
@@ -29,7 +29,7 @@ Reduce only the fresh-game starter enemy to about ten manual attacks
 
 - Type: task
 - Priority: high
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 

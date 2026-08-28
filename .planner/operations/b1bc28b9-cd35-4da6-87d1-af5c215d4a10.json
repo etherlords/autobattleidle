@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b1bc28b9-cd35-4da6-87d1-af5c215d4a10",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T23:56:46.926Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/PROGRESS.md.planner-tmp-b1bc28b9-cd35-4da6-87d1-af5c215d4a10"
+    }
+  ],
+  "committedAt": "2026-08-28T23:56:47.010Z"
+}

@@ -6,6 +6,7 @@ import {
   type AttackEvent,
 } from "../../domain/combat";
 import { createBattleSnapshot, type BattleSnapshot } from "../../domain/snapshot";
+import { formatNumber } from "../../ui/number-format";
 import type { BattleUpdate } from "./contracts";
 
 const attackMessage = (
@@ -15,8 +16,8 @@ const attackMessage = (
   if (outcome.type === "ignored") return undefined;
   const label = source === "manual" ? "Manual" : "Automatic";
   return outcome.defeated
-    ? `${label} kill: +${outcome.reward} coins`
-    : `${label} hit: ${outcome.damage} damage`;
+    ? `${label} kill: +${formatNumber(outcome.reward).text} coins`
+    : `${label} hit: ${formatNumber(outcome.damage).text} damage`;
 };
 
 export const battleEventMessages = {

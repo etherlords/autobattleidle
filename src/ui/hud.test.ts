@@ -194,6 +194,24 @@ describe("createHud", () => {
     expect(upgradeButtons[1]?.attributes.get("aria-label")).toContain("Need 45 coins");
     expect(upgradeButtons[0]?.title).toContain("A deliberately long upgrade label");
     expect(upgradeButtons[0]?.title).toContain("Requires a longer prerequisite");
+    expect(element(upgradeButtons[0] as FakeElement, "upgrade-title").textContent).toContain("99");
+    expect(element(upgradeButtons[0] as FakeElement, "upgrade-price").textContent).toBe(
+      "123K coins",
+    );
+    expect(upgradeButtons[0]?.attributes.get("aria-label")).toContain("123,456 coins");
+    hud.render({
+      ...snapshot,
+      coins: 900_000,
+      enemy: { ...snapshot.enemy, health: 900_000, level: 10_000, maxHealth: 1_000_000 },
+    });
+    expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("900000");
+    expect(element(host, "enemy-health").attributes.get("aria-valuemax")).toBe("1000000");
+    expect(element(host, "enemy-health").attributes.get("aria-label")).toBe(
+      "Ash Wisp health 900,000 of 1,000,000",
+    );
+    expect(element(host, "enemy-health").title).toBe("900,000 / 1,000,000");
+    expect(element(host, "upgrades-coins").textContent).toBe("Coins: 900K");
+    expect(element(host, "upgrades-coins").title).toBe("900,000");
     hud.render(snapshot);
     document.dispatch("keydown", { key: "u", repeat: false });
     expect(modal.hidden).toBe(false);

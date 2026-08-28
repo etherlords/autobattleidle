@@ -4,8 +4,8 @@ id: ABI-021
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 1
-status: Blocked
+revision: 2
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 1
-- Last update: Bootstrapped
+- Status: Ready
+- Revision: 2
+- Last update: Reconcile lifecycle after ABI-023 completion: all declared dependencies are Done; move ABI-021 from Blocked to Ready.
 
 ## Execution plan
 
@@ -37,4 +37,19 @@ requiredGates:
 
 ## Events
 
-_No progress events recorded._
+### evt-119e9043-c74f-42a4-bcf1-4d722b40c999
+
+- Timestamp: 2026-08-28T23:37:48.811Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 1
+- Resulting revision: 2
+- Summary: Reconcile lifecycle after ABI-023 completion: all declared dependencies are Done; move ABI-021 from Blocked to Ready.
+- Idempotency key: abi-s1-post-023-ready-abi-021-20260829
+- Request fingerprint: ea5bf04ec08aaf726c8daebf310a92ffcd8f2d6a8e8624c794da9d6bb7dfe17c
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - ABI-023 Done revision 10
+  - canonical openDependencies=[]
+  - planner_doctor healthy; recovery.required=false

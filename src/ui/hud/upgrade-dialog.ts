@@ -1,6 +1,7 @@
 import type { UpgradeId } from "../../domain/combat";
 import type { BattleSnapshot } from "../../domain/snapshot";
 import { button, makeText } from "./elements";
+import { formatNumber } from "../number-format";
 
 export class UpgradeDialog {
   readonly launcher = button("upgrades-launcher", "Upgrades");
@@ -72,7 +73,9 @@ export class UpgradeDialog {
   }
 
   render(snapshot: BattleSnapshot): void {
-    this.coins.textContent = `Coins: ${snapshot.coins}`;
+    const coins = formatNumber(snapshot.coins);
+    this.coins.textContent = `Coins: ${coins.text}`;
+    this.coins.title = coins.exact;
     for (const upgrade of snapshot.upgrades) {
       let entry = this.upgradeButtons.get(upgrade.id);
       if (entry === undefined) {
@@ -89,9 +92,15 @@ export class UpgradeDialog {
         this.upgradeButtons.set(upgrade.id, entry);
         this.upgrades.append(upgradeButton);
       }
-      const actionLabel = `${upgrade.label} - ${upgrade.level}; ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : `; ${upgrade.disabledReason}`}`;
-      entry.title.textContent = `${upgrade.label} - ${upgrade.level}`;
-      entry.price.textContent = `${upgrade.cost} coins`;
+      const level = formatNumber(upgrade.level);
+      const cost = formatNumber(upgrade.cost);
+      const disabledReason =
+        upgrade.disabledReason === `Need ${upgrade.cost} coins`
+          ? `Need ${cost.text} coins`
+          : upgrade.disabledReason;
+      const actionLabel = `${upgrade.label} - ${level.exact}; ${cost.exact} coins${disabledReason === null ? "" : `; ${disabledReason}`}`;
+      entry.title.textContent = `${upgrade.label} - ${level.text}`;
+      entry.price.textContent = `${cost.text} coins`;
       entry.button.setAttribute("aria-label", actionLabel);
       entry.button.disabled = upgrade.disabledReason !== null;
       entry.button.title = actionLabel;

@@ -4,8 +4,8 @@ id: ABI-022
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Blocked
+revision: 3
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -28,7 +28,7 @@ Expand enemy families and gameplay modifiers with authored component visuals
 
 - Type: task
 - Priority: normal
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 

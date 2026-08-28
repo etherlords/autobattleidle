@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f8e9456e-863e-4a79-a7d8-0d8c91b49f15",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T23:49:09.236Z",
+  "itemId": "ABI-012",
+  "idempotencyKey": "abi-012-review-to-qa-20260829",
+  "requestFingerprint": "249d57afa4b35be89985d7fd22350113d955deaa16b72290026d19020f8218c6",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/BRIEF.md.planner-tmp-f8e9456e-863e-4a79-a7d8-0d8c91b49f15-0",
+      "beforeHash": "fa55fb1882ce0f2bbf57520d23422839dec9374c7678112b0684aa5bd5d0151b",
+      "afterHash": "a3b541ca55b25bdfb1b70ecd88667aaa4b71350c540e977e7993b2324a199874"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud/PROGRESS.md.planner-tmp-f8e9456e-863e-4a79-a7d8-0d8c91b49f15-1",
+      "beforeHash": "fafce4f2612de963a447239ce39c0d4f423cffc209f63b544ce47bd13ad0a022",
+      "afterHash": "f637c27301a435149d5f418b2c03baf106385afe80b82f70d76dee66709647e6"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-f8e9456e-863e-4a79-a7d8-0d8c91b49f15-2",
+      "beforeHash": "0aa361ddeb7a03baced0e966eb9a571a30574ee46a1805e02290c0a7f6876b77",
+      "afterHash": "60036026ec5dd985e9c44aff37d16dac159d5ceca29f2eb613b499a12f5cc833"
+    }
+  ],
+  "committedAt": "2026-08-28T23:49:09.284Z"
+}

@@ -4,8 +4,8 @@ id: ABI-016
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 15
-status: Blocked
+revision: 16
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 15
-- Last update: EVENT checkpoint — Manager — used the narrow Markdown fallback for the unexposed Goal field only; ABI-016 goal and corrected managed plan are camera-only, with cadence and balance deferred to ABI-020.
+- Status: Ready
+- Revision: 16
+- Last update: Reconcile lifecycle after ABI-023 completion: all declared dependencies are Done; move ABI-016 from Blocked to Ready.
 
 ## Execution plan
 
@@ -263,3 +263,20 @@ requiredGates:
 - Idempotency key: abi016-goal-field-fallback-20260829-01
 - Evidence:
   - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/BRIEF.md
+
+### evt-baf7fb05-0f88-48d3-bc6a-80d1bd8aa4cf
+
+- Timestamp: 2026-08-28T23:37:44.674Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 15
+- Resulting revision: 16
+- Summary: Reconcile lifecycle after ABI-023 completion: all declared dependencies are Done; move ABI-016 from Blocked to Ready.
+- Idempotency key: abi-s1-post-023-ready-abi-016-20260829
+- Request fingerprint: 2d9a5da885759fa7708aa85ad2bb1205c387ec16ee397b2be5382770fab51319
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - ABI-023 Done revision 10
+  - canonical openDependencies=[]
+  - planner_doctor healthy; recovery.required=false

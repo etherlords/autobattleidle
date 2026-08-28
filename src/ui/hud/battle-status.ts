@@ -1,5 +1,6 @@
 import type { BattleSnapshot } from "../../domain/snapshot";
 import { makeText, progress, setProgress } from "./elements";
+import { formatNumber } from "../number-format";
 
 export class BattleStatus {
   readonly element = document.createElement("section");
@@ -23,15 +24,20 @@ export class BattleStatus {
 
   render(snapshot: BattleSnapshot): void {
     const { automatic, coins, enemy } = snapshot;
-    this.enemy.textContent = `${enemy.name} · Level ${enemy.level} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${enemy.modifier}`}`;
+    const level = formatNumber(enemy.level);
+    const health = formatNumber(enemy.health);
+    const maxHealth = formatNumber(enemy.maxHealth);
+    const formattedCoins = formatNumber(coins);
+    this.enemy.textContent = `${enemy.name} · Level ${level.text} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${enemy.modifier}`}`;
     setProgress(
       this.health,
-      `${enemy.name} health ${enemy.health} of ${enemy.maxHealth}`,
+      `${enemy.name} health ${health.exact} of ${maxHealth.exact}`,
       enemy.maxHealth,
       enemy.health,
     );
     this.healthFill.style.width = `${(enemy.health / enemy.maxHealth) * 100}%`;
-    this.healthText.textContent = `${enemy.health}/${enemy.maxHealth}`;
+    this.healthText.textContent = `${health.text} / ${maxHealth.text}`;
+    this.health.title = `${health.exact} / ${maxHealth.exact}`;
     setProgress(
       this.automatic,
       "Automatic attack cooldown",
@@ -44,6 +50,7 @@ export class BattleStatus {
     this.automaticText.textContent = automatic.unlocked
       ? `Automatic attack: ${(automatic.remainingMs / 1000).toFixed(3)}s`
       : "Automatic attack: locked";
-    this.coins.textContent = `Coins: ${coins}`;
+    this.coins.textContent = `Coins: ${formattedCoins.text}`;
+    this.coins.title = formattedCoins.exact;
   }
 }

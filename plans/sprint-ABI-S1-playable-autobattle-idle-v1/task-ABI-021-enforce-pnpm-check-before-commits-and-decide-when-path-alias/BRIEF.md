@@ -4,8 +4,8 @@ id: ABI-021
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Blocked
+revision: 3
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -28,7 +28,7 @@ Enforce pnpm check before commits and decide when path aliases are justified
 
 - Type: task
 - Priority: high
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 
