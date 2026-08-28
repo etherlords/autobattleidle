@@ -4,8 +4,8 @@ id: ABI-003
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 5
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-002
@@ -27,7 +27,7 @@ Build Three.js battlefield, enemy grades, and bounded effects
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 

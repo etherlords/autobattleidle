@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e7350fb5-b45f-490f-9648-a57acb6abd3e",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T02:16:07.479Z",
+  "itemId": "ABI-003",
+  "idempotencyKey": "abi003-plan-add-review-repair-1b-20260828",
+  "requestFingerprint": "b8a88b3d18a1d4a3686b4a8b154df05166314104e619ff7197977285d3b67560",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md.planner-tmp-e7350fb5-b45f-490f-9648-a57acb6abd3e-0",
+      "beforeHash": "37e755cd31eb9c32bf43b2ef70cdded406320a5e247822d6afa4cdb0817bced9",
+      "afterHash": "e0be8d6679fbe315dec7c08b97620bb4059e6d294dee4a39ad64dfa87d81d786"
+    }
+  ],
+  "committedAt": "2026-08-28T02:16:07.497Z"
+}
