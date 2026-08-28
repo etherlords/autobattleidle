@@ -43,3 +43,15 @@ requiredGates:
 - QA: PASS — independent local production browser acceptance.
 - Manager verification: PASS — full-diff, executable, Planner/Vault, and representative visual evidence mapped to every ABI-013 criterion.
 - Manager close: PASS — distinct `abi013-manager-closure` gate recorded; ABI-013 advanced to `Done` at task revision 15 and progress revision 49. Coherent commit/push and public Pages proof remain mandatory release follow-up before the overall checkpoint is declared delivered.
+
+## Public Pages release proof — 2026-08-28
+
+- Published checkpoint: commit `2f4dd1f4d3e6b18a46a05516f58cba5b2ddd677c` on `main`; CI run `33186849700` / job `98901950723` and Deploy GitHub Pages run `33186849712` / job `98901951086` completed successfully.
+- URL: `https://etherlords.github.io/autobattleidle/`, Chromium, 1280x720. The proof disabled animation frames only to prevent gameplay from changing seeded state during storage assertions; it did not replace application persistence, DOM, localStorage, keyboard, reload, or deployed-network behavior.
+- Supplied current save: seeded the user's exact 364-byte JSON string under `etherlords.autobattleidle.save`, with versioned slots absent. Public bootstrap displayed `Coins: 25`, `Boss Ash Wisp · Level 30 · boss`, HP `10793/19980`, and the supplied upgrade levels; the historical source remained byte-identical. The generated V2 slot was semantically identical and its canonical bytes remained exact across the second reload.
+- Precedence: changing only the historical source to a valid 999-coin V2 did not replace the valid versioned V2; UI and V2 stayed at 25 coins.
+- Authentic V1: seeded the golden V1 under `.save.v1`; the source remained byte-identical, public bootstrap produced version 2 with coins 7 / encounter 1, and the UI displayed the migrated state.
+- Repair safety: with empty V2 and one deliberately injected V2 `setItem` failure, the native Restore action remained visible and focusable. Enter activation reported `Progress restored from the previous version.`, produced valid V2, preserved V1 bytes, and stayed stable through a second reload.
+- Browser console/page errors: 0 errors and 0 warnings. Visual readback confirmed the supplied boss/25-coin state, migrated V1 state, focused Restore action, and success status.
+- Artifacts: `output/playwright/abi013-deployed-proof.js`, `abi013-deployed-v2-import.png`, `abi013-deployed-v1-migration.png`, and `abi013-deployed-restore-keyboard.png`.
+- Harness note: the first manager run incorrectly required the target V2 serialization to preserve the source object's property order. Readback proved the historical source bytes were intact and the target differed only by canonical key order; the corrected run checks semantic equality for the first publish and exact target-byte stability on reload. No product change was required.

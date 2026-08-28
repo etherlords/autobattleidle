@@ -4,7 +4,7 @@ id: ABI-013
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 51
+revision: 54
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 51
-- Last update: Begin coherent commit/push, CI/Pages wait, and deployed dual-source browser proof after all local gates and Planner closure passed.
+- Revision: 54
+- Last update: Complete ABI-013 delivery after coherent push, green CI/Pages, and public dual-source migration/Restore/reload proof.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [x] migration-write: Implementation owner: preserve the old payload until successful migration/current validation and keep failed writes non-destructive.
 - [x] migration-tests: Implementation owner: prove V1 load, V2 stability, migrated save/reload, malformed/future recovery, and run pnpm check.
 - [x] migration-gates: Independent Reviewer and QA: audit no-progress-loss semantics and reproduce historical-save migration in a real deployed browser.
-- [~] migration-delivery: Manager: verify docs/evidence, commit/push, wait CI/Pages, repeat deployed V1-to-V2 reload proof, and close.
+- [x] migration-delivery: Manager: verify docs/evidence, commit/push, wait CI/Pages, repeat deployed V1-to-V2 reload proof, and close.
 
 ## Events
 
@@ -913,3 +913,58 @@ requiredGates:
   - manager-closure pass revision 48
   - pnpm check pass 19/19
   - independent local browser QA pass
+
+### evt-5f53cdde-2949-46f5-90e3-66b06cd023df
+
+- Timestamp: 2026-08-28T15:53:58.354Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: ABI-013 coherent implementation/recovery/docs/browser-evidence checkpoint committed as 2f4dd1f and pushed to origin/main; only excluded .playwright-cli/ remains untracked. Begin exact CI/Pages and public migration proof.
+- Idempotency key: abi013-commit-push-2f4dd1f-v1
+- Evidence:
+  - git:2f4dd1f
+  - origin/main:2f4dd1f
+  - push:46bb22b..2f4dd1f
+  - worktree:only .playwright-cli/ untracked
+
+### evt-dc830dc1-b7d7-44df-92b4-7cd112b7edfe
+
+- Timestamp: 2026-08-28T16:00:53.196Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Public Pages proof PASS for 2f4dd1f. Exact user save under etherlords.autobattleidle.save imported to versioned V2 without semantic loss; source stayed byte-identical, target stayed byte-stable across reload, valid V2 precedence held. Authentic V1 migrated with source retention; empty V2 plus one injected write failure exposed focusable Restore, Enter repaired V2, status succeeded, and second reload was stable. 0 console errors/warnings. First harness run's target-property-order assumption was corrected; product behavior was valid.
+- Idempotency key: abi013-public-pages-proof-2f4dd1f-v1
+- Evidence:
+  - git:2f4dd1f4d3e6b18a46a05516f58cba5b2ddd677c
+  - github-actions:CI run 33186849700 job 98901950723 success
+  - github-pages:run 33186849712 job 98901951086 success
+  - https://etherlords.github.io/autobattleidle/
+  - planner://work-item/ABI-013/artifact/VERIFICATION.md
+  - output/playwright/abi013-deployed-proof.js
+  - output/playwright/abi013-deployed-v2-import.png
+  - output/playwright/abi013-deployed-v1-migration.png
+  - output/playwright/abi013-deployed-restore-keyboard.png
+
+### evt-86c26a35-e08b-4d33-bfe6-a3797cb3f0e0
+
+- Timestamp: 2026-08-28T16:01:08.187Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Complete ABI-013 delivery after coherent push, green CI/Pages, and public dual-source migration/Restore/reload proof.
+- Idempotency key: abi013-migration-delivery-complete-v1
+- Request fingerprint: 3a0a86fae5340793d47c22a9b64cbb654e6936ed6b97b9ff47b9515fed9894de
+- Action: set_state
+- Step ID: migration-delivery
+- State: complete
+- Evidence:
+  - git:2f4dd1f4d3e6b18a46a05516f58cba5b2ddd677c pushed
+  - github-actions:33186849700 success
+  - github-pages:33186849712 success
+  - planner://work-item/ABI-013/artifact/VERIFICATION.md
+  - https://etherlords.github.io/autobattleidle/

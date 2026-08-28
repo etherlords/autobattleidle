@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "73ac0188-0443-4a12-a1a2-30a9c06b3b5d",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-28T16:00:53.197Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md.planner-tmp-73ac0188-0443-4a12-a1a2-30a9c06b3b5d"
+    }
+  ],
+  "committedAt": "2026-08-28T16:00:53.208Z"
+}
