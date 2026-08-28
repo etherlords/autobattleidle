@@ -4,12 +4,13 @@ id: ABI-012
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-006
   - ABI-008
+  - ABI-015
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -46,6 +47,7 @@ Add readable compact number formatting across the HUD
 
 - ABI-006
 - ABI-008
+- ABI-015
 
 ## Related knowledge
 
