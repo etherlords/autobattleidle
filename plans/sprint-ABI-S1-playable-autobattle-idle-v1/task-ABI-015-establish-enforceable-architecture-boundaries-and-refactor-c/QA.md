@@ -36,3 +36,20 @@ CHANGES_REQUIRED — expanded visual QA found one P2 narrow-layout clipping defe
 - Expanded user-requested visual audit found the player and ordinary enemy clipped at `390x844`; the boss body and crown are also partially outside the viewport. Fixed actor positions at `x = +/-1.7` combined with the narrow camera aspect are the likely cause. Repair and a fresh independent visual QA matrix are required.
 - Artifacts remain excluded under `.playwright-cli/`, including `page-2026-08-28T20-25-47-383Z.png`, `page-2026-08-28T20-26-38-118Z.png`, `page-2026-08-28T20-32-56-508Z.png`, and `page-2026-08-28T20-32-38-607Z.yml`.
 - Failure artifact: `.playwright-cli/page-2026-08-28T20-35-42-460Z.png`.
+
+## Fresh post-repair QA
+
+PASS — no unresolved P0-P2.
+
+- Fresh `pnpm check` passed 7 files / 38 tests plus lint, Prettier, TypeScript, and production build.
+- Real browser at `http://127.0.0.1:5187`: desktop `1280x720` and narrow `390x844`.
+- Ordinary and boss states fully frame the player, enemy body, crown, and grade cue at 390px; no
+  detached, sunken, floating, or clipped visual parts were observed.
+- Pointer and Enter each produced exactly one manual hit. Automatic unlock, automatic attacks, and
+  progression to veteran passed.
+- Dialog label, focus entry, Escape close, and 200 open/close cycles passed. Canvas stayed `1`, DOM
+  nodes stayed `52 -> 52`, narrow `scrollWidth` stayed `390`, and console errors stayed `0`.
+- V1/current V2/historical cadence-15 and malformed-save compatibility remain covered by unchanged
+  persistence fixtures and the fresh 38-test gate.
+- Artifacts remain excluded under `.playwright-cli/`, including
+  `page-2026-08-28T22-07-34-119Z.png` and `page-2026-08-28T22-10-09-052Z.png`.

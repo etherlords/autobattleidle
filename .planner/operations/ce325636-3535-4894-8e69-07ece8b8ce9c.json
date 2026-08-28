@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "ce325636-3535-4894-8e69-07ece8b8ce9c",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:47:02.705Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-v3-26-narrow-framing-start-modular-architecture",
+  "requestFingerprint": "eec24350e9332fc8766243724e70e4681d0f582ef511f8fdf7553a90ee9ce994",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-ce325636-3535-4894-8e69-07ece8b8ce9c-0",
+      "beforeHash": "7b0ec9ca13613d1b929821c50d87c3edfcb668dd2a3de384443c9dd58247b324",
+      "afterHash": "098007f41dcfc99bb53d610a15208362e6492c167a74dae707980ba4d2952380"
+    }
+  ],
+  "committedAt": "2026-08-28T21:47:02.752Z"
+}

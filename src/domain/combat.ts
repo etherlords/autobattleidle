@@ -1,5 +1,5 @@
-export { attack } from "./combat-attacks";
-export { COMBAT_BALANCE } from "./combat-balance";
+export { attack } from "./combat/attacks";
+export { COMBAT_BALANCE } from "./combat/balance";
 export type {
   AttackCommand,
   AttackEvent,
@@ -14,8 +14,8 @@ export type {
   UpgradeDefinition,
   UpgradeId,
   UpgradePurchase,
-} from "./combat-contracts";
-export { spawnEnemy } from "./combat-progression";
+} from "./combat/contracts";
+export { spawnEnemy } from "./combat/progression";
 export {
   armorPenetrationForLevel,
   automaticInterval,
@@ -29,4 +29,4 @@ export {
   upgradeCost,
   upgradeDisabledReason,
   upgradeLevel,
-} from "./combat-upgrades";
+} from "./combat/upgrades";

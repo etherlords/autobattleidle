@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e9dfb750-6030-437b-b419-bddfa9f3b18c",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:46:49.068Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-v3-20-builder-invariants-complete-modular-architecture",
+  "requestFingerprint": "5081e971c91b19196799ae14baa46dbd149d1f6a2a3af4a7b62b0a518baf1ef2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-e9dfb750-6030-437b-b419-bddfa9f3b18c-0",
+      "beforeHash": "7d86341032d8bde652e9f9222278268c085a4b0ee5384ce48e6fd34cf304352e",
+      "afterHash": "de3f1e99fc98ce9c1533967781bfd0a5be3400393fe00d27d53caf594a9f37a1"
+    }
+  ],
+  "committedAt": "2026-08-28T21:46:49.121Z"
+}

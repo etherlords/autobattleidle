@@ -1,0 +1,157 @@
+import type { UpgradeId } from "../../domain/combat";
+import type { BattleSnapshot } from "../../domain/snapshot";
+import { button, makeText } from "./elements";
+
+export class UpgradeDialog {
+  readonly launcher = button("upgrades-launcher", "Upgrades");
+  readonly modal = document.createElement("section");
+  private readonly dialog = document.createElement("section");
+  private readonly close = button("upgrades-close", "Close upgrades");
+  private readonly coins = makeText("p", "");
+  private readonly upgrades = document.createElement("div");
+  private readonly resetButton = button("reset-progress", "Reset progress");
+  private readonly restoreButton = button("restore-progress", "Restore from previous version");
+  private readonly persistenceStatus = makeText("p", "");
+  private readonly upgradeButtons = new Map<
+    UpgradeId,
+    {
+      readonly button: HTMLButtonElement;
+      readonly listener: () => void;
+      readonly price: HTMLSpanElement;
+      readonly title: HTMLSpanElement;
+    }
+  >();
+  private upgradeListener: ((id: UpgradeId) => void) | undefined;
+  private resetListener: (() => void) | undefined;
+  private restoreListener: (() => void) | undefined;
+
+  constructor() {
+    this.launcher.setAttribute("aria-haspopup", "dialog");
+    this.modal.className = "upgrades-modal";
+    this.modal.hidden = true;
+    this.dialog.className = "upgrades-dialog";
+    this.dialog.setAttribute("aria-label", "Upgrades and saved progress");
+    this.dialog.setAttribute("aria-modal", "true");
+    this.dialog.setAttribute("role", "dialog");
+    this.coins.className = "upgrades-coins";
+    this.upgrades.className = "upgrades";
+    this.restoreButton.hidden = true;
+    this.persistenceStatus.className = "persistence-status";
+    this.persistenceStatus.setAttribute("aria-live", "polite");
+    this.dialog.append(
+      this.close,
+      this.coins,
+      this.upgrades,
+      this.resetButton,
+      this.restoreButton,
+      this.persistenceStatus,
+    );
+    this.modal.append(this.dialog);
+    this.launcher.addEventListener("click", this.open);
+    this.close.addEventListener("click", this.closeModal);
+    this.modal.addEventListener("pointerup", this.closeFromBackdrop);
+    this.resetButton.addEventListener("click", this.reset);
+    this.restoreButton.addEventListener("click", this.restore);
+    document.addEventListener("keydown", this.toggleModal);
+  }
+
+  onUpgrade(listener: (id: UpgradeId) => void): void {
+    this.upgradeListener = listener;
+  }
+  onReset(listener: () => void): void {
+    this.resetListener = listener;
+  }
+  onRestore(listener: () => void): void {
+    this.restoreListener = listener;
+  }
+  setRestoreAvailable(available: boolean): void {
+    this.restoreButton.hidden = !available;
+  }
+  reportPersistence(message: string): void {
+    this.persistenceStatus.textContent = message;
+  }
+
+  render(snapshot: BattleSnapshot): void {
+    this.coins.textContent = `Coins: ${snapshot.coins}`;
+    for (const upgrade of snapshot.upgrades) {
+      let entry = this.upgradeButtons.get(upgrade.id);
+      if (entry === undefined) {
+        const upgradeButton = document.createElement("button");
+        upgradeButton.type = "button";
+        const title = document.createElement("span");
+        title.className = "upgrade-title";
+        const price = document.createElement("span");
+        price.className = "upgrade-price";
+        upgradeButton.append(title, price);
+        const listener = (): void => this.upgradeListener?.(upgrade.id);
+        upgradeButton.addEventListener("click", listener);
+        entry = { button: upgradeButton, listener, price, title };
+        this.upgradeButtons.set(upgrade.id, entry);
+        this.upgrades.append(upgradeButton);
+      }
+      const actionLabel = `${upgrade.label} - ${upgrade.level}; ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : `; ${upgrade.disabledReason}`}`;
+      entry.title.textContent = `${upgrade.label} - ${upgrade.level}`;
+      entry.price.textContent = `${upgrade.cost} coins`;
+      entry.button.setAttribute("aria-label", actionLabel);
+      entry.button.disabled = upgrade.disabledReason !== null;
+      entry.button.title = actionLabel;
+    }
+  }
+
+  dispose(): void {
+    this.closeModal();
+    document.removeEventListener("keydown", this.toggleModal);
+    this.launcher.removeEventListener("click", this.open);
+    this.close.removeEventListener("click", this.closeModal);
+    this.modal.removeEventListener("pointerup", this.closeFromBackdrop);
+    this.resetButton.removeEventListener("click", this.reset);
+    this.restoreButton.removeEventListener("click", this.restore);
+    for (const { button: upgradeButton, listener } of this.upgradeButtons.values())
+      upgradeButton.removeEventListener("click", listener);
+    this.upgradeButtons.clear();
+  }
+
+  private readonly reset = (): void => this.resetListener?.();
+  private readonly restore = (): void => this.restoreListener?.();
+  private readonly open = (): void => {
+    if (!this.modal.hidden) return;
+    this.modal.hidden = false;
+    document.addEventListener("keydown", this.modalKeydown);
+    this.close.focus();
+  };
+  private readonly closeModal = (): void => {
+    if (this.modal.hidden) return;
+    this.modal.hidden = true;
+    document.removeEventListener("keydown", this.modalKeydown);
+    this.launcher.focus();
+  };
+  private readonly toggleModal = (event: KeyboardEvent): void => {
+    if (event.repeat || event.key.toLowerCase() !== "u") return;
+    event.preventDefault();
+    if (this.modal.hidden) this.open();
+    else this.closeModal();
+  };
+  private readonly closeFromBackdrop = (event: PointerEvent): void => {
+    if (event.target === this.modal) this.closeModal();
+  };
+  private readonly modalKeydown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      this.closeModal();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const buttons = [
+      this.close,
+      ...[...this.upgradeButtons.values()]
+        .map(({ button }) => button)
+        .filter((button) => !button.disabled),
+      this.resetButton,
+      ...(this.restoreButton.hidden ? [] : [this.restoreButton]),
+    ];
+    const current = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    const next = (current + (event.shiftKey ? buttons.length - 1 : 1)) % buttons.length;
+    event.preventDefault();
+    buttons[next]?.focus();
+  };
+}

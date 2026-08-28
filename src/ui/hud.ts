@@ -1,8 +1,8 @@
 import type { UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
-import { BattleStatus } from "./battle-status";
-import { EventLog } from "./event-log";
-import { UpgradeDialog } from "./upgrade-dialog";
+import { BattleStatus } from "./hud/battle-status";
+import { EventLog } from "./hud/event-log";
+import { UpgradeDialog } from "./hud/upgrade-dialog";
 
 export type Hud = {
   render(snapshot: BattleSnapshot): void;

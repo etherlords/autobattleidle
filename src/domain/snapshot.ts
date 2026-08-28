@@ -1,5 +1,5 @@
 import { automaticInterval } from "./combat";
-import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat-contracts";
+import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
 export type BattleEvent = { readonly id: number; readonly message: string };
 export type UpgradeSnapshot = {

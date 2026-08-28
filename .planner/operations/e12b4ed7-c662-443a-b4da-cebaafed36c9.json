@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e12b4ed7-c662-443a-b4da-cebaafed36c9",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:46:57.361Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-v3-24-battlefield-definitions-start-modular-architecture",
+  "requestFingerprint": "831a885e095861228aba74a11adc9e142b186ec7c8d78c028cf121fd4bc0bf9c",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-e12b4ed7-c662-443a-b4da-cebaafed36c9-0",
+      "beforeHash": "f4fe9178d0c37e0a41c6fc5493bcbf24b1450b066e9bc5892eb5c970a20f3cf6",
+      "afterHash": "79c95b282b975aa69f2a5ca2cf6b5f0e1bbb07a45c7ffad3e4d3032bf9e4fbb8"
+    }
+  ],
+  "committedAt": "2026-08-28T21:46:57.414Z"
+}

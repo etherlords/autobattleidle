@@ -25,13 +25,21 @@ Keep Autobattle Idle readable and extensible without replacing small determinist
 
 ## Ownership and module shape
 
-- Organize by responsibility and mutable-truth owner, not by file length alone.
-- `src/domain` keeps immutable serializable contracts and pure deterministic policies. Split combat contracts, balance, enemy progression, attacks, and upgrades into owner modules with one public barrel.
+- Organize by responsibility and mutable-truth owner, not by file length alone. A layer directory must not become a flat dumping ground.
+- Keep stable compatibility facades at `src/domain/combat.ts`, `src/game/enemy-visual.ts`, `src/game/battlefield.ts`, `src/ui/hud.ts`, and `src/persistence/persistence-boundary.ts`. Implementation owners live below them:
+  - `src/domain/combat/`: named contracts, balance, progression, upgrades, and attacks as pure deterministic policies.
+  - `src/app/battle/`: exhaustive commands/events, the lifecycle-owning controller, and pure presentation mapping.
+  - `src/game/enemy-visual/`: finite specs, feature-local visual config, body factories, invariant builder, component decorators, and lifecycle-owned roots.
+  - `src/game/battlefield/`: scene/camera config, bounded effects, and renderer lifecycle.
+  - `src/ui/hud/`: battle status, event log, upgrade dialog, and DOM/listener ownership.
+  - `src/persistence/save/`: DTO contracts, codecs, migrations, version recognizers/validation, and browser storage lifecycle.
+- Runtime actions use the typed flow `BattleCommand -> BattleController -> pure domain transition -> BattleControllerEvent -> app-owned render/persistence side effects`. Ignored commands emit no event or persistence write; the app may still render an attempted manual action or idle frame once when presentation coherence requires it.
+- Add a new upgrade beside the combat upgrade definitions and exhaustive policy registry, a new enemy body in the finite body-factory registry, and an optional visual cue as a component decorator attached under its named layer root. Extending a discriminated union must make missing registry/controller/presenter handling a compile-time error.
+- `src/domain` keeps immutable serializable contracts and pure deterministic policies; it imports no DOM or Three.js.
 - `src/game` owns Three.js view objects, animation, scene attachment, and idempotent disposal. The battlefield orchestrates identity replacement; each enemy view owns its subtree.
-- `src/ui` owns DOM components and listener lifecycle. Battle status, upgrade dialog, and event log own their subtrees; the HUD composes them.
-- `src/persistence` separates versioned DTO/validation, migrations, and browser storage lifecycle. Supported historical saves remain valid.
-- `src/app` remains a thin composition root and does not absorb domain, view, or persistence details.
+- `src/ui` owns DOM components and listener lifecycle. `src/persistence` owns validated versioned data and storage. `src/app` is the only composition root and does not absorb their implementation details.
 - Shared `types.ts`, `helpers.ts`, or `shared` files are not default dumping grounds. Put a named contract or helper beside its owner; extract only when more than one local module consumes it.
+- Path aliases remain deferred while these responsibility folders keep imports shallow and make upward dependencies visible.
 
 ## Classes, composition, and pure functions
 

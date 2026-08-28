@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "120a6c39-2903-4f90-a579-d7d1a42c49be",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:50:45.025Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-v3-29-start-owner-root-gates",
+  "requestFingerprint": "49a1f59e8df4c071dc981178849dcb20a2c1f806efc4292b0d79f1ade9380df1",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-120a6c39-2903-4f90-a579-d7d1a42c49be-0",
+      "beforeHash": "fc887dcc1c2b06b7de263af5fc24146f883cd3e97d94dc144a9a95ede3ee29c0",
+      "afterHash": "72b2782965da23ca67c701e98306a428bcf281ad8865f0650350bffc1747df9b"
+    }
+  ],
+  "committedAt": "2026-08-28T21:50:45.081Z"
+}

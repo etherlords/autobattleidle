@@ -1,22 +1,17 @@
 import {
-  attack,
   createCombatState,
-  purchaseUpgrade,
-  UPGRADES,
-  upgradeCost,
-  upgradeDisabledReason,
-  upgradeLevel,
   type AttackRolls,
   type CombatState,
   type UpgradeId,
 } from "../domain/combat";
-import { createBattleSnapshot, type BattleEvent, type BattleSnapshot } from "../domain/snapshot";
 import { createBattlefield, type Battlefield } from "../game/battlefield";
 import {
   createPersistenceBoundary,
   type PersistenceBoundary,
 } from "../persistence/persistence-boundary";
 import { createHud, type Hud } from "../ui/hud";
+import { BattleController } from "./battle/controller";
+import { presentBattleUpdate } from "./battle/presenter";
 
 type AnimationFrameHost = {
   addEventListener(type: "resize", listener: EventListenerOrEventListenerObject): void;
@@ -104,95 +99,49 @@ export const createApplication = (
 export const startApplication = (dependencies: LifecycleDependencies): Application => {
   let frame: number | undefined;
   let disposed = false;
-  let nowMs = dependencies.initialNowMs ?? 0;
-  let nextEventId = 1;
-  let state = dependencies.initialState;
   const newGame = (): CombatState =>
     dependencies.createInitialState?.() ?? dependencies.initialState;
-  let events: readonly BattleEvent[] = [];
-  const addEvent = (message: string): void => {
-    events = [...events, { id: nextEventId, message }].slice(-6);
-    nextEventId += 1;
-  };
-  const snapshot = (): BattleSnapshot =>
-    createBattleSnapshot(
-      state,
-      nowMs,
-      events,
-      UPGRADES.map((upgrade) => ({
-        cost: upgradeCost(state, upgrade.id),
-        disabledReason: upgradeDisabledReason(state, upgrade.id),
-        id: upgrade.id,
-        label: upgrade.label,
-        level: upgradeLevel(state, upgrade.id),
-      })),
-    );
+  const controller = new BattleController({
+    createInitialState: newGame,
+    initialNowMs: dependencies.initialNowMs ?? 0,
+    initialState: dependencies.initialState,
+    rolls: dependencies.rolls,
+  });
   const render = (): void => {
-    const current = snapshot();
+    const current = presentBattleUpdate(controller.currentUpdate());
     dependencies.game.render(current);
     dependencies.hud.render(current);
   };
-  const performAttack = (source: "manual" | "automatic"): void => {
-    const result = attack(state, {
-      atMs: nowMs,
-      enemyId: state.enemy.id,
-      rolls: dependencies.rolls(),
-      source,
-    });
-    state = result.state;
-    if (result.event.type !== "hit") return;
-    addEvent(
-      result.event.defeated
-        ? `${source === "manual" ? "Manual" : "Automatic"} kill: +${result.event.reward} coins`
-        : `${source === "manual" ? "Manual" : "Automatic"} hit: ${result.event.damage} damage`,
-    );
-    dependencies.persistence.onStateChanged(state);
-  };
-  const purchase = (id: UpgradeId): void => {
-    const result = purchaseUpgrade(state, id, nowMs);
-    state = result.state;
-    addEvent(
-      result.reason === null
-        ? `Purchased ${UPGRADES.find((entry) => entry.id === id)?.label ?? id}`
-        : result.reason,
-    );
-    if (result.reason === null) dependencies.persistence.onStateChanged(state);
+  const unsubscribe = controller.subscribe((event) => {
+    if (event.persistenceChanged) dependencies.persistence.onStateChanged(event.state);
     render();
-  };
+  });
   const resize = (): void => {
     const viewport = dependencies.viewport();
     dependencies.game.resize(viewport.width, viewport.height);
   };
   const draw = (timestamp: number): void => {
-    nowMs = timestamp;
-    if (state.automaticUnlocked && nowMs >= state.nextAutomaticAttackAtMs)
-      performAttack("automatic");
-    render();
+    if (!controller.dispatch({ nowMs: timestamp, type: "frame" })) render();
     frame = dependencies.window.requestAnimationFrame(draw);
   };
   resize();
   dependencies.hud.onAttack(() => {
-    performAttack("manual");
-    render();
+    if (!controller.dispatch({ source: "manual", type: "attack" })) render();
   });
-  dependencies.hud.onUpgrade(purchase);
+  dependencies.hud.onUpgrade((id: UpgradeId) => controller.dispatch({ id, type: "purchase" }));
   dependencies.hud.onReset(() => {
     if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
     dependencies.persistence.reset();
-    state = newGame();
-    events = [];
-    nextEventId = 1;
-    render();
+    controller.dispatch({ type: "reset" });
   });
   dependencies.hud.setRestoreAvailable(dependencies.persistence.hasPreviousVersionSave());
   dependencies.hud.onRestore(() => {
-    const restored = dependencies.persistence.restorePreviousVersion(nowMs);
+    const restored = dependencies.persistence.restorePreviousVersion(
+      controller.currentUpdate().nowMs,
+    );
     dependencies.hud.reportPersistence(restored.message);
     if (restored.state === undefined) return;
-    state = restored.state;
-    events = [];
-    nextEventId = 1;
-    render();
+    controller.dispatch({ state: restored.state, type: "restore" });
   });
   render();
   dependencies.window.addEventListener("resize", resize);
@@ -203,6 +152,8 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       disposed = true;
       if (frame !== undefined) dependencies.window.cancelAnimationFrame(frame);
       dependencies.window.removeEventListener("resize", resize);
+      unsubscribe();
+      controller.dispose();
       dependencies.persistence.dispose();
       dependencies.hud.dispose();
       dependencies.game.dispose();

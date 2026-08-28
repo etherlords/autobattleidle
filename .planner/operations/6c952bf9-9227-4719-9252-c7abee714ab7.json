@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "6c952bf9-9227-4719-9252-c7abee714ab7",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:33:54.294Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-v3-04-snapshot-seam-complete-checkpoint-dd26691",
+  "requestFingerprint": "fde29002f28f836e353c5ed2c2fabec00ace35bc8af513ede6ca614853d6a59e",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-6c952bf9-9227-4719-9252-c7abee714ab7-0",
+      "beforeHash": "00cceb2e78f0b167f79c4cc5b7d12ad53e7a1baec3f12b4de494c860e1f65b58",
+      "afterHash": "fd944e71cef2f750ad916e4d4ac61f7f8a58ad9818a2dc94995501b25569e40b"
+    }
+  ],
+  "committedAt": "2026-08-28T21:33:54.365Z"
+}

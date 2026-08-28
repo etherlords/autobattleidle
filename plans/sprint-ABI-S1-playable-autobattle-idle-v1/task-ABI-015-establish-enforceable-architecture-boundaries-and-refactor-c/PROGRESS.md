@@ -4,8 +4,8 @@ id: ABI-015
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 108
-status: In Progress
+revision: 170
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-008
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 108
-- Last update: EVENT checkpoint — Manager — user-requested stable intermediate publication is ready at v3-03 with v3-04 active: pnpm check passes 31/31, Planner/Vault are healthy, user balance 35/100 is preserved, follow-up plans were reconciled, and excluded QA artifacts remain unstaged.
+- Status: In QA
+- Revision: 170
+- Last update: Fresh independent desktop/narrow visual and behavior QA passed with no P0-P2
 
 ## Execution plan
 
@@ -51,34 +51,34 @@ requiredGates:
 - [x] v3-01-scope-authority: Re-read canonical scope, Vault rules, original quality diagnosis, and record pattern/no-overengineering decisions
 - [x] v3-02-public-facades: Inventory and freeze every public facade/export/import for combat, snapshot, enemy visual, battlefield, HUD, and persistence
 - [x] v3-03-characterization: Freeze exact tests for user-authored balance, combat outputs, messages, saves, seeds, visual counts, animation, and disposal
-- [~] v3-04-snapshot-seam: Name the finite BattleEnemySnapshot domain-to-view seam and remove loose string contracts
-- [ ] v3-05-formula-config: Centralize unchanged combat formula constants and document authoritative user balance inputs
-- [ ] v3-06-progression-owner: Extract deterministic enemy grade, modifier, health, armor, reward, and spawn progression owner
-- [ ] v3-07-upgrade-owner: Extract player normalization, definitions, formulas, exhaustive upgrade strategies, costs, and purchases
-- [ ] v3-08-attack-owner: Extract deterministic attack, armor, critical, reward, ignored-command, rollover, and next-enemy transition owner
-- [ ] v3-09-combat-facade: Reduce combat.ts to the stable compatibility facade and prove all prior imports/outputs
-- [ ] v3-10-balance-save-compat: Re-characterize cadence-35 telemetry and preserve strict loading of historical cadence-15 V2 saves
-- [ ] v3-11-controller-contracts: Define exhaustive BattleCommand, BattleControllerEvent, BattleUpdate, listener, and unsubscribe contracts
-- [ ] v3-12-controller-owner: Implement BattleController as the sole mutable session state, time, event-id, and bounded-history owner
-- [ ] v3-13-event-dispatch: Implement synchronous typed dispatch after complete transitions with unsubscribe and idempotent disposal
-- [ ] v3-14-presenter: Implement pure typed-event to existing BattleEvent message and BattleSnapshot presentation mapping
-- [ ] v3-15-app-integration: Route HUD, RAF, reset, and restore through controller commands with coherent render/persist semantics
-- [ ] v3-16-controller-tests: Prove controller commands, events, order, cap, state-change flags, snapshot parity, unsubscribe, and disposal
-- [ ] v3-17-view-contracts: Define finite enemy component, body factory, builder, decorator, animation, and named-layer contracts
-- [ ] v3-18-visual-config: Extract named palette, geometry, material, offsets, rotations, scales, anchors, and scene values
-- [ ] v3-19-body-factories: Implement exhaustive beetle, brute, wisp, boss-colossus, and boss-hydra body factories
-- [ ] v3-20-builder-invariants: Implement one-body, named-root, sealed-build, animation-registration, and no-partial-view builder invariants
-- [ ] v3-21-decorators: Implement independent exhaustive grade, modifier, and seeded-decoration decorators
-- [ ] v3-22-view-factory: Compose unchanged specs through body factory, builder, and decorators behind createEnemyVisual facade
-- [ ] v3-23-view-lifecycle: Own roots, animation tick, traversal disposal, parent removal, and idempotency in ThreeEnemyVisual
-- [ ] v3-24-battlefield-definitions: Extract typed scene, player, camera, effect, lifetime, cap, color, and geometry definitions
-- [ ] v3-25-battlefield-owner: Make battlefield renderer, scene, replacement, effects, resize, and disposal lifecycle ownership explicit
-- [ ] v3-26-narrow-framing: Repair aspect-aware 390px player/enemy/boss-crown framing without ABI-016 orbit behavior
-- [ ] v3-27-visual-tests: Prove exhaustive registries, builder failures, decorator attachment, seeds, animation, bounds, replacement, and disposal
-- [ ] v3-28-lint-rules: Add only reliable zero-baseline installed ESLint AST rules; keep aliases and pre-commit hook in ABI-021
-- [ ] v3-29-owner-checks: Run focused domain, controller, game, HUD, persistence checks, full pnpm check, and git diff check
-- [ ] v3-30-independent-review: Run fresh complete-diff independent architecture review and bounded P0-P2 repair/re-review
-- [ ] v3-31-independent-visual-qa: Run desktop and 390px full family/grade/modifier visual matrix, behavior, save, accessibility, and resource QA
+- [x] v3-04-snapshot-seam: Name the finite BattleEnemySnapshot domain-to-view seam and remove loose string contracts
+- [x] v3-05-formula-config: Centralize unchanged combat formula constants and document authoritative user balance inputs
+- [x] v3-06-progression-owner: Extract deterministic enemy grade, modifier, health, armor, reward, and spawn progression owner
+- [x] v3-07-upgrade-owner: Extract player normalization, definitions, formulas, exhaustive upgrade strategies, costs, and purchases
+- [x] v3-08-attack-owner: Extract deterministic attack, armor, critical, reward, ignored-command, rollover, and next-enemy transition owner
+- [x] v3-09-combat-facade: Reduce combat.ts to the stable compatibility facade and prove all prior imports/outputs
+- [x] v3-10-balance-save-compat: Re-characterize cadence-35 telemetry and preserve strict loading of historical cadence-15 V2 saves
+- [x] v3-11-controller-contracts: Define exhaustive BattleCommand, BattleControllerEvent, BattleUpdate, listener, and unsubscribe contracts
+- [x] v3-12-controller-owner: Implement BattleController as the sole mutable session state, time, event-id, and bounded-history owner
+- [x] v3-13-event-dispatch: Implement synchronous typed dispatch after complete transitions with unsubscribe and idempotent disposal
+- [x] v3-14-presenter: Implement pure typed-event to existing BattleEvent message and BattleSnapshot presentation mapping
+- [x] v3-15-app-integration: Route HUD, RAF, reset, and restore through controller commands with coherent render/persist semantics
+- [x] v3-16-controller-tests: Prove controller commands, events, order, cap, state-change flags, snapshot parity, unsubscribe, and disposal
+- [x] v3-17-view-contracts: Define finite enemy component, body factory, builder, decorator, animation, and named-layer contracts
+- [x] v3-18-visual-config: Extract named palette, geometry, material, offsets, rotations, scales, anchors, and scene values
+- [x] v3-19-body-factories: Implement exhaustive beetle, brute, wisp, boss-colossus, and boss-hydra body factories
+- [x] v3-20-builder-invariants: Implement one-body, named-root, sealed-build, animation-registration, and no-partial-view builder invariants
+- [x] v3-21-decorators: Implement independent exhaustive grade, modifier, and seeded-decoration decorators
+- [x] v3-22-view-factory: Compose unchanged specs through body factory, builder, and decorators behind createEnemyVisual facade
+- [x] v3-23-view-lifecycle: Own roots, animation tick, traversal disposal, parent removal, and idempotency in ThreeEnemyVisual
+- [x] v3-24-battlefield-definitions: Extract typed scene, player, camera, effect, lifetime, cap, color, and geometry definitions
+- [x] v3-25-battlefield-owner: Make battlefield renderer, scene, replacement, effects, resize, and disposal lifecycle ownership explicit
+- [x] v3-26-narrow-framing: Repair aspect-aware 390px player/enemy/boss-crown framing without ABI-016 orbit behavior
+- [x] v3-27-visual-tests: Prove exhaustive registries, builder failures, decorator attachment, seeds, animation, bounds, replacement, and disposal
+- [x] v3-28-lint-rules: Add only reliable zero-baseline installed ESLint AST rules; keep aliases and pre-commit hook in ABI-021
+- [x] v3-29-owner-checks: Run focused domain, controller, game, HUD, persistence checks, full pnpm check, and git diff check
+- [x] v3-30-independent-review: Run fresh complete-diff independent architecture review and bounded P0-P2 repair/re-review
+- [x] v3-31-independent-visual-qa: Run desktop and 390px full family/grade/modifier visual matrix, behavior, save, accessibility, and resource QA
 
 ## Events
 
@@ -1833,3 +1833,1052 @@ requiredGates:
   - src/game/battlefield.test.ts
   - plans/PLANNER-GIT-STATE-HANDOFF.md
   - plans/PLANNER-UI-BOUNDED-ARTIFACT-PREVIEW-INCIDENT.md
+
+### evt-72a53e7b-8264-40fb-a1c9-76f9014328f2
+
+- Timestamp: 2026-08-28T21:33:06.952Z
+- Actor: root-manager
+- Operation: claim.renew
+- Prior revision: 108
+- Resulting revision: 109
+- Summary: Renewed task lease: Continue ABI-015 from published stable checkpoint through remaining controller, visual, framing, quality, review, QA, and closure gates
+- Idempotency key: abi015-renew-after-dd26691-20260829
+- Request fingerprint: 3287d4bb1cd515fd248600fe3424a87f9c54a7edc86c2b1708f1075541a5b7e9
+- Agent ID: root-manager
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Continue ABI-015 from published stable checkpoint through remaining controller, visual, framing, quality, review, QA, and closure gates
+- Branch: main
+- Expires at: 2026-08-28T23:33:06.952Z
+- Evidence:
+  - None
+
+### evt-ad7d00c2-aba8-4c4b-91be-1310ea317e44
+
+- Timestamp: 2026-08-28T21:33:54.290Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 109
+- Resulting revision: 110
+- Summary: Finite BattleEnemySnapshot seam and grade/modifier unions verified behind stable snapshot facade
+- Idempotency key: abi015-v3-04-snapshot-seam-complete-checkpoint-dd26691
+- Request fingerprint: fde29002f28f836e353c5ed2c2fabec00ace35bc8af513ede6ca614853d6a59e
+- Action: set_state
+- Step ID: v3-04-snapshot-seam
+- State: complete
+- Evidence:
+  - src/domain/snapshot.ts
+  - src/domain/combat-contracts.ts
+  - pnpm check 31/31
+  - dd266912cb11cebfd97ffb595b948a79e09ae9d9
+
+### evt-36fa09f0-eaaf-4f6b-bee7-623b38a6494a
+
+- Timestamp: 2026-08-28T21:33:55.733Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 110
+- Resulting revision: 111
+- Summary: Begin verification of centralized combat formula configuration
+- Idempotency key: abi015-v3-05-formula-config-in_progress-checkpoint-dd26691
+- Request fingerprint: 0b1cbb921d0c2792a649f64735499224678c17307e0f64cebc1e41b107624d5d
+- Action: set_state
+- Step ID: v3-05-formula-config
+- State: in_progress
+- Evidence:
+  - src/domain/combat-balance.ts
+
+### evt-a8555470-bb89-4f89-b490-bcb8500ef683
+
+- Timestamp: 2026-08-28T21:33:57.218Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 111
+- Resulting revision: 112
+- Summary: Combat balance and formula constants centralized; authoritative 35/100 user values preserved
+- Idempotency key: abi015-v3-05-formula-config-complete-checkpoint-dd26691
+- Request fingerprint: beb02e33d75e74482a610e0d388df1d8fbcea47b96a3e1a68b5856aab5991941
+- Action: set_state
+- Step ID: v3-05-formula-config
+- State: complete
+- Evidence:
+  - src/domain/combat-balance.ts
+  - src/domain/combat.test.ts
+  - pnpm check 31/31
+
+### evt-65206d8e-66ce-40a1-b60d-b4fa2bc6d4a6
+
+- Timestamp: 2026-08-28T21:33:58.811Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 112
+- Resulting revision: 113
+- Summary: Begin deterministic combat progression owner verification
+- Idempotency key: abi015-v3-06-progression-owner-in_progress-checkpoint-dd26691
+- Request fingerprint: b363e805e33820a580e29e53971b3b5ac5ffaffb35cdc6d809617d155b627209
+- Action: set_state
+- Step ID: v3-06-progression-owner
+- State: in_progress
+- Evidence:
+  - src/domain/combat-progression.ts
+
+### evt-97188c4c-0ef5-4c85-8786-0b358c854137
+
+- Timestamp: 2026-08-28T21:34:00.187Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 113
+- Resulting revision: 114
+- Summary: Enemy grade, modifier, health, armor, reward, boss and spawn progression extracted and characterized
+- Idempotency key: abi015-v3-06-progression-owner-complete-checkpoint-dd26691
+- Request fingerprint: f6970da48b8b39d723a4481e058d79ece13d814016b273cd82bd79507d99b85d
+- Action: set_state
+- Step ID: v3-06-progression-owner
+- State: complete
+- Evidence:
+  - src/domain/combat-progression.ts
+  - src/domain/combat.test.ts
+
+### evt-d10b6396-9ba2-4adc-88ee-0aad40c7119b
+
+- Timestamp: 2026-08-28T21:34:01.527Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 114
+- Resulting revision: 115
+- Summary: Begin exhaustive upgrade policy owner verification
+- Idempotency key: abi015-v3-07-upgrade-owner-in_progress-checkpoint-dd26691
+- Request fingerprint: d5054f74c8925366dfcb1df9560980fa46d5eb3842c6fc0ebefb60184b9fa9c3
+- Action: set_state
+- Step ID: v3-07-upgrade-owner
+- State: in_progress
+- Evidence:
+  - src/domain/combat-upgrades.ts
+
+### evt-0c6eeeb3-98fa-40f7-942d-c05cc5dee560
+
+- Timestamp: 2026-08-28T21:34:02.907Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 115
+- Resulting revision: 116
+- Summary: Player normalization, formulas, costs, disabled reasons and purchases use exhaustive typed upgrade policies
+- Idempotency key: abi015-v3-07-upgrade-owner-complete-checkpoint-dd26691
+- Request fingerprint: 1ea04c82d07e1705d280611117cf008c5b1c7762cb42544633a37d7ed87ece01
+- Action: set_state
+- Step ID: v3-07-upgrade-owner
+- State: complete
+- Evidence:
+  - src/domain/combat-upgrades.ts
+  - src/domain/combat.test.ts
+
+### evt-b5453a05-10b5-4f8e-bd50-10cae6bb3dfc
+
+- Timestamp: 2026-08-28T21:34:04.260Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 116
+- Resulting revision: 117
+- Summary: Begin deterministic attack owner verification
+- Idempotency key: abi015-v3-08-attack-owner-in_progress-checkpoint-dd26691
+- Request fingerprint: b612c2602017e677e5672203d355ad38cc59df8939a81954c6c67f52487d98a5
+- Action: set_state
+- Step ID: v3-08-attack-owner
+- State: in_progress
+- Evidence:
+  - src/domain/combat-attacks.ts
+
+### evt-64975144-7e68-4841-8937-055d8cff000f
+
+- Timestamp: 2026-08-28T21:34:05.707Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 117
+- Resulting revision: 118
+- Summary: Attack transition owner preserves ignored, hit, kill, reward, rollover and safe-integer behavior
+- Idempotency key: abi015-v3-08-attack-owner-complete-checkpoint-dd26691
+- Request fingerprint: 7a489570ead4a07c3154362e04232f4512bf2191018b5eaee7a649dadb7c94f7
+- Action: set_state
+- Step ID: v3-08-attack-owner
+- State: complete
+- Evidence:
+  - src/domain/combat-attacks.ts
+  - src/domain/combat.test.ts
+
+### evt-c0c9bdb5-cb03-4387-a8d1-dfbfce00d599
+
+- Timestamp: 2026-08-28T21:34:07.253Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 118
+- Resulting revision: 119
+- Summary: Begin stable combat facade compatibility verification
+- Idempotency key: abi015-v3-09-combat-facade-in_progress-checkpoint-dd26691
+- Request fingerprint: fb36c36b8008b630acb1b7dd99fa0e077c1c729069fc02a90b782f9889f069a2
+- Action: set_state
+- Step ID: v3-09-combat-facade
+- State: in_progress
+- Evidence:
+  - src/domain/combat.ts
+
+### evt-56a39ed4-5354-4f16-bf20-d520c860d417
+
+- Timestamp: 2026-08-28T21:34:08.623Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 119
+- Resulting revision: 120
+- Summary: combat.ts is a small stable re-export facade and characterization imports remain green
+- Idempotency key: abi015-v3-09-combat-facade-complete-checkpoint-dd26691
+- Request fingerprint: 70cf9d14a6f18cfdf69955b0586e97b3300c269334dbf2defe2d0a71ad559639
+- Action: set_state
+- Step ID: v3-09-combat-facade
+- State: complete
+- Evidence:
+  - src/domain/combat.ts
+  - src/domain/combat.test.ts
+  - pnpm check 31/31
+
+### evt-5c76d505-9c16-42d8-bd63-3bbcfa30544c
+
+- Timestamp: 2026-08-28T21:34:09.942Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 120
+- Resulting revision: 121
+- Summary: Begin cadence-35 and historical cadence-15 persistence compatibility verification
+- Idempotency key: abi015-v3-10-balance-save-compat-in_progress-checkpoint-dd26691
+- Request fingerprint: 0f80efeea01730cbd340e9b5564ee70e13cbb90fe4b076b67190e7ea9a1b08b3
+- Action: set_state
+- Step ID: v3-10-balance-save-compat
+- State: in_progress
+- Evidence:
+  - src/persistence/save-validation.ts
+
+### evt-8e8c5f19-676a-4368-8d51-8aaae0c3dcf1
+
+- Timestamp: 2026-08-28T21:34:11.336Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 121
+- Resulting revision: 122
+- Summary: Current cadence-35 and strict historical cadence-15 V2 saves pass; corrupted near-matches reject
+- Idempotency key: abi015-v3-10-balance-save-compat-complete-checkpoint-dd26691
+- Request fingerprint: e1fec4738e42cbc60d76a8fc0c00ca0ea93b58b732bf2df30ff51b3534ce7797
+- Action: set_state
+- Step ID: v3-10-balance-save-compat
+- State: complete
+- Evidence:
+  - src/persistence/save-validation.ts
+  - src/persistence/persistence-boundary.test.ts
+  - pnpm check 31/31
+
+### evt-f0c044e6-197e-4ce9-91e6-32e73da7bf66
+
+- Timestamp: 2026-08-28T21:34:12.686Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 122
+- Resulting revision: 123
+- Summary: Begin exhaustive controller command, event and listener contract implementation
+- Idempotency key: abi015-v3-11-controller-contracts-in_progress-checkpoint-dd26691
+- Request fingerprint: 897144352c7ee33fe0fe7b282bc9a1342d66edc560e67ab0def9576592f32714
+- Action: set_state
+- Step ID: v3-11-controller-contracts
+- State: in_progress
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/IMPLEMENTATION-GUIDE.md
+
+### evt-c264a40f-a44b-4340-8648-75689511d1c3
+
+- Timestamp: 2026-08-28T21:46:29.086Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 123
+- Resulting revision: 124
+- Summary: Exhaustive controller commands, typed events, updates, listeners and unsubscribe contracts implemented
+- Idempotency key: abi015-v3-11-controller-contracts-complete-modular-architecture
+- Request fingerprint: b56945b688b7ae54ca785446b5560709b426619d9f9efb9ec478bb8b41914763
+- Action: set_state
+- Step ID: v3-11-controller-contracts
+- State: complete
+- Evidence:
+  - src/app/battle/contracts.ts
+
+### evt-3b651d35-0390-4f47-a64e-4809b3a66ed6
+
+- Timestamp: 2026-08-28T21:46:30.124Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 124
+- Resulting revision: 125
+- Summary: Begin battleController is sole mutable state, time, event id and six-entry history owner
+- Idempotency key: abi015-v3-12-controller-owner-start-modular-architecture
+- Request fingerprint: 2fc4fb66122ac0e9a27e1029ca99b48d61a39439c8cb40c4111dce8219a25b4f
+- Action: set_state
+- Step ID: v3-12-controller-owner
+- State: in_progress
+- Evidence:
+  - src/app/battle/controller.ts
+
+### evt-84f32a8b-7535-4284-a5c1-525547d12a9e
+
+- Timestamp: 2026-08-28T21:46:31.278Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 125
+- Resulting revision: 126
+- Summary: BattleController is sole mutable state, time, event id and six-entry history owner
+- Idempotency key: abi015-v3-12-controller-owner-complete-modular-architecture
+- Request fingerprint: 98469f5a232bcc1205dc0199af7d83b2f42abd7ad7aff08916ecf17c73b78518
+- Action: set_state
+- Step ID: v3-12-controller-owner
+- State: complete
+- Evidence:
+  - src/app/battle/controller.ts
+
+### evt-4c8a3399-2e1b-4758-a525-fa60ffb22c16
+
+- Timestamp: 2026-08-28T21:46:32.365Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 126
+- Resulting revision: 127
+- Summary: Begin synchronous ordered dispatch, unsubscribe and idempotent disposal verified
+- Idempotency key: abi015-v3-13-event-dispatch-start-modular-architecture
+- Request fingerprint: b09945e60c774dbb3a84c0b29185897a7286247833483a498552f9229d5bc63f
+- Action: set_state
+- Step ID: v3-13-event-dispatch
+- State: in_progress
+- Evidence:
+  - src/app/battle/controller.ts
+
+### evt-b8efdb85-56fd-4d52-a765-e25fcdb2e9b0
+
+- Timestamp: 2026-08-28T21:46:33.423Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 127
+- Resulting revision: 128
+- Summary: Synchronous ordered dispatch, unsubscribe and idempotent disposal verified
+- Idempotency key: abi015-v3-13-event-dispatch-complete-modular-architecture
+- Request fingerprint: 2878825ccd42aa940cc30c38a439b30676f81510778a12f646824aaeb27f2098
+- Action: set_state
+- Step ID: v3-13-event-dispatch
+- State: complete
+- Evidence:
+  - src/app/battle/controller.ts
+  - src/app/battle/controller.test.ts
+
+### evt-eaa36597-b95d-4ad8-bcd7-6d8bfb2723fd
+
+- Timestamp: 2026-08-28T21:46:34.549Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 128
+- Resulting revision: 129
+- Summary: Begin pure typed-event message and BattleSnapshot presentation mapping preserves exact strings
+- Idempotency key: abi015-v3-14-presenter-start-modular-architecture
+- Request fingerprint: c43c737f34b319c81333ebfbf45af70568406ef08bf4c1215bfdae65dd785fc1
+- Action: set_state
+- Step ID: v3-14-presenter
+- State: in_progress
+- Evidence:
+  - src/app/battle/presenter.ts
+
+### evt-afda1e88-44eb-47f8-8318-ee0cf1a00d83
+
+- Timestamp: 2026-08-28T21:46:35.639Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 129
+- Resulting revision: 130
+- Summary: Pure typed-event message and BattleSnapshot presentation mapping preserves exact strings
+- Idempotency key: abi015-v3-14-presenter-complete-modular-architecture
+- Request fingerprint: 4d4131b5b14a416fb50c20bb2da192895e91dc9965df537fea61ce014821a6f2
+- Action: set_state
+- Step ID: v3-14-presenter
+- State: complete
+- Evidence:
+  - src/app/battle/presenter.ts
+  - src/app/battle/controller.test.ts
+
+### evt-a814e61f-cb11-44c5-805b-4d7788a29430
+
+- Timestamp: 2026-08-28T21:46:36.742Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 130
+- Resulting revision: 131
+- Summary: Begin hUD, RAF, reset and restore route through controller with compatible render and persistence order
+- Idempotency key: abi015-v3-15-app-integration-start-modular-architecture
+- Request fingerprint: 98f593ba7281164dbcbe10fa053bb076803a96cfb84547af4c842cdf641de973
+- Action: set_state
+- Step ID: v3-15-app-integration
+- State: in_progress
+- Evidence:
+  - src/app/application.ts
+
+### evt-3a2aa47f-6887-4f9e-917c-38d38c516901
+
+- Timestamp: 2026-08-28T21:46:37.875Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 131
+- Resulting revision: 132
+- Summary: HUD, RAF, reset and restore route through controller with compatible render and persistence order
+- Idempotency key: abi015-v3-15-app-integration-complete-modular-architecture
+- Request fingerprint: adc7dd637f1838fb6a402facb98ae20d5c7968cfbff634e3fed219e9bb68fa4c
+- Action: set_state
+- Step ID: v3-15-app-integration
+- State: complete
+- Evidence:
+  - src/app/application.ts
+  - src/app/application.test.ts
+
+### evt-58ff3de5-5451-4953-b40f-67e57d96427c
+
+- Timestamp: 2026-08-28T21:46:39.106Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 132
+- Resulting revision: 133
+- Summary: Begin controller/application parity suite passes commands, events, history, flags, snapshot, unsubscribe and disposal
+- Idempotency key: abi015-v3-16-controller-tests-start-modular-architecture
+- Request fingerprint: a74be3894664768a13b6d393a00b476676a8057bab3240a8e87492d685747dd1
+- Action: set_state
+- Step ID: v3-16-controller-tests
+- State: in_progress
+- Evidence:
+  - src/app/battle/controller.test.ts
+
+### evt-0bc6beae-8042-4637-9072-4f4dae3b1bd3
+
+- Timestamp: 2026-08-28T21:46:40.167Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 133
+- Resulting revision: 134
+- Summary: Controller/application parity suite passes commands, events, history, flags, snapshot, unsubscribe and disposal
+- Idempotency key: abi015-v3-16-controller-tests-complete-modular-architecture
+- Request fingerprint: 81c0dd969e5f174e15c6a51c3855160c9b16799bc7a1980385beeae69f2f1232
+- Action: set_state
+- Step ID: v3-16-controller-tests
+- State: complete
+- Evidence:
+  - src/app/battle/controller.test.ts
+  - src/app/application.test.ts
+  - pnpm check 36/36
+
+### evt-dad1b531-2aae-47e1-99e7-2ac7c07b4c6d
+
+- Timestamp: 2026-08-28T21:46:41.286Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 134
+- Resulting revision: 135
+- Summary: Begin finite visual component, factory, builder, decorator, animation and layer contracts implemented
+- Idempotency key: abi015-v3-17-view-contracts-start-modular-architecture
+- Request fingerprint: 398ede2d9efc4ec945e73f8a2c83a8de52bff6b81257f86cfd60723c1f502b47
+- Action: set_state
+- Step ID: v3-17-view-contracts
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual/components.ts
+
+### evt-fe816fb7-a8b6-4768-8158-ec8324638f39
+
+- Timestamp: 2026-08-28T21:46:42.362Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 135
+- Resulting revision: 136
+- Summary: Finite visual component, factory, builder, decorator, animation and layer contracts implemented
+- Idempotency key: abi015-v3-17-view-contracts-complete-modular-architecture
+- Request fingerprint: a1479ee673a5b8d65fc014d4cc205fd860f0b21c86dc89e081b9e3eb9e5878cb
+- Action: set_state
+- Step ID: v3-17-view-contracts
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/components.ts
+  - src/game/enemy-visual/builder.ts
+
+### evt-ce094c30-d710-4100-8f25-a7cf7419eee9
+
+- Timestamp: 2026-08-28T21:46:43.510Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 136
+- Resulting revision: 137
+- Summary: Begin feature-local enemy palette, geometry, layout, transforms and animation config extracted
+- Idempotency key: abi015-v3-18-visual-config-start-modular-architecture
+- Request fingerprint: eadb6336307d2a7e3032dacae56742a9136e5a25b38b523d0bc978036aba6b4f
+- Action: set_state
+- Step ID: v3-18-visual-config
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual/config.ts
+
+### evt-fe59ded1-128a-469e-9512-1664043b62c9
+
+- Timestamp: 2026-08-28T21:46:44.655Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 137
+- Resulting revision: 138
+- Summary: Feature-local enemy palette, geometry, layout, transforms and animation config extracted
+- Idempotency key: abi015-v3-18-visual-config-complete-modular-architecture
+- Request fingerprint: 32281dd2bfe9b5e671d5ab90f5bcd41beb1ca2314219d9c676dd3585f8933e82
+- Action: set_state
+- Step ID: v3-18-visual-config
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/config.ts
+
+### evt-bcecddba-e086-46e9-9b43-a450315639dc
+
+- Timestamp: 2026-08-28T21:46:45.754Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 138
+- Resulting revision: 139
+- Summary: Begin exhaustive five-family body factory registry implemented
+- Idempotency key: abi015-v3-19-body-factories-start-modular-architecture
+- Request fingerprint: bc7f8b9761625deb394120ce7c144b413c81ed24db81d1eff3d43cc388acc44e
+- Action: set_state
+- Step ID: v3-19-body-factories
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual/bodies.ts
+
+### evt-d18277d0-2cf5-4265-bc24-0ce457485071
+
+- Timestamp: 2026-08-28T21:46:46.795Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 139
+- Resulting revision: 140
+- Summary: Exhaustive five-family body factory registry implemented
+- Idempotency key: abi015-v3-19-body-factories-complete-modular-architecture
+- Request fingerprint: 09878b0ab88a0338491eb772cc18a89ba49ab962d56e3e35a843b8c0b3d78da9
+- Action: set_state
+- Step ID: v3-19-body-factories
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/bodies.ts
+  - src/game/enemy-visual.test.ts
+
+### evt-1fa74b56-959b-42dd-9475-b11601873d19
+
+- Timestamp: 2026-08-28T21:46:47.860Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 140
+- Resulting revision: 141
+- Summary: Begin builder enforces one body, named roots, sealed build and unique animation registration
+- Idempotency key: abi015-v3-20-builder-invariants-start-modular-architecture
+- Request fingerprint: 27724675201d63b3b015041546b3a7bea22bd8c970633bd27ed9451b485b59cd
+- Action: set_state
+- Step ID: v3-20-builder-invariants
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual/builder.ts
+
+### evt-69af3e98-d9e7-479d-8091-46a339ebb290
+
+- Timestamp: 2026-08-28T21:46:49.066Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 141
+- Resulting revision: 142
+- Summary: Builder enforces one body, named roots, sealed build and unique animation registration
+- Idempotency key: abi015-v3-20-builder-invariants-complete-modular-architecture
+- Request fingerprint: 5081e971c91b19196799ae14baa46dbd149d1f6a2a3af4a7b62b0a518baf1ef2
+- Action: set_state
+- Step ID: v3-20-builder-invariants
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/builder.ts
+  - src/game/enemy-visual.test.ts
+
+### evt-985c8f31-5549-4fec-9eb0-24145c63d658
+
+- Timestamp: 2026-08-28T21:46:50.161Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 142
+- Resulting revision: 143
+- Summary: Begin grade, modifier and seeded decoration registries compose independently and exhaustively
+- Idempotency key: abi015-v3-21-decorators-start-modular-architecture
+- Request fingerprint: 7f21c0be96eacb97e5c8dc3f03bc580aa6adb75c9a91ec31f0d741e744318cdc
+- Action: set_state
+- Step ID: v3-21-decorators
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual/decorators.ts
+
+### evt-262977d6-c8df-47fd-9077-a2987fb84bd2
+
+- Timestamp: 2026-08-28T21:46:51.251Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 143
+- Resulting revision: 144
+- Summary: Grade, modifier and seeded decoration registries compose independently and exhaustively
+- Idempotency key: abi015-v3-21-decorators-complete-modular-architecture
+- Request fingerprint: 2e0dba89c16891fc5783146f07a01a1b7fbaf6507be8d2f336106957c0c2a774
+- Action: set_state
+- Step ID: v3-21-decorators
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/decorators.ts
+  - src/game/enemy-visual.test.ts
+
+### evt-616e7a19-88fb-4aaf-80d0-3af10af99bf1
+
+- Timestamp: 2026-08-28T21:46:52.378Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 144
+- Resulting revision: 145
+- Summary: Begin stable createEnemyVisual facade composes specs through registry, builder and decorators
+- Idempotency key: abi015-v3-22-view-factory-start-modular-architecture
+- Request fingerprint: ec5806facbea9adceaefd7a580645a3e85ab12f5d208b70dd54cd2be1768a063
+- Action: set_state
+- Step ID: v3-22-view-factory
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual.ts
+
+### evt-c0125036-9926-4997-8c9c-2825bbf4f4ef
+
+- Timestamp: 2026-08-28T21:46:53.593Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 145
+- Resulting revision: 146
+- Summary: Stable createEnemyVisual facade composes specs through registry, builder and decorators
+- Idempotency key: abi015-v3-22-view-factory-complete-modular-architecture
+- Request fingerprint: 8a461b7708cb16103935ed7c05ec80d0ab0276ec1c49d3be6dc91f28a8530609
+- Action: set_state
+- Step ID: v3-22-view-factory
+- State: complete
+- Evidence:
+  - src/game/enemy-visual.ts
+  - src/game/enemy-visual/spec.ts
+
+### evt-900aba5f-6bb4-4a70-9b44-fba05a512974
+
+- Timestamp: 2026-08-28T21:46:54.833Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 146
+- Resulting revision: 147
+- Summary: Begin threeEnemyVisual owns roots, tick, traversal disposal, parent removal and idempotency
+- Idempotency key: abi015-v3-23-view-lifecycle-start-modular-architecture
+- Request fingerprint: b36c7a60e6ec6226669684b7389d59c4a9fcbb5eba2c45beda78ee35d7cd5580
+- Action: set_state
+- Step ID: v3-23-view-lifecycle
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual.ts
+
+### evt-80257ade-6a97-4921-9fce-e1b7b5289e63
+
+- Timestamp: 2026-08-28T21:46:56.148Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 147
+- Resulting revision: 148
+- Summary: ThreeEnemyVisual owns roots, tick, traversal disposal, parent removal and idempotency
+- Idempotency key: abi015-v3-23-view-lifecycle-complete-modular-architecture
+- Request fingerprint: 54a45cd8411206fba7bc16935635bfb20eda55fc2dec89c06b51d5d0dbfd7e9a
+- Action: set_state
+- Step ID: v3-23-view-lifecycle
+- State: complete
+- Evidence:
+  - src/game/enemy-visual.ts
+  - src/game/enemy-visual.test.ts
+
+### evt-e0178cba-11c5-44a9-849b-7dea15fd92fc
+
+- Timestamp: 2026-08-28T21:46:57.358Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 148
+- Resulting revision: 149
+- Summary: Begin typed named battlefield scene, camera, player, effect and resource definitions extracted
+- Idempotency key: abi015-v3-24-battlefield-definitions-start-modular-architecture
+- Request fingerprint: 831a885e095861228aba74a11adc9e142b186ec7c8d78c028cf121fd4bc0bf9c
+- Action: set_state
+- Step ID: v3-24-battlefield-definitions
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/config.ts
+
+### evt-32ecab3e-6ee7-480c-a779-f7584fdd8dca
+
+- Timestamp: 2026-08-28T21:46:58.754Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 149
+- Resulting revision: 150
+- Summary: Typed named battlefield scene, camera, player, effect and resource definitions extracted
+- Idempotency key: abi015-v3-24-battlefield-definitions-complete-modular-architecture
+- Request fingerprint: 16e39624cbc016e887fa48a86b10ebd2253efed00895c279650acc39a5b9ea2e
+- Action: set_state
+- Step ID: v3-24-battlefield-definitions
+- State: complete
+- Evidence:
+  - src/game/battlefield/config.ts
+  - src/game/battlefield/effects.ts
+
+### evt-7ea150f2-459d-4576-9889-5c7c0b1e2d69
+
+- Timestamp: 2026-08-28T21:47:00.211Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 150
+- Resulting revision: 151
+- Summary: Begin threeBattlefield owns renderer, scene, enemy replacement, effects, resize and disposal
+- Idempotency key: abi015-v3-25-battlefield-owner-start-modular-architecture
+- Request fingerprint: 41e00c05deb37cf097df34281c2dc6cf1b92fb317b90f6db3148d25db7f40134
+- Action: set_state
+- Step ID: v3-25-battlefield-owner
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+
+### evt-0c876224-a876-4033-a13b-4de0f080ee27
+
+- Timestamp: 2026-08-28T21:47:01.451Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 151
+- Resulting revision: 152
+- Summary: ThreeBattlefield owns renderer, scene, enemy replacement, effects, resize and disposal
+- Idempotency key: abi015-v3-25-battlefield-owner-complete-modular-architecture
+- Request fingerprint: e0e6eb6c24ae411f8525ba7e32644d3b2b070d5d15109085b145417bb7f339d2
+- Action: set_state
+- Step ID: v3-25-battlefield-owner
+- State: complete
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+  - src/game/battlefield.test.ts
+
+### evt-26ea7f15-e448-4b44-b915-523b5b06efb2
+
+- Timestamp: 2026-08-28T21:47:02.702Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 152
+- Resulting revision: 153
+- Summary: Begin aspect-aware static camera framing repairs 390px actor clipping without orbit behavior
+- Idempotency key: abi015-v3-26-narrow-framing-start-modular-architecture
+- Request fingerprint: eec24350e9332fc8766243724e70e4681d0f582ef511f8fdf7553a90ee9ce994
+- Action: set_state
+- Step ID: v3-26-narrow-framing
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/config.ts
+
+### evt-a3a2de9c-10a0-4dfb-991f-c91661f8182b
+
+- Timestamp: 2026-08-28T21:47:03.957Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 153
+- Resulting revision: 154
+- Summary: Aspect-aware static camera framing repairs 390px actor clipping without orbit behavior
+- Idempotency key: abi015-v3-26-narrow-framing-complete-modular-architecture
+- Request fingerprint: 17c844789bebf18aa54ace952a055a7babe224a369074dcf408e34ab968158de
+- Action: set_state
+- Step ID: v3-26-narrow-framing
+- State: complete
+- Evidence:
+  - src/game/battlefield/config.ts
+  - src/game/battlefield/lifecycle.ts
+  - src/game/battlefield.test.ts
+
+### evt-6df28cf4-4e75-410d-a5ce-e94aea480693
+
+- Timestamp: 2026-08-28T21:47:05.202Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 154
+- Resulting revision: 155
+- Summary: Begin game tests cover registries, builder failures, decorators, seeds, animation, bounds, replacement and disposal
+- Idempotency key: abi015-v3-27-visual-tests-start-modular-architecture
+- Request fingerprint: bb3abd9d2cabffd1324cc1bc6fd404d67a94025fec4368fc4345888514c1ac17
+- Action: set_state
+- Step ID: v3-27-visual-tests
+- State: in_progress
+- Evidence:
+  - src/game/enemy-visual.test.ts
+
+### evt-512861b8-4bdc-413f-a056-3e47ea5a15a5
+
+- Timestamp: 2026-08-28T21:47:06.454Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 155
+- Resulting revision: 156
+- Summary: Game tests cover registries, builder failures, decorators, seeds, animation, bounds, replacement and disposal
+- Idempotency key: abi015-v3-27-visual-tests-complete-modular-architecture
+- Request fingerprint: a1fe2cfb4092e71cc4ea4ed33b9aad816e26616392c6c3aa0bb4f3998fb552fb
+- Action: set_state
+- Step ID: v3-27-visual-tests
+- State: complete
+- Evidence:
+  - src/game/enemy-visual.test.ts
+  - src/game/battlefield.test.ts
+  - pnpm check 36/36
+
+### evt-60629a61-89e7-4ea2-822f-ea3ca7b4a3b1
+
+- Timestamp: 2026-08-28T21:47:07.818Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 156
+- Resulting revision: 157
+- Summary: Begin final zero-baseline installed ESLint rule audit after modular architecture refactor
+- Idempotency key: abi015-v3-28-start-zero-baseline-lint
+- Request fingerprint: 9c63ad173912cfd0a2ef6565a0d2f1e49000fb07476ffd663b4b86600948d0f0
+- Action: set_state
+- Step ID: v3-28-lint-rules
+- State: in_progress
+- Evidence:
+  - eslint.config.js
+  - pnpm check 36/36
+
+### evt-acc1faa0-20eb-4a7a-b654-b5d9b4fc1b30
+
+- Timestamp: 2026-08-28T21:50:43.459Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 157
+- Resulting revision: 158
+- Summary: Zero-baseline installed ESLint rules enforce strict typing, layer boundaries, complexity/depth, nested ternaries, named contracts in all source, and no production double assertions
+- Idempotency key: abi015-v3-28-complete-zero-baseline-lint
+- Request fingerprint: 36cb8f9789e2829c3971f8a62196b3a36c29217318b289ac6f5871b29b4742f5
+- Action: set_state
+- Step ID: v3-28-lint-rules
+- State: complete
+- Evidence:
+  - eslint.config.js
+  - pnpm lint PASS
+  - no indexed-access contracts in tests or production
+  - no production double assertions
+
+### evt-39622c9b-ade9-499b-a3f3-776d2d08c329
+
+- Timestamp: 2026-08-28T21:50:45.020Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 158
+- Resulting revision: 159
+- Summary: Begin final owner and root checks after persistence responsibility split and lint ratchet
+- Idempotency key: abi015-v3-29-start-owner-root-gates
+- Request fingerprint: 49a1f59e8df4c071dc981178849dcb20a2c1f806efc4292b0d79f1ade9380df1
+- Action: set_state
+- Step ID: v3-29-owner-checks
+- State: in_progress
+- Evidence:
+  - pnpm check 36/36
+  - git diff --check PASS
+
+### evt-dad765a4-651c-42c0-a864-c4f24b3fb296
+
+- Timestamp: 2026-08-28T21:51:17.753Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 159
+- Resulting revision: 160
+- Summary: Fresh owner and root checks pass after controller, visual, battlefield, module layout, persistence validation split, and lint ratchet
+- Idempotency key: abi015-v3-29-complete-fresh-root-gate
+- Request fingerprint: 3763f2bc043e9b73be9905b37fef9a3e6e855d7bdc6b0076dfb6c38a64e75e7d
+- Action: set_state
+- Step ID: v3-29-owner-checks
+- State: complete
+- Evidence:
+  - pnpm check PASS: 7 files, 36 tests
+  - lint and Prettier PASS
+  - TypeScript and Vite build PASS
+  - git diff --check PASS
+
+### evt-ae0703ba-ceda-40b5-a1d8-86440943c287
+
+- Timestamp: 2026-08-28T21:51:19.333Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 160
+- Resulting revision: 161
+- Summary: Begin fresh independent complete-diff architecture and behavior review
+- Idempotency key: abi015-v3-30-start-independent-full-diff-review
+- Request fingerprint: 5bfd92f8cdfb9165b3dc5339343d5543b8f3f063c9f3ba91f3b72965f006cb64
+- Action: set_state
+- Step ID: v3-30-independent-review
+- State: in_progress
+- Evidence:
+  - git diff dd266912cb11cebfd97ffb595b948a79e09ae9d9
+  - pnpm check 36/36
+
+### evt-3846b7ba-1eb3-4fba-ae74-8c135ccb5375
+
+- Timestamp: 2026-08-28T21:59:23.395Z
+- Actor: root-manager
+- Operation: claim.renew
+- Prior revision: 161
+- Resulting revision: 162
+- Summary: Renewed task lease: Continue ABI-015 Reviewer repairs, re-review, independent QA, Vault sync, coherent publication, and closure
+- Idempotency key: abi015-root-renew-20260829-review-repairs
+- Request fingerprint: f75995f3de3769810a396fb6b7d843c034c8c0ffef0e05b667e6672959b7de8c
+- Agent ID: root-manager
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Continue ABI-015 Reviewer repairs, re-review, independent QA, Vault sync, coherent publication, and closure
+- Branch: main
+- Expires at: 2026-08-28T23:59:23.395Z
+- Evidence:
+  - None
+
+### evt-b11b4c7d-590d-4993-add4-bddb5ad6a28a
+
+- Timestamp: 2026-08-28T22:02:16.062Z
+- Actor: manager-root
+- Operation: progress.append
+- Prior revision: 162
+- Resulting revision: 163
+- Summary: EVENT checkpoint — implementation owners — four Reviewer P2 repairs complete; owner-grouped module tree retained; fresh pnpm check passed 37/37 and git diff check passed; returned to independent Reviewer
+- Idempotency key: abi015-review-repair-selfcheck-20260829
+- Evidence:
+  - src/persistence/save/validation-v2.ts explicit current/historical/invalid recognition
+  - src/game/enemy-visual/* named layer groups and finite typed registries
+  - src/app/battle/controller.ts ignored attacks publish no event
+  - src/app/application.ts fallback renders exactly once
+  - pnpm check PASS 7 files 37 tests
+  - git diff --check PASS
+
+### evt-25beea99-fe7b-4572-937b-5fa3ba79fa7b
+
+- Timestamp: 2026-08-28T22:05:54.777Z
+- Actor: abi015-original-scope-gap-audit
+- Operation: gate.record
+- Prior revision: 163
+- Resulting revision: 164
+- Summary: Expanded complete-diff independent review PASS after bounded P2 repairs; no unresolved P0-P2
+- Idempotency key: abi015-expanded-review-final-pass-20260829
+- Request fingerprint: cdcd906633f395b864492d746dbb84778f4b33f977e631fed6f0a099eeaf6178
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - REVIEW.md expanded architecture review
+  - pnpm check PASS 7 files 38 tests
+  - git diff --check PASS
+  - owner folders and typed command-event-side-effect flow accepted
+
+### evt-f8dfbc92-cb51-4379-94a6-24f15fe72918
+
+- Timestamp: 2026-08-28T22:06:01.123Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 164
+- Resulting revision: 165
+- Summary: Independent expanded architecture review passed after bounded repairs
+- Idempotency key: abi015-v3-30-review-complete-20260829
+- Request fingerprint: ad513edb6a21e197e6092daa51c86d4de1eeba90956e5fe9985bec90576e9aae
+- Action: set_state
+- Step ID: v3-30-independent-review
+- State: complete
+- Evidence:
+  - independent-review gate PASS
+  - REVIEW.md
+  - pnpm check 38/38
+
+### evt-2f8a30ed-8f34-438c-8674-9720cb249e68
+
+- Timestamp: 2026-08-28T22:06:09.784Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 165
+- Resulting revision: 166
+- Summary: Begin fresh independent desktop and 390px behavior, visual, persistence, accessibility, and resource QA
+- Idempotency key: abi015-v3-31-qa-start-20260829
+- Request fingerprint: 43f711317f84582873029111f0813b1bd4a97b9f4b9c706a3af57378e0a64bab
+- Action: set_state
+- Step ID: v3-31-independent-visual-qa
+- State: in_progress
+- Evidence:
+  - independent-review gate PASS
+  - pnpm check 38/38
+
+### evt-8c21be85-567a-4a46-ae02-31c2ed627285
+
+- Timestamp: 2026-08-28T22:08:26.810Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 166
+- Resulting revision: 167
+- Summary: Advance after expanded implementation self-check for canonical review lifecycle
+- Idempotency key: abi015-expanded-to-in-review-20260829
+- Request fingerprint: 4163988418f0f221ef7526d9feb6b313c74f42102cc97011a61626f02bb4d96b
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - implementation self-check PASS
+  - independent review PASS already recorded
+
+### evt-17688c1f-3022-42a5-85ce-a203149346d5
+
+- Timestamp: 2026-08-28T22:08:40.290Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 167
+- Resulting revision: 168
+- Summary: Independent expanded review passed; begin canonical QA lifecycle
+- Idempotency key: abi015-expanded-to-in-qa-20260829
+- Request fingerprint: 55facefe115f4d153b06b25fc3c72a9d64b0ae7791aacc870f7eeda98c669b95
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - independent-review gate PASS
+  - v3-30 complete
+  - v3-31 in progress
+
+### evt-a729dffd-7fee-4952-8f64-02e01970240c
+
+- Timestamp: 2026-08-28T22:11:17.486Z
+- Actor: abi015-independent-qa-run-2
+- Operation: gate.record
+- Prior revision: 168
+- Resulting revision: 169
+- Summary: Fresh QA run 2 passed desktop and 390px behavior, visual, accessibility, persistence, and resource checks; no P0-P2
+- Idempotency key: abi015-expanded-qa-final-pass-run2-20260829
+- Request fingerprint: a736b81c1a2252739e28466ea67a7674aabdda64a7f285c5f725c3ee2e93d88e
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md fresh post-repair QA
+  - fresh QA execution after v3 architecture repairs
+  - pnpm check PASS 7 files 38 tests
+  - desktop 1280x720 and narrow 390x844
+  - .playwright-cli/page-2026-08-28T22-07-34-119Z.png
+  - .playwright-cli/page-2026-08-28T22-10-09-052Z.png
+  - canvas 1; DOM 52->52; console errors 0
+
+### evt-3d77badc-ccfa-4ed5-a024-1f3abf8a8738
+
+- Timestamp: 2026-08-28T22:11:26.666Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 169
+- Resulting revision: 170
+- Summary: Fresh independent desktop/narrow visual and behavior QA passed with no P0-P2
+- Idempotency key: abi015-v3-31-qa-complete-20260829
+- Request fingerprint: bb882c4b8d7bc6336c0c43ac2d2e14902a61de97f483b6a10d81a4d65def3692
+- Action: set_state
+- Step ID: v3-31-independent-visual-qa
+- State: complete
+- Evidence:
+  - independent-qa gate PASS
+  - QA.md
+  - pnpm check 38/38
+  - canvas 1; DOM 52->52; zero console errors

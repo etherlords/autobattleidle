@@ -110,7 +110,6 @@ export default tseslint.config(
   },
   {
     files: ["src/**/*.ts"],
-    ignores: ["src/**/*.test.ts"],
     rules: {
       "no-nested-ternary": "error",
       "no-restricted-syntax": [
@@ -118,6 +117,23 @@ export default tseslint.config(
         {
           selector: "TSIndexedAccessType",
           message: "Name cross-module contracts instead of indexing another contract type.",
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TSIndexedAccessType",
+          message: "Name cross-module contracts instead of indexing another contract type.",
+        },
+        {
+          selector: "TSAsExpression > TSAsExpression",
+          message: "Do not bypass production contracts with a double type assertion.",
         },
       ],
     },

@@ -23,7 +23,7 @@ requiredGates:
 
 ## Verdict
 
-PASS — final bounded independent review; no unresolved P0-P2.
+PASS — expanded final bounded independent review; no unresolved P0-P2.
 
 ## Findings
 
@@ -57,3 +57,19 @@ PASS — final bounded independent review; no unresolved P0-P2.
   stdin probe exited 1; allowed domain imports exited 0.
 - No deterministic behavior, public-contract, resource lifecycle, HUD focus/listener, save compatibility,
   or follow-up feature leak was found.
+
+### Expanded architecture review after stable checkpoint
+
+- Initial verdict: **CHANGES_REQUIRED** for four P2 gaps: save-profile ambiguity policy, real named
+  enemy layer groups, a finite domain-to-view seam, and ignored-attack event absence.
+- The same implementation owners repaired only those findings. Current/historical V2 candidates are
+  evaluated independently and overlap is accepted only when semantics agree; conflicting semantics
+  reject. Body, grade, modifier, and decoration are real `THREE.Group` roots. Visual grade/modifier
+  registries are finite. Ignored attacks emit no controller event/history/persistence while the app
+  still renders the attempted action once.
+- Final independent verdict: **PASS**. Physical code is grouped under responsibility owners
+  (`domain/combat`, `app/battle`, `game/enemy-visual`, `game/battlefield`, `ui/hud`,
+  `persistence/save`) behind stable facades. The typed command -> controller transition -> app-side
+  effect flow is coherent, and upgrades, enemy bodies, and visual decorators extend through exhaustive
+  registries without speculative inheritance or switch/if sprawl.
+- Fresh independent `pnpm check` passed 38/38; `git diff --check` passed. No unresolved P0-P2.

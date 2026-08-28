@@ -70,7 +70,9 @@ describe("startApplication", () => {
     });
     if (attack === undefined || upgrade === undefined) throw new Error("Expected HUD handlers");
 
+    const beforeManualHit = snapshots.length;
     attack();
+    expect(snapshots).toHaveLength(beforeManualHit + 1);
     attack();
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
       "Manual hit: 40 damage",

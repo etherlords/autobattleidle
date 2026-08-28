@@ -222,6 +222,29 @@ describe("persistence boundary", () => {
     ).toEqual(fallback());
   });
 
+  it("uses current recognition first and rejects a non-matching cadence interpretation", () => {
+    const current = { ...fallback(), enemy: spawnEnemy(35, 0) };
+    const currentRaw = JSON.parse(encodeSave(current)) as Record<string, unknown>;
+    expect(decodeSave(currentRaw, fallback(), 0)).toEqual(current);
+    expect(
+      decodeSave(
+        {
+          ...currentRaw,
+          enemy: { ...current.enemy, grade: "normal", maxHealth: 150, health: 150 },
+        },
+        fallback(),
+        0,
+      ),
+    ).toEqual(fallback());
+  });
+
+  it("accepts an ambiguity-policy save only when current and historical semantics agree", () => {
+    const sharedEncounter = { ...fallback(), enemy: spawnEnemy(1, 0) };
+    expect(decodeSave(JSON.parse(encodeSave(sharedEncounter)), fallback(), 0)).toEqual(
+      sharedEncounter,
+    );
+  });
+
   it("prefers direct legacy V2 over versioned V1 when the current slot is unusable", () => {
     const v1 = JSON.stringify(v1Fixture);
     const legacy = JSON.stringify(legacyV2Fixture);

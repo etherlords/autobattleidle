@@ -1,14 +1,35 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 
-import { createEnemyVisual, enemyVisualSpec, stableEnemySeed } from "./enemy-visual";
+import {
+  createEnemyVisual,
+  EnemyViewBuilder,
+  enemyBodyFactories,
+  enemyVisualSpec,
+  stableEnemySeed,
+  type EnemyVisualInput,
+} from "./enemy-visual";
+import { component } from "./enemy-visual/components";
+import {
+  decorateGrade,
+  decorateModifier,
+  decorateSeededDecoration,
+} from "./enemy-visual/decorators";
+
+const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
+  let count = 0;
+  visual.group.traverse((node) => {
+    if (node instanceof THREE.Mesh) count += 1;
+  });
+  return count;
+};
 
 describe("enemy visual factory", () => {
   it("selects stable varied ordinary bodies and decorations from snapshot identity", () => {
     const families = new Set<string>();
     const decorations = new Set<string>();
     for (let level = 1; level <= 18; level += 1) {
-      const input = { grade: "normal", level, modifier: null };
+      const input: EnemyVisualInput = { grade: "normal", level, modifier: null };
       const first = enemyVisualSpec(input);
       expect(enemyVisualSpec(input)).toEqual(first);
       expect(stableEnemySeed(input)).toBe(first.seed);
@@ -75,7 +96,7 @@ describe("enemy visual factory", () => {
   });
 
   it("preserves every reachable modifier cue, including presentation-only wealth", () => {
-    const input = { grade: "elite", level: 3 };
+    const input: Pick<EnemyVisualInput, "grade" | "level"> = { grade: "elite", level: 3 };
     expect(enemyVisualSpec({ ...input, modifier: "armor" }).modifierCue).toBe("shield-plates");
     expect(enemyVisualSpec({ ...input, modifier: "health" }).modifierCue).toBe("vitality-core");
     expect(enemyVisualSpec({ ...input, modifier: "automatic-slow" }).modifierCue).toBe("time-ring");
@@ -90,21 +111,11 @@ describe("enemy visual factory", () => {
       );
     }
     expect(decorations).toEqual(new Set(["fins", "horns", "orbitals", "satellites", "scar"]));
-    expect(
-      createEnemyVisual({ grade: "normal", level: 1, modifier: null }).group.children,
-    ).toHaveLength(3);
-    expect(
-      createEnemyVisual({ grade: "veteran", level: 2, modifier: null }).group.children,
-    ).toHaveLength(4);
-    expect(
-      createEnemyVisual({ grade: "elite", level: 3, modifier: null }).group.children,
-    ).toHaveLength(6);
-    expect(
-      createEnemyVisual({ grade: "boss", level: 35, modifier: null }).group.children,
-    ).toHaveLength(6);
-    expect(
-      createEnemyVisual({ grade: "boss", level: 70, modifier: null }).group.children,
-    ).toHaveLength(4);
+    expect(meshCount(createEnemyVisual({ grade: "normal", level: 1, modifier: null }))).toBe(3);
+    expect(meshCount(createEnemyVisual({ grade: "veteran", level: 2, modifier: null }))).toBe(4);
+    expect(meshCount(createEnemyVisual({ grade: "elite", level: 3, modifier: null }))).toBe(6);
+    expect(meshCount(createEnemyVisual({ grade: "boss", level: 35, modifier: null }))).toBe(6);
+    expect(meshCount(createEnemyVisual({ grade: "boss", level: 70, modifier: null }))).toBe(4);
   });
 
   it("owns a bounded visual tree and keeps the slow ring animated", () => {
@@ -139,5 +150,54 @@ describe("enemy visual factory", () => {
     expect(parent.children).toHaveLength(0);
     expect(geometryDisposals).toBe(1);
     expect(materialDisposals).toBe(1);
+  });
+
+  it("uses an exhaustive body registry and seals valid component builds", () => {
+    expect(Object.keys(enemyBodyFactories).sort()).toEqual([
+      "beetle",
+      "boss-colossus",
+      "boss-hydra",
+      "brute",
+      "wisp",
+    ]);
+    const builder = new EnemyViewBuilder();
+    expect(() => builder.build()).toThrow("requires exactly one body");
+    builder.add(enemyBodyFactories.beetle());
+    expect(() => builder.add(enemyBodyFactories.brute())).toThrow("already has a body");
+    const built = builder.build();
+    expect(built.roots.body.name).toBe("enemy-layer-body");
+    expect(() => builder.add(decorateGrade("crest"))).toThrow("sealed");
+  });
+
+  it("composes decorators independently and registers an animation only once", () => {
+    const builder = new EnemyViewBuilder();
+    builder.add(enemyBodyFactories.beetle());
+    builder.add(decorateGrade("spikes"));
+    builder.add(decorateModifier("time-ring"));
+    builder.add(decorateSeededDecoration("scar", 0));
+    builder.add(decorateSeededDecoration("horns", 1));
+    const built = builder.build();
+    expect(Object.values(built.roots).map((root) => root.name)).toEqual([
+      "enemy-layer-body",
+      "enemy-layer-grade",
+      "enemy-layer-modifier",
+      "enemy-layer-decoration",
+    ]);
+    expect(built.roots.body.children).toHaveLength(2);
+    expect(built.roots.grade.children).toHaveLength(2);
+    expect(built.roots.modifier.children).toHaveLength(1);
+    expect(built.roots.decoration.children).toHaveLength(2);
+    const ring = built.group.getObjectByName("time-ring");
+    if (ring === undefined) throw new Error("Expected decorator time ring");
+    const before = ring.rotation.z;
+    built.tick();
+    expect(ring.rotation.z).toBe(before + 0.035);
+
+    const animations = new EnemyViewBuilder();
+    animations.add(enemyBodyFactories.brute());
+    animations.add(component("decoration", [new THREE.Group()], { shared: () => undefined }));
+    expect(() =>
+      animations.add(component("decoration", [new THREE.Group()], { shared: () => undefined })),
+    ).toThrow("already registered");
   });
 });

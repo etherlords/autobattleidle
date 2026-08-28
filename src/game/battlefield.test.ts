@@ -7,13 +7,11 @@ import {
   enemyVisualSpec,
   nextBattlefieldFrame,
 } from "./battlefield";
+import { cameraScaleForAspect } from "./battlefield/config";
+import type { EnemyGrade } from "../domain/combat/contracts";
 import type { BattleSnapshot } from "../domain/snapshot";
 
-const snapshot = (
-  grade: BattleSnapshot["enemy"]["grade"],
-  level: number,
-  health = 10,
-): BattleSnapshot => ({
+const snapshot = (grade: EnemyGrade, level: number, health = 10): BattleSnapshot => ({
   automatic: { intervalMs: 1_000, remainingMs: 0, unlocked: false },
   coins: 0,
   encounter: "Test",
@@ -58,6 +56,7 @@ describe("nextBattlefieldFrame", () => {
 
   it("disposes retired visuals and clears the scene through one renderer seam", () => {
     let scene: THREE.Scene | undefined;
+    let camera: THREE.Camera | undefined;
     let rendererDisposals = 0;
     let canvasRemovals = 0;
     const host = { append: () => undefined } as unknown as HTMLElement;
@@ -71,8 +70,9 @@ describe("nextBattlefieldFrame", () => {
       dispose: () => {
         rendererDisposals += 1;
       },
-      render: (nextScene: THREE.Scene) => {
+      render: (nextScene: THREE.Scene, nextCamera: THREE.Camera) => {
         scene = nextScene;
+        camera = nextCamera;
       },
       setPixelRatio: () => undefined,
       setSize: () => undefined,
@@ -80,7 +80,8 @@ describe("nextBattlefieldFrame", () => {
     const battlefield = createBattlefieldWithRenderer(host, renderer);
     const initial = snapshot("normal", 1);
     battlefield.render(initial);
-    if (scene === undefined) throw new Error("Expected renderer scene");
+    if (scene === undefined || camera === undefined)
+      throw new Error("Expected renderer scene and camera");
     const enemy = scene.children.find(
       (child) => child instanceof THREE.Group && child.position.x === 1.7,
     );
@@ -89,7 +90,8 @@ describe("nextBattlefieldFrame", () => {
     );
     if (!(enemy instanceof THREE.Group) || !(spawnEffect instanceof THREE.Mesh))
       throw new Error("Expected enemy and spawn effect");
-    const enemyBody = enemy.children[0];
+    const bodyLayer = enemy.getObjectByName("enemy-layer-body");
+    const enemyBody = bodyLayer?.children.find((child) => child instanceof THREE.Mesh);
     if (!(enemyBody instanceof THREE.Mesh)) throw new Error("Expected enemy body");
     let enemyDisposals = 0;
     let effectDisposals = 0;
@@ -114,5 +116,29 @@ describe("nextBattlefieldFrame", () => {
     expect(scene.children).toHaveLength(0);
     expect(rendererDisposals).toBe(1);
     expect(canvasRemovals).toBe(1);
+  });
+
+  it("widens static camera framing only for narrow viewports", () => {
+    let camera: THREE.Camera | undefined;
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const renderer = {
+      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      dispose: () => undefined,
+      render: (_scene: THREE.Scene, nextCamera: THREE.Camera) => {
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: () => undefined,
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.resize(390, 844);
+    battlefield.render(snapshot("boss", 15));
+    if (!(camera instanceof THREE.PerspectiveCamera))
+      throw new Error("Expected perspective camera");
+    expect(camera.position.z).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.z).toBeGreaterThan(7);
+    battlefield.resize(1_600, 900);
+    battlefield.render(snapshot("boss", 15));
+    expect(camera.position.z).toBe(7);
   });
 });
