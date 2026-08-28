@@ -114,16 +114,13 @@ body {
 }
 
 .upgrades-modal {
-  align-items: flex-start;
-  background: #07121f;
+  background: rgb(3 9 15 / 72%);
   border: 0;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   inset: 0;
-  justify-content: flex-end;
-  overflow: auto;
   padding: 1rem;
+  place-items: center;
   position: fixed;
   z-index: 1;
 }
@@ -132,15 +129,39 @@ body {
   display: none;
 }
 
+.upgrades-dialog {
+  background: #07121f;
+  border: 1px solid #75c7ff;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1rem;
+  width: min(38rem, 100%);
+}
+
+.upgrades-coins {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0.75rem 0;
+}
+
 .upgrades {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.4rem;
+  grid-auto-rows: 4.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .upgrades button {
   font: inherit;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
   padding: 0.4rem 0.6rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .event-log {
@@ -178,6 +199,11 @@ body {
   }
 
   .upgrades button {
-    flex: 1 1 10rem;
+    min-height: 0;
+  }
+
+  .upgrades {
+    grid-auto-rows: 4.25rem;
+    grid-template-columns: 1fr;
   }
 }

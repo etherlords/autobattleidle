@@ -107,6 +107,12 @@ afterEach(() => {
 describe("createHud", () => {
   it("keeps a hidden upgrades modal out of the flex layout", () => {
     expect(stylesheet).toContain(".upgrades-modal[hidden] {\n  display: none;\n}");
+    expect(stylesheet).toContain(".upgrades-dialog {");
+    expect(stylesheet).toContain("max-height: calc(100vh - 2rem);");
+    expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(stylesheet).toContain("grid-auto-rows: 4.75rem;");
+    expect(stylesheet).toContain("height: 100%;");
+    expect(stylesheet).toContain("text-overflow: ellipsis;");
   });
 
   it("routes canvas input once and contains upgrades in an accessible modal", () => {
@@ -143,6 +149,24 @@ describe("createHud", () => {
     expect(battlefield.tabIndex).toBe(0);
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
+    expect(element(host, "upgrades-dialog").attributes.get("role")).toBe("dialog");
+    expect(element(host, "upgrades-coins").textContent).toBe("Coins: 2");
+    hud.render({ ...snapshot, coins: 3 });
+    expect(element(host, "upgrades-coins").textContent).toBe("Coins: 3");
+    hud.render({
+      ...snapshot,
+      upgrades: snapshot.upgrades.map((upgrade, index) =>
+        index === 0
+          ? {
+              ...upgrade,
+              cost: 123_456,
+              disabledReason: "Requires a longer prerequisite than the card can display",
+              label: "A deliberately long upgrade label for stable-grid coverage",
+              level: 99,
+            }
+          : upgrade,
+      ),
+    });
 
     const launcher = element(host, "upgrades-launcher");
     const modal = element(host, "upgrades-modal");
@@ -150,6 +174,9 @@ describe("createHud", () => {
     const upgradeButtons = element(host, "upgrades").children;
     const reset = element(host, "reset-progress");
     const restore = element(host, "restore-progress");
+    expect(upgradeButtons[0]?.title).toContain("A deliberately long upgrade label");
+    expect(upgradeButtons[0]?.title).toContain("Requires a longer prerequisite");
+    hud.render(snapshot);
     launcher.dispatch("click");
     expect(modal.hidden).toBe(false);
     expect(close.focusCalls).toBe(1);
@@ -169,7 +196,7 @@ describe("createHud", () => {
     restore.dispatch("click");
     expect(upgrades).toBe(1);
     expect(upgradeButtons[1]?.disabled).toBe(true);
-    expect(upgradeButtons[1]?.title).toBe("Need 45 coins");
+    expect(upgradeButtons[1]?.title).toContain("Need 45 coins");
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(restore.hidden).toBe(false);

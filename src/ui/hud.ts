@@ -36,11 +36,15 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   launcher.setAttribute("aria-haspopup", "dialog");
   const modal = document.createElement("section");
   modal.className = "upgrades-modal";
-  modal.setAttribute("aria-label", "Upgrades and saved progress");
-  modal.setAttribute("aria-modal", "true");
-  modal.setAttribute("role", "dialog");
   modal.hidden = true;
+  const dialog = document.createElement("section");
+  dialog.className = "upgrades-dialog";
+  dialog.setAttribute("aria-label", "Upgrades and saved progress");
+  dialog.setAttribute("aria-modal", "true");
+  dialog.setAttribute("role", "dialog");
   const close = button("upgrades-close", "Close upgrades");
+  const modalCoins = makeText("p", "");
+  modalCoins.className = "upgrades-coins";
   const upgrades = document.createElement("div");
   upgrades.className = "upgrades";
   const resetButton = button("reset-progress", "Reset progress");
@@ -49,7 +53,8 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const persistenceStatus = makeText("p", "");
   persistenceStatus.className = "persistence-status";
   persistenceStatus.setAttribute("aria-live", "polite");
-  modal.append(close, upgrades, resetButton, restoreButton, persistenceStatus);
+  dialog.append(close, modalCoins, upgrades, resetButton, restoreButton, persistenceStatus);
+  modal.append(dialog);
   const log = document.createElement("ol");
   log.className = "event-log";
   log.setAttribute("aria-label", "Combat events");
@@ -137,6 +142,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       ? `Automatic attack: ${(snapshot.automatic.remainingMs / 1000).toFixed(3)}s`
       : "Automatic attack: locked";
     coins.textContent = `Coins: ${snapshot.coins}`;
+    modalCoins.textContent = `Coins: ${snapshot.coins}`;
     for (const upgrade of snapshot.upgrades) {
       let entry = upgradeButtons.get(upgrade.id);
       if (entry === undefined) {
@@ -148,9 +154,10 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
         upgradeButtons.set(upgrade.id, entry);
         upgrades.append(upgradeButton);
       }
-      entry.button.textContent = `${upgrade.label} Lv.${upgrade.level} · ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : ` · ${upgrade.disabledReason}`}`;
+      const actionLabel = `${upgrade.label} Lv.${upgrade.level} · ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : ` · ${upgrade.disabledReason}`}`;
+      entry.button.textContent = actionLabel;
       entry.button.disabled = upgrade.disabledReason !== null;
-      entry.button.title = upgrade.disabledReason ?? "";
+      entry.button.title = actionLabel;
     }
     const eventIds = snapshot.events.map((event) => event.id).join(",");
     if (eventIds !== renderedEventIds) {

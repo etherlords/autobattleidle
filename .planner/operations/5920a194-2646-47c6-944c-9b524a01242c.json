@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "5920a194-2646-47c6-944c-9b524a01242c",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T17:49:43.646Z",
+  "itemId": "ABI-008-FIX",
+  "idempotencyKey": "abi008-fix-progress-to-review-v1",
+  "requestFingerprint": "67be3f5433512c5bb93cdb695189121157e7591d4d2c350b6e3ca98a5d1fb2ed",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/BRIEF.md.planner-tmp-5920a194-2646-47c6-944c-9b524a01242c-0",
+      "beforeHash": "0ae390b2a062c1cdc80eb55bb71b9f803c7a6b3a4cc5e236c8501e3f7e27cfff",
+      "afterHash": "63c5add06e89444c3f465ad6aac97718dc1c8b613816c56d83f600005ea6cdb8"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid/PROGRESS.md.planner-tmp-5920a194-2646-47c6-944c-9b524a01242c-1",
+      "beforeHash": "3619444e78d12a91664815e0925bb19b34e5183504f766d62f9ff4ef4d1722c6",
+      "afterHash": "fd51107bf24c32556930c57cd27dee2a780b85921a1cb696a0218ee710480831"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-5920a194-2646-47c6-944c-9b524a01242c-2",
+      "beforeHash": "ce15b60eb276b837b8cfdfc6e507582105fa28e29da874c3ba398cc9a661d9f4",
+      "afterHash": "f8236adbe354754a524fdd96fedb51c57c184540a6b3d520f2395201e3cbc17a"
+    }
+  ],
+  "committedAt": "2026-08-28T17:49:43.676Z"
+}

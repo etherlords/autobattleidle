@@ -23,6 +23,7 @@
     "ABI-011": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-011-add-bounded-combat-death-reward-boss-and-golden-bug-effects",
     "ABI-012": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-012-add-readable-compact-number-formatting-across-the-hud",
     "ABI-013": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p",
-    "ABI-014": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual"
+    "ABI-014": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual",
+    "ABI-008-FIX": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-FIX-center-upgrades-dialog-and-expose-balance-in-a-stable-grid"
   }
 }
