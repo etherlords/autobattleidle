@@ -4,8 +4,8 @@ id: ABI-008-FIX
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 10
-status: In QA
+revision: 12
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-008
@@ -27,7 +27,7 @@ Center upgrades dialog and expose balance in a stable grid
 
 - Type: bug
 - Priority: high
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

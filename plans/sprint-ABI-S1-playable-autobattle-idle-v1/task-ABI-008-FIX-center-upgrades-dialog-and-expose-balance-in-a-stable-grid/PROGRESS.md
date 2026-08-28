@@ -4,8 +4,8 @@ id: ABI-008-FIX
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 52
-status: In QA
+revision: 59
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-008
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 52
-- Last update: Start corrected candidate publication after green run-3 review and v2 browser QA.
+- Status: Done
+- Revision: 59
+- Last update: Released task claim: Release completed ABI-008-FIX manager lease after canonical closure
 
 ## Execution plan
 
@@ -37,7 +37,7 @@ requiredGates:
 - [x] modal-dismissal: Implementation owner: toggle the modal with U, close only on backdrop outside-card pointer activation, restore launcher focus, and prevent canvas leakage
 - [x] independent-review-3: Same independent Reviewer: re-audit two-line actions, accessible disabled reasons, U toggle, backdrop dismissal, cleanup and full follow-up diff
 - [x] independent-qa-2: Independent QA: freshly prove two-line visual actions, no visible Need, U toggle, backdrop/card dismissal, focus, input isolation and responsive geometry
-- [~] delivery-2: Manager: publish corrected candidate, require green CI/Pages, prove deployed v2 modal/input behavior, record verification, close and root-audit
+- [x] delivery-2: Manager: publish corrected candidate, require green CI/Pages, prove deployed v2 modal/input behavior, record verification, close and root-audit
 
 ## Events
 
@@ -917,3 +917,127 @@ requiredGates:
   - output/playwright/abi008-fix-v2-local-qa-receipt.md
   - command:pnpm check:20/20
   - command:git diff --check
+
+### evt-5cfa9b97-62a8-4346-b2e6-cf9e52bc3a74
+
+- Timestamp: 2026-08-28T18:29:37.576Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Deployed verification PASS for baf9ab17b36c0d3d870ef8429e1f73c05e5bec46: CI 33199133975 and Pages 33199133922 success; exact-SHA desktop/narrow browser behavior green. VERIFICATION.md used documented narrow artifact fallback because Planner v1.1.1 has no verification-section write tool.
+- Idempotency key: abi008-fix-deployed-verification-artifact-v1
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/VERIFICATION.md
+  - output/playwright/abi008-fix-v2-deployed-qa-receipt.md
+  - github-actions:33199133975:success
+  - github-pages:33199133922:success
+  - url:https://etherlords.github.io/autobattleidle/?sha=baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+
+### evt-e34941e4-8c9a-4ac7-a23d-1a6434b5d9a1
+
+- Timestamp: 2026-08-28T18:29:45.956Z
+- Actor: abi008-verifier-v2
+- Operation: gate.record
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: All seven acceptance criteria mapped to green self-check, independent review/QA, exact-SHA CI/Pages and deployed desktop/narrow functional proof.
+- Idempotency key: abi008-fix-verification-pass-v1
+- Request fingerprint: c37e5903333865b2b1df99f26dd5703b76c5edde18c59e87396df02aa32aa6c4
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/VERIFICATION.md
+  - output/playwright/abi008-fix-v2-local-qa-receipt.md
+  - output/playwright/abi008-fix-v2-deployed-qa-receipt.md
+  - git:baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+
+### evt-29e74474-0c72-4127-93a6-afbf5650ec36
+
+- Timestamp: 2026-08-28T18:29:53.626Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Independent QA and exact-SHA deployed verification passed; advance to Manager closure.
+- Idempotency key: abi008-fix-qa-to-manager-v1
+- Request fingerprint: 147f19ca74df38950177b9046fc7cdfd4fe7cfb5843d85df1da58fa2786e9a22
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - planner-gate:independent-qa:pass
+  - planner-gate:verification:pass
+  - git:baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+  - github-actions:33199133975:success
+  - github-pages:33199133922:success
+
+### evt-9216bd51-730b-4074-b4af-6187f7d29722
+
+- Timestamp: 2026-08-28T18:30:02.725Z
+- Actor: abi008-manager-closure-v2
+- Operation: gate.record
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Manager accepts complete evidence: user feedback implemented, one confirmed review P2 repaired, fresh review/QA passed, corrected candidate green in CI/Pages and exact-SHA public behavior verified.
+- Idempotency key: abi008-fix-manager-closure-pass-v1
+- Request fingerprint: 87fb44f1413093a02c48d3f945e80f5f5f1471cc52b57d6cdcd8ab2ed1aab061
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-008-FIX/artifact/REVIEW.md
+  - planner://work-item/ABI-008-FIX/artifact/QA.md
+  - planner://work-item/ABI-008-FIX/artifact/VERIFICATION.md
+  - git:baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+
+### evt-b3982511-2178-429d-8fb0-b4fef0db64b3
+
+- Timestamp: 2026-08-28T18:30:10.509Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: Corrected candidate published; CI/Pages and exact-SHA deployed proof passed; verification and Manager closure recorded.
+- Idempotency key: abi008-fix-delivery2-complete-v1
+- Request fingerprint: b6f4f875cb0377c26a768b116993cb06253a84c766256574b8293a4676084be9
+- Action: set_state
+- Step ID: delivery-2
+- State: complete
+- Evidence:
+  - git:baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+  - github-actions:33199133975:success
+  - github-pages:33199133922:success
+  - output/playwright/abi008-fix-v2-deployed-qa-receipt.md
+
+### evt-1d76afee-9c57-43fe-8561-d3886298cbcc
+
+- Timestamp: 2026-08-28T18:30:18.208Z
+- Actor: abi008-manager-closure-v2
+- Operation: task.advance
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Close ABI-008 follow-up after complete gates, green corrected candidate publication and exact-SHA deployed proof.
+- Idempotency key: abi008-fix-ready-manager-to-done-v1
+- Request fingerprint: 1d4354f42ed75d0b511e4e5c94e1f6c222bb1c5d60541c6a1ac0281a69d701fe
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - planner-gate:manager-closure:pass
+  - planner://work-item/ABI-008-FIX/artifact/VERIFICATION.md
+  - git:baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+  - url:https://etherlords.github.io/autobattleidle/?sha=baf9ab17b36c0d3d870ef8429e1f73c05e5bec46
+
+### evt-23d96497-810b-417f-a547-80ea7b4b6a4b
+
+- Timestamp: 2026-08-28T18:30:26.529Z
+- Actor: abi008-manager-followup
+- Operation: claim.release
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Released task claim: Release completed ABI-008-FIX manager lease after canonical closure
+- Idempotency key: abi008-fix-release-claim-v1
+- Request fingerprint: 267b72d0249ae6a38ebdf9c8898f8a511aee368fddbdc78b22aa8b77921bb53f
+- Agent ID: abi008-manager-followup
+- Session ID: abi008-ux-followup
+- Intent: Release completed ABI-008-FIX manager lease after canonical closure
+- Evidence:
+  - None
