@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "0002d4e9-87c8-426b-b9e3-ba012cafc74f",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:50:40.971Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-18-animation-events-complete-v1",
+  "requestFingerprint": "1ca2304cd27a2da75c2217141f691026e5f544f8080748feddac241a81a0de28",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-0002d4e9-87c8-426b-b9e3-ba012cafc74f-0",
+      "beforeHash": "b01b4b3a41ecee9f6763a4088492242c823be6f2f35c3d81fe4738fc04a81a98",
+      "afterHash": "9ec9ac254c1770d0f9f429796da7ffd1185b66ceb17b3e9e1aa9522507ae6557"
+    }
+  ],
+  "committedAt": "2026-08-28T22:50:40.999Z"
+}

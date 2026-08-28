@@ -125,6 +125,10 @@ export default tseslint.config(
     files: ["src/**/*.ts"],
     ignores: ["src/**/*.test.ts"],
     rules: {
+      "@typescript-eslint/explicit-module-boundary-types": "error",
+      "max-classes-per-file": ["error", 1],
+      "no-else-return": "error",
+      "no-lonely-if": "error",
       "no-restricted-syntax": [
         "error",
         {
@@ -134,6 +138,31 @@ export default tseslint.config(
         {
           selector: "TSAsExpression > TSAsExpression",
           message: "Do not bypass production contracts with a double type assertion.",
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/main.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "**/domain",
+                "**/domain/**",
+                "**/game",
+                "**/game/**",
+                "**/ui",
+                "**/ui/**",
+                "**/persistence",
+                "**/persistence/**",
+              ],
+              message: "The root composes only the application boundary.",
+            },
+          ],
         },
       ],
     },

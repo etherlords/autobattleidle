@@ -4,12 +4,13 @@ id: ABI-018
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-015
   - ABI-017
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -45,6 +46,7 @@ Show current upgrade stats and rebalance automatic attack speed
 
 - ABI-015
 - ABI-017
+- ABI-023
 
 ## Related knowledge
 

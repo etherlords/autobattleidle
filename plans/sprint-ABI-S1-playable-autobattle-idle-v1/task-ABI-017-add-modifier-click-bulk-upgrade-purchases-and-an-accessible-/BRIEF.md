@@ -4,11 +4,12 @@ id: ABI-017
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-015
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -43,6 +44,7 @@ Add modifier-click bulk upgrade purchases and an accessible modal hint
 ## Dependencies
 
 - ABI-015
+- ABI-023
 
 ## Related knowledge
 

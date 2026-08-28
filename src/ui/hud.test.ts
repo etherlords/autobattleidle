@@ -131,6 +131,9 @@ describe("createHud", () => {
     let resets = 0;
     let restores = 0;
     let upgrades = 0;
+    const intents: string[] = [];
+    if (hud.subscribe === undefined) throw new Error("Expected HUD intent subscription");
+    const unsubscribe = hud.subscribe((intent) => intents.push(intent.type));
     hud.onAttack(() => {
       attacks += 1;
     });
@@ -228,6 +231,8 @@ describe("createHud", () => {
     expect(restore.hidden).toBe(false);
     expect(element(host, "persistence-status").textContent).toBe("Restored");
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
+    expect(intents).toEqual(["attack", "attack", "attack", "upgrade", "reset", "restore"]);
+    unsubscribe();
 
     launcher.dispatch("click");
     hud.dispose();
@@ -242,6 +247,7 @@ describe("createHud", () => {
     reset.dispatch("click");
     restore.dispatch("click");
     expect(attacks).toBe(3);
+    expect(intents).toEqual(["attack", "attack", "attack", "upgrade", "reset", "restore"]);
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(launcher.focusCalls).toBe(launcherFocusAtDispose);

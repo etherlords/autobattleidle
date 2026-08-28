@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "9317f5d8-317f-4726-9e1c-6ec0bcd075f1",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:50:49.289Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-22-battlefield-composition-start-v1",
+  "requestFingerprint": "dbcaa21eb9e0f6ad2337d45a728a9378f343dc3697df2f0db8e92094d69b94a8",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-9317f5d8-317f-4726-9e1c-6ec0bcd075f1-0",
+      "beforeHash": "802f81cd323629990c8722581e43adeaca2cac34f4d598607cce83c9103b2f64",
+      "afterHash": "494cc4b4b459d8d024ad9602f6372d1d678e2a923b4568d1688097cf5c4c37ba"
+    }
+  ],
+  "committedAt": "2026-08-28T22:50:49.357Z"
+}

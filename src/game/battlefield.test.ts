@@ -85,18 +85,31 @@ describe("nextBattlefieldFrame", () => {
     const enemy = scene.children.find(
       (child) => child instanceof THREE.Group && child.position.x === 1.7,
     );
+    const player = scene.children.find(
+      (child) => child instanceof THREE.Group && child.position.x === -1.7,
+    );
     const spawnEffect = scene.children.find(
       (child) => child instanceof THREE.Mesh && child.position.y === 0.04,
     );
-    if (!(enemy instanceof THREE.Group) || !(spawnEffect instanceof THREE.Mesh))
-      throw new Error("Expected enemy and spawn effect");
+    if (
+      !(enemy instanceof THREE.Group) ||
+      !(player instanceof THREE.Group) ||
+      !(spawnEffect instanceof THREE.Mesh)
+    )
+      throw new Error("Expected unit roots and spawn effect");
     const bodyLayer = enemy.getObjectByName("enemy-layer-body");
     const enemyBody = bodyLayer?.children.find((child) => child instanceof THREE.Mesh);
     if (!(enemyBody instanceof THREE.Mesh)) throw new Error("Expected enemy body");
+    const playerCore = player.getObjectByName("unit-layer-body")?.children[0];
+    if (!(playerCore instanceof THREE.Mesh)) throw new Error("Expected player core");
     let enemyDisposals = 0;
+    let playerDisposals = 0;
     let effectDisposals = 0;
     enemyBody.geometry.addEventListener("dispose", () => {
       enemyDisposals += 1;
+    });
+    playerCore.geometry.addEventListener("dispose", () => {
+      playerDisposals += 1;
     });
     spawnEffect.geometry.addEventListener("dispose", () => {
       effectDisposals += 1;
@@ -114,8 +127,35 @@ describe("nextBattlefieldFrame", () => {
     battlefield.dispose();
     battlefield.dispose();
     expect(scene.children).toHaveLength(0);
+    expect(playerDisposals).toBe(1);
     expect(rendererDisposals).toBe(1);
     expect(canvasRemovals).toBe(1);
+  });
+
+  it("keeps the current enemy unit for health syncs and replaces it for identity changes", () => {
+    let scene: THREE.Scene | undefined;
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const renderer = {
+      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      dispose: () => undefined,
+      render: (nextScene: THREE.Scene) => {
+        scene = nextScene;
+      },
+      setPixelRatio: () => undefined,
+      setSize: () => undefined,
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.render(snapshot("normal", 1));
+    const original = scene?.children.find(
+      (child) => child instanceof THREE.Group && child.position.x === 1.7,
+    );
+    if (!(original instanceof THREE.Group)) throw new Error("Expected initial enemy unit");
+
+    battlefield.render(snapshot("normal", 1, 8));
+    expect(original.parent).toBe(scene);
+    battlefield.render(snapshot("elite", 2));
+    expect(original.parent).toBeNull();
+    battlefield.dispose();
   });
 
   it("widens static camera framing only for narrow viewports", () => {

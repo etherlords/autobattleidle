@@ -4,11 +4,12 @@ id: ABI-022
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-015
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -44,6 +45,7 @@ Expand enemy families and gameplay modifiers with authored component visuals
 ## Dependencies
 
 - ABI-015
+- ABI-023
 
 ## Related knowledge
 

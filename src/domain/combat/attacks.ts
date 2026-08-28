@@ -1,5 +1,12 @@
 import { COMBAT_FORMULAS, MAX_ENCOUNTER } from "./balance";
 import type { AttackCommand, AttackResult, CombatState } from "./contracts";
+import {
+  armorPenetrationLevelFor,
+  criticalLevelFor,
+  damageLevelFor,
+  doubleRewardLevelFor,
+  normalizeLevel,
+} from "./player-stats";
 import { spawnEnemy } from "./progression";
 import {
   armorPenetrationForLevel,
@@ -10,14 +17,6 @@ import {
   effectiveArmor,
 } from "./upgrades";
 
-const damageLevel = (state: CombatState): number =>
-  state.player.damageLevel ?? Math.max(0, state.player.damage - 1);
-const criticalLevel = (state: CombatState): number =>
-  state.player.criticalLevel ?? Math.round(state.player.criticalChance * 10);
-const doubleRewardLevel = (state: CombatState): number =>
-  state.player.doubleRewardLevel ?? Math.round(state.player.doubleRewardChance * 10);
-const penetrationLevel = (state: CombatState): number => state.player.armorPenetrationLevel ?? 0;
-
 export const attack = (state: CombatState, command: AttackCommand): AttackResult => {
   if (
     command.enemyId !== state.enemy.id ||
@@ -25,10 +24,12 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       (!state.automaticUnlocked || command.atMs < state.nextAutomaticAttackAtMs))
   )
     return { event: { type: "ignored" }, state };
-  const penetration = armorPenetrationForLevel(penetrationLevel(state));
-  const armor = effectiveArmor(state.enemy.armor, penetrationLevel(state));
-  const critical = command.rolls.critical < criticalChanceForLevel(criticalLevel(state));
-  const baseDamage = damageForLevel(damageLevel(state));
+  const penetrationLevel = normalizeLevel(armorPenetrationLevelFor(state.player));
+  const penetration = armorPenetrationForLevel(penetrationLevel);
+  const armor = effectiveArmor(state.enemy.armor, penetrationLevel);
+  const critical =
+    command.rolls.critical < criticalChanceForLevel(normalizeLevel(criticalLevelFor(state.player)));
+  const baseDamage = damageForLevel(normalizeLevel(damageLevelFor(state.player)));
   const damage =
     Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor) *
     (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);
@@ -55,7 +56,8 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
     };
   const requestedReward =
     state.enemy.reward *
-    (command.rolls.doubleReward < doubleRewardChanceForLevel(doubleRewardLevel(state))
+    (command.rolls.doubleReward <
+    doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
       ? COMBAT_FORMULAS.doubleRewardMultiplier
       : 1);
   const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);

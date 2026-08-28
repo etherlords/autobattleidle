@@ -4,11 +4,12 @@ id: ABI-016
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-015
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -41,6 +42,7 @@ Add constrained arena camera orbit for boss encounters
 ## Dependencies
 
 - ABI-015
+- ABI-023
 
 ## Related knowledge
 

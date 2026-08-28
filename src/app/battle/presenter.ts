@@ -6,7 +6,7 @@ import {
   type AttackEvent,
 } from "../../domain/combat";
 import { createBattleSnapshot, type BattleSnapshot } from "../../domain/snapshot";
-import type { BattleControllerEvent, BattleUpdate } from "./contracts";
+import type { BattleUpdate } from "./contracts";
 
 const attackMessage = (
   source: "manual" | "automatic",
@@ -19,26 +19,15 @@ const attackMessage = (
     : `${label} hit: ${outcome.damage} damage`;
 };
 
-export const battleEventMessage = (event: BattleControllerEvent): string | undefined => {
-  switch (event.type) {
-    case "attack":
-      return attackMessage(event.source, event.outcome);
-    case "frame":
-      return event.automaticOutcome === null
-        ? undefined
-        : attackMessage("automatic", event.automaticOutcome);
-    case "purchase":
-      return (
-        event.reason ??
-        `Purchased ${UPGRADES.find((upgrade) => upgrade.id === event.id)?.label ?? event.id}`
-      );
-    case "reset":
-    case "restore":
-      return undefined;
-  }
-  const exhaustiveEvent: never = event;
-  return exhaustiveEvent;
-};
+export const battleEventMessages = {
+  attack: attackMessage,
+  frame: (outcome: AttackEvent | null): string | undefined =>
+    outcome === null ? undefined : attackMessage("automatic", outcome),
+  purchase: (id: string, reason: string | null): string =>
+    reason ?? `Purchased ${UPGRADES.find((upgrade) => upgrade.id === id)?.label ?? id}`,
+  reset: (): undefined => undefined,
+  restore: (): undefined => undefined,
+} as const;
 
 export const presentBattleUpdate = (update: BattleUpdate): BattleSnapshot =>
   createBattleSnapshot(

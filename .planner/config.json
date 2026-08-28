@@ -32,6 +32,7 @@
     "ABI-019": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-019-add-an-accessible-session-only-automatic-attack-pause-contro",
     "ABI-020": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-",
     "ABI-021": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias",
-    "ABI-022": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c"
+    "ABI-022": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c",
+    "ABI-023": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp"
   }
 }

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c4ce006a-afe3-4133-be55-4401d43f06d1",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:28:23.686Z",
+  "itemId": "ABI-014",
+  "idempotencyKey": "abi023-dependency-safety-abi-014-v1",
+  "requestFingerprint": "02e9d2acc5a019cf48afc984a7a0a1dc472e816daf573587480efae626fa41f3",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md.planner-tmp-c4ce006a-afe3-4133-be55-4401d43f06d1-0",
+      "beforeHash": "25d0cfbaf87f0672f46e7dc3f1982a514aaffcac96eff1ab3826899a32500e05",
+      "afterHash": "5750808f1c14d13e0cd4d2ec2138730f16f895577a6b76ec0e2cae6337a3c5fc"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-c4ce006a-afe3-4133-be55-4401d43f06d1-1",
+      "beforeHash": "0cabce4d6ff5f438c26db36b760b50fbd8e0cdc6fb2edb757d0d0e41a4525e7a",
+      "afterHash": "4f4ba4163be054cdbfc11ec94420c6eded6d2a76a84f83f0f2aac9c2fadcafd0"
+    }
+  ],
+  "committedAt": "2026-08-28T22:28:23.724Z"
+}

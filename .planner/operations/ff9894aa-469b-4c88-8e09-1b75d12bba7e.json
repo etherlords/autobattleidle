@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "operationId": "ff9894aa-469b-4c88-8e09-1b75d12bba7e",
+  "operation": "task.create",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:28:08.130Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-create-corrective-unit-mvc-v1",
+  "requestFingerprint": "fd3be771126aa144010992b3fa5f6c7529efa92a683d96826f2fc5d2f9c9a4c3",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/BRIEF.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-0",
+      "afterHash": "08e621a0355e1c3f44cc52267b7640fea123d54a1cb4c4c3c1b15051c0ae5375"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/ANALYSIS.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-1",
+      "afterHash": "156ce8ecdfc909297cd2b5ac215c7940820beeba58433236eed4eeb84de90ec5"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/IMPLEMENTATION-GUIDE.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-2",
+      "afterHash": "6b441313699c882d2bc1e12b4ac45158a789a23a2404a6c5a0a595a637d2f8d0"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-3",
+      "afterHash": "ad9c8f95014c1ffc2b744bc505eb4dfb30a2408e8f4ee38c041148aabcf74660"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/REVIEW.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-4",
+      "afterHash": "81941e52fb3c6138a0d3ef8e0c354a425f3de8f19c207c1009363cc5e30791f3"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/QA.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-5",
+      "afterHash": "0c1495c0298ec80592f9d4e80d6f8f089c8f85576da9d44666d7acedea3bc89c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/VERIFICATION.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-6",
+      "afterHash": "68fc645957b15964396f1848870e8fc4cf88da28a57faa49edb72240a9433119"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-7",
+      "beforeHash": "8501bd661a9cc93124ba2f1332c0b783ccada5022d890c60d39d9f53e0005d33",
+      "afterHash": "68a53b456e70d737c3a3486d71f353e511ab51d38ea9c37645ef3931af3e13f5"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-ff9894aa-469b-4c88-8e09-1b75d12bba7e-8",
+      "beforeHash": "ec2dd05d5461ca149571bebd77bd90b0058fbceb475b6c358e0706419d96e6e5",
+      "afterHash": "ee29c182be014c552bd98d7948e0ad6286e47adac40bd2a1adb617213719e929"
+    }
+  ],
+  "committedAt": "2026-08-28T22:28:08.180Z"
+}

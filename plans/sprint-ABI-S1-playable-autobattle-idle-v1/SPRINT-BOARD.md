@@ -4,7 +4,7 @@ id: ABI-S1
 artifact: sprint-board
 project: ABI
 profile: high-assurance
-revision: 144
+revision: 161
 status: Active
 sourceRevisions:
   ABI-001: 12
@@ -17,40 +17,42 @@ sourceRevisions:
   ABI-000: 9
   ABI-008: 13
   ABI-009: 6
-  ABI-010: 3
+  ABI-010: 4
   ABI-011: 1
-  ABI-012: 3
+  ABI-012: 4
   ABI-013: 15
-  ABI-014: 2
+  ABI-014: 3
   ABI-008-FIX: 12
   ABI-015: 14
-  ABI-016: 2
-  ABI-017: 1
-  ABI-018: 2
+  ABI-016: 3
+  ABI-017: 2
+  ABI-018: 3
   ABI-019: 1
   ABI-020: 3
-  ABI-021: 1
-  ABI-022: 1
+  ABI-021: 2
+  ABI-022: 2
+  ABI-023: 9
 ---
 
 # ABI-S1 board
 
 | Task | Status | Dependencies | Priority |
 | --- | --- | --- | --- |
-| ABI-022 | Blocked | ABI-015 | normal |
-| ABI-021 | Blocked | ABI-015 | high |
+| ABI-023 | Ready for Manager | ABI-015 | critical |
+| ABI-022 | Blocked | ABI-015, ABI-023 | normal |
+| ABI-021 | Blocked | ABI-015, ABI-023 | high |
 | ABI-020 | Blocked | ABI-010, ABI-016, ABI-018, ABI-022 | high |
 | ABI-019 | Blocked | ABI-018 | normal |
-| ABI-018 | Blocked | ABI-015, ABI-017 | high |
-| ABI-017 | Blocked | ABI-015 | normal |
-| ABI-016 | Blocked | ABI-015 | high |
+| ABI-018 | Blocked | ABI-015, ABI-017, ABI-023 | high |
+| ABI-017 | Blocked | ABI-015, ABI-023 | normal |
+| ABI-016 | Blocked | ABI-015, ABI-023 | high |
 | ABI-015 | Done | ABI-008, ABI-009, ABI-013 | critical |
 | ABI-008-FIX | Done | ABI-008 | high |
-| ABI-014 | Blocked | ABI-013, ABI-015 | high |
+| ABI-014 | Blocked | ABI-013, ABI-015, ABI-023 | high |
 | ABI-013 | Done | ABI-005, ABI-006 | critical |
-| ABI-012 | Blocked | ABI-006, ABI-008, ABI-015 | high |
+| ABI-012 | Blocked | ABI-006, ABI-008, ABI-015, ABI-023 | high |
 | ABI-011 | Blocked | ABI-009, ABI-010 | normal |
-| ABI-010 | Blocked | ABI-006, ABI-008, ABI-009, ABI-015, ABI-016 | high |
+| ABI-010 | Blocked | ABI-006, ABI-008, ABI-009, ABI-015, ABI-016, ABI-023 | high |
 | ABI-009 | Done | ABI-003 | normal |
 | ABI-008 | Done | ABI-004, ABI-005 | high |
 | ABI-000 | Done | - | high |

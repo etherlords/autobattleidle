@@ -4,12 +4,13 @@ id: ABI-014
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Blocked
 sprintId: ABI-S1
 dependencies:
   - ABI-013
   - ABI-015
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -43,6 +44,7 @@ Reduce only the fresh-game starter enemy to about ten manual attacks
 
 - ABI-013
 - ABI-015
+- ABI-023
 
 ## Related knowledge
 

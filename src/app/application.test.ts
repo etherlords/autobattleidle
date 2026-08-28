@@ -17,6 +17,7 @@ describe("startApplication", () => {
     const savedCoins: number[] = [];
     let attack: (() => void) | undefined;
     let upgrade: ((id: UpgradeId) => void) | undefined;
+    let intentUnsubscribes = 0;
     let nextFrame = 1;
     const initialState = createCombatState({
       criticalChance: 0,
@@ -38,13 +39,20 @@ describe("startApplication", () => {
       game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
       hud: {
         dispose: () => undefined,
-        onAttack: (listener) => {
-          attack = listener;
+        subscribe: (listener) => {
+          attack = () => listener({ type: "attack" });
+          upgrade = (id) => listener({ id, type: "upgrade" });
+          return () => {
+            intentUnsubscribes += 1;
+          };
+        },
+        onAttack: () => {
+          throw new Error("Application must use HUD intents");
         },
         onReset: () => undefined,
         onRestore: () => undefined,
-        onUpgrade: (listener) => {
-          upgrade = listener;
+        onUpgrade: () => {
+          throw new Error("Application must use HUD intents");
         },
         reportPersistence: () => undefined,
         render: (snapshot) => snapshots.push(snapshot),
@@ -99,6 +107,7 @@ describe("startApplication", () => {
     ]);
     expect(savedCoins).toEqual([2, 3, 2]);
     app.dispose();
+    expect(intentUnsubscribes).toBe(1);
   });
 
   it("keeps automatic hit and kill messages plus persistence on the animation path", () => {
@@ -123,6 +132,7 @@ describe("startApplication", () => {
       game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
       hud: {
         dispose: () => undefined,
+        subscribe: () => () => undefined,
         onAttack: () => undefined,
         onReset: () => undefined,
         onRestore: () => undefined,
@@ -194,6 +204,12 @@ describe("startApplication", () => {
       game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
       hud: {
         dispose: () => undefined,
+        subscribe: (listener) => {
+          attack = () => listener({ type: "attack" });
+          reset = () => listener({ type: "reset" });
+          restore = () => listener({ type: "restore" });
+          return () => undefined;
+        },
         onAttack: (listener) => {
           attack = listener;
         },
@@ -279,6 +295,7 @@ describe("startApplication", () => {
         suppliedBattlefield = battlefield;
         return {
           dispose: () => undefined,
+          subscribe: () => () => undefined,
           onAttack: () => undefined,
           onReset: () => undefined,
           onRestore: () => undefined,
@@ -374,6 +391,12 @@ describe("startApplication", () => {
       hud: {
         dispose: () => {
           calls.hudDispose += 1;
+        },
+        subscribe: (listener) => {
+          attack = () => listener({ type: "attack" });
+          upgrade = (id) => listener({ id, type: "upgrade" });
+          reset = () => listener({ type: "reset" });
+          return () => undefined;
         },
         onAttack: (listener) => {
           attack = listener;

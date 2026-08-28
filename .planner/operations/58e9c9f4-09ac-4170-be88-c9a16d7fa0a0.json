@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "58e9c9f4-09ac-4170-be88-c9a16d7fa0a0",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:51:02.253Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-27-extensibility-tests-start-v1",
+  "requestFingerprint": "4392cb9e496e6d8eb2110560cd652d6511ab154288303cea277909b5726c0e9c",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-58e9c9f4-09ac-4170-be88-c9a16d7fa0a0-0",
+      "beforeHash": "5a498e0e49e353f2d9acafe2ddc3479806f1f342df6dfdd406fe6adc4ec0548e",
+      "afterHash": "545f25ba5a9b31b898cae20d625992d2637c5bfedad7249f08277d37d88e4bad"
+    }
+  ],
+  "committedAt": "2026-08-28T22:51:02.288Z"
+}

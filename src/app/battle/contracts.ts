@@ -7,12 +7,22 @@ import type {
 } from "../../domain/combat";
 import type { BattleEvent } from "../../domain/snapshot";
 
+export type BattleCommandContext = {
+  attack(source: AttackSource): boolean;
+  frame(nowMs: number): boolean;
+  purchase(id: UpgradeId): boolean;
+  reset(): boolean;
+  restore(state: CombatState): boolean;
+};
+
+type Command = { readonly execute: (context: BattleCommandContext) => boolean };
+export type AttackCommand = Command & { readonly type: "attack"; readonly source: AttackSource };
+export type FrameCommand = Command & { readonly type: "frame"; readonly nowMs: number };
+export type PurchaseCommand = Command & { readonly type: "purchase"; readonly id: UpgradeId };
+export type ResetCommand = Command & { readonly type: "reset" };
+export type RestoreCommand = Command & { readonly type: "restore"; readonly state: CombatState };
 export type BattleCommand =
-  | { readonly type: "attack"; readonly source: AttackSource }
-  | { readonly type: "frame"; readonly nowMs: number }
-  | { readonly type: "purchase"; readonly id: UpgradeId }
-  | { readonly type: "reset" }
-  | { readonly type: "restore"; readonly state: CombatState };
+  AttackCommand | FrameCommand | PurchaseCommand | ResetCommand | RestoreCommand;
 
 export type BattleUpdate = {
   readonly events: readonly BattleEvent[];

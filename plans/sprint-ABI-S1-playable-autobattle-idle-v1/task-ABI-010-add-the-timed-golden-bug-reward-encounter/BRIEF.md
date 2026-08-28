@@ -4,7 +4,7 @@ id: ABI-010
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
+revision: 4
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -13,6 +13,7 @@ dependencies:
   - ABI-009
   - ABI-015
   - ABI-016
+  - ABI-023
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -50,6 +51,7 @@ Add the timed Golden Bug reward encounter
 - ABI-009
 - ABI-015
 - ABI-016
+- ABI-023
 
 ## Related knowledge
 

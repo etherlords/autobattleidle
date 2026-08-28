@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "22f84bb0-87c6-421a-b35e-1efc1d4d3393",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:51:22.834Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-advance-review-v1",
+  "requestFingerprint": "69994ed2f8551cf61f0d0d711c6c85d41601ce83fabb31149faca4cdb4e54f0e",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/BRIEF.md.planner-tmp-22f84bb0-87c6-421a-b35e-1efc1d4d3393-0",
+      "beforeHash": "b585495eec8d4a40d7fa1c166a08b691b73f6dcb3fc4eb8ff22d3e234fab543f",
+      "afterHash": "afaffd649bea7d822bf32fb1c9f24177a21e6ad14d3ee17c27ed30a9d80f11f8"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-22f84bb0-87c6-421a-b35e-1efc1d4d3393-1",
+      "beforeHash": "7b0de7f355f47730f56a69812a52e80f4777dade4827e602a6a24bcb30d137f9",
+      "afterHash": "ac74921b3015d16fefdd3c502c5b5fabd411c9c1eb7b9f9e4c29007b1c51a13a"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-22f84bb0-87c6-421a-b35e-1efc1d4d3393-2",
+      "beforeHash": "e9a1190a802eb2d8c701730e8a582d1d90f2a70b03a3217662d44a68fe281c2c",
+      "afterHash": "d76948604b24d62b7c1df17281b94dab96713b17740e5551c35fe43dba0f52a0"
+    }
+  ],
+  "committedAt": "2026-08-28T22:51:22.872Z"
+}

@@ -3,9 +3,11 @@ import type { BattleSnapshot } from "../domain/snapshot";
 import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
 import { UpgradeDialog } from "./hud/upgrade-dialog";
+import type { HudIntent, HudIntentListener, HudUnsubscribe } from "./hud/intents";
 
 export type Hud = {
   render(snapshot: BattleSnapshot): void;
+  subscribe(listener: HudIntentListener): HudUnsubscribe;
   onAttack(listener: () => void): void;
   onUpgrade(listener: (id: UpgradeId) => void): void;
   onReset(listener: () => void): void;
@@ -27,8 +29,12 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
 
   battlefield.tabIndex = 0;
   battlefield.setAttribute("aria-label", "Battlefield. Press Enter or Space to attack.");
-  let attackListener: (() => void) | undefined;
-  const attack = (): void => attackListener?.();
+  let disposed = false;
+  const listeners = new Set<HudIntentListener>();
+  const emit = (intent: HudIntent): void => {
+    for (const listener of [...listeners]) listener(intent);
+  };
+  const attack = (): void => emit({ type: "attack" });
   const pointerAttack = (): void => attack();
   const keyboardAttack = (event: KeyboardEvent): void => {
     if (event.repeat || (event.key !== "Enter" && event.key !== " ")) return;
@@ -37,6 +43,15 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   };
   battlefield.addEventListener("pointerup", pointerAttack);
   battlefield.addEventListener("keydown", keyboardAttack);
+  dialog.onUpgrade((id) => emit({ id, type: "upgrade" }));
+  dialog.onReset(() => emit({ type: "reset" }));
+  dialog.onRestore(() => emit({ type: "restore" }));
+
+  const subscribe = (listener: HudIntentListener): HudUnsubscribe => {
+    if (disposed) return () => undefined;
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  };
 
   return {
     render: (snapshot) => {
@@ -44,15 +59,29 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       dialog.render(snapshot);
       log.render(snapshot.events);
     },
-    onAttack: (listener) => {
-      attackListener = listener;
-    },
-    onUpgrade: (listener) => dialog.onUpgrade(listener),
-    onReset: (listener) => dialog.onReset(listener),
-    onRestore: (listener) => dialog.onRestore(listener),
+    subscribe,
+    onAttack: (listener) =>
+      subscribe((intent) => {
+        if (intent.type === "attack") listener();
+      }),
+    onUpgrade: (listener) =>
+      subscribe((intent) => {
+        if (intent.type === "upgrade") listener(intent.id);
+      }),
+    onReset: (listener) =>
+      subscribe((intent) => {
+        if (intent.type === "reset") listener();
+      }),
+    onRestore: (listener) =>
+      subscribe((intent) => {
+        if (intent.type === "restore") listener();
+      }),
     setRestoreAvailable: (available) => dialog.setRestoreAvailable(available),
     reportPersistence: (message) => dialog.reportPersistence(message),
     dispose: () => {
+      if (disposed) return;
+      disposed = true;
+      listeners.clear();
       battlefield.removeEventListener("pointerup", pointerAttack);
       battlefield.removeEventListener("keydown", keyboardAttack);
       dialog.dispose();

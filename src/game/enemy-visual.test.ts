@@ -15,6 +15,7 @@ import {
   decorateModifier,
   decorateSeededDecoration,
 } from "./enemy-visual/decorators";
+import { EnemyUnitBuilder, EnemyUnitFactory } from "./units/enemy";
 
 const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
   let count = 0;
@@ -195,9 +196,46 @@ describe("enemy visual factory", () => {
 
     const animations = new EnemyViewBuilder();
     animations.add(enemyBodyFactories.brute());
-    animations.add(component("decoration", [new THREE.Group()], { shared: () => undefined }));
+    animations.add(
+      component("decoration-shared-first", "decoration", [new THREE.Group()], {
+        shared: () => undefined,
+      }),
+    );
     expect(() =>
-      animations.add(component("decoration", [new THREE.Group()], { shared: () => undefined })),
+      animations.add(
+        component("decoration-shared-second", "decoration", [new THREE.Group()], {
+          shared: () => undefined,
+        }),
+      ),
     ).toThrow("already registered");
+  });
+
+  it("adapts the stable view through the core-owned enemy unit lifecycle", () => {
+    const unit = new EnemyUnitFactory().create({ grade: "normal", level: 1, modifier: null });
+    const parent = new THREE.Group();
+    const events: string[] = [];
+    unit.subscribeEnemy((event) => events.push(event.type));
+    unit.dispatchEnemy({ type: "spawn", parent });
+    expect(parent.children).toContain(unit.view.group);
+    unit.dispatchEnemy({ type: "sync", snapshot: { grade: "boss", level: 35, modifier: null } });
+    expect(unit.spec.body).toBe("boss-hydra");
+    unit.dispatchEnemy({ type: "hit" });
+    unit.dispatchEnemy({ type: "critical" });
+    unit.dispatchEnemy({ type: "death" });
+    expect(unit.view.group.getObjectByName("enemy-body-boss-hydra")?.userData.lastCommand).toBe(
+      "death",
+    );
+    unit.dispatchEnemy({ type: "dispose" });
+    unit.dispatchEnemy({ type: "dispose" });
+    expect(unit.view.group.parent).toBeNull();
+    expect(events).toEqual(["spawned", "synchronized", "hit", "critical", "death", "disposed"]);
+  });
+
+  it("requires and seals a complete enemy model-view-controller composition", () => {
+    const builder = new EnemyUnitBuilder();
+    expect(() => builder.build()).toThrow("requires a model");
+    const unit = new EnemyUnitFactory().create({ grade: "normal", level: 1, modifier: null });
+    expect(unit.model.snapshot.level).toBe(1);
+    expect(unit.controller.composes(unit.model, unit.view)).toBe(true);
   });
 });

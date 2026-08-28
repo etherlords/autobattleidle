@@ -25,29 +25,38 @@ Keep Autobattle Idle readable and extensible without replacing small determinist
 
 ## Ownership and module shape
 
-- Organize by responsibility and mutable-truth owner, not by file length alone. A layer directory must not become a flat dumping ground.
-- Keep stable compatibility facades at `src/domain/combat.ts`, `src/game/enemy-visual.ts`, `src/game/battlefield.ts`, `src/ui/hud.ts`, and `src/persistence/persistence-boundary.ts`. Implementation owners live below them:
-  - `src/domain/combat/`: named contracts, balance, progression, upgrades, and attacks as pure deterministic policies.
-  - `src/app/battle/`: exhaustive commands/events, the lifecycle-owning controller, and pure presentation mapping.
-  - `src/game/enemy-visual/`: finite specs, feature-local visual config, body factories, invariant builder, component decorators, and lifecycle-owned roots.
-  - `src/game/battlefield/`: scene/camera config, bounded effects, and renderer lifecycle.
-  - `src/ui/hud/`: battle status, event log, upgrade dialog, and DOM/listener ownership.
-  - `src/persistence/save/`: DTO contracts, codecs, migrations, version recognizers/validation, and browser storage lifecycle.
-- Runtime actions use the typed flow `BattleCommand -> BattleController -> pure domain transition -> BattleControllerEvent -> app-owned render/persistence side effects`. Ignored commands emit no event or persistence write; the app may still render an attempted manual action or idle frame once when presentation coherence requires it.
-- Add a new upgrade beside the combat upgrade definitions and exhaustive policy registry, a new enemy body in the finite body-factory registry, and an optional visual cue as a component decorator attached under its named layer root. Extending a discriminated union must make missing registry/controller/presenter handling a compile-time error.
-- `src/domain` keeps immutable serializable contracts and pure deterministic policies; it imports no DOM or Three.js.
-- `src/game` owns Three.js view objects, animation, scene attachment, and idempotent disposal. The battlefield orchestrates identity replacement; each enemy view owns its subtree.
-- `src/ui` owns DOM components and listener lifecycle. `src/persistence` owns validated versioned data and storage. `src/app` is the only composition root and does not absorb their implementation details.
-- Shared `types.ts`, `helpers.ts`, or `shared` files are not default dumping grounds. Put a named contract or helper beside its owner; extract only when more than one local module consumes it.
-- Path aliases remain deferred while these responsibility folders keep imports shallow and make upward dependencies visible.
+- Organize by feature and mutable-truth owner, not by file length alone. A layer directory must not become a flat dumping ground.
+- Keep stable compatibility facades at `src/domain/combat.ts`, `src/game/enemy-visual.ts`, `src/game/battlefield.ts`, `src/ui/hud.ts`, and `src/persistence/persistence-boundary.ts`.
+- Runtime entity composition lives under `src/game/units/`:
+  - `core/` owns the generic `UnitModel`, `UnitView`, `UnitController`, `Unit`, typed local commands/events, subscription lifecycle, Three.js root attachment, tick, animation dispatch, and idempotent disposal.
+  - `player/` and `enemy/` own concrete models, views, products, factories, and family-local configuration. Player and enemy are the real products proving the shared lifecycle.
+  - `UNIT_FACTORIES` is the compiler-complete player/enemy product registry. A new runtime unit kind must add a concrete model/view/product/factory and satisfy the registry.
+- `src/domain/combat/` keeps serializable contracts and pure deterministic transitions. Enemy tier definitions, modifier strategy/decorator classes, upgrade strategies, and stat accessors are compiler-complete owners; no Three.js object or runtime class enters a save payload.
+- Model modifiers transform deterministic enemy construction drafts. View decorators attach independent grade, modifier, and seeded-decoration components to named roots. Model modifiers never mutate Three.js; visual decorators never change combat truth.
+- Enemy construction has two enforced boundaries. `EnemyUnitBuilder` requires one coherent model/view/controller trio, verifies that the controller owns those exact instances, and seals one-shot construction. `EnemyViewBuilder` requires exactly one body, unique component keys, named layer roots, deterministic decorator order, unique animation names, component-local dispose hooks, and a sealed build. Body factories own concrete products; decorators own optional composition.
+- Runtime actions use typed commands and local events: HUD intent -> battle command object -> BattleController handler -> pure domain transition -> controller event -> application-owned render/persistence. Enemy presentation uses the local chain `EnemyUnitCommand -> UnitController -> EnemyUnitView -> keyed body/component handler -> EnemyUnitEvent -> battlefield effect queue`; an event is emitted only when the view route accepted the command. Spawn, hit, and death keep their existing effect count and frame order.
+- `src/game/battlefield/` owns scene, camera, renderer, effect resources, unit attachment/replacement, resize, and final teardown. Each UnitView owns its subtree and local animation/disposal.
+- `src/ui/hud/` owns DOM components and emits one typed intent stream with symmetric unsubscribe/dispose. `src/persistence/save/` owns DTOs, codecs, migrations, validation, and browser storage. `src/app/` is the only cross-layer composition root.
+- Shared `types.ts`, `helpers.ts`, or `shared` bags are not default destinations. Put a named contract or helper beside its owner; extract only when multiple local owners consume it.
+- Path aliases remain deferred while feature directories keep imports shallow and make upward dependencies visible.
 
 ## Classes, composition, and pure functions
 
-Use a class when an object owns mutable state, subscriptions, Three.js/DOM resources, animation state, or ordered disposal. Use composition for optional visual layers such as grade, modifier, and seeded decoration cues. A small typed factory or registry selects among several real view products.
+Use classes when an object owns mutable state, subscriptions, command routing, Three.js/DOM resources, animation state, construction invariants, or ordered disposal.
 
-Keep deterministic formulas, validation, selection, formatting, and immutable state transitions as pure functions. Plain save DTOs and snapshots remain plain data. Do not introduce a base combat-unit class or inheritance hierarchy until at least two runtime unit types share a proven lifecycle/behavior contract. A class-based God object is not an improvement over a functional God file.
+The runtime Unit contract is intentional and concrete:
 
-Builders are justified only for multi-step construction with required invariants or resource ownership. Do not replace a readable object literal with a builder. Typed lookup tables are preferred for finite exhaustive data mappings; strategies/factories are preferred when products or behavior genuinely differ.
+- `UnitModel<TSnapshot>` owns immutable replacement of the latest presented model and local typed change events. It is not the authoritative combat/save state.
+- `UnitView<TSnapshot>` wraps one Three.js container, owns attachment, synchronization, named animation handlers, tick, subtree resources, and idempotent disposal.
+- `UnitController<TSnapshot>` routes typed local commands/events between exactly one model and one view.
+- `Unit<TSnapshot>` is the public entity entry point. Concrete `PlayerUnit` and `EnemyUnit` products supply family behavior without moving combat formulas into the base.
+- Specific subclasses are justified only by different lifecycle, construction, command, or view behavior. Do not create one subclass merely for each data row.
+
+Use factories for multiple real products and an invariant builder for multi-step enemy view construction. Use model strategy/decorator classes for independently composable combat modifiers and view decorator classes for independently attachable visual components. Each significant production class lives in its owner file.
+
+Keep formulas, codecs, validation, finite mappings, formatting, and immutable combat transitions pure. Plain save DTOs and snapshots remain plain data. A class-based God object, global event bus, service locator, reflection container, or decorator that only renames an object spread is rejected.
+
+Typed lookup tables remain appropriate for finite exhaustive data mappings. Selection/display orders for grades, body families, modifiers, and upgrades must be compile-time complete as well as runtime validated, so a new union member cannot compile while silently disappearing from selection. Strategy/factory/command objects are required when variants perform genuinely different construction or behavior. Branches remain valid for guards and small state checks; branch-heavy product construction and repeated behavior selection belong in exhaustive factories/registries.
 
 ## Readability rules
 
@@ -61,11 +70,15 @@ Builders are justified only for multi-step construction with required invariants
 
 ## Automated gates
 
-The blocking quality command remains `pnpm check` and must include strict TypeScript, ESLint, Prettier check, Vitest, and production build.
+The blocking quality command remains `pnpm check` and includes strict TypeScript, ESLint, Prettier check, Vitest, and the production build.
 
-ESLint must block nested ternaries, TypeScript indexed-access types in production contracts, ignored compiler diagnostics, unsafe assertions, explicit `any`, excessive complexity/depth, and upward/cross-layer imports that violate the ownership graph. Prefer built-in ESLint and the installed TypeScript tooling; add a dependency or custom script only when an invariant cannot be expressed correctly by existing tools.
+ESLint blocks nested ternaries, TypeScript indexed-access types in production contracts, ignored compiler diagnostics, unsafe/double assertions, explicit `any`, excessive complexity/depth, upward/cross-layer imports, implicit exported boundaries, lonely/avoidable else branches, multiple significant production classes in one file, and root imports that bypass the application boundary.
 
-Numeric file/function thresholds remain review triggers because a blanket rule creates artificial fragmentation. Architecture that is not syntactically unambiguous—component ownership, correct factory use, resource disposal, and pattern justification—requires focused tests plus independent review instead of a brittle text scan.
+The one-class rule applies to production owners, not test fixtures. It exists to keep lifecycle/strategy/decorator ownership navigable; small data types and pure helpers stay beside their owner. Layer rules keep domain pure and make application the only cross-layer composition root.
+
+Use the installed ESLint and TypeScript tooling. Do not add a custom architecture scanner for semantic claims ESLint cannot prove. Correct component attachment, factory completeness, builder invariants, event/render/persistence semantics, and resource disposal require focused tests plus independent review.
+
+Numeric file/function thresholds remain review triggers rather than fragmentation quotas.
 
 ## Refactor proof
 

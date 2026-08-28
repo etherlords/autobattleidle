@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "291dae94-c58c-443e-9dbf-2cac2644c077",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T23:20:43.363Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-291dae94-c58c-443e-9dbf-2cac2644c077"
+    }
+  ],
+  "committedAt": "2026-08-28T23:20:43.380Z"
+}

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import type { BodyFamily } from "./spec";
-import { component, mesh, type EnemyVisualComponent } from "./components";
+import { component, mesh, type EnemyVisualCommand, type EnemyVisualComponent } from "./components";
 import {
   enemyVisualGeometry,
   enemyVisualLayout,
@@ -22,6 +22,21 @@ const core = (
   return node;
 };
 
+const bodyCommands = (body: THREE.Object3D): Readonly<Record<EnemyVisualCommand, () => void>> => ({
+  spawn: () => {
+    body.userData.lastCommand = "spawn";
+  },
+  hit: () => {
+    body.userData.lastCommand = "hit";
+  },
+  critical: () => {
+    body.userData.lastCommand = "critical";
+  },
+  death: () => {
+    body.userData.lastCommand = "death";
+  },
+});
+
 const beetle: EnemyBodyFactory = () => {
   const body = core(
     new THREE.SphereGeometry(...enemyVisualGeometry.body.beetleCore),
@@ -35,38 +50,38 @@ const beetle: EnemyBodyFactory = () => {
   );
   shell.scale.z = enemyVisualTransforms.beetleShellZScale;
   shell.position.y = enemyVisualTransforms.beetleShellY;
-  return component("body", [body, shell]);
+  return component("body-beetle", "body", [body, shell], undefined, bodyCommands(body));
 };
 
-const brute: EnemyBodyFactory = () =>
-  component("body", [
-    core(
-      new THREE.BoxGeometry(...enemyVisualGeometry.body.brute),
-      enemyVisualPalette.brute.core,
-      enemyVisualPalette.brute.emissive,
-      "brute",
-    ),
-  ]);
+const brute: EnemyBodyFactory = () => {
+  const body = core(
+    new THREE.BoxGeometry(...enemyVisualGeometry.body.brute),
+    enemyVisualPalette.brute.core,
+    enemyVisualPalette.brute.emissive,
+    "brute",
+  );
+  return component("body-brute", "body", [body], undefined, bodyCommands(body));
+};
 
-const wisp: EnemyBodyFactory = () =>
-  component("body", [
-    core(
-      new THREE.OctahedronGeometry(enemyVisualGeometry.body.wisp),
-      enemyVisualPalette.wisp.core,
-      enemyVisualPalette.wisp.emissive,
-      "wisp",
-    ),
-  ]);
+const wisp: EnemyBodyFactory = () => {
+  const body = core(
+    new THREE.OctahedronGeometry(enemyVisualGeometry.body.wisp),
+    enemyVisualPalette.wisp.core,
+    enemyVisualPalette.wisp.emissive,
+    "wisp",
+  );
+  return component("body-wisp", "body", [body], undefined, bodyCommands(body));
+};
 
-const colossus: EnemyBodyFactory = () =>
-  component("body", [
-    core(
-      new THREE.CylinderGeometry(...enemyVisualGeometry.body.colossus),
-      enemyVisualPalette.colossus.core,
-      enemyVisualPalette.colossus.emissive,
-      "boss-colossus",
-    ),
-  ]);
+const colossus: EnemyBodyFactory = () => {
+  const body = core(
+    new THREE.CylinderGeometry(...enemyVisualGeometry.body.colossus),
+    enemyVisualPalette.colossus.core,
+    enemyVisualPalette.colossus.emissive,
+    "boss-colossus",
+  );
+  return component("body-boss-colossus", "body", [body], undefined, bodyCommands(body));
+};
 
 const hydra: EnemyBodyFactory = () => {
   const body = core(
@@ -84,7 +99,7 @@ const hydra: EnemyBodyFactory = () => {
     head.position.set(offset, enemyVisualLayout.body.hydraHeadY, 0);
     return head;
   });
-  return component("body", [body, ...heads]);
+  return component("body-boss-hydra", "body", [body, ...heads], undefined, bodyCommands(body));
 };
 
 export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> = {

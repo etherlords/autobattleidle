@@ -1,14 +1,8 @@
-import * as THREE from "three";
+import type * as THREE from "three";
 
-import { enemyBodyFactories } from "./enemy-visual/bodies";
-import {
-  decorateGrade,
-  decorateModifier,
-  decorateSeededDecoration,
-} from "./enemy-visual/decorators";
-import { EnemyViewBuilder, type EnemyViewBuild } from "./enemy-visual/builder";
-import { enemyVisualLayout } from "./enemy-visual/config";
-import { enemyVisualSpec, type EnemyVisualInput, type EnemyVisualSpec } from "./enemy-visual/spec";
+import type { EnemyVisualInput, EnemyVisualSpec } from "./enemy-visual/spec";
+import type { EnemyUnit } from "./units/enemy";
+import { UNIT_FACTORIES } from "./units/factories";
 
 export { enemyVisualSpec, stableEnemySeed } from "./enemy-visual/spec";
 export type { EnemyVisualInput, EnemyVisualSpec, ModifierCue } from "./enemy-visual/spec";
@@ -22,52 +16,29 @@ export type EnemyVisual = {
   dispose(): void;
 };
 
-const disposeObject = (object: THREE.Object3D): void =>
-  object.traverse((child) => {
-    if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
-      child.geometry.dispose();
-      const surface = child.material;
-      if (Array.isArray(surface)) surface.forEach((entry) => entry.dispose());
-      else surface.dispose();
-    }
-  });
-
-class ThreeEnemyVisual implements EnemyVisual {
-  readonly spec: EnemyVisualSpec;
-  readonly group: THREE.Group;
-  private readonly build: EnemyViewBuild;
-  private disposed = false;
+class EnemyVisualFacade implements EnemyVisual {
+  private readonly unit: EnemyUnit;
 
   constructor(enemy: EnemyVisualInput) {
-    this.spec = enemyVisualSpec(enemy);
-    const builder = new EnemyViewBuilder();
-    builder.add(enemyBodyFactories[this.spec.body]());
-    builder.add(decorateGrade(this.spec.gradeCue));
-    builder.add(decorateModifier(this.spec.modifierCue));
-    this.spec.decorations.forEach((decoration, index) =>
-      builder.add(decorateSeededDecoration(decoration, index)),
-    );
-    this.build = builder.build();
-    this.group = this.build.group;
-    this.group.scale.setScalar(this.spec.scale);
-    this.group.position.set(
-      enemyVisualLayout.actorAnchor.x,
-      enemyVisualLayout.actorAnchor.y,
-      enemyVisualLayout.actorAnchor.z,
-    );
+    this.unit = UNIT_FACTORIES.enemy.create(enemy);
+  }
+
+  get group(): THREE.Group {
+    return this.unit.view.group;
+  }
+
+  get spec(): EnemyVisualSpec {
+    return this.unit.spec;
   }
 
   tick(): void {
-    if (!this.disposed) this.build.tick();
+    this.unit.tick();
   }
 
   dispose(): void {
-    if (this.disposed) return;
-    this.disposed = true;
-    disposeObject(this.group);
-    this.group.removeFromParent();
+    this.unit.dispose();
   }
 }
 
 export const createEnemyVisual = (enemy: EnemyVisualInput): EnemyVisual =>
-  new ThreeEnemyVisual(enemy);
+  new EnemyVisualFacade(enemy);

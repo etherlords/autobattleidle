@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "1a46c023-6d3e-4d0a-84d2-b09ab9d16e5d",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:51:05.944Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-28-parity-tests-complete-v1",
+  "requestFingerprint": "328d08d47dff3c077087628e390526f65b829242cc2ab470024ddeadb14e4801",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-1a46c023-6d3e-4d0a-84d2-b09ab9d16e5d-0",
+      "beforeHash": "a4d6f026d1cc9787cba42e06819bee3d52193cd354bdd389f35c2aff180785c5",
+      "afterHash": "ac1f1ec0d65dcc8d6ca744f2bebed88bc7955a4035ae1d03028bf97fe5900501"
+    }
+  ],
+  "committedAt": "2026-08-28T22:51:05.977Z"
+}

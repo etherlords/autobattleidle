@@ -1,37 +1,30 @@
 import { COMBAT_BALANCE, COMBAT_FORMULAS, MAX_ENCOUNTER } from "./balance";
 import type { CombatEnemy, EliteModifier, EnemyGrade } from "./contracts";
+import { modifierForRoll } from "./enemy-modifiers";
+import { ENEMY_TIERS } from "./enemy-definitions";
+
+type OrdinaryGrade = Exclude<EnemyGrade, "boss">;
+type MissingOrdinaryGrades<Order extends readonly OrdinaryGrade[]> =
+  Order extends readonly (infer Grade extends OrdinaryGrade)[]
+    ? Exclude<OrdinaryGrade, Grade>
+    : OrdinaryGrade;
+
+const ORDINARY_GRADE_VALUES = [
+  "normal",
+  "veteran",
+  "elite",
+] as const satisfies readonly OrdinaryGrade[];
+type CompleteOrdinaryGradeOrder =
+  MissingOrdinaryGrades<typeof ORDINARY_GRADE_VALUES> extends never
+    ? typeof ORDINARY_GRADE_VALUES
+    : never;
+const ORDINARY_GRADES: CompleteOrdinaryGradeOrder = ORDINARY_GRADE_VALUES;
 
 const selectGrade = (encounter: number): EnemyGrade => {
   if (encounter % COMBAT_BALANCE.bossInterval === 0) return "boss";
-  return (["normal", "veteran", "elite"] as const)[(encounter - 1) % 3] ?? "normal";
-};
-
-const selectEliteModifier = (roll: number): EliteModifier =>
-  (["armor", "health", "automatic-slow"] as const)[Math.min(2, Math.floor(roll * 3))] ?? "armor";
-
-const bossHealthMultiplier = (encounter: number): number => {
-  const bossIndex = Math.ceil(encounter / COMBAT_BALANCE.bossInterval) - 1;
-  return (
-    COMBAT_FORMULAS.bossHealthBaseMultiplier +
-    COMBAT_FORMULAS.bossHealthIndexLinearMultiplier * bossIndex +
-    COMBAT_FORMULAS.bossHealthIndexQuadraticMultiplier * bossIndex * bossIndex
-  );
-};
-
-const enemyMultiplier = (grade: EnemyGrade, encounter: number): number => {
-  if (grade === "boss") return bossHealthMultiplier(encounter);
-  if (grade === "elite") return COMBAT_FORMULAS.eliteTierMultiplier;
-  if (grade === "veteran") return COMBAT_FORMULAS.veteranTierMultiplier;
-  return 1;
-};
-
-const enemyArmor = (
-  grade: EnemyGrade,
-  modifier: EliteModifier | null,
-  encounter: number,
-): number => {
-  if (modifier === "armor") return encounter * COMBAT_FORMULAS.enemyArmorPerEncounter;
-  return grade === "boss" ? encounter : 0;
+  const grade = ORDINARY_GRADES[(encounter - 1) % ORDINARY_GRADES.length];
+  if (grade === undefined) throw new RangeError("Encounter did not select an ordinary enemy grade");
+  return grade;
 };
 
 export const spawnEnemy = (encounter: number, eliteModifierRoll: number): CombatEnemy => {
@@ -39,7 +32,7 @@ export const spawnEnemy = (encounter: number, eliteModifierRoll: number): Combat
     throw new RangeError("Encounter must be a positive safe integer with safe outputs");
   const safeEncounter = encounter;
   const grade = selectGrade(safeEncounter);
-  const modifier = grade === "elite" ? selectEliteModifier(eliteModifierRoll) : null;
+  let modifier: EliteModifier | null = null;
   const baseHealth = Math.min(
     Number.MAX_SAFE_INTEGER,
     Math.round(
@@ -49,20 +42,24 @@ export const spawnEnemy = (encounter: number, eliteModifierRoll: number): Combat
             (safeEncounter - 1)),
     ),
   );
-  const multiplier = enemyMultiplier(grade, safeEncounter);
+  const tier = ENEMY_TIERS[grade];
+  const multiplier = tier.multiplier(safeEncounter);
+  const baseModifierDraft = { armor: tier.armor(safeEncounter), healthMultiplier: 1 };
+  let modifierDraft = baseModifierDraft;
+  if (grade === "elite") {
+    const modifierStrategy = modifierForRoll(eliteModifierRoll);
+    modifier = modifierStrategy.id;
+    modifierDraft = modifierStrategy.decorate(baseModifierDraft, safeEncounter);
+  }
   const maxHealth = Math.max(
     COMBAT_FORMULAS.minimumDamage,
     Math.min(
       Number.MAX_SAFE_INTEGER,
-      Math.round(
-        baseHealth *
-          multiplier *
-          (modifier === "health" ? COMBAT_FORMULAS.eliteHealthMultiplier : 1),
-      ),
+      Math.round(baseHealth * multiplier * modifierDraft.healthMultiplier),
     ),
   );
   return {
-    armor: enemyArmor(grade, modifier, safeEncounter),
+    armor: modifierDraft.armor,
     encounter: safeEncounter,
     grade,
     health: maxHealth,

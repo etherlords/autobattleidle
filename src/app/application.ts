@@ -1,16 +1,13 @@
-import {
-  createCombatState,
-  type AttackRolls,
-  type CombatState,
-  type UpgradeId,
-} from "../domain/combat";
+import { createCombatState, type AttackRolls, type CombatState } from "../domain/combat";
 import { createBattlefield, type Battlefield } from "../game/battlefield";
 import {
   createPersistenceBoundary,
   type PersistenceBoundary,
 } from "../persistence/persistence-boundary";
 import { createHud, type Hud } from "../ui/hud";
+import type { HudIntent } from "../ui/hud/intents";
 import { BattleController } from "./battle/controller";
+import { battleCommands } from "./battle/commands";
 import { presentBattleUpdate } from "./battle/presenter";
 
 type AnimationFrameHost = {
@@ -121,28 +118,35 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     dependencies.game.resize(viewport.width, viewport.height);
   };
   const draw = (timestamp: number): void => {
-    if (!controller.dispatch({ nowMs: timestamp, type: "frame" })) render();
+    if (!controller.dispatch(battleCommands.frame(timestamp))) render();
     frame = dependencies.window.requestAnimationFrame(draw);
   };
   resize();
-  dependencies.hud.onAttack(() => {
-    if (!controller.dispatch({ source: "manual", type: "attack" })) render();
-  });
-  dependencies.hud.onUpgrade((id: UpgradeId) => controller.dispatch({ id, type: "purchase" }));
-  dependencies.hud.onReset(() => {
-    if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
-    dependencies.persistence.reset();
-    controller.dispatch({ type: "reset" });
-  });
+  const handleIntent = (intent: HudIntent): void => {
+    if (intent.type === "attack") {
+      if (!controller.dispatch(battleCommands.attack("manual"))) render();
+      return;
+    }
+    if (intent.type === "upgrade") {
+      controller.dispatch(battleCommands.purchase(intent.id));
+      return;
+    }
+    if (intent.type === "reset") {
+      if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
+      dependencies.persistence.reset();
+      controller.dispatch(battleCommands.reset());
+      return;
+    }
+    if (intent.type === "restore") {
+      const restored = dependencies.persistence.restorePreviousVersion(
+        controller.currentUpdate().nowMs,
+      );
+      dependencies.hud.reportPersistence(restored.message);
+      if (restored.state !== undefined) controller.dispatch(battleCommands.restore(restored.state));
+    }
+  };
+  const unsubscribeHud = dependencies.hud.subscribe(handleIntent);
   dependencies.hud.setRestoreAvailable(dependencies.persistence.hasPreviousVersionSave());
-  dependencies.hud.onRestore(() => {
-    const restored = dependencies.persistence.restorePreviousVersion(
-      controller.currentUpdate().nowMs,
-    );
-    dependencies.hud.reportPersistence(restored.message);
-    if (restored.state === undefined) return;
-    controller.dispatch({ state: restored.state, type: "restore" });
-  });
   render();
   dependencies.window.addEventListener("resize", resize);
   frame = dependencies.window.requestAnimationFrame(draw);
@@ -152,6 +156,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       disposed = true;
       if (frame !== undefined) dependencies.window.cancelAnimationFrame(frame);
       dependencies.window.removeEventListener("resize", resize);
+      unsubscribeHud();
       unsubscribe();
       controller.dispose();
       dependencies.persistence.dispose();

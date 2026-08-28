@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c802f06d-4062-4fce-8a14-39ff54255573",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:50:43.308Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-19-battle-commands-complete-v1",
+  "requestFingerprint": "fb4e6dd3aac83ea18cf0c1f40053c5985f9d24cda0c4c626d5a63f2344f83af7",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-c802f06d-4062-4fce-8a14-39ff54255573-0",
+      "beforeHash": "a7e72766484544a4b238e976af67eeccd722114790eef6cc8ae2da02d7f0950b",
+      "afterHash": "b88de8e64c0b4e0d22cc26059c1cb4d4ae9b2515d2523afd38adb8bf4ee8fc9b"
+    }
+  ],
+  "committedAt": "2026-08-28T22:50:43.326Z"
+}

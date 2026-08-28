@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { BattleController } from "./controller";
+import { battleCommands } from "./commands";
 import { presentBattleUpdate } from "./presenter";
 import { createCombatState, type CombatState } from "../../domain/combat";
 import type { BattleControllerEvent } from "./contracts";
@@ -29,16 +30,16 @@ describe("BattleController", () => {
     const updates: BattleControllerEvent[] = [];
     controller.subscribe((event) => updates.push(event));
 
-    expect(controller.dispatch({ source: "automatic", type: "attack" })).toBe(false);
+    expect(controller.dispatch(battleCommands.attack("automatic"))).toBe(false);
     expect(controller.currentUpdate().events).toEqual([]);
     expect(updates).toEqual([]);
-    controller.dispatch({ source: "manual", type: "attack" });
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
-    controller.dispatch({ nowMs: 1_000, type: "frame" });
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
+    controller.dispatch(battleCommands.attack("manual"));
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    controller.dispatch(battleCommands.frame(1_000));
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
 
     expect(updates.map((event) => event.type)).toEqual([
       "attack",
@@ -85,19 +86,19 @@ describe("BattleController", () => {
     const updates: BattleControllerEvent[] = [];
     const unsubscribe = controller.subscribe((event) => updates.push(event));
 
-    controller.dispatch({ id: "automatic-unlock", type: "purchase" });
-    controller.dispatch({ state: restored, type: "restore" });
-    controller.dispatch({ type: "reset" });
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    controller.dispatch(battleCommands.restore(restored));
+    controller.dispatch(battleCommands.reset());
     expect(updates.map((event) => event.type)).toEqual(["purchase", "restore", "reset"]);
     expect(updates.at(1)?.events).toEqual([]);
     expect(updates.at(2)?.events).toEqual([]);
 
     unsubscribe();
-    controller.dispatch({ source: "manual", type: "attack" });
+    controller.dispatch(battleCommands.attack("manual"));
     expect(updates).toHaveLength(3);
     controller.dispose();
     controller.dispose();
-    controller.dispatch({ id: "damage", type: "purchase" });
+    controller.dispatch(battleCommands.purchase("damage"));
     expect(controller.currentUpdate().events.map((event) => event.id)).toEqual([1]);
   });
 });

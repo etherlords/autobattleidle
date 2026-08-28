@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "6077f289-eed1-448c-a010-b9f5ed686c1d",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:50:35.249Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-16-enemy-builder-start-v1",
+  "requestFingerprint": "4874c49e1230680b5216f272e04d24e12ace5df34f055808039fbdbd00fbf6e6",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-6077f289-eed1-448c-a010-b9f5ed686c1d-0",
+      "beforeHash": "3b266fbcbe03cbbc4e0f77477df12b6df7c414e2784fdd923ab8b449a8251740",
+      "afterHash": "c315021b6036228977de104771c0e1979f077ad1b69e1d172e38676f969fd05a"
+    }
+  ],
+  "committedAt": "2026-08-28T22:50:35.283Z"
+}

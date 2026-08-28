@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "44f53700-0d65-4c59-8eda-e48700c44a90",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T22:50:26.553Z",
+  "itemId": "ABI-023",
+  "idempotencyKey": "abi023-12-enemy-definitions-complete-v1",
+  "requestFingerprint": "00bdf7c850320b00a76ed69d00c4394f2f6e88447fcf0004cb1f71f49921faa9",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp/PROGRESS.md.planner-tmp-44f53700-0d65-4c59-8eda-e48700c44a90-0",
+      "beforeHash": "744516cd1cb931734bcbd2b54f2260d6742183bc3f280ab67cd97944be880596",
+      "afterHash": "e95732bc7b25f3d3b23f35562bacd4ee24eff120db99391d06ed153f5a21dc4a"
+    }
+  ],
+  "committedAt": "2026-08-28T22:50:26.589Z"
+}

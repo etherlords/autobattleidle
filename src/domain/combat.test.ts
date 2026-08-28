@@ -11,10 +11,13 @@ import {
   doubleRewardChanceForLevel,
   purchaseUpgrade,
   spawnEnemy,
+  UPGRADES,
   upgradeCost,
   upgradeDisabledReason,
+  upgradeLevel,
 } from "./combat";
 import { simulateProgression } from "./progression-simulator";
+import { UPGRADE_DISPLAY_ORDER } from "./combat/upgrades";
 
 const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>): void => {
   const [firstBoss, secondBoss, thirdBoss] = report.bosses;
@@ -38,6 +41,46 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
 };
 
 describe("endless combat progression", () => {
+  it("keeps display order and behavior in one complete upgrade strategy registry", () => {
+    expect(UPGRADES.map((upgrade) => upgrade.id)).toEqual(UPGRADE_DISPLAY_ORDER);
+    expect(new Set(UPGRADE_DISPLAY_ORDER).size).toBe(UPGRADE_DISPLAY_ORDER.length);
+
+    let state = { ...createCombatState(), coins: Number.MAX_SAFE_INTEGER };
+    for (const id of UPGRADE_DISPLAY_ORDER) {
+      const initialLevel = upgradeLevel(state, id);
+      const purchase = purchaseUpgrade(state, id, 250);
+      expect(upgradeCost(state, id)).toBeGreaterThan(0);
+      expect(purchase.reason).toBeNull();
+      expect(upgradeLevel(purchase.state, id)).toBe(initialLevel + 1);
+      state = purchase.state;
+    }
+  });
+
+  it("uses the same legacy player-level derivation for attacks and upgrades", () => {
+    const state = {
+      ...createCombatState({
+        criticalChance: 0.2,
+        damage: 10,
+        doubleRewardChance: 0.1,
+      }),
+      coins: Number.MAX_SAFE_INTEGER,
+    };
+    expect(state.player).toMatchObject({
+      criticalLevel: 2,
+      damageLevel: 9,
+      doubleRewardLevel: 1,
+    });
+    expect(upgradeLevel(state, "damage")).toBe(9);
+    const result = attack(state, {
+      atMs: 0,
+      enemyId: state.enemy.id,
+      rolls: { critical: 0, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    if (result.event.type === "ignored") throw new Error("Expected a hit");
+    expect(result.event).toMatchObject({ critical: true, damage: damageForLevel(9) * 2 });
+  });
+
   it("keeps repeatable upgrades finite, increasing, and available", () => {
     let state = { ...createCombatState(), coins: Number.MAX_SAFE_INTEGER };
     const first = upgradeCost(state, "damage");
