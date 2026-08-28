@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b33fa9fb-270e-47bf-b7c1-5d80b7f6fb04",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T16:51:07.572Z",
+  "itemId": "ABI-008",
+  "idempotencyKey": "abi008-canvas-input-start-v1",
+  "requestFingerprint": "fcbfec42036ba11eef6b673a217eb3b0b828aa2de9d49d9d0b48f3581fed9ae2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md.planner-tmp-b33fa9fb-270e-47bf-b7c1-5d80b7f6fb04-0",
+      "beforeHash": "84daaf9b6da265878f70707a5853b8d378dff18a41227a157ddf63ea11817ac9",
+      "afterHash": "cb151452940431ca3bd10139270acbae0f11a63d9e4356c49ba7d3c6befe1cb4"
+    }
+  ],
+  "committedAt": "2026-08-28T16:51:07.586Z"
+}

@@ -30,7 +30,7 @@ export type Application = { dispose(): void };
 export type ApplicationDependencies = {
   readonly window: AnimationFrameHost;
   readonly createGame: (host: HTMLElement) => Battlefield;
-  readonly createHud: (host: HTMLElement) => Hud;
+  readonly createHud: (host: HTMLElement, battlefield: HTMLElement) => Hud;
   readonly createPersistence: () => PersistenceBoundary;
   readonly rolls: () => AttackRolls;
   readonly initialState: CombatState;
@@ -84,7 +84,7 @@ export const createApplication = (
   battlefieldHost.className = "battlefield";
   root.replaceChildren(battlefieldHost);
   const game = dependencies.createGame(battlefieldHost);
-  const hud = dependencies.createHud(root);
+  const hud = dependencies.createHud(root, battlefieldHost);
   return startApplication({
     initialState,
     initialNowMs,

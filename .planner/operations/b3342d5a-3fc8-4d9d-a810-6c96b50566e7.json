@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b3342d5a-3fc8-4d9d-a810-6c96b50566e7",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T16:59:38.445Z",
+  "itemId": "ABI-008",
+  "idempotencyKey": "abi008-passive-hud-complete-v1",
+  "requestFingerprint": "00bc276bea5935c66924f3418e50c647b56d237fa4667dbe1f3d54b7a65557ba",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md.planner-tmp-b3342d5a-3fc8-4d9d-a810-6c96b50566e7-0",
+      "beforeHash": "9b4a63a21169f0b382c11f769658c5d692f0118aad7e9505bf450478d9aafacd",
+      "afterHash": "c77ac5bbb73c7c2ac51998ef0531275b9afa723e6ca5c5841c5aa30d59b3c82c"
+    }
+  ],
+  "committedAt": "2026-08-28T16:59:38.500Z"
+}

@@ -4,8 +4,8 @@ id: ABI-008
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
-status: Ready
+revision: 11
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-004
@@ -28,7 +28,7 @@ Redesign canvas attack HUD and modal upgrades overlay
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: In QA
 
 ## Acceptance criteria
 

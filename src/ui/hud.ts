@@ -1,5 +1,5 @@
-import type { BattleSnapshot } from "../domain/snapshot";
 import type { UpgradeId } from "../domain/combat";
+import type { BattleSnapshot } from "../domain/snapshot";
 
 export type Hud = {
   render(snapshot: BattleSnapshot): void;
@@ -12,115 +12,145 @@ export type Hud = {
   dispose(): void;
 };
 
-export const createHud = (host: HTMLElement): Hud => {
+export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const panel = document.createElement("section");
   panel.className = "hud";
   panel.setAttribute("aria-label", "Battle status");
-  host.append(panel);
-  const title = makeText("h1", "Autobattle Idle");
-  const enemy = makeText("h2", "");
-  const health = document.createElement("div");
-  health.className = "enemy-health";
-  health.setAttribute("role", "progressbar");
+  const status = document.createElement("section");
+  status.className = "hud-status";
+  const enemy = makeText("h1", "");
+  const health = progress("enemy-health");
   const healthFill = document.createElement("div");
   healthFill.className = "enemy-health-fill";
   const healthText = document.createElement("span");
   health.append(healthFill, healthText);
-  const automatic = makeText("p", "");
-  const automaticProgress = document.createElement("div");
-  automaticProgress.className = "automatic-progress";
-  automaticProgress.setAttribute("role", "progressbar");
+  const automatic = progress("automatic-progress");
   const automaticFill = document.createElement("div");
   automaticFill.className = "automatic-progress-fill";
-  automaticProgress.append(automaticFill);
+  automatic.append(automaticFill);
+  const automaticText = makeText("p", "");
   const coins = makeText("p", "");
-  const attackButton = document.createElement("button");
-  attackButton.className = "manual-attack";
-  attackButton.type = "button";
-  attackButton.textContent = "Attack";
-  attackButton.setAttribute("aria-label", "Attack enemy");
-  const resetButton = document.createElement("button");
-  resetButton.className = "reset-progress";
-  resetButton.type = "button";
-  resetButton.textContent = "Reset progress";
-  const restoreButton = document.createElement("button");
-  restoreButton.className = "restore-progress";
-  restoreButton.type = "button";
-  restoreButton.textContent = "Restore from previous version";
+  status.append(enemy, health, automatic, automaticText, coins);
+
+  const launcher = button("upgrades-launcher", "Upgrades");
+  launcher.setAttribute("aria-haspopup", "dialog");
+  const modal = document.createElement("section");
+  modal.className = "upgrades-modal";
+  modal.setAttribute("aria-label", "Upgrades and saved progress");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("role", "dialog");
+  modal.hidden = true;
+  const close = button("upgrades-close", "Close upgrades");
+  const upgrades = document.createElement("div");
+  upgrades.className = "upgrades";
+  const resetButton = button("reset-progress", "Reset progress");
+  const restoreButton = button("restore-progress", "Restore from previous version");
   restoreButton.hidden = true;
   const persistenceStatus = makeText("p", "");
   persistenceStatus.className = "persistence-status";
   persistenceStatus.setAttribute("aria-live", "polite");
-  const upgrades = document.createElement("div");
-  upgrades.className = "upgrades";
-  const upgradeButtons = new Map<UpgradeId, { button: HTMLButtonElement; listener: () => void }>();
+  modal.append(close, upgrades, resetButton, restoreButton, persistenceStatus);
   const log = document.createElement("ol");
   log.className = "event-log";
   log.setAttribute("aria-label", "Combat events");
   log.setAttribute("aria-live", "polite");
-  panel.append(
-    title,
-    enemy,
-    health,
-    automatic,
-    automaticProgress,
-    coins,
-    attackButton,
-    resetButton,
-    restoreButton,
-    persistenceStatus,
-    upgrades,
-    log,
-  );
+  panel.append(status, launcher, modal, log);
+  host.append(panel);
+
+  battlefield.tabIndex = 0;
+  battlefield.setAttribute("aria-label", "Battlefield. Press Enter or Space to attack.");
+  const upgradeButtons = new Map<UpgradeId, { button: HTMLButtonElement; listener: () => void }>();
   let attackListener: (() => void) | undefined;
   let resetListener: (() => void) | undefined;
   let restoreListener: (() => void) | undefined;
   let upgradeListener: ((id: UpgradeId) => void) | undefined;
   let renderedEventIds = "";
   const attack = (): void => attackListener?.();
-  attackButton.addEventListener("click", attack);
+  const pointerAttack = (): void => attack();
+  const keyboardAttack = (event: KeyboardEvent): void => {
+    if (event.repeat || (event.key !== "Enter" && event.key !== " ")) return;
+    event.preventDefault();
+    attack();
+  };
   const reset = (): void => resetListener?.();
-  resetButton.addEventListener("click", reset);
   const restore = (): void => restoreListener?.();
+  const modalButtons = (): HTMLButtonElement[] => [
+    close,
+    ...[...upgradeButtons.values()]
+      .map(({ button: upgradeButton }) => upgradeButton)
+      .filter((upgradeButton) => !upgradeButton.disabled),
+    resetButton,
+    ...(restoreButton.hidden ? [] : [restoreButton]),
+  ];
+  const closeModal = (): void => {
+    if (modal.hidden) return;
+    modal.hidden = true;
+    document.removeEventListener("keydown", modalKeydown);
+    launcher.focus();
+  };
+  const modalKeydown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+    if (event.key === "Tab") {
+      const buttons = modalButtons();
+      const current = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      const next = (current + (event.shiftKey ? buttons.length - 1 : 1)) % buttons.length;
+      event.preventDefault();
+      buttons[next]?.focus();
+    }
+  };
+  const openModal = (): void => {
+    if (!modal.hidden) return;
+    modal.hidden = false;
+    document.addEventListener("keydown", modalKeydown);
+    close.focus();
+  };
+  battlefield.addEventListener("pointerup", pointerAttack);
+  battlefield.addEventListener("keydown", keyboardAttack);
+  launcher.addEventListener("click", openModal);
+  close.addEventListener("click", closeModal);
+  resetButton.addEventListener("click", reset);
   restoreButton.addEventListener("click", restore);
   const render = (snapshot: BattleSnapshot): void => {
     enemy.textContent = `${snapshot.enemy.name} · Level ${snapshot.enemy.level} · ${snapshot.enemy.grade}${snapshot.enemy.modifier === null ? "" : ` · ${snapshot.enemy.modifier}`}`;
-    const percent = (snapshot.enemy.health / snapshot.enemy.maxHealth) * 100;
-    health.setAttribute("aria-valuemin", "0");
-    health.setAttribute("aria-valuemax", String(snapshot.enemy.maxHealth));
-    health.setAttribute("aria-valuenow", String(snapshot.enemy.health));
-    health.setAttribute(
-      "aria-label",
+    setProgress(
+      health,
       `${snapshot.enemy.name} health ${snapshot.enemy.health} of ${snapshot.enemy.maxHealth}`,
+      snapshot.enemy.maxHealth,
+      snapshot.enemy.health,
     );
-    healthFill.style.width = `${percent}%`;
+    healthFill.style.width = `${(snapshot.enemy.health / snapshot.enemy.maxHealth) * 100}%`;
     healthText.textContent = `${snapshot.enemy.health}/${snapshot.enemy.maxHealth}`;
-    automatic.textContent = snapshot.automatic.unlocked
-      ? `Automatic attack: ${(snapshot.automatic.remainingMs / 1000).toFixed(3)}s`
-      : "Automatic attack: locked";
-    automaticProgress.setAttribute("aria-label", "Automatic attack cooldown");
-    automaticProgress.setAttribute("aria-valuemin", "0");
-    automaticProgress.setAttribute("aria-valuemax", String(snapshot.automatic.intervalMs));
-    automaticProgress.setAttribute("aria-valuenow", String(snapshot.automatic.remainingMs));
+    setProgress(
+      automatic,
+      "Automatic attack cooldown",
+      snapshot.automatic.intervalMs,
+      snapshot.automatic.remainingMs,
+    );
     automaticFill.style.width = snapshot.automatic.unlocked
       ? `${Math.min(100, (snapshot.automatic.remainingMs / snapshot.automatic.intervalMs) * 100)}%`
       : "0%";
+    automaticText.textContent = snapshot.automatic.unlocked
+      ? `Automatic attack: ${(snapshot.automatic.remainingMs / 1000).toFixed(3)}s`
+      : "Automatic attack: locked";
     coins.textContent = `Coins: ${snapshot.coins}`;
     for (const upgrade of snapshot.upgrades) {
       let entry = upgradeButtons.get(upgrade.id);
       if (entry === undefined) {
-        const button = document.createElement("button");
+        const upgradeButton = document.createElement("button");
+        upgradeButton.type = "button";
         const listener = (): void => upgradeListener?.(upgrade.id);
-        button.type = "button";
-        button.addEventListener("click", listener);
-        entry = { button, listener };
+        upgradeButton.addEventListener("click", listener);
+        entry = { button: upgradeButton, listener };
         upgradeButtons.set(upgrade.id, entry);
-        upgrades.append(button);
+        upgrades.append(upgradeButton);
       }
-      const { button } = entry;
-      button.textContent = `${upgrade.label} Lv.${upgrade.level} · ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : ` · ${upgrade.disabledReason}`}`;
-      button.disabled = upgrade.disabledReason !== null;
-      button.title = upgrade.disabledReason ?? "";
+      entry.button.textContent = `${upgrade.label} Lv.${upgrade.level} · ${upgrade.cost} coins${upgrade.disabledReason === null ? "" : ` · ${upgrade.disabledReason}`}`;
+      entry.button.disabled = upgrade.disabledReason !== null;
+      entry.button.title = upgrade.disabledReason ?? "";
     }
     const eventIds = snapshot.events.map((event) => event.id).join(",");
     if (eventIds !== renderedEventIds) {
@@ -149,19 +179,44 @@ export const createHud = (host: HTMLElement): Hud => {
       persistenceStatus.textContent = message;
     },
     dispose: () => {
-      attackButton.removeEventListener("click", attack);
+      closeModal();
+      battlefield.removeEventListener("pointerup", pointerAttack);
+      battlefield.removeEventListener("keydown", keyboardAttack);
+      launcher.removeEventListener("click", openModal);
+      close.removeEventListener("click", closeModal);
       resetButton.removeEventListener("click", reset);
       restoreButton.removeEventListener("click", restore);
-      for (const { button, listener } of upgradeButtons.values()) {
-        button.removeEventListener("click", listener);
-      }
+      for (const { button: upgradeButton, listener } of upgradeButtons.values())
+        upgradeButton.removeEventListener("click", listener);
       upgradeButtons.clear();
       panel.remove();
     },
   };
 };
 
-const makeText = (tagName: "h1" | "h2" | "p" | "li", value: string): HTMLElement => {
+const button = (className: string, label: string): HTMLButtonElement => {
+  const element = document.createElement("button");
+  element.className = className;
+  element.type = "button";
+  element.textContent = label;
+  return element;
+};
+
+const progress = (className: string): HTMLDivElement => {
+  const element = document.createElement("div");
+  element.className = className;
+  element.setAttribute("role", "progressbar");
+  return element;
+};
+
+const setProgress = (element: HTMLDivElement, label: string, max: number, value: number): void => {
+  element.setAttribute("aria-label", label);
+  element.setAttribute("aria-valuemin", "0");
+  element.setAttribute("aria-valuemax", String(max));
+  element.setAttribute("aria-valuenow", String(value));
+};
+
+const makeText = (tagName: "h1" | "p" | "li", value: string): HTMLElement => {
   const element = document.createElement(tagName);
   element.textContent = value;
   return element;

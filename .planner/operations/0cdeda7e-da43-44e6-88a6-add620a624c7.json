@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "0cdeda7e-da43-44e6-88a6-add620a624c7",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T17:06:23.642Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-008-redesign-canvas-attack-hud-and-modal-upgrades-overlay/PROGRESS.md.planner-tmp-0cdeda7e-da43-44e6-88a6-add620a624c7"
+    }
+  ],
+  "committedAt": "2026-08-28T17:06:23.654Z"
+}

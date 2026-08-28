@@ -18,6 +18,7 @@ describe("startApplication", () => {
     });
     const frames = new Map<number, FrameRequestCallback>();
     const snapshots: BattleSnapshot[] = [];
+    let suppliedBattlefield: HTMLElement | undefined;
     let loadedAt = -1;
     const initialState = {
       ...createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }, 0, true),
@@ -28,16 +29,19 @@ describe("startApplication", () => {
         render: () => undefined,
         resize: () => undefined,
       }),
-      createHud: () => ({
-        dispose: () => undefined,
-        onAttack: () => undefined,
-        onReset: () => undefined,
-        onRestore: () => undefined,
-        onUpgrade: () => undefined,
-        reportPersistence: () => undefined,
-        render: (snapshot) => snapshots.push(snapshot),
-        setRestoreAvailable: () => undefined,
-      }),
+      createHud: (_host, battlefield) => {
+        suppliedBattlefield = battlefield;
+        return {
+          dispose: () => undefined,
+          onAttack: () => undefined,
+          onReset: () => undefined,
+          onRestore: () => undefined,
+          onUpgrade: () => undefined,
+          reportPersistence: () => undefined,
+          render: (snapshot) => snapshots.push(snapshot),
+          setRestoreAvailable: () => undefined,
+        };
+      },
       createPersistence: () => ({
         dispose: () => undefined,
         load: (fallback, nowMs) => {
@@ -63,6 +67,7 @@ describe("startApplication", () => {
       },
     });
     expect(loadedAt).toBe(500);
+    expect(suppliedBattlefield).toBeDefined();
     expect(snapshots.at(-1)?.automatic.remainingMs).toBe(1_000);
     frames.get(1)?.(1_200);
     expect(snapshots.at(-1)?.enemy.health).toBe(140);
