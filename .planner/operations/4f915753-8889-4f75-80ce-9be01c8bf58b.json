@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "4f915753-8889-4f75-80ce-9be01c8bf58b",
+  "operation": "claim.acquire",
+  "state": "committed",
+  "createdAt": "2026-08-28T18:38:07.216Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md.planner-tmp-4f915753-8889-4f75-80ce-9be01c8bf58b"
+    }
+  ],
+  "committedAt": "2026-08-28T18:38:07.231Z"
+}

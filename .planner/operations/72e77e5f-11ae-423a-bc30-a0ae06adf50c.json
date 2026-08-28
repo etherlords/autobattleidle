@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "72e77e5f-11ae-423a-bc30-a0ae06adf50c",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T18:46:19.070Z",
+  "itemId": "ABI-009",
+  "idempotencyKey": "abi009-visual-gates-start-20260828",
+  "requestFingerprint": "f79db62d3804de8a7519ab1033dfba61a1aa2f5bc8968de3edcba2cb2d63d391",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md.planner-tmp-72e77e5f-11ae-423a-bc30-a0ae06adf50c-0",
+      "beforeHash": "eeaa897488ddce89ddfc6195e32770e88baea0b2d86c7293171fdf0ef251eb99",
+      "afterHash": "7db860756e1b7d0cc04ac843f32bf4024c0b6f203bd5fd3c59b6f0decef51b04"
+    }
+  ],
+  "committedAt": "2026-08-28T18:46:19.091Z"
+}

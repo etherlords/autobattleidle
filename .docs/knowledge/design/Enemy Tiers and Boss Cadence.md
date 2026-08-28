@@ -27,14 +27,19 @@ Enemy presentation is composed from independent deterministic layers:
 3. one gameplay modifier attachment;
 4. seeded decorative ornaments chosen from several variants.
 
-The initial modifier catalog contains armor (shield plates or orbiting shields), vitality (larger body or
-pulsing core), automatic slow (time ring), and wealth (gold ornaments and increased reward). Warded
-(first-hit shield) and regenerating (bounded recovery) are candidates only when their domain rules and
-balance proof are implemented; visual-only modifiers must never imply nonexistent gameplay.
+The live modifier catalog contains armor (paired shield plates), vitality (a visible core), and
+automatic slow (an animated time ring). The factory also contains a gold-orbital wealth composition
+for explicitly labeled synthetic visual proof, but it is dormant: the current domain has no wealth
+enemy modifier or wealth reward multiplier. Runtime reward semantics remain the deterministic enemy
+base reward plus the player-owned double-reward roll applied on defeat. Wealth must not activate until
+a domain rule and balance proof supply it through the snapshot. Warded and regenerating remain
+candidates only when their domain rules are implemented.
 
-Bosses use dedicated body families plus the same modifier layer. Decorative horns, fins, orbitals,
-satellites, scars and crown variants are seeded from enemy identity so reloads reproduce the same model.
-Color supports identity but silhouette, motion and attachments carry the primary cue.
+Ordinary enemies use three body families: beetle, brute, and wisp. Bosses use dedicated colossus and
+hydra bodies plus the same composable modifier layer. Decorative horns, fins, orbitals, satellites,
+scars, and grade crowns are selected from stable enemy identity so reload-equivalent snapshots
+reproduce the same model. Color supports identity, while silhouette, motion, and attachments carry
+the primary cue.
 
 ## Boss cadence
 
@@ -48,14 +53,16 @@ Encounters use deterministic safe-number epochs. At the largest encounter whose 
 
 ## Presentation
 
-A single enemy-model factory composes body, grade, modifier and seeded decoration layers from an
-immutable snapshot. It must not own combat state or randomize differently on every render. Replacement
-and disposal are deterministic and bounded for long sessions.
+The accepted implementation uses one snapshot-driven enemy-model factory in `src/game`. It owns
+only its Three.js group and inspectable composition metadata; combat remains in `src/domain`.
+Battlefield replacement retains the snapshot identity key and deterministically disposes retired
+geometry and materials.
 
-Normal enemies use the shared body catalog; bosses use dedicated bodies with larger silhouettes and
-boss cues. Armor, slow, vitality and wealth remain recognizable without relying only on color.
-Decorations provide variation without changing stats.
+Desktop and 390px browser QA covered all ordinary bodies, both dedicated bosses, every active
+modifier, boss/modifier compositions, and the explicitly synthetic dormant wealth cue. A 120-replacement
+real WebGL run kept scene children bounded at 12, preserved stable seeds, disposed retired groups, and
+reported no console or network errors.
 
 A rare `Golden Bug` is a timed event enemy with a dedicated compact body and metallic gold material
 that reacts to scene lighting with readable highlights. Its event rules, timer, reward and escape path
-are separate from ordinary grade cadence.
+are separate from ordinary grade cadence and belong to ABI-010.

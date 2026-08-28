@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c3bdf903-63ec-4e27-a91f-7fcda1fbff20",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T18:46:12.366Z",
+  "itemId": "ABI-009",
+  "idempotencyKey": "abi009-to-review-20260828",
+  "requestFingerprint": "628a86478bef2143f677bdecda02e2ee38d4efa2bb9cf1e48cf2f8563bda73c5",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/BRIEF.md.planner-tmp-c3bdf903-63ec-4e27-a91f-7fcda1fbff20-0",
+      "beforeHash": "a33c3ee7f31cfff4145dee2b5d987fbdf3f709b635bb4dfccef4d66998bc3ee8",
+      "afterHash": "c9205e04a55c5ee0eae234006fd88145737e1c12e6bae48043c78ba2d8169f7c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-009-build-deterministic-enemy-archetype-and-modifier-visual-fact/PROGRESS.md.planner-tmp-c3bdf903-63ec-4e27-a91f-7fcda1fbff20-1",
+      "beforeHash": "189a04b9bb9d644dc793806954ae4fa053ea5e20dbd3fb8cad30b7e314060ab9",
+      "afterHash": "eeaa897488ddce89ddfc6195e32770e88baea0b2d86c7293171fdf0ef251eb99"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-c3bdf903-63ec-4e27-a91f-7fcda1fbff20-2",
+      "beforeHash": "9b88b6205127f9d09265be8bdbe1d8160078ee7c1d78ab9db91b100cda60a59b",
+      "afterHash": "a2f4aa5b243252fb41f960d429e192774e284a44467ff6e76be54e4c5f983d87"
+    }
+  ],
+  "committedAt": "2026-08-28T18:46:12.397Z"
+}

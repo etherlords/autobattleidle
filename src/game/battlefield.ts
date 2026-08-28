@@ -1,6 +1,9 @@
 import * as THREE from "three";
 
 import type { BattleSnapshot } from "../domain/snapshot";
+import { createEnemyVisual, type EnemyVisual } from "./enemy-visual";
+
+export { enemyVisualSpec, type EnemyVisualSpec } from "./enemy-visual";
 
 export type Battlefield = {
   render(snapshot: BattleSnapshot): void;
@@ -11,34 +14,6 @@ export type Battlefield = {
 type EffectKind = "boss" | "death" | "hit" | "spawn";
 type EnemyIdentity = Pick<BattleSnapshot["enemy"], "grade" | "level" | "modifier">;
 type Effect = { readonly kind: EffectKind; life: number; readonly mesh: THREE.Mesh };
-
-export type EnemyVisualSpec = {
-  readonly body: "box" | "cone" | "dodecahedron" | "octahedron";
-  readonly bossCrown: boolean;
-  readonly modifierCue: "clock" | "halo" | "shield" | null;
-  readonly scale: number;
-};
-
-export const enemyVisualSpec = (enemy: EnemyIdentity): EnemyVisualSpec => ({
-  body:
-    enemy.grade === "normal"
-      ? "dodecahedron"
-      : enemy.grade === "veteran"
-        ? "box"
-        : enemy.grade === "elite"
-          ? "octahedron"
-          : "cone",
-  bossCrown: enemy.grade === "boss",
-  modifierCue:
-    enemy.modifier === "armor"
-      ? "shield"
-      : enemy.modifier === "health"
-        ? "halo"
-        : enemy.modifier === "automatic-slow"
-          ? "clock"
-          : null,
-  scale: enemy.grade === "boss" ? 1.45 : enemy.grade === "elite" ? 1.12 : 1,
-});
 
 export type BattlefieldFrame = {
   readonly effects: readonly EffectKind[];
@@ -102,52 +77,6 @@ const createPlayer = (): THREE.Group => {
   return player;
 };
 
-const addModifierCue = (group: THREE.Group, modifier: string | null): void => {
-  if (modifier === "armor") {
-    const shield = mesh(new THREE.TorusGeometry(0.9, 0.06, 8, 20), "#d6e5f0");
-    shield.rotation.x = Math.PI / 2;
-    group.add(shield);
-  }
-  if (modifier === "health") {
-    const halo = mesh(new THREE.TorusGeometry(0.98, 0.08, 8, 20), "#7dff92", "#163f1d");
-    halo.position.y = 0.5;
-    halo.rotation.x = Math.PI / 2;
-    group.add(halo);
-  }
-  if (modifier === "automatic-slow") {
-    const clock = mesh(new THREE.TorusGeometry(0.82, 0.07, 8, 16), "#8cb7ff", "#12274d");
-    clock.rotation.x = Math.PI / 2;
-    group.add(clock);
-    const hand = mesh(new THREE.BoxGeometry(0.05, 0.5, 0.05), "#e8f0ff");
-    hand.position.y = 0.25;
-    group.add(hand);
-  }
-};
-
-const createEnemy = (enemy: EnemyIdentity): THREE.Group => {
-  const group = new THREE.Group();
-  const spec = enemyVisualSpec(enemy);
-  const body =
-    spec.body === "dodecahedron"
-      ? mesh(new THREE.DodecahedronGeometry(0.68), "#ff9d66", "#4d180d")
-      : spec.body === "box"
-        ? mesh(new THREE.BoxGeometry(1.1, 1.1, 1.1), "#f3bd58", "#4d3210")
-        : spec.body === "octahedron"
-          ? mesh(new THREE.OctahedronGeometry(0.8), "#bd7cff", "#311653")
-          : mesh(new THREE.ConeGeometry(0.92, 1.6, 6), "#e9576d", "#5b1021");
-  group.add(body);
-  if (spec.bossCrown) {
-    const crown = mesh(new THREE.ConeGeometry(0.75, 0.5, 5), "#f8d28b", "#60420b");
-    crown.position.y = 1;
-    crown.rotation.y = Math.PI / 5;
-    group.add(crown);
-  }
-  addModifierCue(group, enemy.modifier);
-  group.scale.setScalar(spec.scale);
-  group.position.set(1.7, 0.8, 0);
-  return group;
-};
-
 const createEffect = (kind: EffectKind): Effect => {
   const color = kind === "hit" ? "#fff4ba" : kind === "death" ? "#ff6d52" : "#8bdbff";
   const effect = mesh(new THREE.RingGeometry(0.15, kind === "boss" ? 1.2 : 0.7, 20), color, color);
@@ -177,7 +106,7 @@ export const createBattlefieldWithRenderer = (
   const ground = mesh(new THREE.CircleGeometry(4, 32), "#172c35");
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground, createPlayer());
-  let enemy: THREE.Group | undefined;
+  let enemy: EnemyVisual | undefined;
   let previous: BattleSnapshot | undefined;
   let effects: Effect[] = [];
   let disposed = false;
@@ -196,11 +125,12 @@ export const createBattlefieldWithRenderer = (
         else retire(effect.mesh);
       }
       effects = retained;
+      enemy?.tick();
       const frame = nextBattlefieldFrame(previous, snapshot);
       if (enemy === undefined || frame.enemyChanged) {
-        if (enemy !== undefined) retire(enemy);
-        enemy = createEnemy(snapshot.enemy);
-        scene.add(enemy);
+        if (enemy !== undefined) retire(enemy.group);
+        enemy = createEnemyVisual(snapshot.enemy);
+        scene.add(enemy.group);
       }
       const evicted = effects.splice(0, effectEvictions(effects.length, frame.effects.length));
       for (const effect of evicted) retire(effect.mesh);

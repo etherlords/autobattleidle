@@ -24,20 +24,19 @@ const snapshot = (
 
 describe("nextBattlefieldFrame", () => {
   it("keeps every grade and modifier recognizable without relying on color", () => {
-    expect(enemyVisualSpec(snapshot("normal", 1).enemy).body).toBe("dodecahedron");
-    expect(enemyVisualSpec(snapshot("veteran", 2).enemy).body).toBe("box");
-    expect(enemyVisualSpec(snapshot("elite", 3).enemy).body).toBe("octahedron");
+    expect(enemyVisualSpec(snapshot("normal", 1).enemy).body).toBeDefined();
+    expect(enemyVisualSpec(snapshot("veteran", 2).enemy).gradeCue).toBe("crest");
+    expect(enemyVisualSpec(snapshot("elite", 3).enemy).gradeCue).toBe("spikes");
     expect(enemyVisualSpec(snapshot("boss", 10).enemy)).toMatchObject({
-      body: "cone",
-      bossCrown: true,
+      gradeCue: "crown",
       scale: 1.45,
     });
     expect(enemyVisualSpec({ ...snapshot("elite", 3).enemy, modifier: "armor" }).modifierCue).toBe(
-      "shield",
+      "shield-plates",
     );
     expect(
       enemyVisualSpec({ ...snapshot("elite", 3).enemy, modifier: "automatic-slow" }).modifierCue,
-    ).toBe("clock");
+    ).toBe("time-ring");
   });
 
   it("derives bounded visual effects from immutable snapshots", () => {
@@ -102,7 +101,9 @@ describe("nextBattlefieldFrame", () => {
     });
 
     battlefield.render(snapshot("boss", 10));
-    for (let index = 0; index < 10; index += 1) battlefield.render(snapshot("boss", 10));
+    for (let index = 0; index < 120; index += 1) {
+      battlefield.render(snapshot(index % 2 === 0 ? "boss" : "elite", index + 10));
+    }
     expect(enemyDisposals).toBe(1);
     expect(effectDisposals).toBe(1);
     expect(scene.children.includes(spawnEffect)).toBe(false);

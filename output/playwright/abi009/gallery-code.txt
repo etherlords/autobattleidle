@@ -1,0 +1,61 @@
+async page => await page.evaluate(async () => {
+  const mod = await import('/src/game/enemy-visual.ts');
+  const THREE = await import('/node_modules/three/build/three.module.js');
+  const app = document.querySelector('#app');
+  app.replaceChildren();
+  const canvas = document.createElement('canvas');
+  app.append(canvas);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(innerWidth, innerHeight, false);
+  renderer.setClearColor('#07121f');
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-7, 7, 4.5, -4.5, 0.1, 100);
+  camera.position.z = 10;
+  scene.add(new THREE.AmbientLight('#fff', 2));
+  const cases = [
+    { grade: 'normal', level: 1, modifier: null, name: 'beetle' },
+    { grade: 'elite', level: 2, modifier: 'armor', name: 'brute' },
+    { grade: 'veteran', level: 3, modifier: 'health', name: 'wisp' },
+    { grade: 'boss', level: 4, modifier: 'automatic-slow', name: 'boss-colossus' },
+    { grade: 'boss', level: 5, modifier: 'wealth', name: 'boss-hydra' },
+    { grade: 'boss', level: 6, modifier: 'armor', name: 'boss-colossus' },
+    { grade: 'boss', level: 7, modifier: 'health', name: 'boss-hydra' },
+    { grade: 'elite', level: 8, modifier: 'automatic-slow', name: 'beetle' },
+    { grade: 'veteran', level: 9, modifier: 'wealth', name: 'brute' },
+    { grade: 'normal', level: 10, modifier: 'armor', name: 'wisp' },
+  ];
+  const groups = [];
+  cases.forEach((c, i) => {
+    const v = mod.createEnemyVisual(c);
+    v.group.position.set((i % 5 - 2) * 2.7, (Math.floor(i / 5) - 0.5) * 2.6, 0);
+    scene.add(v.group);
+    groups.push(v.group);
+    const label = document.createElement('div');
+    label.textContent = `${c.name} | ${c.grade}${c.modifier ? ` + ${c.modifier}` : ''}`;
+    label.style.cssText = `position:absolute;left:${2 + (i % 5) * 20}%;top:${35 + Math.floor(i / 5) * 40}%;color:white;font:12px system-ui;white-space:nowrap`;
+    app.append(label);
+  });
+  renderer.render(scene, camera);
+  const stable = cases.every((c) => mod.stableEnemySeed(c) === mod.stableEnemySeed(c));
+  const initialChildren = scene.children.length;
+  const groupChildren = groups.map((g) => g.children.length);
+  const dispose = (o) => o.traverse((c) => {
+    if (c instanceof THREE.Mesh) {
+      c.geometry.dispose();
+      const m = c.material;
+      if (Array.isArray(m)) m.forEach((x) => x.dispose()); else m.dispose();
+    }
+  });
+  let maxChildren = scene.children.length;
+  for (let i = 0; i < 120; i += 1) {
+    const v = mod.createEnemyVisual({ grade: i % 4 === 0 ? 'boss' : 'normal', level: i + 20, modifier: ['armor', 'health', 'automatic-slow', 'wealth'][i % 4] });
+    scene.add(v.group);
+    maxChildren = Math.max(maxChildren, scene.children.length);
+    const old = scene.children.find((c) => c !== v.group && c.type === 'Group');
+    if (old) { scene.remove(old); dispose(old); }
+  }
+  const beforeDispose = scene.children.length;
+  scene.children.filter((c) => c.type === 'Group').forEach(dispose);
+  renderer.dispose();
+  return { viewport: [innerWidth, innerHeight], cases: cases.length, stableSeeds: stable, initialChildren, groupChildren, maxChildren, beforeDispose, remainingGroups: scene.children.filter((c) => c.type === 'Group').length };
+})
