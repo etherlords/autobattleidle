@@ -4,7 +4,7 @@ id: ABI-013
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 54
+revision: 55
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 54
-- Last update: Complete ABI-013 delivery after coherent push, green CI/Pages, and public dual-source migration/Restore/reload proof.
+- Revision: 55
+- Last update: Released task claim: Release completed ABI-013 manager lease after green final evidence CI/Pages; leave task idle and root-audit-ready.
 
 ## Execution plan
 
@@ -968,3 +968,20 @@ requiredGates:
   - github-pages:33186849712 success
   - planner://work-item/ABI-013/artifact/VERIFICATION.md
   - https://etherlords.github.io/autobattleidle/
+
+### evt-bf654816-0397-4a10-8a7b-9adeef7db668
+
+- Timestamp: 2026-08-28T16:10:19.876Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Released task claim: Release completed ABI-013 manager lease after green final evidence CI/Pages; leave task idle and root-audit-ready.
+- Idempotency key: abi013-release-final-lease-v1
+- Request fingerprint: 8e76055ee35001aba17c6eea77cb0bd2f179f356e56bf00ff8a7f1425838613b
+- Agent ID: root-manager
+- Session ID: 01a048c1-50e0-7562-bcd8-919aefc98eef
+- Intent: Release completed ABI-013 manager lease after green final evidence CI/Pages; leave task idle and root-audit-ready.
+- Branch: main
+- Evidence:
+  - None
