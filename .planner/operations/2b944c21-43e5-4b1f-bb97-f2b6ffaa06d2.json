@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "operationId": "2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2",
+  "operation": "task.create",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:09:20.606Z",
+  "itemId": "ABI-021",
+  "idempotencyKey": "abi-021-create-native-precommit-quality-gate-20260829-v1",
+  "requestFingerprint": "d33d27aa8edfe985baed46b5897e19a4536ff19c4946a3ad60bbd2bb222054c2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/BRIEF.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-0",
+      "afterHash": "58d27fda91f85a15381594caf66806c7177641612c5ed127cafb264dd8d75d4a"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/ANALYSIS.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-1",
+      "afterHash": "d48686dddf423903edb08cf9390aa45a9164ab3f2465c1519c03fdc2bc3aaf90"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/IMPLEMENTATION-GUIDE.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-2",
+      "afterHash": "06818fd854a3ddf32c1f6fa737120daa3488cfed2c64b1d52a9e47e2585e934d"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-3",
+      "afterHash": "a34bf20041bc3f309a4d70539c0d37c27aa4c3e5a8c49c31cf0979d714a57a9b"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/REVIEW.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-4",
+      "afterHash": "20ad7f494bea4805044bb4eb710d3d25b8ccaa6dd531f0147841760dcb755921"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/QA.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-5",
+      "afterHash": "b5b0d7571b631facbb4436d125beaa36f4a9fcd037f064d00778e3c4ac1f0c7e"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/VERIFICATION.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-6",
+      "afterHash": "a1ecef5c09013148864ef612e5b12c05e99255e5049a97ef8d3698e395a0a818"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-7",
+      "beforeHash": "104399e9a4458bf4664772c5038bc70ec3d5e7cc1d835c4e6ccf4deca94d3329",
+      "afterHash": "deaa5f1b7ff7a3e1eb87cf98cd7252e630d7768d45afab6a71d89dea43216e72"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-2b944c21-43e5-4b1f-bb97-f2b6ffaa06d2-8",
+      "beforeHash": "33921d83fe9562281b2015cbd4d1bf111b1b4b3c7cd996178fb7814588cc92df",
+      "afterHash": "f7a47e056e9877907d2ecb0a267beb1f7160e6a93066a4f82ddffa1ed797858b"
+    }
+  ],
+  "committedAt": "2026-08-28T20:09:20.679Z"
+}

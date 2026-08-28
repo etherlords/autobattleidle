@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c5ec8467-5bff-4e82-8ad6-ab680e931a46",
+  "operation": "task.create",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:58:57.264Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi022-create-enemy-family-modifier-expansion-20260829-v1",
+  "requestFingerprint": "bcb0a739c95eebe9f100edd0fb678c3eef8e0f4406e244521a0933603871d872",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/BRIEF.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-0",
+      "afterHash": "30ec54e0ac73b3cc993aa0b45fa5f536e95e9896d9aed2c08d08402542464404"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/ANALYSIS.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-1",
+      "afterHash": "b2a56fc409f1121bf54d34afb4592ed08c402d2073b8c0d71a563d8050ce9bf8"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/IMPLEMENTATION-GUIDE.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-2",
+      "afterHash": "bdd5f60f8fa6d8d8af17249127c7c7c5abe6145a36405e2b25cb7501f10bea57"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-3",
+      "afterHash": "25c0901e219dbb3505dd43eae2435fbd5b3dab27848ebc60ac21d3a347ff800f"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/REVIEW.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-4",
+      "afterHash": "220dae2ab404e65bb5ff34eb6b00e8310dc4346463e9eadb9be008c46f7f83f4"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/QA.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-5",
+      "afterHash": "370d3e6e852e214ae8c2240c73ebcf6a4116919264ffd2ac9c9b142a9dfb85fb"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/VERIFICATION.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-6",
+      "afterHash": "1a7b97ca8d8d529612a8a56abb5f74c8373f43f428a11ebe11b677c748ac3646"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-7",
+      "beforeHash": "23a45044dee3ee66efacdec2747bf46db91fadb2af1563bed5bb38a63403c810",
+      "afterHash": "a11a1aa36a156128d7cf628439834ef19b7644ef6b24b52c7e9fc695455c871e"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-c5ec8467-5bff-4e82-8ad6-ab680e931a46-8",
+      "beforeHash": "f7a47e056e9877907d2ecb0a267beb1f7160e6a93066a4f82ddffa1ed797858b",
+      "afterHash": "ec2dd05d5461ca149571bebd77bd90b0058fbceb475b6c358e0706419d96e6e5"
+    }
+  ],
+  "committedAt": "2026-08-28T20:58:57.340Z"
+}

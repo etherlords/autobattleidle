@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "2e6908e8-e46c-4387-a8b3-441b8ffdb9b8",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:24:07.007Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi018-cancel-derived-stats-contract-20260829-01",
+  "requestFingerprint": "e2f958495842a511e172d22950fe42edc02624ff20fc672e8addf49fd6e63942",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-2e6908e8-e46c-4387-a8b3-441b8ffdb9b8-0",
+      "beforeHash": "e8c6e7d21d0cc9f87745c8adf960bdc391089105015c9878e176c21c7d4abb10",
+      "afterHash": "6c2d16c54da20276377ac495200197dd75084ae0c21009c834aed980fdf127d3"
+    }
+  ],
+  "committedAt": "2026-08-28T21:24:07.072Z"
+}

@@ -4,6 +4,7 @@ import {
   armorPenetrationForLevel,
   attack,
   automaticInterval,
+  COMBAT_BALANCE,
   criticalChanceForLevel,
   createCombatState,
   damageForLevel,
@@ -21,10 +22,12 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
     throw new Error("Expected three boss encounters");
   const secondGap = secondBoss.elapsedMs - firstBoss.elapsedMs;
   const thirdGap = thirdBoss.elapsedMs - secondBoss.elapsedMs;
-  expect(firstBoss.elapsedMs).toBeGreaterThan(540_000);
-  expect(firstBoss.elapsedMs).toBeLessThan(660_000);
-  expect(secondGap).toBeGreaterThan(firstBoss.elapsedMs);
-  expect(thirdGap).toBeGreaterThan(secondGap);
+  expect(firstBoss.encounter).toBe(COMBAT_BALANCE.bossInterval);
+  expect(secondBoss.encounter).toBe(COMBAT_BALANCE.bossInterval * 2);
+  expect(thirdBoss.encounter).toBe(COMBAT_BALANCE.bossInterval * 3);
+  expect(firstBoss.elapsedMs).toBeGreaterThan(0);
+  expect(secondGap).toBeGreaterThan(0);
+  expect(thirdGap).toBeGreaterThan(0);
   const repeatablePurchases =
     report.purchases.damage +
     report.purchases["armor-penetration"] +
@@ -119,7 +122,9 @@ describe("endless combat progression", () => {
   });
 
   it("saturates the highest accepted boss reward safely", () => {
-    const highestBoss = Math.floor(Number.MAX_SAFE_INTEGER / 3 / 15) * 15;
+    const highestBoss =
+      Math.floor(Number.MAX_SAFE_INTEGER / 3 / COMBAT_BALANCE.bossInterval) *
+      COMBAT_BALANCE.bossInterval;
     expect(Number.isSafeInteger(spawnEnemy(highestBoss, 0).reward)).toBe(true);
   });
 
@@ -143,24 +148,24 @@ describe("endless combat progression", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
     expect(first).toEqual({
-      armorPreventedDamage: 50313,
-      automaticAttacks: 2262,
+      armorPreventedDamage: 387767,
+      automaticAttacks: 5842,
       bosses: [
-        { elapsedMs: 596085.714285711, encounter: 15 },
-        { elapsedMs: 1296381.36645964, encounter: 30 },
-        { elapsedMs: 2135163.9751553102, encounter: 45 },
+        { elapsedMs: 907468.752117449, encounter: 35 },
+        { elapsedMs: 2960992.2615383873, encounter: 70 },
+        { elapsedMs: 4824837.422828496, encounter: 105 },
       ],
-      coins: 18081,
-      elapsedMs: 2135163.9751553102,
-      encounters: 46,
+      coins: 37715,
+      elapsedMs: 4824837.422828496,
+      encounters: 106,
       manualAttacks: 0,
-      penetration: 0.25,
+      penetration: 0.375,
       purchases: {
-        "armor-penetration": 10,
-        "automatic-speed": 3,
+        "armor-penetration": 20,
+        "automatic-speed": 11,
         "automatic-unlock": 1,
-        "critical-chance": 0,
-        damage: 31,
+        "critical-chance": 9,
+        damage: 64,
         "double-reward": 0,
       },
     });

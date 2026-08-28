@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "6fda58a7-3934-4df3-9bd6-9734a5474e1d",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:24:42.905Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-cancel-independent-gates-20260829-01",
+  "requestFingerprint": "2a7e5f5ea2971b65aeba102c5621f0544cd0f1e985855c1630ea66dca7596eca",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-6fda58a7-3934-4df3-9bd6-9734a5474e1d-0",
+      "beforeHash": "aa4a640d7d571527d9312a9da93cbba6c19a2b1c0eed2a39bd035a7e7f88c963",
+      "afterHash": "650b78493109889c88f64394371b03f54e49769c7ae42793e3d9062c4b33060b"
+    }
+  ],
+  "committedAt": "2026-08-28T21:24:42.933Z"
+}

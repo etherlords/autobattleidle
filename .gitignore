@@ -13,3 +13,6 @@ dist/
 .env
 .env.*
 !.env.example
+
+.playwright-cli/*
+vite-qa.err

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e2d26834-b479-4a35-a8d3-7da49dd78abb",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:21:57.233Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi018-remove-stale-cadence-link-20260829-01",
+  "requestFingerprint": "306267d2a92b64200c21642aaf75cff6541d6cd2390f9ae40eed5d647bcd67fc",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md.planner-tmp-e2d26834-b479-4a35-a8d3-7da49dd78abb-0",
+      "beforeHash": "67fa9891b7c45bd17db059b47ecadb4b6112505aa78adbad0024d3c15556bd80",
+      "afterHash": "b168b8a7e74ce61212abe2fc351ac4dd46ddd7ad47dc244962b4f1c2d6bf0d65"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-e2d26834-b479-4a35-a8d3-7da49dd78abb-1",
+      "beforeHash": "76e3131756b9957de32b3b50749a9c24c8ea6a69a5810f29cdd7f9ea6c864f49",
+      "afterHash": "c6e7941a87b25257613a60200eaba9a5346891ec709b923c9f36eb70b91b9a27"
+    }
+  ],
+  "committedAt": "2026-08-28T21:21:57.269Z"
+}

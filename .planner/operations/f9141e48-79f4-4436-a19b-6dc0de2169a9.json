@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f9141e48-79f4-4436-a19b-6dc0de2169a9",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:38:06.247Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-quality-contracts-start-20260829-v1",
+  "requestFingerprint": "9efc0b60b7a685690d8db70609964e226ceca4508aced22ede0533e1d6c5085b",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-f9141e48-79f4-4436-a19b-6dc0de2169a9-0",
+      "beforeHash": "89f2566ebcd05c55e86a1dd63670f33692388d665f9f12722a0adb9b4c91b96e",
+      "afterHash": "12e719a91636cb6b92487e0ad0dc597d6d8a9de732df2a760aff6a67060e7cfd"
+    }
+  ],
+  "committedAt": "2026-08-28T19:38:06.270Z"
+}

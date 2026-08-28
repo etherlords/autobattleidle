@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "983c59e5-2ccf-409f-b4ac-42db7127cac9",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:58:19.616Z",
+  "itemId": "ABI-016",
+  "idempotencyKey": "abi016-remove-cadence-rebalance-to-abi020-20260829-v1",
+  "requestFingerprint": "e4990ae2b2e07c1f2a6873f53fb8dbda19787a85472455512803afebc003072e",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/BRIEF.md.planner-tmp-983c59e5-2ccf-409f-b4ac-42db7127cac9-0",
+      "beforeHash": "43d36da05ed761275ef651865bc8750a052e3270ab177f141da1277abfa377cf",
+      "afterHash": "e848760ff2affdc5e5366d97107f222f6348038f773eb952052f728692e85fc2"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-983c59e5-2ccf-409f-b4ac-42db7127cac9-1",
+      "beforeHash": "f27dde55e8d381a00cc7fc484d2efd3c4c137ba172a60094e4b028c63c6b3e1d",
+      "afterHash": "23a45044dee3ee66efacdec2747bf46db91fadb2af1563bed5bb38a63403c810"
+    }
+  ],
+  "committedAt": "2026-08-28T20:58:19.649Z"
+}

@@ -52,3 +52,15 @@ Defeat rewards are granted exactly once, with a 2x request when the roll is belo
 
 Pure formulas and transitions require focused unit tests. Presentation owns effect lifetime and
 deterministic cleanup.
+
+## Planned automatic timing and pause follow-ups
+
+ABI-018 will replace only automatic attack timing with the bounded curve `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)`, converted by `intervalMs = 1000 / APS(level)`. The curve starts at 0.1 APS, is approximately 1 APS at level 100 and 2 APS at level 200, and approaches but never reaches 3 APS. Deterministic rolls, manual attacks, upgrade costs, armor penetration, critical chance, double reward, saves, and safe-number rollover remain unchanged.
+
+ABI-019 will add a session-only pause for automatic attacks. Pause freezes the exact cooldown remainder; resume continues from it with no catch-up attack. Manual attacks and the rest of the application continue. Reload clears the pause state. Both follow-ups require fresh progression/cadence simulation, automatic-slow coverage, historical-save proof, and desktop/390px browser QA before these planned rules become current authority.
+
+## Planned headless ordinary-balance telemetry
+
+ABI-020 will exercise existing spawn, attack, and purchase operations without Three.js or DOM for at least 3,000 ordinary encounters using fixed rolls. It attempts at most one round-robin affordable repeatable purchase after each defeated ordinary enemy and records normal/veteran/elite hit and time distributions, transition spikes, walls, upgrade state, safe-number behavior, and bosses separately.
+
+The simulation compares 0.5% and 0.8% safe-saturated exponential ordinary base-health growth after ABI-018 speed and ABI-016 cadence land. It must be deterministic, target roughly two seconds of test runtime, keep ordinary time-to-kill finite with no 60-second wall, and preserve intentional one-hit plus meaningful 5- and 10-hit cases. Boss cadence and multiplier are not changed.

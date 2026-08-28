@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "126bc932-53c2-415e-87d6-6f9a730ac73b",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:55:11.734Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-start-user-balance-reconciliation-20260829-v1",
+  "requestFingerprint": "989c13da08fd987b622259280119141f30a1e3733e6efcef945b0cce98083504",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-126bc932-53c2-415e-87d6-6f9a730ac73b-0",
+      "beforeHash": "35acfedad5cd8145487ac5614d0e0320f256c03618eb49c9c58dc2b3bd3ac866",
+      "afterHash": "4c0d30d0807b7950b5276488f0d653beaed3ff1ec452191cfd02da025cdd193c"
+    }
+  ],
+  "committedAt": "2026-08-28T20:55:11.811Z"
+}

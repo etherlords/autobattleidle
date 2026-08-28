@@ -1,30 +1,22 @@
 import * as THREE from "three";
+import {
+  enemyVisualSpec,
+  type BodyFamily,
+  type Decoration,
+  type EnemyVisualInput,
+  type EnemyVisualSpec,
+  type GradeCue,
+  type ModifierCue,
+} from "./enemy-visual-spec";
 
-export type EnemyVisualInput = {
-  readonly grade: string;
-  readonly level: number;
-  readonly modifier: string | null;
-};
-
-type BodyFamily = "beetle" | "brute" | "wisp" | "boss-colossus" | "boss-hydra";
-type Decoration = "fins" | "horns" | "orbitals" | "satellites" | "scar";
-type GradeCue = "none" | "crest" | "spikes" | "crown";
-export type ModifierCue =
-  "shield-plates" | "vitality-core" | "time-ring" | "wealth-orbitals" | null;
-
-export type EnemyVisualSpec = {
-  readonly body: BodyFamily;
-  readonly decorations: readonly Decoration[];
-  readonly gradeCue: GradeCue;
-  readonly modifierCue: ModifierCue;
-  readonly scale: number;
-  readonly seed: number;
-};
+export { enemyVisualSpec, stableEnemySeed } from "./enemy-visual-spec";
+export type { EnemyVisualInput, EnemyVisualSpec, ModifierCue } from "./enemy-visual-spec";
 
 export type EnemyVisual = {
   readonly group: THREE.Group;
   readonly spec: EnemyVisualSpec;
   tick(): void;
+  dispose(): void;
 };
 
 const material = (color: string, emissive = "#000000"): THREE.MeshStandardMaterial =>
@@ -33,67 +25,17 @@ const material = (color: string, emissive = "#000000"): THREE.MeshStandardMateri
 const mesh = (geometry: THREE.BufferGeometry, color: string, emissive?: string): THREE.Mesh =>
   new THREE.Mesh(geometry, material(color, emissive));
 
-export const stableEnemySeed = (enemy: EnemyVisualInput): number => {
-  let seed = Math.abs(Math.trunc(enemy.level)) || 1;
-  for (const character of `${enemy.grade}:${enemy.modifier ?? "none"}`) {
-    seed = (seed * 31 + character.charCodeAt(0)) >>> 0;
-  }
-  return seed;
-};
-
-const bodyFamily = (enemy: EnemyVisualInput): BodyFamily => {
-  const identityLevel = Math.abs(Math.trunc(enemy.level));
-  if (enemy.grade === "boss") return identityLevel % 2 === 0 ? "boss-colossus" : "boss-hydra";
-  return (["beetle", "brute", "wisp"] as const)[identityLevel % 3] ?? "beetle";
-};
-
-const modifierCue = (modifier: string | null): ModifierCue => {
-  if (modifier === "armor") return "shield-plates";
-  if (modifier === "health") return "vitality-core";
-  if (modifier === "automatic-slow") return "time-ring";
-  return modifier === "wealth" ? "wealth-orbitals" : null;
-};
-
-const gradeCue = (grade: string): GradeCue =>
-  grade === "boss"
-    ? "crown"
-    : grade === "elite"
-      ? "spikes"
-      : grade === "veteran"
-        ? "crest"
-        : "none";
-
-const decorationChoices = (seed: number): readonly Decoration[] => {
-  const choices = ["fins", "horns", "orbitals", "satellites", "scar"] as const;
-  return [
-    choices[seed % choices.length] ?? "fins",
-    choices[(seed >>> 3) % choices.length] ?? "horns",
-  ];
-};
-
-export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
-  const seed = stableEnemySeed(enemy);
-  return {
-    body: bodyFamily(enemy),
-    decorations: decorationChoices(seed),
-    gradeCue: gradeCue(enemy.grade),
-    modifierCue: modifierCue(enemy.modifier),
-    scale: enemy.grade === "boss" ? 1.45 : enemy.grade === "elite" ? 1.12 : 1,
-    seed,
-  };
+const bodyCore = (body: BodyFamily): THREE.Mesh => {
+  if (body === "beetle") return mesh(new THREE.SphereGeometry(0.7, 12, 10), "#ff9d66", "#4d180d");
+  if (body === "brute") return mesh(new THREE.BoxGeometry(1.1, 0.9, 0.9), "#f3bd58", "#4d3210");
+  if (body === "wisp") return mesh(new THREE.OctahedronGeometry(0.8), "#bd7cff", "#311653");
+  if (body === "boss-colossus")
+    return mesh(new THREE.CylinderGeometry(0.8, 1.05, 1.55, 8), "#e9576d", "#5b1021");
+  return mesh(new THREE.IcosahedronGeometry(0.95, 1), "#d754c3", "#4e123f");
 };
 
 const addBody = (group: THREE.Group, body: BodyFamily): void => {
-  const core =
-    body === "beetle"
-      ? mesh(new THREE.SphereGeometry(0.7, 12, 10), "#ff9d66", "#4d180d")
-      : body === "brute"
-        ? mesh(new THREE.BoxGeometry(1.1, 0.9, 0.9), "#f3bd58", "#4d3210")
-        : body === "wisp"
-          ? mesh(new THREE.OctahedronGeometry(0.8), "#bd7cff", "#311653")
-          : body === "boss-colossus"
-            ? mesh(new THREE.CylinderGeometry(0.8, 1.05, 1.55, 8), "#e9576d", "#5b1021")
-            : mesh(new THREE.IcosahedronGeometry(0.95, 1), "#d754c3", "#4e123f");
+  const core = bodyCore(body);
   core.name = `enemy-body-${body}`;
   group.add(core);
   if (body === "beetle") {
@@ -195,20 +137,42 @@ const addDecoration = (group: THREE.Group, decoration: Decoration, index: number
   }
 };
 
-export const createEnemyVisual = (enemy: EnemyVisualInput): EnemyVisual => {
-  const spec = enemyVisualSpec(enemy);
-  const group = new THREE.Group();
-  addBody(group, spec.body);
-  addGradeCue(group, spec.gradeCue);
-  const timeRing = addModifierCue(group, spec.modifierCue);
-  spec.decorations.forEach((decoration, index) => addDecoration(group, decoration, index));
-  group.scale.setScalar(spec.scale);
-  group.position.set(1.7, 0.8, 0);
-  return {
-    group,
-    spec,
-    tick: () => {
-      if (timeRing !== undefined) timeRing.rotation.z += 0.035;
-    },
-  };
-};
+class ThreeEnemyVisual implements EnemyVisual {
+  readonly group = new THREE.Group();
+  readonly spec: EnemyVisualSpec;
+  private readonly timeRing: THREE.Object3D | undefined;
+  private disposed = false;
+
+  constructor(enemy: EnemyVisualInput) {
+    this.spec = enemyVisualSpec(enemy);
+    addBody(this.group, this.spec.body);
+    addGradeCue(this.group, this.spec.gradeCue);
+    this.timeRing = addModifierCue(this.group, this.spec.modifierCue);
+    this.spec.decorations.forEach((decoration, index) =>
+      addDecoration(this.group, decoration, index),
+    );
+    this.group.scale.setScalar(this.spec.scale);
+    this.group.position.set(1.7, 0.8, 0);
+  }
+
+  tick(): void {
+    if (!this.disposed && this.timeRing !== undefined) this.timeRing.rotation.z += 0.035;
+  }
+
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.group.traverse((child) => {
+      if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
+        child.geometry.dispose();
+        const material = child.material;
+        if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
+        else material.dispose();
+      }
+    });
+    this.group.removeFromParent();
+  }
+}
+
+export const createEnemyVisual = (enemy: EnemyVisualInput): EnemyVisual =>
+  new ThreeEnemyVisual(enemy);

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b6a3feeb-4741-4d0a-8ec1-a21fa15f978a",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:23:49.527Z",
+  "itemId": "ABI-016",
+  "idempotencyKey": "abi016-add-camera-manager-closure-v2-20260829-01",
+  "requestFingerprint": "d1cb3eca49949ba3e71473468367e5a66cd87badc6be4b6a28687b627ee2ada2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md.planner-tmp-b6a3feeb-4741-4d0a-8ec1-a21fa15f978a-0",
+      "beforeHash": "0a7868a6c7727b8f478465bccbd8486a2add971cfcab91ac0e7b9f75196cdac8",
+      "afterHash": "e8b065551a4154c283a23024a0f92db68654c6acd7bd1b9e5f2ef1fdf353124d"
+    }
+  ],
+  "committedAt": "2026-08-28T21:23:49.567Z"
+}

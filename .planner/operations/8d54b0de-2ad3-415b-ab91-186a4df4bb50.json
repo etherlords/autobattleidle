@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "8d54b0de-2ad3-415b-ab91-186a4df4bb50",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:24:43.986Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-cancel-manager-closure-20260829-01",
+  "requestFingerprint": "0dbc04ee8ff1ffca544c850c79ffe3236e3c12f807f6fb5f3274f0832cbbdab2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-8d54b0de-2ad3-415b-ab91-186a4df4bb50-0",
+      "beforeHash": "650b78493109889c88f64394371b03f54e49769c7ae42793e3d9062c4b33060b",
+      "afterHash": "1c899de8a7f18dee85f39ad5c4626e2a1dc0ec7202e2e0a0b39c079e5c8c636d"
+    }
+  ],
+  "committedAt": "2026-08-28T21:24:44.021Z"
+}

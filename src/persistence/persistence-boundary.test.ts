@@ -3,7 +3,7 @@ import v1Fixture from "./fixtures/save-v1.json";
 import v2Fixture from "./fixtures/save-v2.json";
 import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 
-import { createCombatState, spawnEnemy } from "../domain/combat";
+import { COMBAT_BALANCE, createCombatState, spawnEnemy } from "../domain/combat";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -203,6 +203,25 @@ describe("persistence boundary", () => {
     expect(boundary.load(fallback(), 300)).toMatchObject({ coins: 25 });
   });
 
+  it("accepts current and previous boss cadence saves but rejects corrupted historical values", () => {
+    const current = { ...fallback(), enemy: spawnEnemy(35, 0) };
+    expect(decodeSave(JSON.parse(encodeSave(current)) as unknown, fallback(), 0)).toEqual(current);
+    expect(decodeSave(legacyV2Fixture, fallback(), 0)).toMatchObject({
+      coins: legacyV2Fixture.coins,
+      enemy: legacyV2Fixture.enemy,
+    });
+    expect(
+      decodeSave(
+        {
+          ...legacyV2Fixture,
+          enemy: { ...legacyV2Fixture.enemy, reward: legacyV2Fixture.enemy.reward + 1 },
+        },
+        fallback(),
+        0,
+      ),
+    ).toEqual(fallback());
+  });
+
   it("prefers direct legacy V2 over versioned V1 when the current slot is unusable", () => {
     const v1 = JSON.stringify(v1Fixture);
     const legacy = JSON.stringify(legacyV2Fixture);
@@ -308,7 +327,9 @@ describe("persistence boundary", () => {
   });
 
   it("round-trips the highest accepted boss without an unsafe reward", () => {
-    const highestBoss = Math.floor(Number.MAX_SAFE_INTEGER / 3 / 15) * 15;
+    const highestBoss =
+      Math.floor(Number.MAX_SAFE_INTEGER / 3 / COMBAT_BALANCE.bossInterval) *
+      COMBAT_BALANCE.bossInterval;
     const state = {
       ...fallback(),
       enemy: spawnEnemy(highestBoss, 0),

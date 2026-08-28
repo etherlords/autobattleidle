@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b62ad7af-26f3-41f2-9764-1c3f214a454c",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:45:01.423Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-add-battlefield-framing-20260829-v1",
+  "requestFingerprint": "d75bc80c007ba3c5c2168ea27af4e21e97e36bb8bd9743a7b27518455d1fce90",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-b62ad7af-26f3-41f2-9764-1c3f214a454c-0",
+      "beforeHash": "43e6b3f5756ada4925867866d524e9522d9cf92196fdf2a6561f2e44bfcb1656",
+      "afterHash": "ce379dcf0941d21552e2677a0bd430ff8a5b599f5701169fc5d6c027ecc53297"
+    }
+  ],
+  "committedAt": "2026-08-28T20:45:01.472Z"
+}

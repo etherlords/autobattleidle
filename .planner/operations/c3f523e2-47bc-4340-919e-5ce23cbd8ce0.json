@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c3f523e2-47bc-4340-919e-5ce23cbd8ce0",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:39:29.726Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-reconcile-original-pattern-mvc-acceptance-20260829-v1",
+  "requestFingerprint": "25b3225f2a0652a1cd690f9acc43a4a132a2f97bfe88ec7badbc680817f12268",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/BRIEF.md.planner-tmp-c3f523e2-47bc-4340-919e-5ce23cbd8ce0-0",
+      "beforeHash": "b10aef1d9791da516eb34e40ce858ee31f51135b390eda6c013193ecfd14db29",
+      "afterHash": "fffe293128badbcf995bb1d403f9d0a90bb41b0a25ea1470fd1ae94b1df3a64d"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-c3f523e2-47bc-4340-919e-5ce23cbd8ce0-1",
+      "beforeHash": "21da38102a056813a6092664eabac1798da1c1ed60ccc99aeab3db4f56a19003",
+      "afterHash": "f27dde55e8d381a00cc7fc484d2efd3c4c137ba172a60094e4b028c63c6b3e1d"
+    }
+  ],
+  "committedAt": "2026-08-28T20:39:29.767Z"
+}

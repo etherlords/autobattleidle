@@ -11,6 +11,250 @@ afterEach(() => {
 });
 
 describe("startApplication", () => {
+  it("keeps attack, automatic-frame, purchase, persistence, and render ordering compatible", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    const snapshots: BattleSnapshot[] = [];
+    const savedCoins: number[] = [];
+    let attack: (() => void) | undefined;
+    let upgrade: ((id: UpgradeId) => void) | undefined;
+    let nextFrame = 1;
+    const initialState = createCombatState({
+      criticalChance: 0,
+      damage: 10,
+      doubleRewardChance: 0,
+    });
+    const app = startApplication({
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: (id) => frames.delete(id),
+        removeEventListener: () => undefined,
+        requestAnimationFrame: (callback) => {
+          const id = nextFrame;
+          nextFrame += 1;
+          frames.set(id, callback);
+          return id;
+        },
+      },
+      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      hud: {
+        dispose: () => undefined,
+        onAttack: (listener) => {
+          attack = listener;
+        },
+        onReset: () => undefined,
+        onRestore: () => undefined,
+        onUpgrade: (listener) => {
+          upgrade = listener;
+        },
+        reportPersistence: () => undefined,
+        render: (snapshot) => snapshots.push(snapshot),
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => undefined,
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
+        onStateChanged: (state) => savedCoins.push(state.coins),
+        reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
+      },
+      initialState: {
+        ...initialState,
+        coins: 2,
+        enemy: { ...initialState.enemy, health: 70 },
+        nextAutomaticAttackAtMs: 100,
+      },
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+      onDispose: () => undefined,
+    });
+    if (attack === undefined || upgrade === undefined) throw new Error("Expected HUD handlers");
+
+    attack();
+    attack();
+    expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
+      "Manual hit: 40 damage",
+      "Manual kill: +1 coins",
+    ]);
+    expect(savedCoins).toEqual([2, 3]);
+
+    const beforeIdleFrame = snapshots.length;
+    const idleFrame = frames.get(1);
+    if (idleFrame === undefined) throw new Error("Expected animation frame");
+    frames.delete(1);
+    idleFrame(99);
+    expect(snapshots).toHaveLength(beforeIdleFrame + 1);
+    expect(snapshots.at(-1)?.events).toHaveLength(2);
+    expect(savedCoins).toEqual([2, 3]);
+
+    upgrade("automatic-unlock");
+    upgrade("automatic-unlock");
+    expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
+      "Manual hit: 40 damage",
+      "Manual kill: +1 coins",
+      "Purchased Unlock automatic attack",
+      "Already unlocked",
+    ]);
+    expect(savedCoins).toEqual([2, 3, 2]);
+    app.dispose();
+  });
+
+  it("keeps automatic hit and kill messages plus persistence on the animation path", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    const snapshots: BattleSnapshot[] = [];
+    const savedCoins: number[] = [];
+    const initialState = createCombatState(
+      { criticalChance: 0, damage: 10, doubleRewardChance: 0 },
+      0,
+      true,
+    );
+    const app = startApplication({
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: (id) => frames.delete(id),
+        removeEventListener: () => undefined,
+        requestAnimationFrame: (callback) => {
+          frames.set(1, callback);
+          return 1;
+        },
+      },
+      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      hud: {
+        dispose: () => undefined,
+        onAttack: () => undefined,
+        onReset: () => undefined,
+        onRestore: () => undefined,
+        onUpgrade: () => undefined,
+        reportPersistence: () => undefined,
+        render: (snapshot) => snapshots.push(snapshot),
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => undefined,
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
+        onStateChanged: (state) => savedCoins.push(state.coins),
+        reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
+      },
+      initialState: { ...initialState, enemy: { ...initialState.enemy, health: 80 } },
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+      onDispose: () => undefined,
+    });
+    const firstFrame = frames.get(1);
+    if (firstFrame === undefined) throw new Error("Expected animation frame");
+    frames.delete(1);
+    firstFrame(0);
+    const secondFrame = frames.get(1);
+    if (secondFrame === undefined) throw new Error("Expected animation frame");
+    frames.delete(1);
+    secondFrame(1_000);
+    expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
+      "Automatic hit: 40 damage",
+      "Automatic kill: +1 coins",
+    ]);
+    expect(savedCoins).toEqual([0, 1]);
+    app.dispose();
+  });
+
+  it("keeps reset, restore, and disposal side effects compatible", () => {
+    const frames = new Map<number, FrameRequestCallback>();
+    const messages: string[] = [];
+    const snapshots: BattleSnapshot[] = [];
+    let attack: (() => void) | undefined;
+    let reset: (() => void) | undefined;
+    let restore: (() => void) | undefined;
+    let confirmed = false;
+    let resets = 0;
+    let disposals = 0;
+    const initialState = createCombatState({
+      criticalChance: 0,
+      damage: 10,
+      doubleRewardChance: 0,
+    });
+    const restoredState = { ...initialState, coins: 9 };
+    const restoreResults = [
+      { message: "Previous-version save is unavailable or invalid.", state: undefined },
+      { message: "Progress restored from the previous version.", state: restoredState },
+    ];
+    const app = startApplication({
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: (id) => frames.delete(id),
+        confirm: () => confirmed,
+        removeEventListener: () => undefined,
+        requestAnimationFrame: (callback) => {
+          frames.set(1, callback);
+          return 1;
+        },
+      },
+      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      hud: {
+        dispose: () => undefined,
+        onAttack: (listener) => {
+          attack = listener;
+        },
+        onReset: (listener) => {
+          reset = listener;
+        },
+        onRestore: (listener) => {
+          restore = listener;
+        },
+        onUpgrade: () => undefined,
+        reportPersistence: (message) => messages.push(message),
+        render: (snapshot) => snapshots.push(snapshot),
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => {
+          disposals += 1;
+        },
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => true,
+        onStateChanged: () => undefined,
+        reset: () => {
+          resets += 1;
+        },
+        restorePreviousVersion: () => restoreResults.shift() ?? { message: "", state: undefined },
+      },
+      initialState,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+      onDispose: () => undefined,
+    });
+    if (attack === undefined || reset === undefined || restore === undefined)
+      throw new Error("Expected HUD handlers");
+
+    attack();
+    const beforeCancelledReset = snapshots.length;
+    reset();
+    expect(resets).toBe(0);
+    expect(snapshots).toHaveLength(beforeCancelledReset);
+
+    const beforeFailedRestore = snapshots.length;
+    restore();
+    expect(messages).toEqual(["Previous-version save is unavailable or invalid."]);
+    expect(snapshots).toHaveLength(beforeFailedRestore);
+
+    restore();
+    expect(messages).toEqual([
+      "Previous-version save is unavailable or invalid.",
+      "Progress restored from the previous version.",
+    ]);
+    expect(snapshots.at(-1)?.coins).toBe(9);
+    expect(snapshots.at(-1)?.events).toEqual([]);
+
+    confirmed = true;
+    reset();
+    expect(resets).toBe(1);
+    expect(snapshots.at(-1)?.coins).toBe(0);
+    expect(snapshots.at(-1)?.events).toEqual([]);
+    app.dispose();
+    app.dispose();
+    expect(disposals).toBe(1);
+  });
+
   it("uses the startup clock for restored automatic cooldown", () => {
     Object.defineProperty(globalThis, "document", {
       configurable: true,

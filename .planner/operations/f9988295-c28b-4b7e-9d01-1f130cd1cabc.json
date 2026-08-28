@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f9988295-c28b-4b7e-9d01-1f130cd1cabc",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:50:22.666Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi-020-calibration-candidates-20260829-v2",
+  "requestFingerprint": "9b10f2952413e728285895578f32e063591d318a2304f7f558226a7e91f721e6",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md.planner-tmp-f9988295-c28b-4b7e-9d01-1f130cd1cabc-0",
+      "beforeHash": "14d7a39f652ef224617244a14684d916cec016c9c98ac931430cb98a7a90e565",
+      "afterHash": "c6f255841080fa0562336b23c64fa653bd7f057489f5d200c5d8e47816827dfc"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-f9988295-c28b-4b7e-9d01-1f130cd1cabc-1",
+      "beforeHash": "353ed2b0bc5352021735a44594a30a141d5ae1767c538d21fffa1283c886fb0d",
+      "afterHash": "113ebe4d29e40e30b87c0e86b1882b5289ad035419af7870518c4f3b6fc4255f"
+    }
+  ],
+  "committedAt": "2026-08-28T19:50:22.703Z"
+}

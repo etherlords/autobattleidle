@@ -45,6 +45,26 @@ Overlay layering is explicit: passive HUD and log ignore pointer events; upgrade
 them; the remaining viewport routes pointer input to the canvas. Responsive QA proves no overlap,
 selection, accidental double attack, page scroll, or layout growth.
 
+## Planned modifier-click bulk purchasing
+
+ABI-017 is a blocked follow-up after the behavior-preserving ABI-015 refactor; this section is a planned contract, not current deployed behavior. A default upgrade click requests one level, Shift-click requests up to 10, and Ctrl-click requests up to 100, with Ctrl taking precedence when both modifiers are present. The HUD emits one named `(upgradeId, quantity)` request and shows one compact aria-readable modifier hint in the existing dialog space.
+
+The application applies the existing pure single-level purchase sequentially and stops on the first disabled or unaffordable result. Every successful level keeps the existing `Purchased ...` event in order. The failed attempt emits no event, debit, or level change. After the loop, the application performs one coherent render and persistence update; summarizing the events requires a separate product decision.
+
+The follow-up does not change the save schema, modal layout model, focus trap, keyboard activation, dismissal, disabled reasons, or listener ownership. Focused tests and desktop/390px browser QA prove modifier precedence, caps, partial-stop parity with repeated single purchases, event count/order, failed-attempt identity, coherent persistence, accessibility, and no modal/focus regression.
+
+## Planned current upgrade stats and automatic-speed balance
+
+ABI-018 follows ABI-015 and ABI-017; this is planned behavior, not the current deployed balance. The upgrades dialog will add a compact aria-readable panel for current damage, armor penetration, critical chance, double-reward chance, and automatic attacks per second without changing the modal layout model.
+
+Automatic speed will use `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)` and `intervalMs = 1000 / APS(level)`: about 0.1 APS at level 0, 0.99 at level 100, 1.96 at level 200, asymptotically below 3 APS. Armor penetration and critical chance keep their existing diminishing-return formulas; double reward is displayed but not rebalanced. ABI-014 starter behavior and ABI-016 cadence timing require fresh simulation evidence after this change.
+
+## Planned automatic-attack pause control
+
+ABI-019 follows ABI-018; this is planned behavior. A compact real button beside the automatic-attack status pauses only automatic attacks. Running state exposes a pause action; paused state exposes a play/resume action with non-color and aria-readable state. Pausing freezes the remaining cooldown and resuming continues from it without catch-up or duplicate attacks.
+
+Manual attacks, upgrades, modal interaction, rendering, persistence, and enemy animation remain active. Pause is session-only and is not added to the save schema; reload resumes normal automatic operation.
+
 ## Persistence
 
 Progress is stored in version-addressed `localStorage` slots after meaningful state changes with a short debounce and on page hide. The current V2 slot is `etherlords.autobattleidle.save.v2`; retained V1 is `etherlords.autobattleidle.save.v1`; `etherlords.autobattleidle.save` is the historical unversioned compatibility source. Normal saves and reset affect only V2.

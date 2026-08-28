@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d1c025a1-d4b8-44da-8cc5-d8a23c9dd7d5",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:25:11.769Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-add-rebalance-self-check-v2-20260829-02",
+  "requestFingerprint": "d77753464b2258e6ee6da0e4d7da1587b6f2d548ddd0d9787114983da0cea8b0",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-d1c025a1-d4b8-44da-8cc5-d8a23c9dd7d5-0",
+      "beforeHash": "5d009f61b2249af6fe4443a9f6d894ade4a40a506cc83ca62a21254c013b3fe1",
+      "afterHash": "2ab50ad9ddf1bdb553ba1d2943edc38cbd260467851dbcfeec5de04558ae7b55"
+    }
+  ],
+  "committedAt": "2026-08-28T21:25:11.806Z"
+}

@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "operationId": "468ceb70-3caf-4411-87bf-da55fca55f3e",
+  "operation": "task.create",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:43:38.195Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi-018-create-upgrade-stats-and-auto-speed-rebalance-20260829-v1",
+  "requestFingerprint": "a752d4b7d1e2360ed6a75b093dabd1a7c4c70a121085b1d816a63f3ac312f0e4",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-0",
+      "afterHash": "67fa9891b7c45bd17db059b47ecadb4b6112505aa78adbad0024d3c15556bd80"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/ANALYSIS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/ANALYSIS.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-1",
+      "afterHash": "d9def71d6685b7ecfb49bf21ad19a032f33ccde79c207fdc889469944dc91779"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/IMPLEMENTATION-GUIDE.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/IMPLEMENTATION-GUIDE.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-2",
+      "afterHash": "cfa78607e0d347bdbc07ca30383325f41ccaeb95f79af1ee63bf878f0c653e1f"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-3",
+      "afterHash": "27beaebb0fe5b75114e4f990c7328234d3d014e482be47d0e966026335bcd481"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/REVIEW.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/REVIEW.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-4",
+      "afterHash": "facd077060ac99c5a0afff342d41009e6aee6266644e7107d8a8bc18a48f81e1"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/QA.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/QA.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-5",
+      "afterHash": "83be4f7154f2bd9f23fe86ba64099ebd09cce6a3c0c5119246dc6fb49764ebe9"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/VERIFICATION.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/VERIFICATION.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-6",
+      "afterHash": "22b2e90f7e014f9f973a0f49bc707e847287b8e04067019285d56022dde7e088"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-7",
+      "beforeHash": "713da512be871600193dc47a474749d7c5c794d5415e1bd3a6dde546b879708b",
+      "afterHash": "b040f921fab3f55601602aa00a87a92d1bf2394e7858d5c2ed5294518eecda4c"
+    },
+    {
+      "target": ".planner/config.json",
+      "temporary": ".planner/config.json.planner-tmp-468ceb70-3caf-4411-87bf-da55fca55f3e-8",
+      "beforeHash": "257730d37b9540717084dcde2abae93b9defdbfac410602fc99a175d2009a423",
+      "afterHash": "371db527cc78ec6f71f2fd5b13ff2e940caa9556a8ab287421686b462d9bce5c"
+    }
+  ],
+  "committedAt": "2026-08-28T19:43:38.252Z"
+}

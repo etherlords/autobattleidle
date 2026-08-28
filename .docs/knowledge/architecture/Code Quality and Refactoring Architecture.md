@@ -82,3 +82,11 @@ The refactor is behavior-preserving:
 - [[architecture/Technical Architecture|Technical Architecture]]
 - [[quality/Testing Strategy|Testing Strategy]]
 - [[design/Enemy Tiers and Boss Cadence|Enemy Tiers and Boss Cadence]]
+
+## Planned local commit enforcement and alias decision
+
+ABI-021 will add a tracked native Git pre-commit hook that runs the canonical `pnpm check` and blocks a commit on lint, Prettier check, tests, TypeScript, or build failure. The hook will not auto-format or mutate staged files; the developer fixes or runs `pnpm format`, stages the result, and retries. Exact-SHA CI runs the same command independently because local hooks can be bypassed.
+
+No hook framework dependency is planned. Installation must be idempotent, repository-scoped through `core.hooksPath`, and proven on Windows without creating a real publication. Reviewer and Manager evidence must cite fresh command output or exact-SHA CI, not a prose claim.
+
+Path aliases remain deferred while imports are shallow and ownership direction is clearer with relative paths. Reconsider aliases only when repeated deep traversal creates measured friction and TypeScript, Vite, Vitest, plus layer-lint can share one mapping without hiding upward dependencies.

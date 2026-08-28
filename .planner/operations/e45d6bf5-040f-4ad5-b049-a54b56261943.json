@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e45d6bf5-040f-4ad5-b049-a54b56261943",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:57:10.879Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-plan-persistence-decomposition-complete-20260829-9",
+  "requestFingerprint": "89e490ef1d6f18000ba72e5dfc3f4039e792d528d952bb4b233c64e497390dfc",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-e45d6bf5-040f-4ad5-b049-a54b56261943-0",
+      "beforeHash": "ec751136b12cc3830407f4733ed987616898447d4aa5a6ed4cf2a70d537a4e19",
+      "afterHash": "a1a3b17cd4302352be21097b4054a7cbd604a0551a8dbd67cfc657904f7a6490"
+    }
+  ],
+  "committedAt": "2026-08-28T19:57:10.914Z"
+}

@@ -101,6 +101,7 @@ describe("nextBattlefieldFrame", () => {
     });
 
     battlefield.render(snapshot("boss", 10));
+    expect(enemy.parent).toBeNull();
     for (let index = 0; index < 120; index += 1) {
       battlefield.render(snapshot(index % 2 === 0 ? "boss" : "elite", index + 10));
     }

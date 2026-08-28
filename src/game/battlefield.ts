@@ -12,7 +12,11 @@ export type Battlefield = {
 };
 
 type EffectKind = "boss" | "death" | "hit" | "spawn";
-type EnemyIdentity = Pick<BattleSnapshot["enemy"], "grade" | "level" | "modifier">;
+type EnemyIdentity = {
+  readonly grade: string;
+  readonly level: number;
+  readonly modifier: string | null;
+};
 type Effect = { readonly kind: EffectKind; life: number; readonly mesh: THREE.Mesh };
 
 export type BattlefieldFrame = {
@@ -78,11 +82,15 @@ const createPlayer = (): THREE.Group => {
 };
 
 const createEffect = (kind: EffectKind): Effect => {
-  const color = kind === "hit" ? "#fff4ba" : kind === "death" ? "#ff6d52" : "#8bdbff";
+  const color = effectColor(kind);
   const effect = mesh(new THREE.RingGeometry(0.15, kind === "boss" ? 1.2 : 0.7, 20), color, color);
   effect.rotation.x = -Math.PI / 2;
   effect.position.set(1.7, 0.04, 0);
   return { kind, life: kind === "boss" ? 18 : 10, mesh: effect };
+};
+const effectColor = (kind: EffectKind): string => {
+  if (kind === "hit") return "#fff4ba";
+  return kind === "death" ? "#ff6d52" : "#8bdbff";
 };
 
 export const createBattlefield = (host: HTMLElement): Battlefield =>
@@ -128,7 +136,7 @@ export const createBattlefieldWithRenderer = (
       enemy?.tick();
       const frame = nextBattlefieldFrame(previous, snapshot);
       if (enemy === undefined || frame.enemyChanged) {
-        if (enemy !== undefined) retire(enemy.group);
+        enemy?.dispose();
         enemy = createEnemyVisual(snapshot.enemy);
         scene.add(enemy.group);
       }
@@ -152,6 +160,7 @@ export const createBattlefieldWithRenderer = (
     dispose: () => {
       if (disposed) return;
       disposed = true;
+      enemy?.dispose();
       disposeObject(scene);
       scene.clear();
       renderer.dispose();

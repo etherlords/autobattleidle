@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "636a7c35-de64-4719-b75b-e4845e3d1302",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:57:04.704Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-plan-enemy-view-decomposition-in_progress-20260829-4",
+  "requestFingerprint": "87fcb15a153aa48feb0ed637392efb19f8955eb1cf2ddc3ff9cd683cc73a86f6",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-636a7c35-de64-4719-b75b-e4845e3d1302-0",
+      "beforeHash": "13f331fad37ec98d672cd4a401aab572daf93df4393eb42023bc7858626c6741",
+      "afterHash": "53939e71ed3aa7ea1f208df10e8b656043dd1bc99d58e16350ba678a4d524aab"
+    }
+  ],
+  "committedAt": "2026-08-28T19:57:05.042Z"
+}

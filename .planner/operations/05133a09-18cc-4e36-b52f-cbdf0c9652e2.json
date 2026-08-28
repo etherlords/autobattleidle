@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "05133a09-18cc-4e36-b52f-cbdf0c9652e2",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:24:14.694Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi018-add-automatic-speed-curve-v2-20260829-01",
+  "requestFingerprint": "c65b36f6efae7d897fc57b670494aeb128fb50b198e8dd6cd7ebedfb755e510f",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-05133a09-18cc-4e36-b52f-cbdf0c9652e2-0",
+      "beforeHash": "203259e4c41a17559d2d9e19082951a9daf96baf17e621f78fd06f935c3d68e4",
+      "afterHash": "28c0b22d240dd9b927314904dfcddb6daec1099c3989d05619b6d9548f64dc3b"
+    }
+  ],
+  "committedAt": "2026-08-28T21:24:14.729Z"
+}

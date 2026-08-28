@@ -17,4 +17,109 @@ export default tseslint.config(
       "max-depth": ["error", 4],
     },
   },
+  {
+    files: ["src/domain/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "**/game",
+                "**/game/**",
+                "**/ui",
+                "**/ui/**",
+                "**/persistence",
+                "**/persistence/**",
+                "**/app",
+                "**/app/**",
+              ],
+              message: "Domain stays pure.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/game/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "**/ui",
+                "**/ui/**",
+                "**/persistence",
+                "**/persistence/**",
+                "**/app",
+                "**/app/**",
+              ],
+              message: "Game may depend only on domain.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/ui/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "**/game",
+                "**/game/**",
+                "**/persistence",
+                "**/persistence/**",
+                "**/app",
+                "**/app/**",
+              ],
+              message: "UI may depend only on domain.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/persistence/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["**/game", "**/game/**", "**/ui", "**/ui/**", "**/app", "**/app/**"],
+              message: "Persistence may depend only on domain.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/**/*.ts"],
+    ignores: ["src/**/*.test.ts"],
+    rules: {
+      "no-nested-ternary": "error",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TSIndexedAccessType",
+          message: "Name cross-module contracts instead of indexing another contract type.",
+        },
+      ],
+    },
+  },
 );

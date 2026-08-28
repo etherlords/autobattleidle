@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f5e3c418-8dc7-4e7c-bec1-5a3dda9d016f",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:24:08.168Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi018-cancel-automatic-speed-curve-20260829-01",
+  "requestFingerprint": "75b2fb374ccd2fd511a8e9df4ee0899af49ba54476ee8b46df3cfdf74b2b8091",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-f5e3c418-8dc7-4e7c-bec1-5a3dda9d016f-0",
+      "beforeHash": "6c2d16c54da20276377ac495200197dd75084ae0c21009c834aed980fdf127d3",
+      "afterHash": "854c98cee1b04bb8f4be28a105beac491e116a83906c9715dbc1fd0c445f659e"
+    }
+  ],
+  "committedAt": "2026-08-28T21:24:08.224Z"
+}

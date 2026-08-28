@@ -42,3 +42,15 @@ All five repeatable paths have no catalog/gameplay maximum and have a positive a
 The report performs 2,262 automatic attacks and 0 manual attacks, ends at encounter 46 with 18,081 coins, records 50,313 armor-prevented damage, and finishes at penetration 0.25. Purchases are automatic unlock 1, damage 31, armor penetration 10, critical 0, double reward 0, and automatic speed 3. The 44 repeatable purchases do not exceed the 45 defeated encounters, and unpurchased choices remain open before and after the first boss.
 
 Tests assert the complete exact report plus the one-purchase-per-defeat invariant, first/later target envelopes, minimum damage, all five million-level adjacent effects, effect-aware representation-boundary blocking/no-spend, integer good-save round-trip and mismatched fallback, encounter 100→101 and safe epoch rollover, saturated cost/reward/currency, highest-boss persistence, and stale-attack rejection after rollover. `pnpm check` covers lint, formatting, 14 Vitest tests, TypeScript, and Vite build. Source: `src/domain/combat.ts`, `src/domain/progression-simulator.ts`, `src/domain/combat.test.ts`, and `src/persistence/persistence-boundary.ts`.
+
+## Planned derived-stat presentation and automatic-speed curve
+
+ABI-018 plans a compact current-stat presentation for damage, armor penetration, critical chance, double-reward chance, and automatic attacks per second. The automatic-speed upgrade will use `0.1 + 2.9 * level^2 / (level^2 + 150^2)` APS, remaining strictly increasing and asymptotically below 3 APS. Formula-table tests cover levels 0, 1, 10, 50, 100, 200, 500, and 1000.
+
+The existing armor penetration `0.75 * level / (level + 20)` and critical chance `0.6 * level / (level + 20)` already have diminishing returns and never reach their caps, so they remain unchanged. Double reward is shown with its current formula but is not rebalanced; changing it would alter the reward economy and needs a separate product decision.
+
+## Planned ordinary-balance simulator
+
+ABI-020 will add a pure headless production-path simulator for at least 3,000 configurable ordinary encounters. After each defeat it attempts at most one affordable repeatable upgrade in round-robin order across the full repeatable catalog, while reporting combat-affecting levels separately from double reward. Candidate ordinary health growth is 0.5% versus 0.8% exponential per encounter; selection is based on measured hit/time-to-kill envelopes, not a hard-coded preference.
+
+The report includes per-grade and per-band p50/p90/max hits and time, one-hit/5-plus/10-plus fractions, transitions, spikes, walls, safe saturation, and deterministic repeatability. No adjacent-band median may jump more than 2x and no ordinary wall may exceed 60 seconds under the reference strategy. Boss balance stays separate.

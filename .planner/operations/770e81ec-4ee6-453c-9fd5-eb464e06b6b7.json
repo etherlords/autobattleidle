@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "770e81ec-4ee6-453c-9fd5-eb464e06b6b7",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:22:30.954Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-rebalance-contract-20260829-01",
+  "requestFingerprint": "5a4c0e9113cba5873b76fd4594b6519aa481649f6b9095b6354f3606fcbaa1fc",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md.planner-tmp-770e81ec-4ee6-453c-9fd5-eb464e06b6b7-0",
+      "beforeHash": "c6f255841080fa0562336b23c64fa653bd7f057489f5d200c5d8e47816827dfc",
+      "afterHash": "a561f7e947924897d3222c0c5bb42705c075b738c3ef0673e654b34d2d239b0e"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-770e81ec-4ee6-453c-9fd5-eb464e06b6b7-1",
+      "beforeHash": "c6e7941a87b25257613a60200eaba9a5346891ec709b923c9f36eb70b91b9a27",
+      "afterHash": "5aa302cb495dd4007215a71fb980ca268b2abb302bb31eced80dfb4c6e50ecd9"
+    }
+  ],
+  "committedAt": "2026-08-28T21:22:30.991Z"
+}

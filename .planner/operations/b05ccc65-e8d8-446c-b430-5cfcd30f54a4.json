@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b05ccc65-e8d8-446c-b430-5cfcd30f54a4",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:00:58.800Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-supersede-manager-closure-v2-for-v3-detailed-plan",
+  "requestFingerprint": "629cd0c5e344484d5f6a3598f9771658e460b2dce5920e0d7fc459dcdafce95e",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-b05ccc65-e8d8-446c-b430-5cfcd30f54a4-0",
+      "beforeHash": "9cd890888954400124d9618f3a5d4ff50cd6a59f14d3f0c493229a1f478004f1",
+      "afterHash": "b7c8bc32a582735e23f86c432e26c5072cffa81813947607ccc7cf65184a92d7"
+    }
+  ],
+  "committedAt": "2026-08-28T21:00:58.839Z"
+}

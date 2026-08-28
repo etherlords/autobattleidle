@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "9e4f59ce-a358-45bc-bd5a-66f5efa75bb9",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:25:09.626Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-add-chance-penetration-strategies-v2-20260829-02",
+  "requestFingerprint": "613e4c7f5926cf93ab4e27fca88fbe983f0af420ad4d89367c768d53ec4abc05",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-9e4f59ce-a358-45bc-bd5a-66f5efa75bb9-0",
+      "beforeHash": "11a3dea306059986a976c3dbe903b2570d24ea52b4617066886827d8003bab86",
+      "afterHash": "d12bdd9269ba3e65926010dbd14e44f95d82a50802d6a1c623168dff9b3d99bf"
+    }
+  ],
+  "committedAt": "2026-08-28T21:25:09.660Z"
+}

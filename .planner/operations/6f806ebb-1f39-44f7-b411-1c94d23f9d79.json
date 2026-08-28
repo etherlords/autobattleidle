@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "6f806ebb-1f39-44f7-b411-1c94d23f9d79",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:55:10.604Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-add-typed-controller-events-v2-20260829-v1",
+  "requestFingerprint": "110ca24237f04a7457eb28fe92c0dfc9b70b03350520fbe5fdc5d4de24099fd1",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-6f806ebb-1f39-44f7-b411-1c94d23f9d79-0",
+      "beforeHash": "65dacf15a7654b821b4f0e7ca3c5ba441e74dfbbe5110a0933bf20a84736c373",
+      "afterHash": "35acfedad5cd8145487ac5614d0e0320f256c03618eb49c9c58dc2b3bd3ac866"
+    }
+  ],
+  "committedAt": "2026-08-28T20:55:10.648Z"
+}

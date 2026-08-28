@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f20fe887-6f7f-47b2-9db6-d21f597e3889",
+  "operation": "claim.acquire",
+  "state": "committed",
+  "createdAt": "2026-08-28T19:35:31.657Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-f20fe887-6f7f-47b2-9db6-d21f597e3889"
+    }
+  ],
+  "committedAt": "2026-08-28T19:35:31.693Z"
+}

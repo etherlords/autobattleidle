@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "4da7aad7-e302-4518-9f27-ea5719643fc6",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:01:10.885Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-add-v3-09-combat-facade-20260829-v1",
+  "requestFingerprint": "cc86e8f4dd15fdb19c4a1e3a7adf18f7aeb5b3250cdc0fc11cd972fae7c32e45",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-4da7aad7-e302-4518-9f27-ea5719643fc6-0",
+      "beforeHash": "516aeb21012f33aef1d691eaebf22ca2c117c34563031ec183809ee5edd16442",
+      "afterHash": "c58adb94eb76ea5e907f4c817c382901e9b3c2f59529f71b6f1bd13895792879"
+    }
+  ],
+  "committedAt": "2026-08-28T21:01:10.934Z"
+}

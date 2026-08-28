@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "4fa04486-dbb4-4eb8-ac61-cc55a718fb1b",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:11:52.318Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-review2-return-final-repair-20260829-v1",
+  "requestFingerprint": "97fa1375972876ac80e1372d39d513c6b424f96db7ee5bc7377db19504b1cf9a",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/BRIEF.md.planner-tmp-4fa04486-dbb4-4eb8-ac61-cc55a718fb1b-0",
+      "beforeHash": "24db9e4203246a558a49173260bd25e210b30ad571a43cf29cce416a097e9cd6",
+      "afterHash": "7d61cc40c4fb203d5fce023e9f31791bf3fbca826c0aeb3158fb4561c5534649"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-4fa04486-dbb4-4eb8-ac61-cc55a718fb1b-1",
+      "beforeHash": "8589c1929fd7cf3377b36dc760e3f3b30f522d8e5617e8160ec6b12678a3e0f2",
+      "afterHash": "8345eaaf71d8e7bdfeeb7f3017f8afca0b8177730168ef636be464ccfb26506c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-4fa04486-dbb4-4eb8-ac61-cc55a718fb1b-2",
+      "beforeHash": "deaa5f1b7ff7a3e1eb87cf98cd7252e630d7768d45afab6a71d89dea43216e72",
+      "afterHash": "f0d09544b31225af74476353bab76e22b4ae276e52d685c841f6a6c707e62df2"
+    }
+  ],
+  "committedAt": "2026-08-28T20:11:52.353Z"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "866140ff-13b9-4be1-a99d-6a57277da0cd",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:25:06.288Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-add-headless-simulator-v2-20260829-02",
+  "requestFingerprint": "85fad0975de41bf1e57c609c3e7407c3f7138207b73cc8533b1c0eb59374d815",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-866140ff-13b9-4be1-a99d-6a57277da0cd-0",
+      "beforeHash": "356b7d54d76553ff61bd1dff3d4aef143c8c0241c06dcf0bef3a30d8840b40eb",
+      "afterHash": "93cd7903d195c933cb96c67999a9edd65dbd7254d0920bfbfa25fcba87a5f14f"
+    }
+  ],
+  "committedAt": "2026-08-28T21:25:06.326Z"
+}

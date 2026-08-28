@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "a02c1bb0-5c4e-4415-82a7-bb3a432d68d3",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T20:44:54.724Z",
+  "itemId": "ABI-015",
+  "idempotencyKey": "abi015-cancel-old-manager-closure-20260829-v1",
+  "requestFingerprint": "1627dde8b4b07a84723a27b4a188462882e056f5e2ead0c2279969f93570d86c",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-015-establish-enforceable-architecture-boundaries-and-refactor-c/PROGRESS.md.planner-tmp-a02c1bb0-5c4e-4415-82a7-bb3a432d68d3-0",
+      "beforeHash": "f35668f467841317a943f51fa516c5c7866f01b921220f7aeb3eeb0df8343dc4",
+      "afterHash": "429baff9e0abbb350fa764ad5414961b7bd2d3580e88430650a6200a00e845e7"
+    }
+  ],
+  "committedAt": "2026-08-28T20:44:54.807Z"
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "41a5c2f0-33a2-41a6-b559-149913de732a",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T21:25:12.852Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi020-add-rebalance-independent-gates-v2-20260829-02",
+  "requestFingerprint": "560b7700f5e315f05210a0de851a0e7eb3365817d5595708dcd6f953cb1dec5f",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-41a5c2f0-33a2-41a6-b559-149913de732a-0",
+      "beforeHash": "2ab50ad9ddf1bdb553ba1d2943edc38cbd260467851dbcfeec5de04558ae7b55",
+      "afterHash": "9d8531e25d69210908d5c6b997f16ad22fe64393bb946c50d5a67b4b293c5cf6"
+    }
+  ],
+  "committedAt": "2026-08-28T21:25:12.888Z"
+}
