@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "9cb32a65-bd9f-4112-9875-755ab07a4ab5",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-28T02:41:35.810Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/PROGRESS.md.planner-tmp-9cb32a65-bd9f-4112-9875-755ab07a4ab5"
+    }
+  ],
+  "committedAt": "2026-08-28T02:41:35.829Z"
+}

@@ -4,8 +4,8 @@ id: ABI-003
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 38
-status: Ready for Manager
+revision: 42
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-002
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 38
-- Last update: Begin coherent Git checkpoint, push, CI/Pages wait, deployed proof, and manager closure.
+- Status: Done
+- Revision: 42
+- Last update: Close ABI-003 after all required gates, pushed code, successful CI/Pages, and deployed real-browser proof.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [x] lifecycle-tests: Implementation owner: add focused scene/effect/disposal tests, object/listener/RAF stability checks, and pnpm check
 - [x] independent-review: Independent Reviewer: verify scope, snapshot-only outcomes, accessibility cues, bounded resources, and full checks
 - [x] browser-qa: Independent QA: prove all grades/effects, desktop+narrow readability, long-session stability, and clean disposal in a real browser
-- [~] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed visual-functional scenarios, and close
+- [x] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed visual-functional scenarios, and close
 - [x] review-repair-1: Implementation owner: repair transition-critical effect retention and prove complete scene/effect lifecycle cleanup
 - [x] independent-rereview-1: Independent Reviewer: re-review both repaired P2 findings and the complete ABI-003 diff
 
@@ -649,3 +649,75 @@ requiredGates:
 - State: in_progress
 - Evidence:
   - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md
+
+### evt-9c8a579a-ceeb-441c-9358-b5c0f006a4b6
+
+- Timestamp: 2026-08-28T02:41:35.809Z
+- Actor: manager-abi003
+- Operation: progress.append
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Deployed Pages functional proof, exact asset hashes, elapsed/tool ledger, and out-of-scope Planner pilot findings recorded in physical VERIFICATION.md via section-write fallback.
+- Idempotency key: abi003-deployed-verification-fallback-note-20260828
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md
+  - commit ccefb8c88cfebb23636f036acb9a14b4cf7ea212
+  - CI run 33136407417 success
+  - Pages run 33136407178 success
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-1d716042-e539-4623-a95d-42134a990b41
+
+- Timestamp: 2026-08-28T02:41:36.781Z
+- Actor: manager-abi003
+- Operation: execution_plan.update
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Complete commit/push, successful CI/Pages, exact asset match, public functional proof, and manager verification.
+- Idempotency key: abi003-plan-delivery-complete-20260828
+- Request fingerprint: e46e73705115cf4524311b02f6226e6c27e519918e0ad463510e10b8016bad41
+- Action: set_state
+- Step ID: delivery
+- State: complete
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md
+  - CI run 33136407417 success
+  - Pages run 33136407178 success
+  - public browser PASS
+
+### evt-d09757f2-d9e1-4efb-b6f5-17aa04406f1b
+
+- Timestamp: 2026-08-28T02:42:09.873Z
+- Actor: manager-closure-abi003
+- Operation: gate.record
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Separate Manager-close actor PASS: all independent gates, pushed code, CI/Pages, deployed behavior, asset hashes, evidence, scope, and hygiene verified.
+- Idempotency key: abi003-gate-manager-closure-distinct-actor-pass-20260828
+- Request fingerprint: 43f7f8a1112394880267a3cf2a20d5759a80d7e23a9c8cf6e29cc6c8d5a682fc
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md
+  - commit ccefb8c88cfebb23636f036acb9a14b4cf7ea212
+  - CI run 33136407417 success
+  - Pages run 33136407178 success
+  - public browser PASS
+
+### evt-a2ee2f01-c227-475d-9b6d-ad0b3697d5db
+
+- Timestamp: 2026-08-28T02:42:10.698Z
+- Actor: manager-closure-abi003
+- Operation: task.advance
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Close ABI-003 after all required gates, pushed code, successful CI/Pages, and deployed real-browser proof.
+- Idempotency key: abi003-ready-manager-to-done-after-closure-20260828
+- Request fingerprint: ce30872042f228daa50433889b362fb96f72c11ad14e48673142c21742f187ca
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-003-build-three-js-battlefield-enemy-grades-and-bounded-effects/VERIFICATION.md
+  - commit ccefb8c88cfebb23636f036acb9a14b4cf7ea212
+  - CI run 33136407417 success
+  - Pages run 33136407178 success
