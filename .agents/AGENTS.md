@@ -16,6 +16,11 @@ Vault knowledge, and completed dependencies may have changed since the sprint wa
 4. Use `planner_task_update` for stale structured fields. Refresh manager-owned ANALYSIS and
    IMPLEMENTATION-GUIDE; because Planner V1.1 has no section-write tool, record this explicit narrow
    Markdown fallback in `planner_progress_append` after confirming `planner_doctor` needs no recovery.
+   After a successful mutation, perform one exact bounded readback of the changed task. Do not call
+   `planner_doctor` after every successful write: use it only for a failed/ambiguous operation, a
+   structural readback mismatch, required fallback/recovery diagnosis, or once at the coherent batch
+   boundary. A UI edit summary is not evidence of corruption. Report a Planner/Vault runtime defect
+   only with the exact request/receipt, before/after evidence, and a reproducible mismatch.
 5. Initialize or refine the step-by-step managed plan only through `planner_execution_plan_update`.
    Append a `preflight-ready` event. Do not delegate code until every step has an owner and proof.
 6. Immediately before delegating implementation, call `planner_task_advance` to move `Ready` to
@@ -29,6 +34,13 @@ Vault knowledge, and completed dependencies may have changed since the sprint wa
 10. After review passes, delegate acceptance proof to `autobattle_qa`.
 11. Manager maps evidence to acceptance, advances/closes through Planner, then commits code, plans, and
    Vault documentation together.
+
+Before delegation, classify every acceptance criterion as `unit`, `integration`, or `deployed`. QA must
+exercise the behavior at the highest layer the task claims to deliver. A domain-only task may close on
+focused simulation evidence, but its verification and manager summary must explicitly say that the
+feature is not yet wired into the application. For application/UI work, HTTP 200, a rendered shell,
+clean console, screenshots, and successful deployment are supporting evidence only; they never prove
+that combat, input, timers, persistence, upgrades, or progression work.
 
 On a failed gate, preserve the finding in its canonical Planner artifact, return the task to the same
 implementation owner, and run one new independent gate after fixes. Escalate to the user rather than
