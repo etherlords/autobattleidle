@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d575a3b9-b550-4efb-99f7-66cdfba97fa6",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T12:42:00.620Z",
+  "itemId": "ABI-006",
+  "idempotencyKey": "abi006-review-repair3-start-20260828",
+  "requestFingerprint": "b1cb0cf8d793fb04a21acc6ef949531e9aa3d5727f3f7d9133c217db509abb87",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md.planner-tmp-d575a3b9-b550-4efb-99f7-66cdfba97fa6-0",
+      "beforeHash": "6fd3b92c713bd6a97b582ae8d7227a656502501c049baeec26e1598b782fc9f1",
+      "afterHash": "a5e648eb14d293ff833939a844c8fbb0e0644319c26ba7abf581ad6841a6cd79"
+    }
+  ],
+  "committedAt": "2026-08-28T12:42:00.631Z"
+}

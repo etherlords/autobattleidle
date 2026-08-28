@@ -60,7 +60,7 @@ describe("startApplication", () => {
     expect(loadedAt).toBe(500);
     expect(snapshots.at(-1)?.automatic.remainingMs).toBe(1_000);
     frames.get(1)?.(1_200);
-    expect(snapshots.at(-1)?.enemy.health).toBe(10);
+    expect(snapshots.at(-1)?.enemy.health).toBe(140);
     expect(snapshots.at(-1)?.automatic.remainingMs).toBe(300);
     app.dispose();
   });
@@ -142,11 +142,10 @@ describe("startApplication", () => {
           calls.persistenceReset += 1;
         },
       },
-      initialState: createCombatState(
-        { criticalChance: 0, damage: 10, doubleRewardChance: 0 },
-        0,
-        false,
-      ),
+      initialState: {
+        ...createCombatState({ criticalChance: 0, damage: 10, doubleRewardChance: 0 }, 0, false),
+        coins: 1,
+      },
       rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
       viewport: () => ({ height: 240, width: 400 }),
       onDispose: () => undefined,
@@ -163,21 +162,23 @@ describe("startApplication", () => {
       throw new Error("Expected HUD handlers");
     }
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
-      "Need 1 coins",
-      "Need 1024 coins",
+      null,
+      "Need 45 coins",
+      "Need 3 coins",
       "Need 3 coins",
       "Need 4 coins",
       "Requires automatic attack unlock",
     ]);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(23);
+    expect(lastSnapshot().enemy.health).toBe(100);
     expect(lastSnapshot().coins).toBe(1);
-    expect(lastSnapshot().events.at(-1)?.message).toBe("Manual kill: +1 coins");
-    expect(lastSnapshot().upgrades).toHaveLength(5);
+    expect(lastSnapshot().events.at(-1)?.message).toBe("Manual hit: 40 damage");
+    expect(lastSnapshot().upgrades).toHaveLength(6);
     expect(savedCoins).toEqual([1]);
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
       null,
-      "Need 1024 coins",
+      "Need 45 coins",
+      "Need 3 coins",
       "Need 3 coins",
       "Need 4 coins",
       "Requires automatic attack unlock",
@@ -186,19 +187,19 @@ describe("startApplication", () => {
     expect(savedCoins).toEqual([1, 0]);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(13);
+    expect(lastSnapshot().enemy.health).toBe(60);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     const firstFrame = callbacks.values().next().value as FrameRequestCallback;
     callbacks.delete(1);
     firstFrame(1000);
-    expect(snapshots.at(-1)?.enemy.health).toBe(3);
+    expect(snapshots.at(-1)?.enemy.health).toBe(20);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     reset();
     expect(calls.persistenceReset).toBe(0);
     confirmed = true;
     reset();
     expect(calls.persistenceReset).toBe(1);
-    expect(lastSnapshot().coins).toBe(0);
+    expect(lastSnapshot().coins).toBe(1);
     app.dispose();
     app.dispose();
     expect(resizeListeners.size).toBe(0);

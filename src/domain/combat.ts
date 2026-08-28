@@ -1,18 +1,18 @@
 export const COMBAT_BALANCE = {
   automaticAttackIntervalMs: 1_000,
-  automaticAttackMinimumIntervalMs: 500,
-  automaticAttackSpeedStepMs: 100,
-  bossInterval: 10,
+  automaticAttackMinimumIntervalMs: 200,
+  bossInterval: 15,
   eliteAutomaticSlowMs: 500,
-  baseEnemyHealth: 10,
-  enemyHealthPerEncounter: 5,
-  baseReward: 1,
+  baseEnemyHealth: 140,
+  enemyHealthGrowth: 1.002,
+  baseReward: 1.2,
 } as const;
+
+const MAX_ENCOUNTER = Math.floor(Number.MAX_SAFE_INTEGER / 3);
 
 export type AttackSource = "manual" | "automatic";
 export type EnemyGrade = "normal" | "veteran" | "elite" | "boss";
 export type EliteModifier = "armor" | "health" | "automatic-slow";
-
 export type CombatEnemy = {
   readonly id: number;
   readonly encounter: number;
@@ -23,37 +23,28 @@ export type CombatEnemy = {
   readonly armor: number;
   readonly reward: number;
 };
-
 export type CombatPlayer = {
   readonly automaticSpeedLevel: number;
-  readonly damage: number;
   readonly criticalChance: number;
+  readonly damage: number;
   readonly doubleRewardChance: number;
+  readonly armorPenetrationLevel?: number;
+  readonly criticalLevel?: number;
+  readonly damageLevel?: number;
+  readonly doubleRewardLevel?: number;
 };
-
 export type UpgradeId =
-  "automatic-unlock" | "damage" | "critical-chance" | "double-reward" | "automatic-speed";
-
+  | "automatic-unlock"
+  | "damage"
+  | "armor-penetration"
+  | "critical-chance"
+  | "double-reward"
+  | "automatic-speed";
 export type UpgradeDefinition = {
   readonly id: UpgradeId;
   readonly label: string;
-  readonly maximumLevel: number;
   readonly baseCost: number;
 };
-
-export type UpgradePurchase = {
-  readonly state: CombatState;
-  readonly reason: string | null;
-};
-
-export const UPGRADES: readonly UpgradeDefinition[] = [
-  { id: "automatic-unlock", label: "Unlock automatic attack", maximumLevel: 1, baseCost: 1 },
-  { id: "damage", label: "Damage", maximumLevel: 10, baseCost: 2 },
-  { id: "critical-chance", label: "Critical chance", maximumLevel: 5, baseCost: 3 },
-  { id: "double-reward", label: "Double reward chance", maximumLevel: 5, baseCost: 4 },
-  { id: "automatic-speed", label: "Automatic speed", maximumLevel: 5, baseCost: 5 },
-];
-
 export type CombatState = {
   readonly automaticUnlocked: boolean;
   readonly coins: number;
@@ -61,20 +52,17 @@ export type CombatState = {
   readonly nextAutomaticAttackAtMs: number;
   readonly player: CombatPlayer;
 };
-
 export type AttackRolls = {
   readonly critical: number;
   readonly doubleReward: number;
   readonly nextEliteModifier: number;
 };
-
 export type AttackCommand = {
   readonly atMs: number;
   readonly enemyId: number;
   readonly rolls: AttackRolls;
   readonly source: AttackSource;
 };
-
 export type AttackEvent =
   | { readonly type: "ignored" }
   | {
@@ -83,116 +71,223 @@ export type AttackEvent =
       readonly damage: number;
       readonly defeated: boolean;
       readonly reward: number;
+      readonly armorPreventedDamage: number;
+      readonly penetration: number;
     };
+export type AttackResult = { readonly event: AttackEvent; readonly state: CombatState };
+export type UpgradePurchase = { readonly state: CombatState; readonly reason: string | null };
 
-export type AttackResult = {
-  readonly event: AttackEvent;
-  readonly state: CombatState;
+export const UPGRADES: readonly UpgradeDefinition[] = [
+  { id: "automatic-unlock", label: "Unlock automatic attack", baseCost: 1 },
+  { id: "damage", label: "Damage", baseCost: 2 },
+  {
+    id: "armor-penetration",
+    label: "Armor penetration",
+    baseCost: 3,
+  },
+  { id: "critical-chance", label: "Critical chance", baseCost: 3 },
+  {
+    id: "double-reward",
+    label: "Double reward chance",
+    baseCost: 4,
+  },
+  { id: "automatic-speed", label: "Automatic speed", baseCost: 5 },
+];
+
+const finiteLevel = (level: number): number => {
+  if (!Number.isSafeInteger(level) || level < 0)
+    throw new RangeError("Level must be a non-negative safe integer");
+  return level;
 };
-
-const selectGrade = (encounter: number): EnemyGrade => {
-  if (encounter % COMBAT_BALANCE.bossInterval === 0) return "boss";
-  return (["normal", "veteran", "elite"] as const)[(encounter - 1) % 3] ?? "normal";
+const diminishingChance = (level: number): number =>
+  (0.6 * finiteLevel(level)) / (finiteLevel(level) + 20);
+export const damageForLevel = (level: number): number => {
+  const safeLevel = finiteLevel(level);
+  return Math.min(Number.MAX_SAFE_INTEGER, 1 + safeLevel + Math.floor(10 * Math.sqrt(safeLevel)));
 };
+export const criticalChanceForLevel = (level: number): number => diminishingChance(level);
+export const doubleRewardChanceForLevel = (level: number): number => diminishingChance(level);
+export const armorPenetrationForLevel = (level: number): number =>
+  (0.75 * finiteLevel(level)) / (finiteLevel(level) + 20);
+export const effectiveArmor = (armor: number, penetrationLevel: number): number =>
+  Math.max(0, Math.floor(armor * (1 - armorPenetrationForLevel(penetrationLevel))));
 
-const selectEliteModifier = (roll: number): EliteModifier => {
-  const index = Math.min(2, Math.floor(roll * 3));
-  return (["armor", "health", "automatic-slow"] as const)[index] ?? "armor";
+const selectGrade = (encounter: number): EnemyGrade =>
+  encounter % COMBAT_BALANCE.bossInterval === 0
+    ? "boss"
+    : ((["normal", "veteran", "elite"] as const)[(encounter - 1) % 3] ?? "normal");
+const selectEliteModifier = (roll: number): EliteModifier =>
+  (["armor", "health", "automatic-slow"] as const)[Math.min(2, Math.floor(roll * 3))] ?? "armor";
+const bossHealthMultiplier = (encounter: number): number => {
+  const bossIndex = Math.ceil(encounter / COMBAT_BALANCE.bossInterval) - 1;
+  return 10 + 120 * bossIndex + 5 * bossIndex * bossIndex;
 };
-
 export const spawnEnemy = (encounter: number, eliteModifierRoll: number): CombatEnemy => {
-  const grade = selectGrade(encounter);
+  if (!Number.isSafeInteger(encounter) || encounter < 1 || encounter > MAX_ENCOUNTER)
+    throw new RangeError("Encounter must be a positive safe integer with safe outputs");
+  const safeEncounter = encounter;
+  const grade = selectGrade(safeEncounter);
   const modifier = grade === "elite" ? selectEliteModifier(eliteModifierRoll) : null;
-  const baseHealth =
-    COMBAT_BALANCE.baseEnemyHealth + (encounter - 1) * COMBAT_BALANCE.enemyHealthPerEncounter;
-  const gradeMultiplier =
-    grade === "boss" ? 3 : grade === "elite" ? 2 : grade === "veteran" ? 1.5 : 1;
-  const maxHealth = Math.round(baseHealth * gradeMultiplier * (modifier === "health" ? 1.5 : 1));
-  const reward = Math.round(COMBAT_BALANCE.baseReward * encounter * gradeMultiplier);
-
+  const baseHealth = Math.min(
+    Number.MAX_SAFE_INTEGER,
+    Math.round(
+      COMBAT_BALANCE.baseEnemyHealth *
+        (1 + (COMBAT_BALANCE.enemyHealthGrowth - 1) * (safeEncounter - 1)),
+    ),
+  );
+  const multiplier =
+    grade === "boss"
+      ? bossHealthMultiplier(safeEncounter)
+      : grade === "elite"
+        ? 2
+        : grade === "veteran"
+          ? 1.5
+          : 1;
+  const maxHealth = Math.max(
+    1,
+    Math.min(
+      Number.MAX_SAFE_INTEGER,
+      Math.round(baseHealth * multiplier * (modifier === "health" ? 1.5 : 1)),
+    ),
+  );
   return {
-    armor: modifier === "armor" ? encounter : 0,
-    encounter,
+    armor: modifier === "armor" ? safeEncounter * 2 : grade === "boss" ? safeEncounter : 0,
+    encounter: safeEncounter,
     grade,
     health: maxHealth,
-    id: encounter,
+    id: safeEncounter,
     maxHealth,
     modifier,
-    reward,
+    reward: Math.min(
+      Number.MAX_SAFE_INTEGER,
+      Math.max(1, Math.round(COMBAT_BALANCE.baseReward * safeEncounter * multiplier)),
+    ),
   };
 };
 
+const damageLevel = (player: CombatPlayer): number =>
+  finiteLevel(player.damageLevel ?? Math.max(0, player.damage - 1));
+const criticalLevel = (player: CombatPlayer): number =>
+  finiteLevel(player.criticalLevel ?? Math.round(player.criticalChance * 10));
+const doubleRewardLevel = (player: CombatPlayer): number =>
+  finiteLevel(player.doubleRewardLevel ?? Math.round(player.doubleRewardChance * 10));
+const penetrationLevel = (player: CombatPlayer): number =>
+  finiteLevel(player.armorPenetrationLevel ?? 0);
+const DEFAULT_PLAYER: CombatPlayer = {
+  automaticSpeedLevel: 0,
+  armorPenetrationLevel: 0,
+  criticalChance: 0,
+  criticalLevel: 0,
+  damage: 1,
+  damageLevel: 0,
+  doubleRewardChance: 0,
+  doubleRewardLevel: 0,
+};
+const normalizedPlayer = (player: Partial<CombatPlayer>): CombatPlayer => {
+  const merged = { ...DEFAULT_PLAYER, ...player };
+  return {
+    ...merged,
+    armorPenetrationLevel: player.armorPenetrationLevel ?? 0,
+    criticalLevel: player.criticalLevel ?? Math.round(merged.criticalChance * 10),
+    damageLevel: player.damageLevel ?? Math.max(0, merged.damage - 1),
+    doubleRewardLevel: player.doubleRewardLevel ?? Math.round(merged.doubleRewardChance * 10),
+  };
+};
 export const createCombatState = (
-  player: Omit<CombatPlayer, "automaticSpeedLevel"> &
-    Partial<Pick<CombatPlayer, "automaticSpeedLevel">>,
-  firstEliteModifierRoll: number,
-  automaticUnlocked: boolean,
+  player: Partial<CombatPlayer> = {},
+  firstEliteModifierRoll = 0,
+  automaticUnlocked = false,
 ): CombatState => ({
   automaticUnlocked,
   coins: 0,
   enemy: spawnEnemy(1, firstEliteModifierRoll),
   nextAutomaticAttackAtMs: 0,
-  player: { ...player, automaticSpeedLevel: player.automaticSpeedLevel ?? 0 },
+  player: normalizedPlayer(player),
 });
-
 export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>
-  Math.max(
-    COMBAT_BALANCE.automaticAttackMinimumIntervalMs,
-    COMBAT_BALANCE.automaticAttackIntervalMs -
-      player.automaticSpeedLevel * COMBAT_BALANCE.automaticAttackSpeedStepMs,
-  ) + (enemy.modifier === "automatic-slow" ? COMBAT_BALANCE.eliteAutomaticSlowMs : 0);
-
+  COMBAT_BALANCE.automaticAttackIntervalMs -
+  (600 * finiteLevel(player.automaticSpeedLevel)) / (finiteLevel(player.automaticSpeedLevel) + 20) +
+  (enemy.modifier === "automatic-slow" ? COMBAT_BALANCE.eliteAutomaticSlowMs : 0);
 const definitionFor = (id: UpgradeId): UpgradeDefinition => {
   const definition = UPGRADES.find((entry) => entry.id === id);
-  if (definition === undefined) throw new Error(`Unknown upgrade ${id}`);
+  if (!definition) throw new Error(`Unknown upgrade ${id}`);
   return definition;
 };
-
-export const upgradeLevel = (state: CombatState, id: UpgradeId): number => {
-  if (id === "automatic-unlock") return state.automaticUnlocked ? 1 : 0;
-  if (id === "damage") return state.player.damage - 1;
-  if (id === "critical-chance") return Math.round(state.player.criticalChance * 10);
-  if (id === "double-reward") return Math.round(state.player.doubleRewardChance * 10);
-  return state.player.automaticSpeedLevel;
-};
-
+export const upgradeLevel = (state: CombatState, id: UpgradeId): number =>
+  id === "automatic-unlock"
+    ? Number(state.automaticUnlocked)
+    : id === "damage"
+      ? damageLevel(state.player)
+      : id === "armor-penetration"
+        ? penetrationLevel(state.player)
+        : id === "critical-chance"
+          ? criticalLevel(state.player)
+          : id === "double-reward"
+            ? doubleRewardLevel(state.player)
+            : state.player.automaticSpeedLevel;
 export const upgradeCost = (state: CombatState, id: UpgradeId): number => {
-  const definition = definitionFor(id);
-  return definition.baseCost * 2 ** upgradeLevel(state, id);
+  const cost = Math.ceil(definitionFor(id).baseCost * (upgradeLevel(state, id) + 1) ** 1.35);
+  return Math.max(1, Math.min(Number.MAX_SAFE_INTEGER, cost));
 };
-
-export const upgradeDisabledReason = (state: CombatState, id: UpgradeId): string | null => {
-  const definition = definitionFor(id);
-  if (id === "automatic-speed" && !state.automaticUnlocked) {
-    return "Requires automatic attack unlock";
+const canAdvanceUpgrade = (state: CombatState, id: UpgradeId): boolean => {
+  if (id === "automatic-unlock") return !state.automaticUnlocked;
+  const level = upgradeLevel(state, id);
+  if (level === Number.MAX_SAFE_INTEGER) return false;
+  const nextLevel = level + 1;
+  switch (id) {
+    case "damage":
+      return damageForLevel(nextLevel) > damageForLevel(level);
+    case "armor-penetration":
+      return armorPenetrationForLevel(nextLevel) > armorPenetrationForLevel(level);
+    case "critical-chance":
+      return criticalChanceForLevel(nextLevel) > criticalChanceForLevel(level);
+    case "double-reward":
+      return doubleRewardChanceForLevel(nextLevel) > doubleRewardChanceForLevel(level);
+    case "automatic-speed":
+      return (
+        automaticInterval(state.enemy, { ...state.player, automaticSpeedLevel: nextLevel }) <
+        automaticInterval(state.enemy, state.player)
+      );
   }
-  if (upgradeLevel(state, id) >= definition.maximumLevel) return "Maximum level reached";
+};
+export const upgradeDisabledReason = (state: CombatState, id: UpgradeId): string | null => {
+  if (id === "automatic-speed" && !state.automaticUnlocked)
+    return "Requires automatic attack unlock";
+  if (id === "automatic-unlock" && state.automaticUnlocked) return "Already unlocked";
+  if (!canAdvanceUpgrade(state, id)) return "Level cannot advance safely";
   const cost = upgradeCost(state, id);
   return state.coins < cost ? `Need ${cost} coins` : null;
 };
-
+const upgradedPlayer = (player: CombatPlayer, id: UpgradeId, level: number): CombatPlayer => {
+  switch (id) {
+    case "automatic-unlock":
+      return player;
+    case "damage":
+      return { ...player, damageLevel: level, damage: damageForLevel(level) };
+    case "armor-penetration":
+      return { ...player, armorPenetrationLevel: level };
+    case "critical-chance":
+      return { ...player, criticalLevel: level, criticalChance: criticalChanceForLevel(level) };
+    case "double-reward":
+      return {
+        ...player,
+        doubleRewardLevel: level,
+        doubleRewardChance: doubleRewardChanceForLevel(level),
+      };
+    case "automatic-speed":
+      return { ...player, automaticSpeedLevel: level };
+  }
+};
 export const purchaseUpgrade = (
   state: CombatState,
   id: UpgradeId,
   atMs: number,
 ): UpgradePurchase => {
-  const disabledReason = upgradeDisabledReason(state, id);
-  if (disabledReason !== null) return { reason: disabledReason, state };
+  const reason = upgradeDisabledReason(state, id);
+  if (reason) return { reason, state };
   const cost = upgradeCost(state, id);
-  if (state.coins < cost) return { reason: `Need ${cost} coins`, state };
-  const player =
-    id === "damage"
-      ? { ...state.player, damage: state.player.damage + 1 }
-      : id === "critical-chance"
-        ? { ...state.player, criticalChance: Math.min(0.5, state.player.criticalChance + 0.1) }
-        : id === "double-reward"
-          ? {
-              ...state.player,
-              doubleRewardChance: Math.min(0.5, state.player.doubleRewardChance + 0.1),
-            }
-          : id === "automatic-speed"
-            ? { ...state.player, automaticSpeedLevel: state.player.automaticSpeedLevel + 1 }
-            : state.player;
+  const level = Math.min(Number.MAX_SAFE_INTEGER, upgradeLevel(state, id) + 1);
+  const player = upgradedPlayer(state.player, id, level);
   const automaticUnlocked = state.automaticUnlocked || id === "automatic-unlock";
   return {
     reason: null,
@@ -208,39 +303,59 @@ export const purchaseUpgrade = (
     },
   };
 };
-
 export const attack = (state: CombatState, command: AttackCommand): AttackResult => {
   if (
     command.enemyId !== state.enemy.id ||
     (command.source === "automatic" &&
       (!state.automaticUnlocked || command.atMs < state.nextAutomaticAttackAtMs))
-  ) {
+  )
     return { event: { type: "ignored" }, state };
-  }
-
-  const critical = command.rolls.critical < state.player.criticalChance;
-  const damage = Math.max(1, state.player.damage - state.enemy.armor) * (critical ? 2 : 1);
+  const penetration = armorPenetrationForLevel(penetrationLevel(state.player));
+  const armor = effectiveArmor(state.enemy.armor, penetrationLevel(state.player));
+  const critical = command.rolls.critical < criticalChanceForLevel(criticalLevel(state.player));
+  const baseDamage = damageForLevel(damageLevel(state.player));
+  const damage = Math.max(1, baseDamage - armor) * (critical ? 2 : 1);
+  const armorPreventedDamage =
+    Math.max(0, baseDamage - Math.max(1, baseDamage - armor)) * (critical ? 2 : 1);
   const health = Math.max(0, state.enemy.health - damage);
   const nextAutomaticAttackAtMs =
     command.source === "automatic"
       ? command.atMs + automaticInterval(state.enemy, state.player)
       : state.nextAutomaticAttackAtMs;
-
-  if (health > 0) {
+  if (health > 0)
     return {
-      event: { critical, damage, defeated: false, reward: 0, type: "hit" },
+      event: {
+        type: "hit",
+        critical,
+        damage,
+        defeated: false,
+        reward: 0,
+        armorPreventedDamage,
+        penetration,
+      },
       state: { ...state, enemy: { ...state.enemy, health }, nextAutomaticAttackAtMs },
     };
-  }
-
-  const reward =
-    state.enemy.reward * (command.rolls.doubleReward < state.player.doubleRewardChance ? 2 : 1);
+  const requestedReward =
+    state.enemy.reward *
+    (command.rolls.doubleReward < doubleRewardChanceForLevel(doubleRewardLevel(state.player))
+      ? 2
+      : 1);
+  const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);
+  const nextEncounter = state.enemy.encounter === MAX_ENCOUNTER ? 1 : state.enemy.encounter + 1;
   return {
-    event: { critical, damage, defeated: true, reward, type: "hit" },
+    event: {
+      type: "hit",
+      critical,
+      damage,
+      defeated: true,
+      reward,
+      armorPreventedDamage,
+      penetration,
+    },
     state: {
       ...state,
       coins: state.coins + reward,
-      enemy: spawnEnemy(state.enemy.encounter + 1, command.rolls.nextEliteModifier),
+      enemy: spawnEnemy(nextEncounter, command.rolls.nextEliteModifier),
       nextAutomaticAttackAtMs,
     },
   };

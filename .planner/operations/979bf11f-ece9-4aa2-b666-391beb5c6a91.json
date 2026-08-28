@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "979bf11f-ece9-4aa2-b666-391beb5c6a91",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T13:52:57.928Z",
+  "itemId": "ABI-006",
+  "idempotencyKey": "abi006-qa-to-ready-manager-after-verification-20260828",
+  "requestFingerprint": "b13e64bf8c76e88424bd9d84bafd30b450f0238c6edbe1c99dcaf9878965a85c",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/BRIEF.md.planner-tmp-979bf11f-ece9-4aa2-b666-391beb5c6a91-0",
+      "beforeHash": "e9ee052d98bdeb88712d1d4e36e283118e0ad14773110078010343d3086c8003",
+      "afterHash": "2ab445229caebeab914420fb83e714c537e1c96f7275a2f88ef6ba0b87f44703"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md.planner-tmp-979bf11f-ece9-4aa2-b666-391beb5c6a91-1",
+      "beforeHash": "c4b37247916ec534ed0e5c5219e6ca49c9d7c026867b89ff077e6f4096f1f669",
+      "afterHash": "58cc3183369d3ce1a6cef99ed21c615d201e299898975c0ed039af0ea1371104"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-979bf11f-ece9-4aa2-b666-391beb5c6a91-2",
+      "beforeHash": "cce18537b199069309a1bb41749fa8b5358c65889061548d671b11155b6653dd",
+      "afterHash": "1a3e1da08dfc14f9d770fa1bad32be769d899f9d5d863ff19d4b179c91feeaef"
+    }
+  ],
+  "committedAt": "2026-08-28T13:52:57.952Z"
+}

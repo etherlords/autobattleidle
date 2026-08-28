@@ -121,7 +121,7 @@ describe("createHud", () => {
 
     expect(attacks).toBe(1);
     expect(resets).toBe(1);
-    expect(upgrades).toBe(5);
+    expect(upgrades).toBe(6);
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
     hud.dispose();
     attack.click();
@@ -129,7 +129,7 @@ describe("createHud", () => {
     for (const upgrade of upgradeButtons) upgrade.click();
     expect(attacks).toBe(1);
     expect(resets).toBe(1);
-    expect(upgrades).toBe(5);
+    expect(upgrades).toBe(6);
     expect(host.children).toHaveLength(0);
   });
 });

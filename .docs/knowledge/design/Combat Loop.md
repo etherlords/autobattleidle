@@ -32,19 +32,11 @@ deadline and escape transition.
 
 ## Damage and rewards
 
-Base damage and armor penetration are derived from centralized repeatable upgrade curves. Effective armor
-uses a bounded formula; a valid hit still deals at least one. Critical hits and reward multipliers use
-documented diminishing-return curves and remain finite at high levels.
+Combat derives player effects from centralized safe-integer levels. Integer damage at level `L` is `min(Number.MAX_SAFE_INTEGER, 1 + L + floor(10 * sqrt(L)))`: practical levels gain at least one damage while the square-root bonus and relative gain diminish. Critical and double-reward chances are `0.6 * L / (L + 20)`. Armor penetration is `0.75 * L / (L + 20)`, and effective armor is `floor(armor * (1 - penetration))`, bounded at zero. A valid hit deals `max(1, base damage - effective armor)` before the 2x critical multiplier. `armorPreventedDamage` records only damage actually prevented after the minimum-hit rule.
 
-A Golden Bug is offered for a fixed initial target window of ten seconds. Before spawn, its health is
-derived from the maximum automatic damage possible during that window, multiplied by a tuned factor
-(initial candidate 5x-10x), so automatic combat alone cannot defeat it before timeout. A measured manual
-click-rate envelope must still make it killable through active input. On timeout it escapes with no
-reward and normal progression resumes.
+Automatic interval is `1000 - 600 * L / (L + 20)` milliseconds, plus 500 ms only for the automatic-slow modifier. All five curves have strictly measurable adjacent effects at tested levels 999,999 and 1,000,000 without a repeatable gameplay cap. Before currency is spent, one shared guard requires the next representable level to strictly improve its effect; a non-improving IEEE-754 endpoint returns the original state with no debit. Runtime and deterministic simulator both call `attack`, `purchaseUpgrade`, `spawnEnemy`, and the same helpers; rendering owns no combat formula.
 
-Golden Bug reward is likewise a tuned large multiplier (initial candidate 5x-10x ordinary reward).
-Kill, timeout and reward are each exactly-once transitions and are included in deterministic simulator
-evidence.
+Defeat rewards are granted exactly once, with a 2x request when the roll is below the level-derived double-reward chance. Enemy rewards, the awarded amount, and total coins saturate safely, and the event reports the actual added amount. Integer damage keeps live enemy health persistence-compatible. V2 saves are exact-key validated and cross-check stored damage/chance values against levels; malformed, inconsistent, or V1 values recover to the supplied safe state. The highest accepted boss enemy also round-trips through V2 with safe saturated health and reward.
 
 ## State transitions
 

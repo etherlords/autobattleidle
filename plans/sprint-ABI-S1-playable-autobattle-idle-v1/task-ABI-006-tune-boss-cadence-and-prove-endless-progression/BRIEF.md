@@ -4,8 +4,8 @@ id: ABI-006
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Ready
+revision: 12
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-003
@@ -29,7 +29,7 @@ Tune boss cadence and prove endless progression
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 
@@ -42,19 +42,7 @@ Tune boss cadence and prove endless progression
 - [ ] Exact constants, curve rationale, simulator reports and supported numeric limits are documented in Vault and protected by focused tests
 - [ ] pnpm check, independent review, browser QA, CI/Pages and deployed multi-boss/upgrade/armor proof pass
 
-
-- [ ] A deterministic simulator reports time, purchases, attacks, and currency for several bosses
-- [ ] The first unattended boss target is approximately ten minutes with later targets increasing
-- [ ] The player cannot buy every upgrade before the first boss under the reference strategy
-- [ ] Progression formulas continue beyond handcrafted content without numeric instability
-- [ ] Balance constants and measured evidence are documented and tested
-
 ## Dependencies
-
-- ABI-003
-- ABI-004
-- ABI-005
-
 
 - ABI-003
 - ABI-004
@@ -65,10 +53,6 @@ Tune boss cadence and prove endless progression
 - AUTOBATTLEIDLE-DOC-20260827-A7FD1F
 - AUTOBATTLEIDLE-DOC-20260827-A798F2
 - AUTOBATTLEIDLE-DOC-20260827-584401
-
-
-- AUTOBATTLEIDLE-DOC-20260827-A7FD1F
-- AUTOBATTLEIDLE-DOC-20260827-A798F2
 
 ## Constraints
 

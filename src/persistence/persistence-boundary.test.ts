@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createCombatState } from "../domain/combat";
+import { createCombatState, spawnEnemy } from "../domain/combat";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -23,14 +23,14 @@ describe("persistence boundary", () => {
       automaticUnlocked: true,
       coins: 7,
       enemy: { ...fallback().enemy, health: 4 },
-      player: { automaticSpeedLevel: 1, criticalChance: 0.1, damage: 2, doubleRewardChance: 0.2 },
+      player: fallback().player,
     };
     const raw = encodeSave(state);
     expect(raw).not.toContain("nextAutomaticAttackAtMs");
     expect(raw).not.toContain("events");
     expect(decodeSave(JSON.parse(raw) as unknown, fallback(), 200)).toEqual({
       ...state,
-      nextAutomaticAttackAtMs: 1_100,
+      nextAutomaticAttackAtMs: 1_200,
     });
     expect(decodeSave({ version: SAVE_VERSION + 1 }, fallback(), 0)).toEqual(fallback());
     expect(decodeSave({ ...JSON.parse(raw), timer: 1 }, fallback(), 0)).toEqual(fallback());
@@ -44,6 +44,13 @@ describe("persistence boundary", () => {
           automaticUnlocked: false,
           player: { ...state.player, automaticSpeedLevel: 1 },
         },
+        fallback(),
+        0,
+      ),
+    ).toEqual(fallback());
+    expect(
+      decodeSave(
+        { ...JSON.parse(raw), player: { ...state.player, damage: state.player.damage + 1 } },
         fallback(),
         0,
       ),
@@ -122,5 +129,14 @@ describe("persistence boundary", () => {
     expect(timers.size).toBe(0);
     expect(writes).toBe(2);
     expect(storageRemoves).toBe(1);
+  });
+
+  it("round-trips the highest accepted boss without an unsafe reward", () => {
+    const highestBoss = Math.floor(Number.MAX_SAFE_INTEGER / 3 / 15) * 15;
+    const state = {
+      ...fallback(),
+      enemy: spawnEnemy(highestBoss, 0),
+    };
+    expect(decodeSave(JSON.parse(encodeSave(state)), fallback(), 0)).toEqual(state);
   });
 });

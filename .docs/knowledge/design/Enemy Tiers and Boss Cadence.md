@@ -38,12 +38,13 @@ Color supports identity but silhouette, motion and attachments carry the primary
 
 ## Boss cadence
 
-V1 targets roughly ten minutes of unattended progression to the first boss after sensible purchases.
-Each later boss target adds approximately one minute. Runtime formulas may calculate health and reward
-from boss index; the game must not contain a finite list of handcrafted bosses.
+V1 uses formula-driven encounters rather than handcrafted boss records. Bosses occur every 15 encounters. Base enemy health is `round(140 * (1 + (1.002 - 1) * (encounter - 1)))`; ordinary grade multipliers are normal 1x, veteran 1.5x, and elite 2x. A boss at zero-based boss index `i = ceil(encounter / 15) - 1` uses `10 + 120*i + 5*i^2`, producing multipliers 10, 135, and 270 for the first three bosses. Base rewards use `1.2 * encounter * grade multiplier`.
 
-Balance validation uses a headless simulation with representative purchase rules. The target is a
-measured envelope, not an exact promise for every player. Manual clicking should accelerate progress.
+The deterministic unattended reference strategy unlocks automatic attack, then attempts exactly one affordable purchase after each defeated enemy in this order: damage, armor penetration, automatic speed, critical chance, and double reward. It never purchases after a non-defeating hit. Fixed rolls are 0.25 for critical/reward and 0 for the next elite modifier. Boss arrivals are encounter 15 at 596,085.714285711 ms, encounter 30 at 1,296,381.36645964 ms, and encounter 45 at 2,135,163.9751553102 ms. Intervals are 596,085.714285711 ms (9.93 min), 700,295.652173929 ms (11.67 min), and 838,782.6086956701 ms (13.98 min). Manual input is outside this unattended report and can only accelerate progress.
+
+The run makes 44 repeatable purchases across 45 defeated encounters, plus the initial automatic unlock. This invariant prevents the simulator from buying several upgrades from one reward and keeps the measured cadence tied to the declared strategy.
+
+Encounters use deterministic safe-number epochs. At the largest encounter whose armor remains safe, boss health and reward saturate to safe integers; the next defeated enemy rolls to encounter 1 while preserving player upgrades and safe saturated currency. This representation rollover prevents a crash or terminal combat cap; it is not a finite content list.
 
 ## Presentation
 

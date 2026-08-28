@@ -5,10 +5,16 @@ import type {
   EliteModifier,
   EnemyGrade,
 } from "../domain/combat";
-import { automaticInterval, spawnEnemy } from "../domain/combat";
+import {
+  automaticInterval,
+  criticalChanceForLevel,
+  damageForLevel,
+  doubleRewardChanceForLevel,
+  spawnEnemy,
+} from "../domain/combat";
 
 export const SAVE_KEY = "etherlords.autobattleidle.save";
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 type SaveV1 = {
   readonly version: typeof SAVE_VERSION;
@@ -63,11 +69,7 @@ const integer = (
   typeof value === "number" && Number.isSafeInteger(value) && value >= minimum && value <= maximum;
 
 const chance = (value: unknown): value is number =>
-  typeof value === "number" &&
-  Number.isFinite(value) &&
-  value >= 0 &&
-  value <= 0.5 &&
-  Number.isInteger(value * 10);
+  typeof value === "number" && Number.isFinite(value) && value >= 0 && value < 0.6;
 
 const grade = (value: unknown): value is EnemyGrade =>
   value === "normal" || value === "veteran" || value === "elite" || value === "boss";
@@ -75,30 +77,84 @@ const grade = (value: unknown): value is EnemyGrade =>
 const modifier = (value: unknown): value is EliteModifier | null =>
   value === null || value === "armor" || value === "health" || value === "automatic-slow";
 
+const matchesPlayerDerivedValues = (
+  damage: number,
+  damageLevel: number,
+  criticalChance: number,
+  criticalLevel: number,
+  doubleRewardChance: number,
+  doubleRewardLevel: number,
+): boolean =>
+  damage === damageForLevel(damageLevel) &&
+  criticalChance === criticalChanceForLevel(criticalLevel) &&
+  doubleRewardChance === doubleRewardChanceForLevel(doubleRewardLevel);
+
 const parsePlayer = (value: unknown): CombatPlayer | undefined => {
   if (
     !isRecord(value) ||
-    !hasExactKeys(value, ["automaticSpeedLevel", "criticalChance", "damage", "doubleRewardChance"])
+    !hasExactKeys(value, [
+      "automaticSpeedLevel",
+      "armorPenetrationLevel",
+      "criticalChance",
+      "criticalLevel",
+      "damage",
+      "damageLevel",
+      "doubleRewardChance",
+      "doubleRewardLevel",
+    ])
   ) {
     return undefined;
   }
-  const { automaticSpeedLevel, criticalChance, damage, doubleRewardChance } = value;
+  const {
+    automaticSpeedLevel,
+    armorPenetrationLevel,
+    criticalChance,
+    criticalLevel,
+    damage,
+    damageLevel,
+    doubleRewardChance,
+    doubleRewardLevel,
+  } = value;
   if (
-    !integer(automaticSpeedLevel, 0, 5) ||
-    !integer(damage, 1, 11) ||
+    !integer(automaticSpeedLevel, 0) ||
+    !integer(armorPenetrationLevel, 0) ||
+    !integer(criticalLevel, 0) ||
+    !integer(damage, 1) ||
+    !integer(damageLevel, 0) ||
     !chance(criticalChance) ||
+    !integer(doubleRewardLevel, 0) ||
     !chance(doubleRewardChance)
   ) {
     return undefined;
   }
-  return { automaticSpeedLevel, criticalChance, damage, doubleRewardChance };
+  if (
+    !matchesPlayerDerivedValues(
+      damage,
+      damageLevel,
+      criticalChance,
+      criticalLevel,
+      doubleRewardChance,
+      doubleRewardLevel,
+    )
+  )
+    return undefined;
+  return {
+    automaticSpeedLevel,
+    armorPenetrationLevel,
+    criticalChance,
+    criticalLevel,
+    damage,
+    damageLevel,
+    doubleRewardChance,
+    doubleRewardLevel,
+  };
 };
 
 const parseEnemyNumbers = (value: Record<string, unknown>) => {
   const { armor, encounter, health, id, maxHealth, reward } = value;
   if (
     !integer(id, 1) ||
-    !integer(encounter, 1) ||
+    !integer(encounter, 1, Number.MAX_SAFE_INTEGER / 3) ||
     id !== encounter ||
     !integer(health, 1) ||
     !integer(maxHealth, 1) ||

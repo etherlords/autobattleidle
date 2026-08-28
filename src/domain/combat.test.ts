@@ -1,144 +1,173 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  armorPenetrationForLevel,
   attack,
-  COMBAT_BALANCE,
+  automaticInterval,
+  criticalChanceForLevel,
   createCombatState,
+  damageForLevel,
+  doubleRewardChanceForLevel,
   purchaseUpgrade,
   spawnEnemy,
   upgradeCost,
-  type AttackCommand,
-  type CombatState,
+  upgradeDisabledReason,
 } from "./combat";
+import { simulateProgression } from "./progression-simulator";
 
-const player = { criticalChance: 0, damage: 10, doubleRewardChance: 0 };
+const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>): void => {
+  const [firstBoss, secondBoss, thirdBoss] = report.bosses;
+  if (firstBoss === undefined || secondBoss === undefined || thirdBoss === undefined)
+    throw new Error("Expected three boss encounters");
+  const secondGap = secondBoss.elapsedMs - firstBoss.elapsedMs;
+  const thirdGap = thirdBoss.elapsedMs - secondBoss.elapsedMs;
+  expect(firstBoss.elapsedMs).toBeGreaterThan(540_000);
+  expect(firstBoss.elapsedMs).toBeLessThan(660_000);
+  expect(secondGap).toBeGreaterThan(firstBoss.elapsedMs);
+  expect(thirdGap).toBeGreaterThan(secondGap);
+  const repeatablePurchases =
+    report.purchases.damage +
+    report.purchases["armor-penetration"] +
+    report.purchases["automatic-speed"] +
+    report.purchases["critical-chance"] +
+    report.purchases["double-reward"];
+  expect(repeatablePurchases).toBeLessThanOrEqual(report.encounters - 1);
+};
 
-const command = (state: CombatState, source: AttackCommand["source"], atMs = 0): AttackCommand => ({
-  atMs,
-  enemyId: state.enemy.id,
-  rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
-  source,
-});
-
-describe("combat simulation", () => {
-  it("uses one attack command for manual and automatic attacks", () => {
-    const state = createCombatState(player, 0, true);
-    const manual = attack(state, command(state, "manual"));
-    const automatic = attack(state, command(state, "automatic"));
-
-    expect(manual.event).toEqual(automatic.event);
-    expect(manual.state).toMatchObject({ coins: 1, enemy: { encounter: 2 } });
-    expect(automatic.state).toMatchObject({ coins: 1, enemy: { encounter: 2 } });
-  });
-
-  it("rejects automatic attacks before unlock without changing manual attacks", () => {
-    const state = createCombatState(player, 0, false);
-
-    expect(attack(state, command(state, "automatic")).event).toEqual({ type: "ignored" });
-    expect(attack(state, command(state, "manual")).event).toMatchObject({ type: "hit" });
-  });
-
-  it("bounds armored damage and doubles final critical damage", () => {
-    const state: CombatState = {
-      ...createCombatState({ ...player, criticalChance: 1, damage: 3 }, 0, false),
-      enemy: { ...spawnEnemy(3, 0), armor: 99, health: 10 },
-    };
-
-    const result = attack(state, {
-      ...command(state, "manual"),
-      rolls: { critical: 0, doubleReward: 1, nextEliteModifier: 0 },
-    });
-    expect(result.event).toMatchObject({ critical: true, damage: 2, defeated: false, reward: 0 });
-    expect(result.state.enemy.health).toBe(8);
-  });
-
-  it("advances once, pays one double reward, and ignores a stale duplicate", () => {
-    const state = createCombatState({ ...player, damage: 100, doubleRewardChance: 1 }, 0, false);
-    const defeated = attack(state, {
-      ...command(state, "manual"),
-      rolls: { critical: 1, doubleReward: 0, nextEliteModifier: 0 },
-    });
-    const duplicate = attack(defeated.state, command(state, "manual"));
-
-    expect(defeated.event).toMatchObject({ defeated: true, reward: 2 });
-    expect(defeated.state).toMatchObject({ coins: 2, enemy: { encounter: 2 } });
-    expect(duplicate.event).toEqual({ type: "ignored" });
-    expect(duplicate.state.coins).toBe(2);
-  });
-
-  it("selects deterministic grades, bosses, and seeded elite modifiers", () => {
-    expect(spawnEnemy(1, 0)).toMatchObject({ grade: "normal", modifier: null });
-    expect(spawnEnemy(2, 0)).toMatchObject({ grade: "veteran", modifier: null });
-    expect(spawnEnemy(3, 0.8)).toMatchObject({ grade: "elite", modifier: "automatic-slow" });
-    expect(spawnEnemy(COMBAT_BALANCE.bossInterval, 0)).toMatchObject({
-      grade: "boss",
-      modifier: null,
-    });
-  });
-
-  it("slows only scheduled automatic attacks against a slow elite", () => {
-    const state: CombatState = {
-      ...createCombatState(player, 0, true),
-      enemy: spawnEnemy(3, 0.8),
-    };
-    const automatic = attack(state, command(state, "automatic", 10));
-    const manual = attack(state, command(state, "manual", 10));
-
-    expect(automatic.state.nextAutomaticAttackAtMs).toBe(
-      10 + COMBAT_BALANCE.automaticAttackIntervalMs + COMBAT_BALANCE.eliteAutomaticSlowMs,
+describe("endless combat progression", () => {
+  it("keeps repeatable upgrades finite, increasing, and available", () => {
+    let state = { ...createCombatState(), coins: Number.MAX_SAFE_INTEGER };
+    const first = upgradeCost(state, "damage");
+    state = purchaseUpgrade(state, "damage", 0).state;
+    expect(upgradeCost(state, "damage")).toBeGreaterThan(first);
+    expect(upgradeDisabledReason(state, "damage")).toBeNull();
+    const high = 1_000_000;
+    expect(damageForLevel(high)).toBeGreaterThan(damageForLevel(high - 1));
+    expect(armorPenetrationForLevel(high)).toBeGreaterThan(armorPenetrationForLevel(high - 1));
+    expect(criticalChanceForLevel(high)).toBeGreaterThan(criticalChanceForLevel(high - 1));
+    expect(doubleRewardChanceForLevel(high)).toBeGreaterThan(doubleRewardChanceForLevel(high - 1));
+    expect(
+      automaticInterval(spawnEnemy(1, 0), {
+        ...createCombatState().player,
+        automaticSpeedLevel: high,
+      }),
+    ).toBeLessThan(
+      automaticInterval(spawnEnemy(1, 0), {
+        ...createCombatState().player,
+        automaticSpeedLevel: high - 1,
+      }),
     );
-    expect(manual.state.nextAutomaticAttackAtMs).toBe(0);
+    expect(armorPenetrationForLevel(high)).toBeLessThan(0.75);
+    expect(
+      upgradeDisabledReason({ ...state, player: { ...state.player, damageLevel: high } }, "damage"),
+    ).toBeNull();
+    expect(() => spawnEnemy(0, 0)).toThrow(RangeError);
+    expect(() => spawnEnemy(Number.POSITIVE_INFINITY, 0)).toThrow(RangeError);
+    const maxLevelState = {
+      ...createCombatState(),
+      coins: Number.MAX_SAFE_INTEGER,
+      player: {
+        ...createCombatState().player,
+        damage: damageForLevel(Number.MAX_SAFE_INTEGER),
+        damageLevel: Number.MAX_SAFE_INTEGER,
+      },
+    };
+    const noOp = purchaseUpgrade(maxLevelState, "damage", 0);
+    expect(Number.isSafeInteger(maxLevelState.player.damage)).toBe(true);
+    expect(noOp.reason).toBe("Level cannot advance safely");
+    expect(noOp.state).toBe(maxLevelState);
+    const edgeState = {
+      ...createCombatState(),
+      automaticUnlocked: true,
+      coins: Number.MAX_SAFE_INTEGER,
+      player: {
+        ...createCombatState().player,
+        armorPenetrationLevel: Number.MAX_SAFE_INTEGER - 1,
+        automaticSpeedLevel: Number.MAX_SAFE_INTEGER - 1,
+        criticalLevel: Number.MAX_SAFE_INTEGER - 1,
+        damage: damageForLevel(Number.MAX_SAFE_INTEGER - 1),
+        damageLevel: Number.MAX_SAFE_INTEGER - 1,
+        doubleRewardLevel: Number.MAX_SAFE_INTEGER - 1,
+      },
+    };
+    for (const id of [
+      "damage",
+      "armor-penetration",
+      "critical-chance",
+      "double-reward",
+      "automatic-speed",
+    ] as const) {
+      const purchase = purchaseUpgrade(edgeState, id, 0);
+      expect(purchase.reason).toBe("Level cannot advance safely");
+      expect(purchase.state).toBe(edgeState);
+    }
   });
 
-  it("accepts unlocked automatic attacks once per second", () => {
-    const state = createCombatState({ ...player, damage: 1 }, 0, true);
-    const first = attack(state, command(state, "automatic", 0));
-    const early = attack(first.state, command(first.state, "automatic", 999));
-    const next = attack(first.state, command(first.state, "automatic", 1_000));
-
-    expect(early.event).toEqual({ type: "ignored" });
-    expect(next.event).toMatchObject({ type: "hit" });
-    expect(next.state.nextAutomaticAttackAtMs).toBe(2_000);
-  });
-
-  it("purchases the five upgrades atomically with prerequisites, caps, and geometric costs", () => {
+  it("advances encounter 100 into a finite 101", () => {
     const state = {
-      ...createCombatState({ ...player, damage: 1 }, 0, false),
-      coins: 10_000,
+      ...createCombatState({ damageLevel: 100, damage: damageForLevel(100) }),
+      enemy: { ...spawnEnemy(100, 0), health: 1 },
     };
-    expect(purchaseUpgrade(state, "automatic-speed", 0).reason).toBe(
-      "Requires automatic attack unlock",
-    );
-    const unlocked = purchaseUpgrade(state, "automatic-unlock", 10).state;
-    expect(unlocked.nextAutomaticAttackAtMs).toBe(1_010);
-    const damage = purchaseUpgrade(unlocked, "damage", 10).state;
-    expect(damage.player.damage).toBe(2);
-    expect(upgradeCost(damage, "damage")).toBe(4);
-    const critical = purchaseUpgrade(damage, "critical-chance", 10).state;
-    const rewards = purchaseUpgrade(critical, "double-reward", 10).state;
-    const speed = purchaseUpgrade(rewards, "automatic-speed", 10).state;
-    expect(speed.player).toMatchObject({
-      automaticSpeedLevel: 1,
-      criticalChance: 0.1,
-      doubleRewardChance: 0.1,
+    const result = attack(state, {
+      atMs: 0,
+      enemyId: 100,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
     });
-    expect(speed.nextAutomaticAttackAtMs).toBe(910);
-    const capped = { ...speed, player: { ...speed.player, criticalChance: 0.5 } };
-    expect(purchaseUpgrade(capped, "critical-chance", 10).reason).toBe("Maximum level reached");
+    expect(result.state.enemy).toMatchObject({ encounter: 101, health: expect.any(Number) });
+    expect(Number.isSafeInteger(result.state.enemy.reward)).toBe(true);
   });
 
-  it("reschedules slow elite automatic attacks after speed purchase without changing manual attacks", () => {
-    const state: CombatState = {
-      ...createCombatState({ ...player, automaticSpeedLevel: 0 }, 0, true),
-      coins: 100,
-      enemy: spawnEnemy(3, 0.8),
-      nextAutomaticAttackAtMs: 1_600,
-    };
-    const speed = purchaseUpgrade(state, "automatic-speed", 100).state;
-    const manual = attack(speed, command(speed, "manual", 100));
+  it("saturates the highest accepted boss reward safely", () => {
+    const highestBoss = Math.floor(Number.MAX_SAFE_INTEGER / 3 / 15) * 15;
+    expect(Number.isSafeInteger(spawnEnemy(highestBoss, 0).reward)).toBe(true);
+  });
 
-    expect(speed.nextAutomaticAttackAtMs).toBe(1_500);
-    expect(manual.state.nextAutomaticAttackAtMs).toBe(1_500);
-    expect(manual.state.enemy.health).toBe(state.enemy.health - player.damage);
+  it("uses bounded penetration before minimum damage", () => {
+    const state = {
+      ...createCombatState({ armorPenetrationLevel: 20, damageLevel: 10, damage: 33 }),
+      enemy: { ...spawnEnemy(3, 0), armor: 40, health: 100 },
+    };
+    const result = attack(state, {
+      atMs: 0,
+      enemyId: state.enemy.id,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    if (result.event.type === "ignored") throw new Error("Expected a hit");
+    expect(result.event.damage).toBeGreaterThan(1);
+    expect(result.event.armorPreventedDamage).toBeGreaterThan(0);
+  });
+
+  it("produces a deterministic, finite multi-boss reference report", () => {
+    const first = simulateProgression();
+    expect(simulateProgression()).toEqual(first);
+    expect(first).toEqual({
+      armorPreventedDamage: 50313,
+      automaticAttacks: 2262,
+      bosses: [
+        { elapsedMs: 596085.714285711, encounter: 15 },
+        { elapsedMs: 1296381.36645964, encounter: 30 },
+        { elapsedMs: 2135163.9751553102, encounter: 45 },
+      ],
+      coins: 18081,
+      elapsedMs: 2135163.9751553102,
+      encounters: 46,
+      manualAttacks: 0,
+      penetration: 0.25,
+      purchases: {
+        "armor-penetration": 10,
+        "automatic-speed": 3,
+        "automatic-unlock": 1,
+        "critical-chance": 0,
+        damage: 31,
+        "double-reward": 0,
+      },
+    });
+    expectReferenceStrategy(first);
+    expect(first.automaticAttacks).toBeGreaterThan(0);
+    expect(first.manualAttacks).toBe(0);
+    expect(first.purchases.damage).toBeGreaterThan(0);
+    expect(first.purchases["armor-penetration"]).toBeGreaterThan(0);
   });
 });

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "ecca3c44-c4fe-4f5d-aae9-d230fa06d3bc",
+  "operation": "claim.acquire",
+  "state": "committed",
+  "createdAt": "2026-08-28T11:52:46.018Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-006-tune-boss-cadence-and-prove-endless-progression/PROGRESS.md.planner-tmp-ecca3c44-c4fe-4f5d-aae9-d230fa06d3bc"
+    }
+  ],
+  "committedAt": "2026-08-28T11:52:46.034Z"
+}
