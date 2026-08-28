@@ -4,8 +4,8 @@ id: ABI-005
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 34
-status: Ready for Manager
+revision: 39
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-002
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 34
-- Last update: Review, browser QA and local manager verification passed; proceed with release proof.
+- Status: Done
+- Revision: 39
+- Last update: Released task claim: ABI-005 Done and deployed; release finite manager lease.
 
 ## Execution plan
 
@@ -35,7 +35,7 @@ requiredGates:
 - [x] persistence-tests: Implementation owner: add round-trip, corrupt/unknown version, write-bounding, failure, reset, and application reload tests; run pnpm check
 - [x] independent-review: Independent Reviewer: verify versioning, validation, no good-save loss, ownership boundaries, disposal, and full checks
 - [x] browser-qa: Independent QA: prove save/reload, malformed-save recovery, reset confirmation, bounded writes, desktop+narrow behavior, and clean console
-- [~] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat persistence scenarios on deployed URL, and close
+- [x] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat persistence scenarios on deployed URL, and close
 
 ## Events
 
@@ -584,3 +584,94 @@ requiredGates:
   - REVIEW.md revision 2
   - QA.md revision 2
   - VERIFICATION.md revision 2
+
+### evt-b5f524c2-7a33-4b99-8e3e-713a3a3cdb4c
+
+- Timestamp: 2026-08-28T10:21:00.072Z
+- Actor: manager-abi005
+- Operation: progress.append
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Deployed Pages persistence proof PASS; physical VERIFICATION.md updated by documented no-section-write fallback.
+- Idempotency key: abi005-deployed-proof-r34
+- Evidence:
+  - VERIFICATION.md revision 3
+  - CI 33162708148 success
+  - Pages 33162708156 success
+  - Public persistence scenarios PASS
+  - Remote/local asset SHA-256 match
+
+### evt-6ebd3ff2-5fa9-4ded-82e8-05f46b3777a3
+
+- Timestamp: 2026-08-28T10:21:23.809Z
+- Actor: manager-abi005
+- Operation: gate.record
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Manager closure PASS: coherent feature checkpoint deployed and public persistence acceptance proven.
+- Idempotency key: abi005-manager-closure-pass-r35
+- Request fingerprint: f2d3df7aa4e15fd7c7e04865c8649e54d9466eb76b77903c7f633a4050d7976c
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Feature commit 0c66fce pushed
+  - CI 33162708148 success
+  - Pages 33162708156 success
+  - Public persistence QA PASS
+  - VERIFICATION.md revision 3
+
+### evt-3997dce1-3e5e-4f29-84d8-3d501162c5af
+
+- Timestamp: 2026-08-28T10:21:40.429Z
+- Actor: manager-abi005
+- Operation: execution_plan.update
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: Manager delivery complete: feature pushed, CI/Pages green and deployed persistence verified.
+- Idempotency key: abi005-plan-delivery-complete-r36
+- Request fingerprint: eb8ce97263b3ba726b1b07f7dc65c7269d6d1e30ac6d97cf8d82a869cf3a10a5
+- Action: set_state
+- Step ID: delivery
+- State: complete
+- Evidence:
+  - Feature commit 0c66fce deployed
+  - CI and Pages success
+  - Public persistence proof PASS
+  - manager-closure PASS
+  - VERIFICATION.md revision 4
+
+### evt-f73ffeb8-c39d-45fc-b22b-3c0eef5cb3a8
+
+- Timestamp: 2026-08-28T10:21:50.641Z
+- Actor: manager-abi005
+- Operation: task.advance
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Close ABI-005 after implementation, independent review/QA, manager verification and deployed proof.
+- Idempotency key: abi005-advance-done-task-r5
+- Request fingerprint: 527aa2e32756c6d1edb28ae616bba32a4ee44aed33ab566ac58002061a11ca65
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required gates PASS
+  - Eight-step execution plan complete
+  - Feature commit 0c66fce deployed
+  - CI/Pages success
+  - Public persistence proof PASS
+  - VERIFICATION.md revision 4
+
+### evt-b4286663-9bb1-431b-be36-dfe293b46b94
+
+- Timestamp: 2026-08-28T10:22:11.980Z
+- Actor: manager-abi005
+- Operation: claim.release
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Released task claim: ABI-005 Done and deployed; release finite manager lease.
+- Idempotency key: abi005-release-after-done-r38
+- Request fingerprint: b81b02645cc2a0a8b9704d905db52b94cd00701d835fbac4bdd1f6271d02946e
+- Agent ID: manager-abi005
+- Session ID: abi005-manager-20260828
+- Intent: ABI-005 Done and deployed; release finite manager lease.
+- Evidence:
+  - None

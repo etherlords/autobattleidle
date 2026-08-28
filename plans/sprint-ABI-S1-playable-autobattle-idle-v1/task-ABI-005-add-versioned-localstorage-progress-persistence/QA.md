@@ -5,7 +5,7 @@ artifact: qa
 project: ABI
 profile: high-assurance
 revision: 2
-status: In QA
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-002
