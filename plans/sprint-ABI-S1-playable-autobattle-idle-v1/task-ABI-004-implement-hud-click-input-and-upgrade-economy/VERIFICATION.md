@@ -40,10 +40,24 @@ requiredGates:
 - Independent QA: PASS on `http://127.0.0.1:5173/` with actual state transitions.
 - Manager `pnpm check`: PASS, 3 files / 11 tests, TypeScript and Vite build; existing >500 KB chunk advisory only.
 - Manager `git diff --check`: PASS.
-- Publication/deployed functional proof: pending the coherent commit, push, CI, and GitHub Pages rollout.
+- Published commit: `849524e534f22ed4d7d4ce9e262859f86a0f92da` pushed to `origin/main`.
+- CI: PASS, run `33132218859`, check job completed in 22 seconds.
+- GitHub Pages: PASS, run `33132218783`, deploy job completed in 26 seconds.
+- Public URL: `https://etherlords.github.io/autobattleidle/`.
+- Deployed assets returned HTTP 200 and matched the commit build: `index-9ijaY3gu.js` and
+  `index-BpE-2Ij5.css`.
+- Deployed real-Chromium proof: initial `10/10` HP; pointer `10 -> 9`, Enter `9 -> 8`, and Space
+  `8 -> 7`, each with exactly one event; first kill spawned the next enemy, granted one coin, and logged
+  `Manual kill: +1 coins`.
+- Deployed automatic proof: unlock exposed a live countdown; automatic hits reduced HP and reset the
+  interval. During an active elite countdown, a pointer hit changed HP `27 -> 26` while remaining time
+  continued `1.375s -> 1.361s` rather than resetting. A bounded interval changed HP `8 -> 7` and reset
+  the countdown; the event list stayed capped at six.
+- Deployed responsive proof: `390x844` viewport had no overflow and retained usable/readable HUD,
+  countdown, controls, and log. Console had zero errors and zero warnings.
 
 ## Sign-off
 
 - Reviewer: PASS — `autobattle-reviewer-abi004`
 - QA: PASS — `autobattle-qa-abi004-final`
-- Manager close: pending
+- Manager close: PASS after commit/push, CI, Pages, and deployed functional proof

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "operationId": "86930037-0940-439f-83ac-fc5302512b42",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T01:20:58.856Z",
+  "committedAt": "2026-08-28T01:22:28.1565689Z",
+  "recovered": true,
+  "recoveredAt": "2026-08-28T01:22:28.1565689Z",
+  "itemId": "ABI-007",
+  "idempotencyKey": "abi007-detailed-plan-init-after-abi004-20260828",
+  "requestFingerprint": "a0336c7da02db12674f79045961609c8990ad0f9078394a8bcb272c19ec6c497",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/PROGRESS.md.planner-tmp-86930037-0940-439f-83ac-fc5302512b42-0",
+      "beforeHash": "ede66e5058024a34a4c692693e2693aa221cf798f48a5adcf7172dc2f845013e",
+      "afterHash": "d5a803e9d6d50dc7976772a6456be83d86fce317f6579f0ec3a533ada65f1b5d",
+      "content": "---\nplannerFormat: 1\nid: ABI-007\nartifact: progress\nproject: ABI\nprofile: high-assurance\nrevision: 2\nstatus: Ready\nsprintId: ABI-S1\ndependencies:\n  - ABI-006\nrequiredGates:\n  - implementation-self-check\n  - independent-review\n  - independent-qa\n  - verification\n  - manager-closure\n---\n\n# ABI-007 progress\n\n## Current state\n\n- Status: Ready\n- Revision: 2\n- Last update: Initialize release QA/evidence/visualization/deployed closure plan without claim or lifecycle start.\n\n## Execution plan\n\n- [ ] dependency-preflight: Manager: wait for ABI-006, then refresh release matrix, public build, Vault/testing requirements, receipts, and acceptance-layer ownership\n- [ ] clean-check: Implementation/manager: verify frozen dependency install and pnpm check from the supported clean-dependency workflow; record exact versions and advisory debt\n- [ ] deployed-combat: Independent QA: prove deployed pointer/Enter/Space attacks, automatic lock/unlock/countdown/zero/reset, manual cooldown independence, and automatic-only slow\n- [ ] deployed-hud-responsive: Independent QA: prove deployed enemy identity/current-max HP, shrinking bar, bounded reward log, accessibility, desktop and narrow layouts\n- [ ] deployed-progression-persistence: Independent QA: prove upgrades, all grades, bosses, multiple-boss endless progression, save/reload, malformed-save recovery, and confirmed reset\n- [ ] stability-health: Independent QA: run bounded long-session checks for six-entry log cap, scene/listener/RAF stability, network health, and zero blocking console errors\n- [ ] release-receipts: Manager: bind exact main commit, CI run, Pages deployment, public URL, deployed asset names, and functional observations into verification evidence\n- [ ] timeline-visualization: Manager: derive the Planner task/gate timeline and produce the requested user-facing progress visualization without inventing missing evidence\n- [ ] independent-review: Independent Reviewer: audit the complete release matrix, receipts, timeline accuracy, scope, and unresolved debt\n- [ ] manager-close: Manager: address one bounded gate return if needed, finalize QA/verification, commit/push evidence, confirm final Pages state, and close the sprint\n\n## Events\n\n### evt-74f30c24-b152-47b8-85a8-e6b9889d3927\n\n- Timestamp: 2026-08-28T01:20:58.854Z\n- Actor: root-planning\n- Operation: execution_plan.update\n- Prior revision: 1\n- Resulting revision: 2\n- Summary: Initialize release QA/evidence/visualization/deployed closure plan without claim or lifecycle start.\n- Idempotency key: abi007-detailed-plan-init-after-abi004-20260828\n- Request fingerprint: a0336c7da02db12674f79045961609c8990ad0f9078394a8bcb272c19ec6c497\n- Action: initialize\n- Evidence:\n  - planner://work-item/ABI-007/artifact/BRIEF.md\n  - BRIEF revision 2 preserved\n  - open dependency ABI-006 explicitly preserved\n"
+    }
+  ]
+}

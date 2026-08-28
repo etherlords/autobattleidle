@@ -4,8 +4,8 @@ id: ABI-004
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 54
-status: Ready for Manager
+revision: 61
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-002
@@ -21,17 +21,17 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 54
-- Last update: Manager publication begins: coherent commit/push, CI/Pages, deployed functional proof.
+- Status: Done
+- Revision: 61
+- Last update: Released task claim: ABI-004 manager checkpoint complete
 
 ## Execution plan
 
 - [x] implementation: Implementation owner: live combat composition, HUD/input, upgrades, focused tests, pnpm check
 - [x] independent-review: Independent Reviewer: scope/correctness/accessibility/disposal review and focused checks
 - [x] independent-qa: Independent QA: actual local browser state transitions, desktop/narrow, disposal, pnpm check
-- [~] publication: Manager: coherent commit/push, CI and Pages wait, deployed functional scenarios
-- [ ] manager-close: Manager: verification mapping, gates, Done closure, lease release, final audit
+- [x] publication: Manager: coherent commit/push, CI and Pages wait, deployed functional scenarios
+- [x] manager-close: Manager: verification mapping, gates, Done closure, lease release, final audit
 - [x] review-repair: Implementation owner: repair three review P2 findings and add HUD/native-transition tests
 - [x] independent-rereview: Same independent Reviewer: verify the three P2 repairs and rerun focused/full checks
 - [x] review-proof-repair: Implementation owner: add createHud native activation/log/disposal tests and slow-elite speed-reschedule proof
@@ -946,3 +946,128 @@ requiredGates:
   - planner://work-item/ABI-004/artifact/VERIFICATION.md
   - planner independent-review PASS
   - planner independent-qa PASS
+
+### evt-d2592853-cb31-4a42-bf12-e1c7ef769962
+
+- Timestamp: 2026-08-28T01:18:26.240Z
+- Actor: root
+- Operation: progress.append
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Deployed functional PASS and CI/Pages receipts appended to VERIFICATION.md via narrow manager-owned Markdown fallback because Planner has no artifact section-write tool.
+- Idempotency key: abi004-deployed-verification-physical-fallback-20260828
+- Evidence:
+  - commit: 849524e534f22ed4d7d4ce9e262859f86a0f92da
+  - CI: https://github.com/etherlords/autobattleidle/actions/runs/33132218859
+  - Pages: https://github.com/etherlords/autobattleidle/actions/runs/33132218783
+  - URL: https://etherlords.github.io/autobattleidle/
+  - deployed real Chromium functional PASS
+
+### evt-7963cf5e-24df-45c2-b14f-16c594bdabae
+
+- Timestamp: 2026-08-28T01:18:33.690Z
+- Actor: root
+- Operation: execution_plan.update
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Commit/push, CI, Pages, and deployed functional proof PASS.
+- Idempotency key: abi004-plan-publication-complete-20260828
+- Request fingerprint: 883281ae9e02765c7cb74e31f54080afb49d34525436f104bf7be95f5686f95f
+- Action: set_state
+- Step ID: publication
+- State: complete
+- Evidence:
+  - commit: 849524e534f22ed4d7d4ce9e262859f86a0f92da
+  - CI run 33132218859 PASS
+  - Pages run 33132218783 PASS
+  - URL: https://etherlords.github.io/autobattleidle/
+
+### evt-31ea5707-3e09-43c1-b10a-5a2cd5592f04
+
+- Timestamp: 2026-08-28T01:18:40.261Z
+- Actor: root
+- Operation: execution_plan.update
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: All implementation, review, QA, publication, and deployed proof gates are green; begin final closure.
+- Idempotency key: abi004-plan-manager-close-start-20260828
+- Request fingerprint: ff113c24aec5797e9648dcaa71796999dc12ae69c78cfe16b443292d3db247ee
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - planner://work-item/ABI-004/artifact/VERIFICATION.md
+  - commit 849524e
+  - CI/Pages PASS
+
+### evt-175221dc-6b60-4e5a-a815-757a2398c145
+
+- Timestamp: 2026-08-28T01:19:02.709Z
+- Actor: manager-close-abi004
+- Operation: gate.record
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: PASS: dedicated manager-close phase verified coherent commit/push, independent review/QA, CI, Pages, and deployed functional scenarios.
+- Idempotency key: abi004-manager-closure-distinct-attribution-pass-20260828
+- Request fingerprint: 105aadbde0cf2c5214543eef39f0af9c18468b72c583ca18a6dd815d9ba40455
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - planner://work-item/ABI-004/artifact/VERIFICATION.md
+  - commit: 849524e534f22ed4d7d4ce9e262859f86a0f92da
+  - CI run 33132218859 PASS
+  - Pages run 33132218783 PASS
+  - URL: https://etherlords.github.io/autobattleidle/
+
+### evt-866216e3-a372-4328-bad0-ac930afcdb22
+
+- Timestamp: 2026-08-28T01:19:08.902Z
+- Actor: manager-close-abi004
+- Operation: execution_plan.update
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Manager closure gate PASS; ABI-004 ready for Done.
+- Idempotency key: abi004-plan-manager-close-complete-20260828
+- Request fingerprint: 0794c2aa0ed17c399bdd851d6c5bf9ae77482298e87cddee312bdce2ca61d054
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - planner gate manager-closure PASS
+  - planner://work-item/ABI-004/artifact/VERIFICATION.md
+
+### evt-5321b479-dcbe-4f8f-be26-a03f468e8c96
+
+- Timestamp: 2026-08-28T01:19:15.764Z
+- Actor: manager-close-abi004
+- Operation: task.advance
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: ABI-004 complete: implementation, independent review, independent QA, verification, publication, CI/Pages, deployed proof, and manager closure all PASS.
+- Idempotency key: abi004-done-after-deployed-proof-20260828
+- Request fingerprint: b0d3c35d7aeefa2e964006d4d9443b8a5e7dac19af680cd8196a428427ce585f
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - planner://work-item/ABI-004/artifact/VERIFICATION.md
+  - commit 849524e
+  - CI run 33132218859 PASS
+  - Pages run 33132218783 PASS
+  - URL: https://etherlords.github.io/autobattleidle/
+
+### evt-25fff114-c1e9-49e3-9a53-605b4a497a31
+
+- Timestamp: 2026-08-28T01:19:21.896Z
+- Actor: root
+- Operation: claim.release
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Released task claim: ABI-004 manager checkpoint complete
+- Idempotency key: abi004-lease-release-after-done-20260828
+- Request fingerprint: 3fed001c7f796d838f8dfaeaeeeb1259a8cdbd7d21727d93b310c71a1ecdfb57
+- Agent ID: root
+- Session ID: abi004-manager-20260828
+- Intent: ABI-004 manager checkpoint complete
+- Branch: main
+- Evidence:
+  - None
