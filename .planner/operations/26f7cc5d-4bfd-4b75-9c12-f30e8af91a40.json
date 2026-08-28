@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "26f7cc5d-4bfd-4b75-9c12-f30e8af91a40",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T00:08:00.670Z",
+  "itemId": "ABI-004",
+  "idempotencyKey": "abi-004-live-combat-hud-contract-20260828",
+  "requestFingerprint": "3c86123b3de03c7224e1b9d69b23f733c74f47fca99f2301d9c91e0155b3e828",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-004-implement-hud-click-input-and-upgrade-economy/BRIEF.md.planner-tmp-26f7cc5d-4bfd-4b75-9c12-f30e8af91a40-0",
+      "beforeHash": "810929ccf479a45a9c3d36eaf7142e74a58cfb2bbc9e09afb3ead4676e375685",
+      "afterHash": "a98a4aa3e9fe163db1883cafd74743d27eb5375f9cad716308be96390dec315b"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-26f7cc5d-4bfd-4b75-9c12-f30e8af91a40-1",
+      "beforeHash": "e97fff31be3ebdfcaef2ced4667fd74863181f3f4897ed780fcf7c0911ccea71",
+      "afterHash": "f7675a875e366496be08d66bf166457ef8f2973c850ddc4d000df6f67599e20d"
+    }
+  ],
+  "committedAt": "2026-08-28T00:08:00.685Z"
+}

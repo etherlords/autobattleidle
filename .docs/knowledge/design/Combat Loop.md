@@ -18,13 +18,13 @@ Deterministic attack, damage, reward, and encounter transition rules.
 
 ## Runtime loop
 
-The simulation owns elapsed time, enemy state, player statistics, attack cooldown, rewards, and
-progression. Rendering consumes immutable snapshots and never changes combat state directly.
+The simulation owns elapsed time, enemy state, player statistics, automatic-attack cooldown, rewards, and progression. Rendering consumes immutable snapshots and never changes combat state directly.
 
-Manual input calls one bounded attack command per accepted pointer activation. There is no gameplay
-rate limit for intentional clicks, but one browser event must never produce duplicate attacks.
-Automatic attacks are locked initially, then start at one attack per second and become faster through
-upgrades. Grade +2 slow effects modify only the automatic interval; manual clicks remain unaffected.
+Manual pointer or keyboard activation calls one bounded attack command per accepted browser activation. Manual attacks bypass automatic scheduling: they may occur while the automatic cooldown is running and never reset, extend, shorten, or otherwise change that cooldown. One browser activation must never produce duplicate attacks.
+
+Automatic attacks are locked initially. After the one-time unlock, the scheduler counts down the current automatic interval. When remaining time reaches zero it issues exactly one automatic attack, then starts the next interval. The default interval is one second and speed upgrades may shorten it to the documented minimum. Grade +2 slow modifies only the automatic interval; manual attacks remain unaffected.
+
+The presentation snapshot exposes the automatic locked state, total interval, and remaining milliseconds. The UI renders a countdown progress bar that drains to zero and a visible seconds-plus-milliseconds readout; reaching zero corresponds to the scheduled attack.
 
 ## Damage and rewards
 

@@ -18,12 +18,13 @@ HUD ownership, localStorage contract, lifecycle gates, and release QA scope.
 
 ## HUD and input
 
-The browser view contains the player on the left, enemy on the right, health and encounter status,
-currency, attack feedback, and an upgrade panel. Pointer and keyboard activation share one command path.
-Controls expose accessible names, visible focus, disabled reasons, and readable contrast.
+The battlefield keeps the player and enemy visually separated. A large enemy-status HUD spans the top of the viewport and shows the enemy name, encounter level, grade and active modifier. Its health bar visibly shrinks as damage is applied and contains the exact centered value in `current/max` form, for example `1000/1000`. The accessible name exposes the same values without relying on color.
 
-The scene scales to common desktop and mobile widths. Text and controls remain DOM-owned; Three.js owns
-only the animated battlefield.
+The automatic-attack HUD is separate from manual input. Before purchase it clearly shows that automatic attacks are locked. After unlock it shows a labeled countdown progress bar that drains from the full interval to zero, plus a live numeric countdown in seconds and milliseconds. At zero the scheduler issues one automatic attack and the bar restarts for the next interval. Manual pointer clicks and keyboard activation bypass this scheduler, execute exactly one immediate manual attack, and never reset or otherwise disturb the automatic cooldown.
+
+A compact bounded event log sits at the lower right. It records recent combat and economy feedback, including the coins granted for each kill. It retains only a small recent window, is readable on narrow layouts, and uses a polite live region so new rewards are announced without stealing focus.
+
+Currency, attack feedback, and upgrade controls remain DOM-owned. Controls expose accessible names, visible focus, disabled reasons, and readable contrast; Three.js owns only the animated battlefield. Desktop and common mobile widths must keep the enemy HUD, countdown, click target, and recent log usable without overlap.
 
 ## Persistence
 

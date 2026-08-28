@@ -26,9 +26,10 @@ an account or backend and remain playable after a reload.
 
 ## Player promise
 
-- The current target and the result of every attack are immediately understandable.
-- Clicking is always useful; automation reduces effort without disabling manual play.
-- Every enemy defeat advances either purchasing power or boss progress.
+- The current enemy is always understandable through a prominent name, encounter level, grade, modifier, and a large numeric health bar that decreases with damage.
+- Clicking or keyboard activation always performs an immediate manual attack when accepted; manual attacks remain useful and never disturb the automatic-attack cooldown.
+- Automation reduces effort without disabling manual play. Its locked state and time to the next attack are visible through a countdown bar and seconds-plus-milliseconds readout.
+- Every enemy defeat advances either purchasing power or boss progress, and a small recent log makes the granted reward visible.
 - Progress is deterministic enough to test, while critical hits and rewards add readable variance.
 
 ## Technical boundaries

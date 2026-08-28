@@ -4,7 +4,7 @@ id: ABI-007
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -32,9 +32,12 @@ Complete release QA, GitHub Pages proof, and project timeline
 ## Acceptance criteria
 
 - [ ] pnpm check passes from a clean dependency state
-- [ ] A real browser run proves combat, upgrades, grades, bosses, persistence, reset, and responsive layout
-- [ ] The GitHub Pages build is deployed and playable without blocking console errors
-- [ ] The game remains stable during a bounded long-run scenario and continues past multiple bosses
+- [ ] A real browser run proves deployed manual click and keyboard attacks reduce HP immediately without changing the automatic cooldown
+- [ ] A real browser run proves the automatic attack locked state, unlock, seconds-and-milliseconds countdown, progress-to-zero attack, cooldown restart, and automatic-only slow behavior
+- [ ] The deployed large enemy HUD shows name, encounter level, grade, modifier, and a shrinking accessible current/max HP bar on desktop and narrow viewports
+- [ ] The deployed bounded lower-right log reports kill rewards and remains stable without unbounded entries during a long-run scenario
+- [ ] A real browser run proves upgrades, grades, bosses, persistence, malformed-save recovery, reset, responsive layout, and continued progression past multiple bosses
+- [ ] The GitHub Pages build is playable without blocking console errors and its exact deployment receipt and public URL are recorded
 - [ ] Planner evidence produces a user-facing visualization of project progress and gate outcomes
 
 ## Dependencies
@@ -44,6 +47,7 @@ Complete release QA, GitHub Pages proof, and project timeline
 ## Related knowledge
 
 - AUTOBATTLEIDLE-DOC-20260827-A7F881
+- AUTOBATTLEIDLE-DOC-20260827-584401
 - AUTOBATTLEIDLE-DOC-20260827-85CBFC
 
 ## Constraints
