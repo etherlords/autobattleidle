@@ -99,6 +99,7 @@ describe("createHud", () => {
     const host = new FakeElement();
     const hud = createHud(host as unknown as HTMLElement);
     let attacks = 0;
+    let resets = 0;
     let upgrades = 0;
     hud.onAttack(() => {
       attacks += 1;
@@ -106,20 +107,28 @@ describe("createHud", () => {
     hud.onUpgrade(() => {
       upgrades += 1;
     });
+    hud.onReset(() => {
+      resets += 1;
+    });
     hud.render(snapshot);
 
     const attack = element(host, "manual-attack");
     const upgradeButtons = element(host, "upgrades").children;
+    const reset = element(host, "reset-progress");
     attack.click();
+    reset.click();
     for (const upgrade of upgradeButtons) upgrade.click();
 
     expect(attacks).toBe(1);
+    expect(resets).toBe(1);
     expect(upgrades).toBe(5);
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
     hud.dispose();
     attack.click();
+    reset.click();
     for (const upgrade of upgradeButtons) upgrade.click();
     expect(attacks).toBe(1);
+    expect(resets).toBe(1);
     expect(upgrades).toBe(5);
     expect(host.children).toHaveLength(0);
   });

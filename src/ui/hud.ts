@@ -5,6 +5,7 @@ export type Hud = {
   render(snapshot: BattleSnapshot): void;
   onAttack(listener: () => void): void;
   onUpgrade(listener: (id: UpgradeId) => void): void;
+  onReset(listener: () => void): void;
   dispose(): void;
 };
 
@@ -35,6 +36,10 @@ export const createHud = (host: HTMLElement): Hud => {
   attackButton.type = "button";
   attackButton.textContent = "Attack";
   attackButton.setAttribute("aria-label", "Attack enemy");
+  const resetButton = document.createElement("button");
+  resetButton.className = "reset-progress";
+  resetButton.type = "button";
+  resetButton.textContent = "Reset progress";
   const upgrades = document.createElement("div");
   upgrades.className = "upgrades";
   const upgradeButtons = new Map<UpgradeId, { button: HTMLButtonElement; listener: () => void }>();
@@ -50,14 +55,18 @@ export const createHud = (host: HTMLElement): Hud => {
     automaticProgress,
     coins,
     attackButton,
+    resetButton,
     upgrades,
     log,
   );
   let attackListener: (() => void) | undefined;
+  let resetListener: (() => void) | undefined;
   let upgradeListener: ((id: UpgradeId) => void) | undefined;
   let renderedEventIds = "";
   const attack = (): void => attackListener?.();
   attackButton.addEventListener("click", attack);
+  const reset = (): void => resetListener?.();
+  resetButton.addEventListener("click", reset);
   const render = (snapshot: BattleSnapshot): void => {
     enemy.textContent = `${snapshot.enemy.name} · Level ${snapshot.enemy.level} · ${snapshot.enemy.grade}${snapshot.enemy.modifier === null ? "" : ` · ${snapshot.enemy.modifier}`}`;
     const percent = (snapshot.enemy.health / snapshot.enemy.maxHealth) * 100;
@@ -111,8 +120,12 @@ export const createHud = (host: HTMLElement): Hud => {
     onUpgrade: (listener) => {
       upgradeListener = listener;
     },
+    onReset: (listener) => {
+      resetListener = listener;
+    },
     dispose: () => {
       attackButton.removeEventListener("click", attack);
+      resetButton.removeEventListener("click", reset);
       for (const { button, listener } of upgradeButtons.values()) {
         button.removeEventListener("click", listener);
       }

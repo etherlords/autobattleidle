@@ -23,6 +23,7 @@ type AnimationFrameHost = {
   cancelAnimationFrame(handle: number): void;
   removeEventListener(type: "resize", listener: EventListenerOrEventListenerObject): void;
   requestAnimationFrame(callback: FrameRequestCallback): number;
+  confirm?(message: string): boolean;
 };
 
 export type Application = { dispose(): void };
@@ -33,6 +34,8 @@ export type ApplicationDependencies = {
   readonly createPersistence: () => PersistenceBoundary;
   readonly rolls: () => AttackRolls;
   readonly initialState: CombatState;
+  readonly createInitialState?: () => CombatState;
+  readonly now?: () => number;
 };
 
 type LifecycleDependencies = Omit<
@@ -44,24 +47,31 @@ type LifecycleDependencies = Omit<
   readonly persistence: PersistenceBoundary;
   readonly viewport: () => { readonly width: number; readonly height: number };
   readonly onDispose: () => void;
+  readonly initialNowMs?: number;
 };
 
-const browserDependencies = (): ApplicationDependencies => ({
-  window,
-  createGame: createBattlefield,
-  createHud,
-  createPersistence: createPersistenceBoundary,
-  initialState: createCombatState(
-    { automaticSpeedLevel: 0, criticalChance: 0, damage: 1, doubleRewardChance: 0 },
-    Math.random(),
-    false,
-  ),
-  rolls: () => ({
-    critical: Math.random(),
-    doubleReward: Math.random(),
-    nextEliteModifier: Math.random(),
-  }),
-});
+const browserDependencies = (): ApplicationDependencies => {
+  const createInitialState = (): CombatState =>
+    createCombatState(
+      { automaticSpeedLevel: 0, criticalChance: 0, damage: 1, doubleRewardChance: 0 },
+      Math.random(),
+      false,
+    );
+  return {
+    window,
+    createGame: createBattlefield,
+    createHud,
+    createInitialState,
+    createPersistence: createPersistenceBoundary,
+    initialState: createInitialState(),
+    now: () => performance.now(),
+    rolls: () => ({
+      critical: Math.random(),
+      doubleReward: Math.random(),
+      nextEliteModifier: Math.random(),
+    }),
+  };
+};
 
 export const createApplication = (
   root: HTMLElement,
@@ -73,8 +83,11 @@ export const createApplication = (
   const game = dependencies.createGame(battlefieldHost);
   const hud = dependencies.createHud(root);
   const persistence = dependencies.createPersistence();
+  const initialNowMs = dependencies.now?.() ?? 0;
+  const initialState = persistence.load(dependencies.initialState, initialNowMs);
   return startApplication({
-    initialState: dependencies.initialState,
+    initialState,
+    initialNowMs,
     rolls: dependencies.rolls,
     game,
     hud,
@@ -91,9 +104,11 @@ export const createApplication = (
 export const startApplication = (dependencies: LifecycleDependencies): Application => {
   let frame: number | undefined;
   let disposed = false;
-  let nowMs = 0;
+  let nowMs = dependencies.initialNowMs ?? 0;
   let nextEventId = 1;
   let state = dependencies.initialState;
+  const newGame = (): CombatState =>
+    dependencies.createInitialState?.() ?? dependencies.initialState;
   let events: readonly BattleEvent[] = [];
   const addEvent = (message: string): void => {
     events = [...events, { id: nextEventId, message }].slice(-6);
@@ -116,7 +131,6 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     const current = snapshot();
     dependencies.game.render(current);
     dependencies.hud.render(current);
-    dependencies.persistence.onStateChanged(current);
   };
   const performAttack = (source: "manual" | "automatic"): void => {
     const result = attack(state, {
@@ -132,6 +146,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
         ? `${source === "manual" ? "Manual" : "Automatic"} kill: +${result.event.reward} coins`
         : `${source === "manual" ? "Manual" : "Automatic"} hit: ${result.event.damage} damage`,
     );
+    dependencies.persistence.onStateChanged(state);
   };
   const purchase = (id: UpgradeId): void => {
     const result = purchaseUpgrade(state, id, nowMs);
@@ -141,6 +156,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
         ? `Purchased ${UPGRADES.find((entry) => entry.id === id)?.label ?? id}`
         : result.reason,
     );
+    if (result.reason === null) dependencies.persistence.onStateChanged(state);
     render();
   };
   const resize = (): void => {
@@ -160,6 +176,14 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     render();
   });
   dependencies.hud.onUpgrade(purchase);
+  dependencies.hud.onReset(() => {
+    if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
+    dependencies.persistence.reset();
+    state = newGame();
+    events = [];
+    nextEventId = 1;
+    render();
+  });
   render();
   dependencies.window.addEventListener("resize", resize);
   frame = dependencies.window.requestAnimationFrame(draw);

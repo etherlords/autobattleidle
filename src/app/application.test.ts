@@ -1,10 +1,70 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
-import { startApplication } from "./application";
+import { createApplication, startApplication } from "./application";
 import { createCombatState, type UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 
+const originalDocument = globalThis.document;
+
+afterEach(() => {
+  Object.defineProperty(globalThis, "document", { configurable: true, value: originalDocument });
+});
+
 describe("startApplication", () => {
+  it("uses the startup clock for restored automatic cooldown", () => {
+    Object.defineProperty(globalThis, "document", {
+      configurable: true,
+      value: { createElement: () => ({ className: "", clientHeight: 240, clientWidth: 400 }) },
+    });
+    const frames = new Map<number, FrameRequestCallback>();
+    const snapshots: BattleSnapshot[] = [];
+    let loadedAt = -1;
+    const initialState = {
+      ...createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }, 0, true),
+    };
+    const app = createApplication({ replaceChildren: () => undefined } as unknown as HTMLElement, {
+      createGame: () => ({
+        dispose: () => undefined,
+        render: () => undefined,
+        resize: () => undefined,
+      }),
+      createHud: () => ({
+        dispose: () => undefined,
+        onAttack: () => undefined,
+        onReset: () => undefined,
+        onUpgrade: () => undefined,
+        render: (snapshot) => snapshots.push(snapshot),
+      }),
+      createPersistence: () => ({
+        dispose: () => undefined,
+        load: (fallback, nowMs) => {
+          loadedAt = nowMs;
+          return { ...fallback, nextAutomaticAttackAtMs: nowMs + 1_000 };
+        },
+        onStateChanged: () => undefined,
+        reset: () => undefined,
+      }),
+      initialState,
+      now: () => 500,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: (id) => frames.delete(id),
+        removeEventListener: () => undefined,
+        requestAnimationFrame: (callback) => {
+          frames.set(1, callback);
+          return 1;
+        },
+      },
+    });
+    expect(loadedAt).toBe(500);
+    expect(snapshots.at(-1)?.automatic.remainingMs).toBe(1_000);
+    frames.get(1)?.(1_200);
+    expect(snapshots.at(-1)?.enemy.health).toBe(10);
+    expect(snapshots.at(-1)?.automatic.remainingMs).toBe(300);
+    app.dispose();
+  });
+
   it("owns one frame and resize listener, then disposes both idempotently", () => {
     const callbacks = new Map<number, FrameRequestCallback>();
     const resizeListeners = new Set<EventListenerOrEventListenerObject>();
@@ -13,13 +73,17 @@ describe("startApplication", () => {
       gameDispose: 0,
       hudDispose: 0,
       persistenceDispose: 0,
+      persistenceReset: 0,
       render: 0,
       resize: 0,
     };
     let nextFrame = 1;
     let attack: (() => void) | undefined;
+    let reset: (() => void) | undefined;
     let upgrade: ((id: UpgradeId) => void) | undefined;
     const snapshots: BattleSnapshot[] = [];
+    const savedCoins: number[] = [];
+    let confirmed = false;
     const app = startApplication({
       window: {
         addEventListener: (type, listener) => {
@@ -38,6 +102,7 @@ describe("startApplication", () => {
           callbacks.set(id, callback);
           return id;
         },
+        confirm: () => confirmed,
       },
       game: {
         dispose: () => {
@@ -57,6 +122,9 @@ describe("startApplication", () => {
         onAttack: (listener) => {
           attack = listener;
         },
+        onReset: (listener) => {
+          reset = listener;
+        },
         onUpgrade: (listener) => {
           upgrade = listener;
         },
@@ -68,7 +136,11 @@ describe("startApplication", () => {
         dispose: () => {
           calls.persistenceDispose += 1;
         },
-        onStateChanged: () => undefined,
+        load: (fallback) => fallback,
+        onStateChanged: (state) => savedCoins.push(state.coins),
+        reset: () => {
+          calls.persistenceReset += 1;
+        },
       },
       initialState: createCombatState(
         { criticalChance: 0, damage: 10, doubleRewardChance: 0 },
@@ -87,7 +159,9 @@ describe("startApplication", () => {
       if (snapshot === undefined) throw new Error("Expected a rendered snapshot");
       return snapshot;
     };
-    if (attack === undefined || upgrade === undefined) throw new Error("Expected HUD handlers");
+    if (attack === undefined || upgrade === undefined || reset === undefined) {
+      throw new Error("Expected HUD handlers");
+    }
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
       "Need 1 coins",
       "Need 1024 coins",
@@ -100,6 +174,7 @@ describe("startApplication", () => {
     expect(lastSnapshot().coins).toBe(1);
     expect(lastSnapshot().events.at(-1)?.message).toBe("Manual kill: +1 coins");
     expect(lastSnapshot().upgrades).toHaveLength(5);
+    expect(savedCoins).toEqual([1]);
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
       null,
       "Need 1024 coins",
@@ -108,6 +183,7 @@ describe("startApplication", () => {
       "Requires automatic attack unlock",
     ]);
     upgrade("automatic-unlock");
+    expect(savedCoins).toEqual([1, 0]);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     attack();
     expect(lastSnapshot().enemy.health).toBe(13);
@@ -117,6 +193,12 @@ describe("startApplication", () => {
     firstFrame(1000);
     expect(snapshots.at(-1)?.enemy.health).toBe(3);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
+    reset();
+    expect(calls.persistenceReset).toBe(0);
+    confirmed = true;
+    reset();
+    expect(calls.persistenceReset).toBe(1);
+    expect(lastSnapshot().coins).toBe(0);
     app.dispose();
     app.dispose();
     expect(resizeListeners.size).toBe(0);
@@ -126,7 +208,7 @@ describe("startApplication", () => {
       gameDispose: 1,
       hudDispose: 1,
       persistenceDispose: 1,
-      render: 5,
+      render: 6,
       resize: 1,
     });
   });

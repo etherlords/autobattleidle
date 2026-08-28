@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d8cceb9c-8dc1-460b-b02c-490f83e1381e",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T10:08:14.276Z",
+  "itemId": "ABI-005",
+  "idempotencyKey": "abi005-plan-qa-complete-28",
+  "requestFingerprint": "5796069cc8e1055820b8def2b013bbd792d5fe7e166a68999f2d5bb737dbfd45",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md.planner-tmp-d8cceb9c-8dc1-460b-b02c-490f83e1381e-0",
+      "beforeHash": "074c1ebdcfa5090758d7a40d1cbf9637a7138a3631ec333257ab7752e48bce9c",
+      "afterHash": "57cfb8066b0fcb545a95804b76db50462a1b3f8ba2051e4a14ebeb4e07b61baa"
+    }
+  ],
+  "committedAt": "2026-08-28T10:08:14.311Z"
+}

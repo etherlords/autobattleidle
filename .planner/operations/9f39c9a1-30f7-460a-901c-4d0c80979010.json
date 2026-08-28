@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "9f39c9a1-30f7-460a-901c-4d0c80979010",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-28T09:56:33.650Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-005-add-versioned-localstorage-progress-persistence/PROGRESS.md.planner-tmp-9f39c9a1-30f7-460a-901c-4d0c80979010"
+    }
+  ],
+  "committedAt": "2026-08-28T09:56:33.687Z"
+}
