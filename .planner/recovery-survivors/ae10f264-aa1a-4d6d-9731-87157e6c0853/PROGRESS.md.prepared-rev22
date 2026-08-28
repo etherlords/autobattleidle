@@ -1,0 +1,397 @@
+---
+plannerFormat: 1
+id: ABI-013
+artifact: progress
+project: ABI
+profile: high-assurance
+revision: 22
+status: In Review
+sprintId: ABI-S1
+dependencies:
+  - ABI-005
+  - ABI-006
+requiredGates:
+  - implementation-self-check
+  - independent-review
+  - independent-qa
+  - verification
+  - manager-closure
+---
+
+# ABI-013 progress
+
+## Current state
+
+- Status: In Review
+- Revision: 22
+- Last update: EVENT review-fail — independent Reviewer run 1 — CHANGES_REQUIRED with one P1 and two P2 findings; exact run persisted via documented REVIEW.md fallback after healthy doctor/no recovery. Return to same implementation owner for one bounded repair.
+
+## Execution plan
+
+- [x] migration-preflight: Manager: recover exact V1/V2 schemas from Git, map canonical versus derived fields, classify loss risks, and define unit/integration/deployed evidence.
+- [x] v1-fixture: Implementation owner: add the smallest authentic V1 golden fixture and current V2 semantic comparison.
+- [x] migration: Implementation owner: add a deterministic V1-to-V2 adapter at the persistence boundary with safe defaults and derived-value reconstruction.
+- [x] migration-write: Implementation owner: preserve the old payload until successful migration/current validation and keep failed writes non-destructive.
+- [x] migration-tests: Implementation owner: prove V1 load, V2 stability, migrated save/reload, malformed/future recovery, and run pnpm check.
+- [~] migration-gates: Independent Reviewer and QA: audit no-progress-loss semantics and reproduce historical-save migration in a real deployed browser.
+- [ ] migration-delivery: Manager: verify docs/evidence, commit/push, wait CI/Pages, repeat deployed V1-to-V2 reload proof, and close.
+
+## Events
+
+### evt-225abd94-2d8a-404c-a4df-3afd2e1059bc
+
+- Timestamp: 2026-08-28T14:16:29.782Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 1
+- Resulting revision: 2
+- Summary: Priority raised high to critical. planner_task_update returned an ambiguous EBUSY error but canonical revision 2 committed and duplicated structured values; after healthy doctor/no recovery, Manager used an exact BRIEF-only Markdown fallback. Before SHA-256 C14C24AF5CFE00C1F4819CCE69D27704FBBC366599C34C9397A6F878ED6B1C1E; after 5E09A6F7E86B212004C9B20B67D149DA1EF68CA16A9420CC3E9B71DE1433D1C9. Planner bounded readback confirms one authoritative set: 8 criteria, dependencies ABI-005/ABI-006, related Vault IDs E27CD3/85CBFC. One rejected no-op readback requested maxCharsPerArtifact=12000 above the 6000 limit; retry at 6000 succeeded.
+- Idempotency key: abi-013-priority-normalization-fallback-v1
+- Evidence:
+  - planner://work-item/ABI-013/artifact/BRIEF.md
+  - planner_doctor healthy; recovery.required=false
+  - before:C14C24AF5CFE00C1F4819CCE69D27704FBBC366599C34C9397A6F878ED6B1C1E
+  - after:5E09A6F7E86B212004C9B20B67D149DA1EF68CA16A9420CC3E9B71DE1433D1C9
+
+### evt-610cc464-8d47-43f1-91e6-07fe7c44231c
+
+- Timestamp: 2026-08-28T14:19:48.587Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 2
+- Resulting revision: 3
+- Summary: Scope expanded by user to version-addressed save slots, pre-runtime migration bootstrap, byte-preserved previous-version payloads, and an accessible explicit Restore from previous version repair action. Because the confirmed task.update merge defect makes the exposed metadata mutation unsafe, Manager used one revision-checked canonical Markdown fallback after healthy doctor/no recovery, updating BRIEF revision 2 to 3 and board revision 74 to 75/source ABI-013 revision 3. Planner bounded readback confirms 11 unique criteria, critical/Ready state, unchanged dependencies, and no claim or implementation. BRIEF SHA-256 5E09A6F7E86B212004C9B20B67D149DA1EF68CA16A9420CC3E9B71DE1433D1C9 to DB1E387D1003614A45F302CB3E5DB9042BB0B543E2BB86E4752709C1DDCC1314; board E3B4FFEF1BCB2539D4FD0CA8C606B11ED8502AC909DE97F1C71B7F8BA7C49331 to 00E2C69ED9C45C18C4DD09451DFBB0A621D000EAB079E475A095F5D259FC3A28.
+- Idempotency key: abi-013-versioned-save-slots-repair-ui-plan-v1
+- Evidence:
+  - planner://work-item/ABI-013/artifact/BRIEF.md
+  - planner_doctor healthy; recovery.required=false
+  - brief-before:5E09A6F7E86B212004C9B20B67D149DA1EF68CA16A9420CC3E9B71DE1433D1C9
+  - brief-after:DB1E387D1003614A45F302CB3E5DB9042BB0B543E2BB86E4752709C1DDCC1314
+  - board-before:E3B4FFEF1BCB2539D4FD0CA8C606B11ED8502AC909DE97F1C71B7F8BA7C49331
+  - board-after:00E2C69ED9C45C18C4DD09451DFBB0A621D000EAB079E475A095F5D259FC3A28
+
+### evt-0dd35764-25c7-454f-a669-63907d217939
+
+- Timestamp: 2026-08-28T14:25:07.792Z
+- Actor: root-manager
+- Operation: claim.acquire
+- Prior revision: 3
+- Resulting revision: 4
+- Summary: Claimed task lease: Manage ABI-013 preflight, implementation lifecycle, independent gates, closure, and deployed proof only
+- Idempotency key: abi013-claim-01a048c1
+- Request fingerprint: 459b64b334ddc2fc309c1066144a3423efd4552450484c2c1ba536eb8f0d66bf
+- Agent ID: root-manager
+- Session ID: 01a048c1-50e0-7562-bcd8-919aefc98eef
+- Intent: Manage ABI-013 preflight, implementation lifecycle, independent gates, closure, and deployed proof only
+- Branch: main
+- Expires at: 2026-08-28T15:25:07.792Z
+- Evidence:
+  - None
+
+### evt-b6d4e69f-b62e-4e64-9ced-2c9da451f2b9
+
+- Timestamp: 2026-08-28T14:25:55.307Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 4
+- Resulting revision: 5
+- Summary: Begin fresh ABI-013 preflight after Ready/dependency/unclaimed confirmation.
+- Idempotency key: abi013-preflight-start
+- Request fingerprint: 3babd6774a353f38c5aa05d4465e8ae86fa0a99a1a054ffc43fa283db118af04
+- Action: set_state
+- Step ID: migration-preflight
+- State: in_progress
+- Evidence:
+  - planner_get_current: ABI-013 Ready revision 3
+  - planner_next_task: all dependencies Done
+  - planner_tasks_list: openDependencies empty and lease null
+  - Vault search fresh generation 14
+
+### evt-4e714c83-8b0c-4b47-abc1-752690e982f7
+
+- Timestamp: 2026-08-28T14:28:15.260Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 5
+- Resulting revision: 6
+- Summary: EVENT preflight-ready — root-manager — Planner has no analysis/guide section writer; after healthy planner_doctor with no recovery, used the documented narrow fallback to refresh only manager-owned ANALYSIS.md and IMPLEMENTATION-GUIDE.md. Git recovered authentic V1 at 0c66fce and V2 boundary at e83ec78. Classified schema migration; unit/integration/deployed matrix recorded. ANALYSIS SHA256 73E12F50CEA01E3F787EC242F10E5916E5AF816BD19B5A617C2963414552ACE9; GUIDE SHA256 8AAA590B99C2C13ACA24DC4B42E0EE5A6BE1B4D6C2241B8FED5131B49DC9A1BF.
+- Idempotency key: abi013-preflight-fallback
+- Evidence:
+  - planner_doctor healthy, recovery.required=false
+  - Git V1 source: 0c66fce
+  - Git V2 change: e83ec78
+  - Vault AUTOBATTLEIDLE-DOC-20260827-E27CD3
+  - Vault AUTOBATTLEIDLE-DOC-20260827-85CBFC
+
+### evt-a8b39420-d112-453b-9344-06a6b691acc0
+
+- Timestamp: 2026-08-28T14:28:47.756Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 6
+- Resulting revision: 7
+- Summary: Fresh preflight complete: authentic schemas, migration risks, minimal implementation sequence, and unit/integration/deployed evidence are recorded.
+- Idempotency key: abi013-preflight-complete
+- Request fingerprint: 24a027576b0d9a9e261e87d4c9d298ae07af32e2a174c24f5727439356fdb29e
+- Action: set_state
+- Step ID: migration-preflight
+- State: complete
+- Evidence:
+  - ANALYSIS SHA256 73E12F50CEA01E3F787EC242F10E5916E5AF816BD19B5A617C2963414552ACE9
+  - IMPLEMENTATION-GUIDE SHA256 8AAA590B99C2C13ACA24DC4B42E0EE5A6BE1B4D6C2241B8FED5131B49DC9A1BF
+  - progress event evt-4e714c83-8b0c-4b47-abc1-752690e982f7
+
+### evt-d0bfcd47-9bc3-46dc-bb37-94a36d32b296
+
+- Timestamp: 2026-08-28T14:28:53.330Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 7
+- Resulting revision: 8
+- Summary: Preflight and managed plan complete; begin bounded ABI-013 implementation.
+- Idempotency key: abi013-ready-to-in-progress
+- Request fingerprint: b989e0e1d6ae836b687664dc3e769fa137fb29e14b1f365ea0053487b5f6a5d3
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - EVENT preflight-ready evt-4e714c83-8b0c-4b47-abc1-752690e982f7
+  - execution plan preflight complete at progress revision 7
+  - schema migration evidence matrix recorded
+
+### evt-1b1456b3-4779-45fd-90e0-4a7cf72b0955
+
+- Timestamp: 2026-08-28T14:29:12.484Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 8
+- Resulting revision: 9
+- Summary: Implementation owner begins authentic fixture and bounded migration implementation.
+- Idempotency key: abi013-v1-fixture-start
+- Request fingerprint: 913fedd298fb52b318dc26b814579957a9fe1f4960a8283a85ba514bdddb52ab
+- Action: set_state
+- Step ID: v1-fixture
+- State: in_progress
+- Evidence:
+  - ABI-013 canonical readback In Progress revision 4
+  - preflight plan complete
+  - implementation guide SHA256 8AAA590B99C2C13ACA24DC4B42E0EE5A6BE1B4D6C2241B8FED5131B49DC9A1BF
+
+### evt-5ff08d88-1c38-4244-8f4f-bd30439ae86d
+
+- Timestamp: 2026-08-28T14:41:22.327Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 9
+- Resulting revision: 10
+- Summary: Authentic V1 and current V2 golden fixtures added and exercised.
+- Idempotency key: abi013-v1-fixture-complete
+- Request fingerprint: 0df8039ffe17b7045f8c6235500776260e514c4be73a1a857cbcec2605d41812
+- Action: set_state
+- Step ID: v1-fixture
+- State: complete
+- Evidence:
+  - src/persistence/fixtures/save-v1.json
+  - src/persistence/fixtures/save-v2.json
+  - implementation owner pnpm check: 16/16 tests
+
+### evt-fa2437f3-342f-4b23-82ad-72bc26136c23
+
+- Timestamp: 2026-08-28T14:41:41.691Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 10
+- Resulting revision: 11
+- Summary: Record implementation of deterministic V1-to-V2 adapter.
+- Idempotency key: abi013-migration-start
+- Request fingerprint: ccd149abe4fba3c65ff9d994f9e75a64ab8e53c03db6a4e1f9308b06b051bacc
+- Action: set_state
+- Step ID: migration
+- State: in_progress
+- Evidence:
+  - src/persistence/persistence-boundary.ts
+
+### evt-bf384cbb-b199-4b80-b9fb-b31f455b8d55
+
+- Timestamp: 2026-08-28T14:41:42.540Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 11
+- Resulting revision: 12
+- Summary: Strict V1 validation, deterministic level/default mapping, V2 validation, and domain reconstruction complete.
+- Idempotency key: abi013-migration-complete
+- Request fingerprint: 1ec59f09129d8f243761b71aa534238fa2398fd0f669bba237b676c677e39a23
+- Action: set_state
+- Step ID: migration
+- State: complete
+- Evidence:
+  - src/persistence/persistence-boundary.ts
+  - V1 damage/chance levels reconstructed
+  - armor penetration default 0
+
+### evt-9c193213-92b7-4b52-bbd6-f9c6377b92d5
+
+- Timestamp: 2026-08-28T14:41:43.397Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 12
+- Resulting revision: 13
+- Summary: Record versioned slot and safe publish implementation.
+- Idempotency key: abi013-migration-write-start
+- Request fingerprint: bd8d67fb82fa70c94e5855e72cb976d66527a3aefd02f0950771789f5b99a5ce
+- Action: set_state
+- Step ID: migration-write
+- State: in_progress
+- Evidence:
+  - SAVE_V1_KEY
+  - SAVE_V2_KEY
+
+### evt-2f636125-4fb7-456f-8c6f-3eb5376094a9
+
+- Timestamp: 2026-08-28T14:41:44.269Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 13
+- Resulting revision: 14
+- Summary: V1 bytes retained, V2-only writes/reset, validated migration publish, and failed-write in-memory continuation implemented.
+- Idempotency key: abi013-migration-write-complete
+- Request fingerprint: 8a967a2a46f09d6abc9840276904bb4cc1b3db3c8705cbed6bd713f8221d0857
+- Action: set_state
+- Step ID: migration-write
+- State: complete
+- Evidence:
+  - src/persistence/persistence-boundary.test.ts migration preservation cases
+
+### evt-8dc5b9d4-1a59-4550-b3ad-087ca66e0623
+
+- Timestamp: 2026-08-28T14:41:45.114Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 14
+- Resulting revision: 15
+- Summary: Record focused persistence/application/HUD verification.
+- Idempotency key: abi013-migration-tests-start
+- Request fingerprint: e769b010c0fe3f6d6eb9652f0ddf1cb9179e5d7b196c32d04a26d07b976264f2
+- Action: set_state
+- Step ID: migration-tests
+- State: in_progress
+- Evidence:
+  - implementation owner self-check
+
+### evt-f8e9d0eb-9b20-45ac-bfc8-49d401dbc878
+
+- Timestamp: 2026-08-28T14:41:45.961Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 15
+- Resulting revision: 16
+- Summary: Implementation self-check passed: lint, format, 16/16 Vitest, strict TypeScript, and Vite build.
+- Idempotency key: abi013-migration-tests-complete
+- Request fingerprint: fe4ac5b080975fc47bf45be6c1229d05d9ef9d1d3cc84f34da29e378319b66e2
+- Action: set_state
+- Step ID: migration-tests
+- State: complete
+- Evidence:
+  - pnpm check exit 0
+  - existing Vite >500 kB advisory only
+  - Vault Persistence Contract hash prefix 77c23f
+  - Vault UI/Persistence/QA hash prefix 890429
+
+### evt-124282fb-cc75-4ed1-a30b-2c1a4bdcac8a
+
+- Timestamp: 2026-08-28T14:42:01.818Z
+- Actor: implementation-owner
+- Operation: progress.append
+- Prior revision: 16
+- Resulting revision: 17
+- Summary: EVENT checkpoint — implementation owner — ABI-013 version-addressed V1/V2 migration, byte-preserving repair UI, fixtures, Vault contract updates, and pnpm check passed; ready for independent review.
+- Idempotency key: abi013-implementation-checkpoint
+- Evidence:
+  - Changed persistence/app/HUD plus focused tests and two fixtures
+  - Vault Persistence Contract and UI/Persistence/QA updated through MCP
+  - pnpm check: lint, format, 16/16 Vitest, strict TypeScript, Vite build
+  - Vite existing >500 kB advisory only
+
+### evt-922cfbd4-3b38-49be-9b12-f3724810ce86
+
+- Timestamp: 2026-08-28T14:42:02.830Z
+- Actor: implementation-owner
+- Operation: gate.record
+- Prior revision: 17
+- Resulting revision: 18
+- Summary: Implementation owner self-check passed all repository checks and mapped ABI-013 behavior to focused tests.
+- Idempotency key: abi013-self-check-pass
+- Request fingerprint: 5094e28f3d90d20796be8e234377a4e7afe5f97cf4b338bcc24b8614d6d23499
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - pnpm check exit 0
+  - 16/16 Vitest tests
+  - strict tsc -b and Vite build green
+  - deployed proof intentionally deferred to independent QA
+
+### evt-f0b302d1-7f3b-49c2-866d-3f44706f4548
+
+- Timestamp: 2026-08-28T14:42:03.691Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 18
+- Resulting revision: 19
+- Summary: Begin fresh independent review, followed by independent QA after review passes.
+- Idempotency key: abi013-migration-gates-start
+- Request fingerprint: 6f7ee6296d8daa1ce1edc08fb9e3ffb817cfab85bd6ab7149dc03fd624991f5d
+- Action: set_state
+- Step ID: migration-gates
+- State: in_progress
+- Evidence:
+  - implementation-self-check pass
+  - implementation checkpoint recorded
+
+### evt-0ec004f5-7c1a-46f5-8081-b964e84558dd
+
+- Timestamp: 2026-08-28T14:42:12.447Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 19
+- Resulting revision: 20
+- Summary: Implementation self-check passed; hand off unchanged ABI-013 diff to a fresh independent Reviewer.
+- Idempotency key: abi013-in-progress-to-review
+- Request fingerprint: c2ab8256c11c2a07d52811501035b488e3af72132471ce6a51f0715284eae4df
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - implementation-self-check pass at progress revision 18
+  - migration-gates active at progress revision 19
+  - pnpm check green
+
+### evt-507e2da8-c696-4fbb-87bd-ca52c3a995b6
+
+- Timestamp: 2026-08-28T14:46:24.722Z
+- Actor: independent-reviewer-run-1
+- Operation: gate.record
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: CHANGES_REQUIRED: valid V2 can be overwritten by Restore; failed publish has no promised retry; golden fixtures are unused by tests.
+- Idempotency key: abi013-review-run1-fail
+- Request fingerprint: 45bef8c5a8e9eaf839a61ac64db65f3cd3ebf692f7cf19fde408d86ee958e38e
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - REVIEW.md Run 1
+  - P1 persistence-boundary.ts:424 application.ts:187
+  - P2 persistence-boundary.ts:393,424
+  - P2 persistence-boundary.test.ts:136
+  - pnpm check passed 16/16
+
+### evt-f7b91bff-426d-48b7-8e19-c8fb73a8686d
+
+- Timestamp: 2026-08-28T14:46:25.928Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: EVENT review-fail — independent Reviewer run 1 — CHANGES_REQUIRED with one P1 and two P2 findings; exact run persisted via documented REVIEW.md fallback after healthy doctor/no recovery. Return to same implementation owner for one bounded repair.
+- Idempotency key: abi013-review-run1-recorded
+- Evidence:
+  - REVIEW.md Run 1
+  - independent-review gate fail
+  - Reviewer read-only elapsed about 12 minutes

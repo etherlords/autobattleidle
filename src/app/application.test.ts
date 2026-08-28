@@ -32,8 +32,11 @@ describe("startApplication", () => {
         dispose: () => undefined,
         onAttack: () => undefined,
         onReset: () => undefined,
+        onRestore: () => undefined,
         onUpgrade: () => undefined,
+        reportPersistence: () => undefined,
         render: (snapshot) => snapshots.push(snapshot),
+        setRestoreAvailable: () => undefined,
       }),
       createPersistence: () => ({
         dispose: () => undefined,
@@ -41,8 +44,10 @@ describe("startApplication", () => {
           loadedAt = nowMs;
           return { ...fallback, nextAutomaticAttackAtMs: nowMs + 1_000 };
         },
+        hasPreviousVersionSave: () => false,
         onStateChanged: () => undefined,
         reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
       }),
       initialState,
       now: () => 500,
@@ -125,22 +130,27 @@ describe("startApplication", () => {
         onReset: (listener) => {
           reset = listener;
         },
+        onRestore: () => undefined,
         onUpgrade: (listener) => {
           upgrade = listener;
         },
+        reportPersistence: () => undefined,
         render: (snapshot) => {
           snapshots.push(snapshot);
         },
+        setRestoreAvailable: () => undefined,
       },
       persistence: {
         dispose: () => {
           calls.persistenceDispose += 1;
         },
         load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
         onStateChanged: (state) => savedCoins.push(state.coins),
         reset: () => {
           calls.persistenceReset += 1;
         },
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
       },
       initialState: {
         ...createCombatState({ criticalChance: 0, damage: 10, doubleRewardChance: 0 }, 0, false),

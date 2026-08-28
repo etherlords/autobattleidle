@@ -43,13 +43,13 @@ selection, accidental double attack, page scroll, or layout growth.
 
 ## Persistence
 
-Progress is stored in `localStorage` after meaningful state changes with a short debounce and on page hide. The payload has a schema version and contains only canonical simulation state.
+Progress is stored in version-addressed `localStorage` slots after meaningful state changes with a short debounce and on page hide. The current V2 slot is `etherlords.autobattleidle.save.v2`; retained V1 is `etherlords.autobattleidle.save.v1`; `etherlords.autobattleidle.save` is the historical unversioned compatibility source. Normal saves and reset affect only V2.
 
 Every task preflight classifies persistence impact as `no schema change`, `compatible extension`, or `schema migration`. A task with no schema change must still prove that the supported historical save fixtures load without semantic progress loss. A task that changes the shape or meaning of saved data ships the version bump, the next-version migration adapter, source and target fixtures, and load -> migrate -> save -> reload proof in the same delivery.
 
-Supported older versions never silently reset. Load validates the source shape, migrates step by step, validates the current shape, and reconstructs derived values through the domain. Malformed data and unsupported future versions fall back safely without crashing. A user-confirmed reset remains the only ordinary path that intentionally removes valid progress.
+Supported saves never silently reset. Before gameplay, HUD, timers, or autosave, a valid versioned V2 wins. When it is missing, empty, or invalid, a valid schema-V2 document from the unversioned compatibility key is validated as V2 and published to the V2 slot without changing the original bytes; only then may bootstrap fall back to migrating V1. Failed publication leaves the valid in-memory state and every source value intact for bounded retry.
 
-Offline elapsed-time rewards are deferred from V1 unless implementation and QA prove a bounded formula; ordinary saved progress must still resume exactly.
+A visible native Restore from previous version action may explicitly repair a missing, empty, or invalid V2 from V1: it rereads/revalidates V1, remigrates, validates, and writes V2 before replacing live state; its accessible status reports success or failure. Malformed data and unsupported future versions fall back safely without crashing. A user-confirmed reset removes only V2.
 
 ## Delivery lifecycle
 

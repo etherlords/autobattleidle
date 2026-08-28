@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+import v1Fixture from "./fixtures/save-v1.json";
+import v2Fixture from "./fixtures/save-v2.json";
+import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 
 import { createCombatState, spawnEnemy } from "../domain/combat";
 import {
@@ -6,6 +9,9 @@ import {
   decodeSave,
   encodeSave,
   SAVE_KEY,
+  LEGACY_SAVE_KEY,
+  SAVE_V1_KEY,
+  SAVE_V2_KEY,
   SAVE_VERSION,
 } from "./persistence-boundary";
 
@@ -129,6 +135,176 @@ describe("persistence boundary", () => {
     expect(timers.size).toBe(0);
     expect(writes).toBe(2);
     expect(storageRemoves).toBe(1);
+  });
+
+  it("migrates the authentic V1 shape into V2 without changing the prior bytes", () => {
+    const v1 = JSON.stringify(v1Fixture);
+    const values = new Map<string, string>([[SAVE_V1_KEY, v1]]);
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+    const migrated = boundary.load(fallback(), 100);
+    expect(migrated).toMatchObject({
+      automaticUnlocked: true,
+      coins: 7,
+      enemy: { encounter: 1, health: 84, maxHealth: 140 },
+      player: {
+        armorPenetrationLevel: 0,
+        criticalLevel: 1,
+        damage: 12,
+        damageLevel: 1,
+        doubleRewardLevel: 2,
+      },
+    });
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
+    expect(values.get(SAVE_V2_KEY)).toBe(encodeSave(migrated));
+    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(v2Fixture);
+    expect(boundary.hasPreviousVersionSave()).toBe(false);
+    expect(boundary.restorePreviousVersion(200)).toEqual({
+      message: "Current-version progress is already valid.",
+      state: undefined,
+    });
+    expect(boundary.load(fallback(), 200)).toMatchObject({ coins: 7, enemy: { health: 84 } });
+    boundary.reset();
+    expect(values.has(SAVE_V2_KEY)).toBe(false);
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
+  });
+
+  it("promotes a valid legacy V2 slot without modifying its bytes", () => {
+    const legacy = JSON.stringify(legacyV2Fixture);
+    const expectedState = {
+      automaticUnlocked: legacyV2Fixture.automaticUnlocked,
+      coins: legacyV2Fixture.coins,
+      enemy: legacyV2Fixture.enemy,
+      player: legacyV2Fixture.player,
+    };
+    const values = new Map<string, string>([
+      [LEGACY_SAVE_KEY, legacy],
+      [SAVE_V2_KEY, "invalid current payload"],
+    ]);
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+    expect(boundary.load(fallback(), 100)).toMatchObject(expectedState);
+    expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
+    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+    expect(boundary.load(fallback(), 200)).toMatchObject(expectedState);
+    values.set(LEGACY_SAVE_KEY, JSON.stringify({ ...legacyV2Fixture, coins: 1 }));
+    expect(boundary.load(fallback(), 300)).toMatchObject({ coins: 25 });
+  });
+
+  it("prefers direct legacy V2 over versioned V1 when the current slot is unusable", () => {
+    const v1 = JSON.stringify(v1Fixture);
+    const legacy = JSON.stringify(legacyV2Fixture);
+    const values = new Map<string, string>([
+      [SAVE_V1_KEY, v1],
+      [LEGACY_SAVE_KEY, legacy],
+    ]);
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+    expect(boundary.load(fallback(), 100)).toMatchObject({
+      coins: legacyV2Fixture.coins,
+      enemy: legacyV2Fixture.enemy,
+      player: legacyV2Fixture.player,
+    });
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
+    expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
+  });
+
+  it("keeps legacy V2 precedence when Restore runs before a failed publish retry", () => {
+    const v1 = JSON.stringify(v1Fixture);
+    const legacy = JSON.stringify(legacyV2Fixture);
+    const values = new Map<string, string>([
+      [SAVE_V1_KEY, v1],
+      [LEGACY_SAVE_KEY, legacy],
+      [SAVE_V2_KEY, "invalid current payload"],
+    ]);
+    const timers = new Map<number, () => void>();
+    let writes = 0;
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => {
+          writes += 1;
+          if (writes === 1) throw new Error("quota");
+          values.set(key, value);
+        },
+      },
+      timers: {
+        clearTimeout: (handle) => timers.delete(handle),
+        setTimeout: (callback) => {
+          timers.set(1, callback);
+          return 1;
+        },
+      },
+    });
+    expect(boundary.load(fallback(), 100)).toMatchObject({ coins: legacyV2Fixture.coins });
+    expect(boundary.hasPreviousVersionSave()).toBe(true);
+    expect(boundary.restorePreviousVersion(100).state).toMatchObject({
+      coins: legacyV2Fixture.coins,
+    });
+    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
+    expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
+    timers.get(1)?.();
+    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+  });
+
+  it("repairs only an invalid current slot and keeps the in-memory migration on write failure", () => {
+    const v1 = JSON.stringify({ ...v1Fixture, coins: 3 });
+    const values = new Map<string, string>([
+      [SAVE_V1_KEY, v1],
+      [SAVE_V2_KEY, "not json"],
+    ]);
+    let writesFail = true;
+    const timers = new Map<number, () => void>();
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => {
+          if (writesFail) throw new Error("quota");
+          values.set(key, value);
+        },
+      },
+      timers: {
+        clearTimeout: (handle) => timers.delete(handle),
+        setTimeout: (callback) => {
+          timers.set(1, callback);
+          return 1;
+        },
+      },
+    });
+    expect(boundary.load(fallback(), 0)).toMatchObject({ coins: 3 });
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
+    expect(values.get(SAVE_V2_KEY)).toBe("not json");
+    expect(timers.size).toBe(1);
+    writesFail = false;
+    timers.get(1)?.();
+    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toMatchObject({
+      version: SAVE_VERSION,
+      coins: 3,
+    });
+    expect(values.get(SAVE_V1_KEY)).toBe(v1);
   });
 
   it("round-trips the highest accepted boss without an unsafe reward", () => {

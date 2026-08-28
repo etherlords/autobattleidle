@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "de978073-ff25-4901-988f-cf7c88d63581",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-28T15:12:00.940Z",
+  "itemId": "ABI-013",
+  "idempotencyKey": "abi013-repair-to-fresh-review-20260828",
+  "requestFingerprint": "01f043c294beb58d07a014339b99eb5670fa875276c63d63a193622c9ab7c599",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/BRIEF.md.planner-tmp-de978073-ff25-4901-988f-cf7c88d63581-0",
+      "beforeHash": "1e051f5511dbc3a75c1d180671e01491779e6262374bf114722dc03ce96cf6e9",
+      "afterHash": "a2e6cfe6b1a0c4056f9aff352b1162c20aeb6443a838e5d2ca96ac73c297d0aa"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md.planner-tmp-de978073-ff25-4901-988f-cf7c88d63581-1",
+      "beforeHash": "0e916da63f21f4654b652c32a1225c33b9cc48a297d4ee371d223aa79f519529",
+      "afterHash": "445a6442dfca2a7577b89464180e5d82d8f33c1d451e0c91cd6e44747a0ea516"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-de978073-ff25-4901-988f-cf7c88d63581-2",
+      "beforeHash": "be392339ab520c50b8bf94f85af3ff8ec338761e45ce987f5c4e00fb330db156",
+      "afterHash": "000f9f45f3a9dd35eb149f9abd064db07bc81398393eeffead4e301e423fbcb4"
+    }
+  ],
+  "committedAt": "2026-08-28T15:12:00.960Z"
+}

@@ -77,14 +77,14 @@ export const createApplication = (
   root: HTMLElement,
   dependencies: ApplicationDependencies = browserDependencies(),
 ): Application => {
+  const persistence = dependencies.createPersistence();
+  const initialNowMs = dependencies.now?.() ?? 0;
+  const initialState = persistence.load(dependencies.initialState, initialNowMs);
   const battlefieldHost = document.createElement("div");
   battlefieldHost.className = "battlefield";
   root.replaceChildren(battlefieldHost);
   const game = dependencies.createGame(battlefieldHost);
   const hud = dependencies.createHud(root);
-  const persistence = dependencies.createPersistence();
-  const initialNowMs = dependencies.now?.() ?? 0;
-  const initialState = persistence.load(dependencies.initialState, initialNowMs);
   return startApplication({
     initialState,
     initialNowMs,
@@ -180,6 +180,16 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
     dependencies.persistence.reset();
     state = newGame();
+    events = [];
+    nextEventId = 1;
+    render();
+  });
+  dependencies.hud.setRestoreAvailable(dependencies.persistence.hasPreviousVersionSave());
+  dependencies.hud.onRestore(() => {
+    const restored = dependencies.persistence.restorePreviousVersion(nowMs);
+    dependencies.hud.reportPersistence(restored.message);
+    if (restored.state === undefined) return;
+    state = restored.state;
     events = [];
     nextEventId = 1;
     render();

@@ -21,11 +21,13 @@ The browser stores one versioned canonical game-state document in localStorage. 
 
 ## Write and load
 
-Save after meaningful state changes using a short debounce and on page hide. Load parses unknown data once, validates the source-version shape, migrates every supported historical version step by step, validates the current shape and invariants, then reconstructs derived state through the domain.
+Save after meaningful state changes using a short debounce and on page hide. Version 1 lives at `etherlords.autobattleidle.save.v1`; version 2 lives at `etherlords.autobattleidle.save.v2`. The historical unversioned key is `etherlords.autobattleidle.save`.
 
-A deployment that does not change the schema must continue to load the current payload unchanged. A schema bump must ship together with a deterministic adapter for every supported predecessor; version `N` migrates to `N+1`, and longer upgrades compose those adapters. Do not scatter version checks through application or UI code.
+Bootstrap first loads a valid version-addressed V2 slot. If that slot is missing, empty, or invalid, bootstrap next parses the unversioned value once: a valid schema-V2 document is imported into the V2 slot without applying the V1 adapter, while its original raw bytes remain unchanged. Only when neither source supplies valid V2 does bootstrap parse the V1 slot, validate the historical shape, apply the V1-to-V2 adapter, validate/reconstruct V2 domain state, and publish V2. A valid version-addressed V2 always wins and no compatibility source may overwrite it.
 
-Migration preserves player progress: coins, encounter/enemy position, automatic unlock, upgrade levels, armor penetration, and other canonical domain values. New fields receive explicit safe defaults. Derived damage/chance/cooldown fields are recomputed from canonical levels instead of trusting stale serialized copies.
+A deployment that does not change the schema must continue to load the current payload unchanged. A schema bump ships a deterministic one-version adapter for each supported predecessor; longer upgrades compose those adapters. Do not scatter version checks through application or UI code.
+
+Migration and compatibility import preserve player progress: coins, encounter and remaining-health progress, automatic unlock, upgrade levels, armor penetration, and other canonical domain values. New fields receive explicit safe defaults only during schema migration. Derived damage/chance/cooldown fields are recomputed from canonical levels instead of trusting stale serialized copies.
 
 ## Migration commit and recovery
 

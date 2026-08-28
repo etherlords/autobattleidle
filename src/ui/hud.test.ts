@@ -11,6 +11,7 @@ class FakeElement {
   readonly style = { width: "" };
   className = "";
   disabled = false;
+  hidden = false;
   parent: FakeElement | undefined;
   textContent = "";
   title = "";
@@ -100,6 +101,7 @@ describe("createHud", () => {
     const hud = createHud(host as unknown as HTMLElement);
     let attacks = 0;
     let resets = 0;
+    let restores = 0;
     let upgrades = 0;
     hud.onAttack(() => {
       attacks += 1;
@@ -110,25 +112,37 @@ describe("createHud", () => {
     hud.onReset(() => {
       resets += 1;
     });
+    hud.onRestore(() => {
+      restores += 1;
+    });
+    hud.setRestoreAvailable(true);
+    hud.reportPersistence("Restored");
     hud.render(snapshot);
 
     const attack = element(host, "manual-attack");
     const upgradeButtons = element(host, "upgrades").children;
     const reset = element(host, "reset-progress");
+    const restore = element(host, "restore-progress");
     attack.click();
     reset.click();
+    restore.click();
     for (const upgrade of upgradeButtons) upgrade.click();
 
     expect(attacks).toBe(1);
     expect(resets).toBe(1);
+    expect(restores).toBe(1);
+    expect(restore.hidden).toBe(false);
+    expect(element(host, "persistence-status").textContent).toBe("Restored");
     expect(upgrades).toBe(6);
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
     hud.dispose();
     attack.click();
     reset.click();
+    restore.click();
     for (const upgrade of upgradeButtons) upgrade.click();
     expect(attacks).toBe(1);
     expect(resets).toBe(1);
+    expect(restores).toBe(1);
     expect(upgrades).toBe(6);
     expect(host.children).toHaveLength(0);
   });

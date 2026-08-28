@@ -1,0 +1,25 @@
+{
+  "automaticUnlocked": true,
+  "coins": 7,
+  "enemy": {
+    "armor": 0,
+    "encounter": 1,
+    "grade": "normal",
+    "health": 84,
+    "id": 1,
+    "maxHealth": 140,
+    "modifier": null,
+    "reward": 1
+  },
+  "player": {
+    "automaticSpeedLevel": 1,
+    "armorPenetrationLevel": 0,
+    "criticalChance": 0.02857142857142857,
+    "criticalLevel": 1,
+    "damage": 12,
+    "damageLevel": 1,
+    "doubleRewardChance": 0.05454545454545454,
+    "doubleRewardLevel": 2
+  },
+  "version": 2
+}

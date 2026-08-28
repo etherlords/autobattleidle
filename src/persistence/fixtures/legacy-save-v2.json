@@ -1,0 +1,25 @@
+{
+  "automaticUnlocked": true,
+  "coins": 25,
+  "enemy": {
+    "armor": 30,
+    "encounter": 30,
+    "health": 10793,
+    "id": 30,
+    "maxHealth": 19980,
+    "reward": 4860,
+    "grade": "boss",
+    "modifier": null
+  },
+  "player": {
+    "automaticSpeedLevel": 4,
+    "armorPenetrationLevel": 7,
+    "criticalChance": 0.12,
+    "criticalLevel": 5,
+    "damage": 52,
+    "damageLevel": 14,
+    "doubleRewardChance": 0.13846153846153844,
+    "doubleRewardLevel": 6
+  },
+  "version": 2
+}

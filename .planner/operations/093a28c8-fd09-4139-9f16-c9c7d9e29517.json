@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "093a28c8-fd09-4139-9f16-c9c7d9e29517",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-28T15:44:11.241Z",
+  "itemId": "ABI-013",
+  "idempotencyKey": "abi013-plan-delivery-start-after-close-20260828",
+  "requestFingerprint": "cc487d66f3ad69964a33ac047a2af0a838dbb3a7881fc878daf6473f5487a199",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-013-preserve-and-migrate-historical-localstorage-saves-without-p/PROGRESS.md.planner-tmp-093a28c8-fd09-4139-9f16-c9c7d9e29517-0",
+      "beforeHash": "b873f72a7b7ca455fec9f452de3f6d7e39aa9af2267dda97263bf2aff041a3ea",
+      "afterHash": "4d15ec334a7533e6a6a44354c2b205b6273cd7e7adfcc82a250d4951033b30a0"
+    }
+  ],
+  "committedAt": "2026-08-28T15:44:11.256Z"
+}
