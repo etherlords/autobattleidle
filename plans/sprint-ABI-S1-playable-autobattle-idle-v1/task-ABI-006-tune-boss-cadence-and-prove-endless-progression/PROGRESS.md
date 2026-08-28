@@ -4,8 +4,8 @@ id: ABI-006
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 101
-status: Ready for Manager
+revision: 105
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-003
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 101
-- Last update: Begin coherent commit/push, CI/Pages and deployed functional proof.
+- Status: Done
+- Revision: 105
+- Last update: EVENT closed — abi006-manager-closure — ABI-006 completed with green independent gates, CI/Pages, and deployed public proof.
 
 ## Execution plan
 
@@ -38,7 +38,7 @@ requiredGates:
 - [x] vault-documentation: Manager/owner: update canonical balance documentation through Vault with final constants, strategy, measurements, limits, and code/test links
 - [x] independent-review: Independent Reviewer: verify shared constants, simulator/runtime parity, target interpretation, numeric stability, evidence, and scope
 - [x] qa: Independent QA: reproduce deterministic report and exercise bounded real-browser multi-boss progression without visual or persistence regressions
-- [~] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed progression proof, and close
+- [x] delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed progression proof, and close
 - [x] review-repair-1: Implementation owner: repair review run 1 metrics, diminishing effects, boss cadence, persistence consistency, encounter bounds, and tests
 - [x] independent-review-2: Independent Reviewer: fresh review after run-1 repairs and Vault documentation
 - [x] review-repair-2: Implementation owner: remove artificial repeatable/encounter caps and add practical safe-number boundary coverage
@@ -1783,3 +1783,78 @@ requiredGates:
 - Evidence:
   - task Ready for Manager
   - review/QA/verification pass
+
+### evt-00b599c6-7b74-4cab-b218-d1bffecc104b
+
+- Timestamp: 2026-08-28T14:02:58.127Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 101
+- Resulting revision: 102
+- Summary: EVENT checkpoint — root-manager — e83ec78 pushed; CI and Pages passed; deployed armor, penetration, persistence, automatic attack, and Boss 15/30/45 progression proved; exact VERIFICATION.md fallback recorded.
+- Idempotency key: abi006-public-proof-e83ec78-20260828
+- Evidence:
+  - Commit e83ec78 pushed to origin/main
+  - CI 33177639069 job 98870292637 success
+  - Pages 33177639025 job 98870292962 success
+  - Public URL https://etherlords.github.io/autobattleidle/
+  - Deployed Chromium: armored hit 36 -> penetration purchase -> 37; unlock and penetration persisted after reload
+  - Deployed accelerated V2 save observed Boss 15, Boss 30, Boss 45 and encounter 46
+  - Console 0 errors/warnings; no NaN/Infinity; horizontal overflow absent at 390x844 and 1280x800
+  - Narrow canonical Markdown fallback updated VERIFICATION.md because Planner V1.1 exposes no artifact section-write; Planner doctor healthy before fallback
+
+### evt-470eb141-1fc4-49a3-a86c-9b9602ad9fce
+
+- Timestamp: 2026-08-28T14:03:14.815Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 102
+- Resulting revision: 103
+- Summary: Complete ABI-006 delivery after push, green CI/Pages, and deployed functional proof.
+- Idempotency key: abi006-delivery-complete-e83ec78
+- Request fingerprint: 5cb4e4abef2d22be53c0a796dcb3c2ef279e1c3ecc0a4c8ae8848ba80d7248af
+- Action: set_state
+- Step ID: delivery
+- State: complete
+- Evidence:
+  - e83ec78 on origin/main
+  - CI 33177639069 success
+  - Pages 33177639025 success
+  - Deployed public armor/penetration/persistence/automatic/multi-boss proof recorded in VERIFICATION.md
+
+### evt-d4eff1cd-ad16-4f1d-a7a0-5e119cc41188
+
+- Timestamp: 2026-08-28T14:03:15.680Z
+- Actor: abi006-manager-closure
+- Operation: gate.record
+- Prior revision: 103
+- Resulting revision: 104
+- Summary: Manager closure PASS: all acceptance, independent gates, publication, CI/Pages, and deployed proof complete.
+- Idempotency key: abi006-manager-closure-pass-e83ec78
+- Request fingerprint: ac8e82cebf5769e9fc916b5d5b649c93043e78318146a73c8b00ed37e5bf13dd
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Independent review run 8 APPROVE; no P0-P2
+  - Independent QA PASS plus combat.test.ts 5/5 targeted addendum
+  - Manager verification PASS and pnpm check 14 tests/build
+  - Commit e83ec78 pushed to origin/main
+  - CI 33177639069 and Pages 33177639025 succeeded
+  - Public Pages verified armor 36->37 after penetration, reload persistence, automatic attacks, Boss 15/30/45, finite numeric display, zero console errors/warnings
+
+### evt-edb85c9b-2264-4cb5-8af6-0e8668e9547c
+
+- Timestamp: 2026-08-28T14:03:16.633Z
+- Actor: abi006-manager-closure
+- Operation: task.advance
+- Prior revision: 104
+- Resulting revision: 105
+- Summary: EVENT closed — abi006-manager-closure — ABI-006 completed with green independent gates, CI/Pages, and deployed public proof.
+- Idempotency key: abi006-ready-manager-to-done-e83ec78
+- Request fingerprint: a9e26b5aa86ea349fcf935c80514fa38da03df524d99a7449bd2fdd46baf07e1
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All 24 managed steps complete
+  - Required gates implementation-self-check, independent-review, independent-qa, verification, manager-closure passed
+  - e83ec78 published with green CI/Pages and deployed proof

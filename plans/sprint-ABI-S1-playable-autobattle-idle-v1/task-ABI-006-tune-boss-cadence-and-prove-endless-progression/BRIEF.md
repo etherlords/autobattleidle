@@ -4,8 +4,8 @@ id: ABI-006
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 12
-status: Ready for Manager
+revision: 13
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-003
@@ -29,7 +29,7 @@ Tune boss cadence and prove endless progression
 
 - Type: task
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 

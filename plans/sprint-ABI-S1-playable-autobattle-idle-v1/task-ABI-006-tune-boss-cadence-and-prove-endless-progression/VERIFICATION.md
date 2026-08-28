@@ -33,10 +33,14 @@ requiredGates:
 - Gates/checks: independent Reviewer run 8 APPROVE with no P0–P2; independent QA PASS. Fresh Manager `pnpm check` passed lint, format, 14 tests, TypeScript and Vite build; `git diff --check` passed; Planner doctor healthy with only the expected dirty-checkpoint warning.
 - Evidence caveat: QA screenshot creation failed because the CLI selector syntax was invalid, so no screenshot artifact exists. Behavioral observations and executable checks remain reproducible and passed.
 - Scope: ABI-006 code, packet and related Vault articles only. ABI-007+ implementation is absent and `.playwright-cli/` is excluded.
+- Published checkpoint: commit `e83ec78` was pushed to `origin/main`. GitHub Actions CI run `33177639069`, job `98870292637`, passed `pnpm check`; Pages run `33177639025`, job `98870292962`, deployed successfully to `https://etherlords.github.io/autobattleidle/`.
+- Deployed Chromium proof: an armored encounter hit for 36 before penetration and 37 after the purchase; coins changed 100 to 97, penetration changed level 0 to 1, automatic unlock persisted across reload, and automatic attacks continued after reload.
+- Deployed multi-boss proof: a valid accelerated V2 save starting at encounter 14 produced 33 observed transitions and directly observed boss encounters 15, 30, and 45 before reaching encounter 46. The public runtime later continued past encounter 100 with finite displayed values.
+- Deployed layout/health: `390x844` and `1280x800` rendered with zero horizontal overflow, no visible NaN/Infinity, and zero console errors/warnings. Existing desktop vertical document scroll is pre-existing HUD/layout debt owned by ABI-008 and is not changed in ABI-006.
 
 ## Sign-off
 
 - Reviewer: APPROVE — independent run 8, no P0–P2.
 - QA: PASS — independent simulator and real-browser acceptance.
 - Manager verification: PASS — local checks, packet/Vault health, evidence mapping and scope audit complete.
-- Manager close: pending coherent commit/push, CI/Pages and deployed proof.
+- Manager close: PASS — distinct `abi006-manager-closure` gate recorded; ABI-006 advanced to `Done` at task revision 13 and progress revision 105.
