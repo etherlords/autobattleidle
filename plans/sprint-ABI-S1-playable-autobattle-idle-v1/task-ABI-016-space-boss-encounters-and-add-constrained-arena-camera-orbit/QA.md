@@ -21,7 +21,7 @@ requiredGates:
 
 ## Verdict
 
-PASS for local application-layer acceptance. Deployed exact-SHA Pages proof remains a Manager publication gate.
+PASS for local and deployed exact-SHA application-layer acceptance.
 
 ## Evidence
 
@@ -34,3 +34,6 @@ PASS for local application-layer acceptance. Deployed exact-SHA Pages proof rema
 - Persistence: localStorage contained only `etherlords.autobattleidle.save.v2`; no camera property was serialized.
 - Lifecycle/resources: focused listener/disposal tests passed; repeated disposal removes listeners/resources once. Focused browser-support suite passed 15/15.
 - Artifacts: `output/playwright/abi016-boss-before.png`, `abi016-boss-after-drag.png`, `abi016-mobile-before.png`, `abi016-mobile-after-drag.png`, `abi016-ordinary-before.png`, `abi016-ordinary-after.png`, `abi016-modal-open.png`, `abi016-boss-resized.png`, and `abi016-boss-reload-reset.png`.
+- Deployed candidate: `https://etherlords.github.io/autobattleidle/` at SHA `084afa2468fd1ecb341fd301310c12234f20aa1d`; CI run `33228656710` and Pages run `33228656702` succeeded for that exact SHA. Assets `index-opAdi5gC.js` and `index-CoUfL1zx.css` returned HTTP 200.
+- Deployed real-browser smoke repeated desktop 1280x720 and narrow 390x844 boss/ordinary drag, stationary attack, arrows, Enter/Space, modal isolation, resize/reload, schema-v2-only storage, and clean console/network behavior. Real pointer flows passed; one invalid synthetic PointerEvent injection produced a native capture error and was discarded, then a clean reload and real interactions had zero console errors/warnings.
+- Deployed artifacts: `output/playwright/abi016-deployed-boss-before.png`, `abi016-deployed-boss-drag.png`, `abi016-deployed-modal.png`, `abi016-deployed-ordinary-mobile.png`, `abi016-deployed-ordinary-mobile-actions.png`, `abi016-deployed-boss-rotated.png`, `abi016-deployed-boss-resized-390.png`, and `abi016-deployed-boss-touch-drag.png`.

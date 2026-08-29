@@ -4,8 +4,8 @@ id: ABI-016
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 41
-status: In QA
+revision: 50
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 41
-- Last update: EVENT checkpoint — manager-root — Vault sync complete: accepted boss-camera/input semantics added; stale cadence authority reconciled to current 35-encounter code/test truth; index fresh and Vault doctor 0 errors/0 warnings.
+- Status: Done
+- Revision: 50
+- Last update: Released task claim: ABI-016 closed and exact-SHA candidate deployed; release manager lease
 
 ## Execution plan
 
@@ -39,7 +39,7 @@ requiredGates:
 - [x] camera-input-lifecycle-v2: Implementation owner preserves click-versus-drag attack semantics, resize angle, HUD isolation, listener ownership, and idempotent disposal
 - [x] camera-self-check-v2: Implementation owner adds focused camera bounds, input arbitration, resize, ordinary/boss, narrow layout, and disposal tests then runs pnpm check
 - [x] camera-independent-gates-v2: Independent Reviewer and browser QA verify desktop/390px camera behavior, accessibility, no accidental attacks, clean console, and bounded resources
-- [ ] camera-manager-closure-v2: Manager records verification, updates accepted camera/input Vault guidance, publishes coherently, and proves exact-SHA CI/Pages
+- [x] camera-manager-closure-v2: Manager records verification, updates accepted camera/input Vault guidance, publishes coherently, and proves exact-SHA CI/Pages
 
 ## Events
 
@@ -738,3 +738,166 @@ requiredGates:
   - AUTOBATTLEIDLE-DOC-20260827-A7FD1F hash d86e2577...
   - vault_index needsEmbedding=0 indexFresh=true
   - vault_doctor filesChecked=14 errors=0 warnings=0
+
+### evt-bf8328f9-fa5a-41ef-886e-4141aa5989e5
+
+- Timestamp: 2026-08-29T02:25:52.216Z
+- Actor: manager-root
+- Operation: progress.append
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: EVENT checkpoint — manager-root — exact-SHA CI/Pages and deployed desktop/390px functional proof added to QA.md and VERIFICATION.md through explicit narrow Markdown fallback after canonical read and healthy/no-recovery doctor.
+- Idempotency key: abi-016-deployed-proof-fallback-20260829
+- Evidence:
+  - SHA 084afa2468fd1ecb341fd301310c12234f20aa1d
+  - CI 33228656710 success exact SHA
+  - Pages 33228656702 success exact SHA
+  - https://etherlords.github.io/autobattleidle/ HTTP 200
+  - deployed independent QA PASS
+  - deployed asset and screenshot receipts
+
+### evt-c2e03c93-fe27-499d-a918-d3002f402ab4
+
+- Timestamp: 2026-08-29T02:26:00.321Z
+- Actor: manager-root
+- Operation: gate.record
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Acceptance verified end to end: scoped code/tests, fresh review/QA, Vault sync, exact-SHA CI and Pages success, and deployed desktop/390px functional proof.
+- Idempotency key: abi-016-verification-pass-20260829
+- Request fingerprint: ffaf587007c022e33e03d5cb35253ed786c280fd5d08ce3c7cf8e2a46566d280
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - pnpm check 71/71
+  - independent-review PASS
+  - independent-qa local/deployed PASS
+  - Vault doctor 0/0 and fresh index
+  - candidate SHA 084afa2468fd1ecb341fd301310c12234f20aa1d
+  - CI run 33228656710 success
+  - Pages run 33228656702 success
+  - public deployed HTTP 200 and interaction proof
+
+### evt-46534c61-fe98-4880-af07-048f5d1e9a09
+
+- Timestamp: 2026-08-29T02:26:07.691Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: All implementation, independent review, independent QA, Vault, exact-SHA CI/Pages, and deployed verification gates pass; begin Manager closure.
+- Idempotency key: abi-016-ready-for-manager-after-verification-20260829
+- Request fingerprint: 8c9cef1f58fb0c4f461264eb5f4ba5299f68fab52120cbc2108bd6fe89125aa2
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification pass at progress revision 43
+  - candidate SHA 084afa2468fd1ecb341fd301310c12234f20aa1d
+
+### evt-ce63bbeb-c643-42a2-b072-18b0273cdebe
+
+- Timestamp: 2026-08-29T02:26:15.614Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Manager performs final canonical readback, closure gate, Done transition, evidence checkpoint publication, and lease release.
+- Idempotency key: abi-016-manager-closure-start-20260829
+- Request fingerprint: 35e690b53f6703e3f63f5eb2956b8b48476e8b73f4e430244dc1971b9dac7a41
+- Action: set_state
+- Step ID: camera-manager-closure-v2
+- State: in_progress
+- Evidence:
+  - ABI-016 Ready for Manager revision 10
+  - all required pre-closure gates pass
+  - candidate exact-SHA deployed proof
+
+### evt-0e27b2fd-beaa-44cf-93f6-daa6db155bad
+
+- Timestamp: 2026-08-29T02:26:37.615Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Manager closure evidence complete: canonical gates, Vault sync, release-candidate commit/push, exact-SHA CI/Pages, and deployed QA all pass.
+- Idempotency key: abi-016-manager-closure-complete-20260829
+- Request fingerprint: ae94537c6f481e3ba316030ca8cde48ad1541412930fe907f1a954458b422486
+- Action: set_state
+- Step ID: camera-manager-closure-v2
+- State: complete
+- Evidence:
+  - verification gate pass
+  - Vault doctor 0/0
+  - candidate SHA 084afa2468fd1ecb341fd301310c12234f20aa1d
+  - CI 33228656710
+  - Pages 33228656702
+  - deployed QA PASS
+
+### evt-692ed4f5-a5ef-4fe3-bab4-155f024a478e
+
+- Timestamp: 2026-08-29T02:27:08.458Z
+- Actor: abi016-manager-closure
+- Operation: gate.record
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Distinct Manager-closure role confirms all prior independent gates, Vault sync, candidate publication, exact-SHA CI/Pages, and deployed proof; ABI-016 is ready for Done.
+- Idempotency key: abi-016-manager-closure-pass-separated-20260829
+- Request fingerprint: 8088b7512e610773cc587e1d2b754c1f04f87b899da375f76bf74b6c7493a2b0
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - canonical readback Ready for Manager revision 10 progress 46
+  - doctor healthy/no recovery
+  - all earlier gates pass under separate actors
+  - SHA 084afa2468fd1ecb341fd301310c12234f20aa1d deployed
+
+### evt-581eff13-ad73-4d3d-9282-8b34916cd290
+
+- Timestamp: 2026-08-29T02:27:16.873Z
+- Actor: abi016-manager-closure
+- Operation: task.advance
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Close ABI-016 after implementation, bounded review repair, fresh review, independent local/deployed QA, Vault sync, exact-SHA CI/Pages, and public functional proof.
+- Idempotency key: abi-016-done-20260829
+- Request fingerprint: 93fadab3cd2309c129741dba247f04e9a733b5602f57358ac1b73a629726a2cc
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure pass at progress revision 47
+  - SHA 084afa2468fd1ecb341fd301310c12234f20aa1d
+  - CI 33228656710
+  - Pages 33228656702
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-87ab8e6d-32af-4fc4-8e57-cf99a9328768
+
+- Timestamp: 2026-08-29T02:27:38.805Z
+- Actor: abi016-manager-closure
+- Operation: progress.append
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: EVENT closed — abi016-manager-closure — ABI-016 is Done; VERIFICATION.md manager sign-off updated through explicit narrow Markdown fallback after healthy/no-recovery canonical audit.
+- Idempotency key: abi-016-closed-signoff-fallback-20260829
+- Evidence:
+  - task revision 11 status Done
+  - progress revision 48
+  - all required gates pass
+  - candidate exact-SHA deployed proof
+
+### evt-4373d3be-aad4-4929-b38e-6c6c5832b26d
+
+- Timestamp: 2026-08-29T02:27:46.464Z
+- Actor: manager-root
+- Operation: claim.release
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Released task claim: ABI-016 closed and exact-SHA candidate deployed; release manager lease
+- Idempotency key: abi-016-lease-release-20260829
+- Request fingerprint: 4c55345a6844234855cc8d142537b3796713943ffd0d973675b0633c96bb3566
+- Agent ID: manager-root
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: ABI-016 closed and exact-SHA candidate deployed; release manager lease
+- Branch: main
+- Evidence:
+  - None
