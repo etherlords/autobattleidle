@@ -11,6 +11,57 @@ afterEach(() => {
 });
 
 describe("startApplication", () => {
+  it("routes presentation-only camera intents to the battlefield", () => {
+    let rotate: ((delta: number) => void) | undefined;
+    let rotatedBy = 0;
+    const app = startApplication({
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: () => undefined,
+        removeEventListener: () => undefined,
+        requestAnimationFrame: () => 1,
+      },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: (delta) => {
+          rotatedBy += delta;
+        },
+        resize: () => undefined,
+      },
+      hud: {
+        dispose: () => undefined,
+        subscribe: (listener) => {
+          rotate = (delta) => listener({ delta, type: "rotate-camera" });
+          return () => undefined;
+        },
+        onAttack: () => undefined,
+        onReset: () => undefined,
+        onRestore: () => undefined,
+        onUpgrade: () => undefined,
+        reportPersistence: () => undefined,
+        render: () => undefined,
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => undefined,
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
+        onStateChanged: () => undefined,
+        reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
+      },
+      initialState: createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }),
+      onDispose: () => undefined,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+    });
+    if (rotate === undefined) throw new Error("Expected camera handler");
+    rotate(0.12);
+    expect(rotatedBy).toBe(0.12);
+    app.dispose();
+  });
+
   it("keeps attack, automatic-frame, purchase, persistence, and render ordering compatible", () => {
     const frames = new Map<number, FrameRequestCallback>();
     const snapshots: BattleSnapshot[] = [];
@@ -36,7 +87,12 @@ describe("startApplication", () => {
           return id;
         },
       },
-      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: () => undefined,
+        resize: () => undefined,
+      },
       hud: {
         dispose: () => undefined,
         subscribe: (listener) => {
@@ -129,7 +185,12 @@ describe("startApplication", () => {
           return 1;
         },
       },
-      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: () => undefined,
+        resize: () => undefined,
+      },
       hud: {
         dispose: () => undefined,
         subscribe: () => () => undefined,
@@ -201,7 +262,12 @@ describe("startApplication", () => {
           return 1;
         },
       },
-      game: { dispose: () => undefined, render: () => undefined, resize: () => undefined },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: () => undefined,
+        resize: () => undefined,
+      },
       hud: {
         dispose: () => undefined,
         subscribe: (listener) => {
@@ -289,6 +355,7 @@ describe("startApplication", () => {
       createGame: () => ({
         dispose: () => undefined,
         render: () => undefined,
+        rotateCamera: () => undefined,
         resize: () => undefined,
       }),
       createHud: (_host, battlefield) => {
@@ -384,6 +451,7 @@ describe("startApplication", () => {
         render: () => {
           calls.render += 1;
         },
+        rotateCamera: () => undefined,
         resize: () => {
           calls.resize += 1;
         },

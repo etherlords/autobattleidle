@@ -4,8 +4,8 @@ id: ABI-016
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: Ready
+revision: 9
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -28,7 +28,7 @@ Add constrained arena camera orbit for boss encounters
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: In QA
 
 ## Acceptance criteria
 

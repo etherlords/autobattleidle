@@ -15,6 +15,7 @@ import {
 
 export type Battlefield = {
   render(snapshot: BattleSnapshot): void;
+  rotateCamera(delta: number): void;
   resize(width: number, height: number): void;
   dispose(): void;
 };
@@ -91,6 +92,9 @@ class ThreeBattlefield implements Battlefield {
   private pendingEnemyEffects: EffectKind[] = [];
   private previous: BattleSnapshot | undefined;
   private effects: BattlefieldEffect[] = [];
+  private aspect = 1;
+  private azimuth = 0;
+  private bossOrbitEnabled = false;
   private disposed = false;
 
   constructor(
@@ -118,16 +122,25 @@ class ThreeBattlefield implements Battlefield {
     else this.enemy.dispatchEnemy({ type: "sync", snapshot: snapshot.enemy });
     if (frame.effects.includes("hit")) this.enemy?.dispatchEnemy({ type: "hit" });
     this.addEffects(this.effectsForFrame(frame.effects));
+    this.bossOrbitEnabled = snapshot.enemy.grade === "boss";
+    this.frameCamera(this.aspect);
     this.previous = snapshot;
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  rotateCamera(delta: number): void {
+    if (this.disposed || !this.bossOrbitEnabled || !Number.isFinite(delta)) return;
+    this.azimuth = (this.azimuth + delta) % (Math.PI * 2);
+    this.frameCamera(this.aspect);
     this.renderer.render(this.scene, this.camera);
   }
 
   resize(width: number, height: number): void {
     const safeWidth = Math.max(width, 1);
     const safeHeight = Math.max(height, 1);
-    const aspect = safeWidth / safeHeight;
-    this.camera.aspect = aspect;
-    this.frameCamera(aspect);
+    this.aspect = safeWidth / safeHeight;
+    this.camera.aspect = this.aspect;
+    this.frameCamera(this.aspect);
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(safeWidth, safeHeight, false);
   }
@@ -166,10 +179,12 @@ class ThreeBattlefield implements Battlefield {
 
   private frameCamera(aspect: number): void {
     const scale = cameraScaleForAspect(aspect);
+    const distance = BATTLEFIELD_CONFIG.camera.distance * scale;
+    const azimuth = this.bossOrbitEnabled ? this.azimuth : 0;
     this.camera.position.set(
-      0,
+      Math.sin(azimuth) * distance,
       BATTLEFIELD_CONFIG.camera.elevation * scale,
-      BATTLEFIELD_CONFIG.camera.distance * scale,
+      Math.cos(azimuth) * distance,
     );
     this.camera.lookAt(0, 0, 0);
   }

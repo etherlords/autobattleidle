@@ -181,4 +181,43 @@ describe("nextBattlefieldFrame", () => {
     battlefield.render(snapshot("boss", 15));
     expect(camera.position.z).toBe(7);
   });
+
+  it("orbits bosses only and preserves the session azimuth across resize", () => {
+    let camera: THREE.Camera | undefined;
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const renderer = {
+      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      dispose: () => undefined,
+      render: (_scene: THREE.Scene, nextCamera: THREE.Camera) => {
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: () => undefined,
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.render(snapshot("normal", 1));
+    battlefield.rotateCamera(1);
+    if (!(camera instanceof THREE.PerspectiveCamera))
+      throw new Error("Expected perspective camera");
+    expect(camera.position.x).toBe(0);
+    battlefield.render(snapshot("boss", 15));
+    battlefield.rotateCamera(Math.PI / 2);
+    expect(camera.position.x).toBeCloseTo(7);
+    expect(camera.position.y).toBe(2);
+    expect(camera.position.z).toBeCloseTo(0);
+    expect(camera.fov).toBe(50);
+    battlefield.rotateCamera(Number.NaN);
+    battlefield.rotateCamera(Number.POSITIVE_INFINITY);
+    expect(camera.position.x).toBeCloseTo(7);
+    expect(camera.position.z).toBeCloseTo(0);
+    battlefield.resize(390, 844);
+    expect(camera.position.x).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.y).toBeCloseTo(2 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.z).toBeCloseTo(0);
+    battlefield.render(snapshot("normal", 1));
+    battlefield.rotateCamera(Math.PI / 2);
+    expect(camera.position.x).toBe(0);
+    expect(camera.position.z).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
+    battlefield.dispose();
+  });
 });

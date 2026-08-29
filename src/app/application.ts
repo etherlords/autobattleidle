@@ -123,6 +123,10 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   };
   resize();
   const handleIntent = (intent: HudIntent): void => {
+    if (intent.type === "rotate-camera") {
+      dependencies.game.rotateCamera(intent.delta);
+      return;
+    }
     if (intent.type === "attack") {
       if (!controller.dispatch(battleCommands.attack("manual"))) render();
       return;

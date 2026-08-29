@@ -21,8 +21,12 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS after one bounded repair and fresh independent re-review.
 
 ## Findings
 
-_Pending._
+- Initial review: CHANGES_REQUIRED. P1: the battlefield lacked `touch-action: none`, so native touch pan/pinch could cancel orbit. P2: non-finite rotate deltas could corrupt camera coordinates.
+- Repair: battlefield-only `touch-action: none`; `rotateCamera` rejects non-finite deltas; focused CSS and NaN/Infinity regressions added. Focused 9/9 and full `pnpm check` 71/71 passed.
+- Re-review: PASS. Boss-only azimuth, fixed target/FOV/orbit geometry, ordinary static framing, no zoom/pan, attack-versus-drag arbitration, keyboard parity, HUD/modal isolation, resize preservation, idempotent teardown, and session-only state remain correct.
+- Scope audit: no domain, persistence, cadence, combat/reward formula, deterministic identity, dependency, or save-schema changes.
+- Independent evidence: `git diff --check` passed; fresh focused command reported 71/71 tests.

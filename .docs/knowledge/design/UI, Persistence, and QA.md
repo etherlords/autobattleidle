@@ -18,10 +18,20 @@ HUD ownership, localStorage contract, lifecycle gates, and release QA scope.
 
 ## HUD and input
 
-The battlefield canvas is the primary manual-attack target. One accepted pointer activation anywhere
+The battlefield canvas is the primary manual-attack target. One accepted stationary pointer activation anywhere
 on the playable canvas issues exactly one manual attack; there is no permanent Attack button. Keyboard
 Enter/Space remains an accessible equivalent when the battlefield is focused. Manual input still
 bypasses and never resets the automatic cooldown.
+
+During boss encounters only, primary-pointer or touch drag rotates the battlefield camera around the
+arena-center azimuth. ArrowLeft/ArrowRight while the battlefield is focused provide the keyboard
+equivalent. The orbit keeps the PerspectiveCamera field of view, arena-center target, responsive
+elevation, and responsive radius fixed for the current viewport; zoom and pan are unavailable. Drag or
+pointer cancel never attacks, while stationary activation still attacks exactly once. Ordinary
+encounters retain azimuth-zero framing and ignore rotation requests. Resize preserves the boss azimuth;
+reload resets it because camera and gesture state are session-only presentation state and never enter
+CombatState, snapshots, save codecs, or localStorage. The battlefield interaction surface uses
+`touch-action: none` so native pan/pinch cannot cancel the bounded touch orbit.
 
 The HUD is a fixed overlay that does not participate in page layout. Enemy name is centered at the top;
 a nearly viewport-width current/max health bar sits directly below it; the automatic-attack bar follows
@@ -39,11 +49,11 @@ two-row action (`TITLE - LEVEL`, then `PRICE coins`) in a two-column desktop gri
 grid; disabled reasons remain available through accessible names and titles without resizing the
 visible controls. The modal owns only its controls, traps/restores focus, toggles with `U`, closes by an
 explicit control, Escape, or a backdrop-only pointer activation, and does not turn the passive HUD into
-click targets or leak input to the battlefield.
+click targets or leak input or camera rotation to the battlefield.
 
 Overlay layering is explicit: passive HUD and log ignore pointer events; upgrade launcher/modal accept
-them; the remaining viewport routes pointer input to the canvas. Responsive QA proves no overlap,
-selection, accidental double attack, page scroll, or layout growth.
+them; the remaining viewport routes pointer input to the battlefield. Responsive QA proves no overlap,
+selection, accidental double attack, camera-input leak, page scroll, or layout growth.
 
 ## Planned modifier-click bulk purchasing
 

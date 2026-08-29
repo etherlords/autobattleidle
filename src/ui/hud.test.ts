@@ -4,6 +4,7 @@ import { UPGRADES } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 import stylesheet from "../style.css?raw";
 import { createHud } from "./hud";
+import type { HudIntent } from "./hud/intents";
 
 class FakeElement {
   readonly attributes = new Map<string, string>();
@@ -33,7 +34,7 @@ class FakeElement {
     }
   }
 
-  dispatch(type: string, detail: Partial<KeyboardEvent> = {}): void {
+  dispatch(type: string, detail: Record<string, unknown> = {}): void {
     const event = { preventDefault: () => undefined, ...detail, target: this } as unknown as Event;
     dispatchListeners(this, type, event);
   }
@@ -117,6 +118,9 @@ describe("createHud", () => {
     expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(stylesheet).toContain("grid-auto-rows: 4.75rem;");
     expect(stylesheet).toContain("height: 100%;");
+    expect(stylesheet).toContain(
+      ".battlefield {\n  grid-area: 1 / 1;\n  min-height: 100vh;\n  touch-action: none;\n}",
+    );
     expect(stylesheet).toContain("grid-template-rows: 1fr 1fr;");
     expect(stylesheet).toContain(".upgrade-title,");
   });
@@ -150,10 +154,13 @@ describe("createHud", () => {
     hud.reportPersistence("Restored");
     hud.render(snapshot);
 
-    battlefield.dispatch("pointerup");
+    battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 1 });
+    battlefield.dispatch("pointerup", { clientX: 10, isPrimary: true, pointerId: 1 });
     battlefield.dispatch("keydown", { key: "Enter", repeat: false });
     battlefield.dispatch("keydown", { key: " ", repeat: false });
     battlefield.dispatch("keydown", { key: " ", repeat: true });
+    battlefield.dispatch("keydown", { key: "ArrowLeft", repeat: false });
+    battlefield.dispatch("keydown", { key: "ArrowRight", repeat: false });
     expect(attacks).toBe(3);
     expect(battlefield.tabIndex).toBe(0);
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
@@ -249,7 +256,16 @@ describe("createHud", () => {
     expect(restore.hidden).toBe(false);
     expect(element(host, "persistence-status").textContent).toBe("Restored");
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
-    expect(intents).toEqual(["attack", "attack", "attack", "upgrade", "reset", "restore"]);
+    expect(intents).toEqual([
+      "attack",
+      "attack",
+      "attack",
+      "rotate-camera",
+      "rotate-camera",
+      "upgrade",
+      "reset",
+      "restore",
+    ]);
     unsubscribe();
 
     launcher.dispatch("click");
@@ -259,16 +275,55 @@ describe("createHud", () => {
     document.dispatch("keydown", { key: "Escape" });
     document.dispatch("keydown", { key: "Tab" });
     document.dispatch("keydown", { key: "u" });
-    battlefield.dispatch("pointerup");
+    battlefield.dispatch("pointerup", { isPrimary: true, pointerId: 1 });
     battlefield.dispatch("keydown", { key: "Enter", repeat: false });
     launcher.dispatch("click");
     reset.dispatch("click");
     restore.dispatch("click");
     expect(attacks).toBe(3);
-    expect(intents).toEqual(["attack", "attack", "attack", "upgrade", "reset", "restore"]);
+    expect(intents).toEqual([
+      "attack",
+      "attack",
+      "attack",
+      "rotate-camera",
+      "rotate-camera",
+      "upgrade",
+      "reset",
+      "restore",
+    ]);
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(launcher.focusCalls).toBe(launcherFocusAtDispose);
     expect(host.children).toHaveLength(0);
+    expect([...battlefield.listeners.values()].every((listeners) => listeners.size === 0)).toBe(
+      true,
+    );
+  });
+
+  it("arbitrates drag, cancel, and stationary battlefield pointer input", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = new FakeElement();
+    const battlefield = new FakeElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    const intents: HudIntent[] = [];
+    hud.subscribe((intent) => intents.push(intent));
+
+    battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 1 });
+    battlefield.dispatch("pointermove", { clientX: 22, isPrimary: true, pointerId: 1 });
+    battlefield.dispatch("pointermove", { clientX: 35, isPrimary: true, pointerId: 1 });
+    battlefield.dispatch("pointerup", { clientX: 35, isPrimary: true, pointerId: 1 });
+    battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 2 });
+    battlefield.dispatch("pointercancel", { isPrimary: true, pointerId: 2 });
+    battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 3 });
+    battlefield.dispatch("pointerup", { clientX: 10, isPrimary: true, pointerId: 3 });
+
+    expect(intents.filter((intent) => intent.type === "attack")).toHaveLength(1);
+    expect(intents.filter((intent) => intent.type === "rotate-camera")).toHaveLength(2);
+    hud.dispose();
+    hud.dispose();
+    expect([...battlefield.listeners.values()].every((listeners) => listeners.size === 0)).toBe(
+      true,
+    );
   });
 });

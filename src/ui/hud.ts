@@ -28,20 +28,61 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   host.append(panel);
 
   battlefield.tabIndex = 0;
-  battlefield.setAttribute("aria-label", "Battlefield. Press Enter or Space to attack.");
+  battlefield.setAttribute(
+    "aria-label",
+    "Battlefield. Press Enter or Space to attack; use Left and Right arrows to rotate during boss encounters.",
+  );
   let disposed = false;
   const listeners = new Set<HudIntentListener>();
   const emit = (intent: HudIntent): void => {
     for (const listener of [...listeners]) listener(intent);
   };
   const attack = (): void => emit({ type: "attack" });
-  const pointerAttack = (): void => attack();
+  const rotate = (delta: number): void => emit({ delta, type: "rotate-camera" });
+  let pointer: { id: number; x: number; dragged: boolean } | undefined;
+  const pointerDown = (event: PointerEvent): void => {
+    if (!event.isPrimary || event.button !== 0) return;
+    pointer = { dragged: false, id: event.pointerId, x: event.clientX };
+    battlefield.setPointerCapture?.(event.pointerId);
+  };
+  const pointerMove = (event: PointerEvent): void => {
+    if (pointer?.id !== event.pointerId) return;
+    const deltaX = event.clientX - pointer.x;
+    if (Math.abs(deltaX) < 4 && !pointer.dragged) return;
+    pointer.dragged = true;
+    pointer.x = event.clientX;
+    if (deltaX !== 0) rotate(-deltaX * 0.012);
+  };
+  const clearPointer = (event: PointerEvent): { readonly dragged: boolean } | undefined => {
+    if (pointer?.id !== event.pointerId) return undefined;
+    const current = pointer;
+    pointer = undefined;
+    if (battlefield.hasPointerCapture?.(event.pointerId))
+      battlefield.releasePointerCapture(event.pointerId);
+    return current;
+  };
+  const pointerUp = (event: PointerEvent): void => {
+    const current = clearPointer(event);
+    if (current !== undefined && !current.dragged) attack();
+  };
+  const pointerCancel = (event: PointerEvent): void => {
+    clearPointer(event);
+  };
   const keyboardAttack = (event: KeyboardEvent): void => {
-    if (event.repeat || (event.key !== "Enter" && event.key !== " ")) return;
+    if (event.repeat) return;
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      rotate(event.key === "ArrowLeft" ? 0.12 : -0.12);
+      return;
+    }
+    if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
     attack();
   };
-  battlefield.addEventListener("pointerup", pointerAttack);
+  battlefield.addEventListener("pointerdown", pointerDown);
+  battlefield.addEventListener("pointermove", pointerMove);
+  battlefield.addEventListener("pointerup", pointerUp);
+  battlefield.addEventListener("pointercancel", pointerCancel);
   battlefield.addEventListener("keydown", keyboardAttack);
   dialog.onUpgrade((id) => emit({ id, type: "upgrade" }));
   dialog.onReset(() => emit({ type: "reset" }));
@@ -82,7 +123,10 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       if (disposed) return;
       disposed = true;
       listeners.clear();
-      battlefield.removeEventListener("pointerup", pointerAttack);
+      battlefield.removeEventListener("pointerdown", pointerDown);
+      battlefield.removeEventListener("pointermove", pointerMove);
+      battlefield.removeEventListener("pointerup", pointerUp);
+      battlefield.removeEventListener("pointercancel", pointerCancel);
       battlefield.removeEventListener("keydown", keyboardAttack);
       dialog.dispose();
       panel.remove();

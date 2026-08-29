@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c0969a80-8008-4f00-8f26-874ceed126df",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T01:52:55.547Z",
+  "itemId": "ABI-016",
+  "idempotencyKey": "abi-016-camera-preflight-complete-20260829",
+  "requestFingerprint": "5d9c82046bf50215facba4c8713eeed96fe75e36bfdbec4b595b5d66d0610942",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md.planner-tmp-c0969a80-8008-4f00-8f26-874ceed126df-0",
+      "beforeHash": "c401bed9fa87767556d5140a3991420e50c8f5b342ffdd090f241e8b6e60d385",
+      "afterHash": "20dd937412bfe404277d5d498b8e493550bf400acde1ce3dc28567ff17581c4c"
+    }
+  ],
+  "committedAt": "2026-08-29T01:52:55.610Z"
+}

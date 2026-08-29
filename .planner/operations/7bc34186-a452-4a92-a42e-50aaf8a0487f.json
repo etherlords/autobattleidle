@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "7bc34186-a452-4a92-a42e-50aaf8a0487f",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-29T01:59:09.621Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md.planner-tmp-7bc34186-a452-4a92-a42e-50aaf8a0487f"
+    }
+  ],
+  "committedAt": "2026-08-29T01:59:09.682Z"
+}

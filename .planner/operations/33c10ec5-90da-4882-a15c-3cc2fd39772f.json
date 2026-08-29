@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "33c10ec5-90da-4882-a15c-3cc2fd39772f",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T02:06:01.564Z",
+  "itemId": "ABI-016",
+  "idempotencyKey": "abi-016-enter-qa-20260829",
+  "requestFingerprint": "9f38fea1ca8ef4aa3160fba2a1b0c8f30d82cdaff50268334271050cd4baa7a9",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/BRIEF.md.planner-tmp-33c10ec5-90da-4882-a15c-3cc2fd39772f-0",
+      "beforeHash": "3b5075452f3877df366c3639bd62704f5a515af47a957673360f2fea3d387052",
+      "afterHash": "08e9cc7165e7a2ba3de4ebc16d08e00df0975096590ff51c43dc85b391dae713"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-016-space-boss-encounters-and-add-constrained-arena-camera-orbit/PROGRESS.md.planner-tmp-33c10ec5-90da-4882-a15c-3cc2fd39772f-1",
+      "beforeHash": "490be19f27fec6edb93ec28621a115367a86aa50eb37738c772c204e26f1baf0",
+      "afterHash": "9f789efa91f3fea6f6d5d2ac80cd6dc5459922782688283752b9cbc1f9aa4bc4"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-33c10ec5-90da-4882-a15c-3cc2fd39772f-2",
+      "beforeHash": "e8369ca7a7b2356e2e3fbac42a157e8dd95729c6be6ed078fbc4fc2091af8b6b",
+      "afterHash": "af9e96f584e07c8e5f77eab324bf2f243930f764960bbe288b47b64671f94a56"
+    }
+  ],
+  "committedAt": "2026-08-29T02:06:01.637Z"
+}
