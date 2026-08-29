@@ -36,6 +36,21 @@ export const armorPenetrationForLevel = (level: number): number =>
 export const effectiveArmor = (armor: number, penetrationLevel: number): number =>
   Math.max(0, Math.floor(armor * (1 - armorPenetrationForLevel(penetrationLevel))));
 
+export const automaticAttacksPerSecond = (level: number): number => {
+  const safeLevel = normalizeLevel(level);
+  const ratio =
+    safeLevel === 0
+      ? 0
+      : 1 / (1 + (COMBAT_FORMULAS.automaticAttacksPerSecondLevelScale / safeLevel) ** 2);
+  return Math.min(
+    COMBAT_FORMULAS.automaticAttacksPerSecondBase +
+      COMBAT_FORMULAS.automaticAttacksPerSecondBonus -
+      Number.EPSILON * 2,
+    COMBAT_FORMULAS.automaticAttacksPerSecondBase +
+      COMBAT_FORMULAS.automaticAttacksPerSecondBonus * ratio,
+  );
+};
+
 const DEFAULT_PLAYER: CombatPlayer = {
   automaticSpeedLevel: 0,
   armorPenetrationLevel: 0,
@@ -78,9 +93,7 @@ export const createCombatState = (
 });
 
 export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>
-  COMBAT_BALANCE.automaticAttackIntervalMs -
-  (COMBAT_FORMULAS.automaticSpeedReductionMs * normalizeLevel(player.automaticSpeedLevel)) /
-    (normalizeLevel(player.automaticSpeedLevel) + COMBAT_FORMULAS.chanceLevelScale) +
+  1_000 / automaticAttacksPerSecond(player.automaticSpeedLevel) +
   (enemy.modifier === "automatic-slow" ? COMBAT_BALANCE.eliteAutomaticSlowMs : 0);
 
 type UpgradeStrategy = {

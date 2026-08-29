@@ -234,7 +234,7 @@ describe("startApplication", () => {
     const secondFrame = frames.get(1);
     if (secondFrame === undefined) throw new Error("Expected animation frame");
     frames.delete(1);
-    secondFrame(1_000);
+    secondFrame(10_000);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
       "Automatic hit: 40 damage",
       "Automatic kill: +1 coins",
@@ -549,15 +549,15 @@ describe("startApplication", () => {
     ]);
     upgrade("automatic-unlock");
     expect(savedCoins).toEqual([2, 1]);
-    expect(lastSnapshot().automatic.remainingMs).toBe(1000);
+    expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     attack();
     expect(lastSnapshot().enemy.health).toBe(170);
-    expect(lastSnapshot().automatic.remainingMs).toBe(1000);
+    expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     const firstFrame = callbacks.values().next().value as FrameRequestCallback;
     callbacks.delete(1);
-    firstFrame(1000);
+    firstFrame(10000);
     expect(snapshots.at(-1)?.enemy.health).toBe(130);
-    expect(lastSnapshot().automatic.remainingMs).toBe(1000);
+    expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     reset();
     expect(calls.persistenceReset).toBe(0);
     confirmed = true;

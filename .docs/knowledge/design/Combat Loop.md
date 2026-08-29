@@ -51,9 +51,9 @@ Focused tests cover spawn/kill/escape, deadline anchoring/equality, reward/satur
 
 ## Planned automatic timing and pause follow-ups
 
-ABI-018 will replace only automatic attack timing with the bounded curve `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)`, converted by `intervalMs = 1000 / APS(level)`. The curve starts at 0.1 APS, is approximately 1 APS at level 100 and 2 APS at level 200, and approaches but never reaches 3 APS. Deterministic rolls, manual attacks, upgrade costs, armor penetration, critical chance, double reward, saves, and safe-number rollover remain unchanged.
+ABI-018 is accepted current behavior. Automatic timing uses the bounded curve `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)`, converted by `intervalMs = 1000 / APS(level)`. The curve starts at 0.1 APS, is approximately 1 APS at level 100 and 2 APS at level 200, and approaches but never reaches 3 APS. The elite automatic-slow modifier adds exactly 500 ms to that interval. Deterministic rolls, manual attacks, upgrade costs, armor penetration, critical chance, double reward, saves, and safe-number rollover remain unchanged.
 
-ABI-019 will add a session-only pause for automatic attacks. Pause freezes the exact cooldown remainder; resume continues from it with no catch-up attack. Manual attacks and the rest of the application continue. Reload clears the pause state. Both follow-ups require fresh progression/cadence simulation, automatic-slow coverage, historical-save proof, and desktop/390px browser QA before these planned rules become current authority.
+ABI-019 remains a planned session-only pause for automatic attacks. Pause freezes the exact cooldown remainder; resume continues from it with no catch-up attack. Manual attacks and the rest of the application continue. Reload clears the pause state. It still requires fresh focused and deployed proof before becoming current authority.
 
 ## Planned headless ordinary-balance telemetry
 

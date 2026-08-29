@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c6445272-451d-42e8-81fb-e7db569ccee9",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-29T13:33:54.772Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-c6445272-451d-42e8-81fb-e7db569ccee9"
+    }
+  ],
+  "committedAt": "2026-08-29T13:33:54.848Z"
+}

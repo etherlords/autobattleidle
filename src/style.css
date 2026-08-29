@@ -147,6 +147,11 @@ body {
   margin: 0.75rem 0;
 }
 
+.current-upgrade-stats {
+  line-height: 1.4;
+  margin: 0.5rem 0;
+}
+
 .upgrade-bulk-hint {
   margin: 0.5rem 0;
 }

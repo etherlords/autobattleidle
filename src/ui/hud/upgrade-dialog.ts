@@ -16,6 +16,7 @@ export class UpgradeDialog {
   private readonly dialog = document.createElement("section");
   private readonly close = button("upgrades-close", "Close upgrades");
   private readonly coins = makeText("p", "");
+  private readonly currentStats = makeText("p", "");
   private readonly bulkHint = makeText("p", "Shift-click buys x10. Ctrl-click buys x100.");
   private readonly upgrades = document.createElement("div");
   private readonly resetButton = button("reset-progress", "Reset progress");
@@ -43,6 +44,8 @@ export class UpgradeDialog {
     this.dialog.setAttribute("aria-modal", "true");
     this.dialog.setAttribute("role", "dialog");
     this.coins.className = "upgrades-coins";
+    this.currentStats.className = "current-upgrade-stats";
+    this.currentStats.setAttribute("aria-label", "Current upgrade stats");
     this.bulkHint.className = "upgrade-bulk-hint";
     this.upgrades.className = "upgrades";
     this.restoreButton.hidden = true;
@@ -51,6 +54,7 @@ export class UpgradeDialog {
     this.dialog.append(
       this.close,
       this.coins,
+      this.currentStats,
       this.bulkHint,
       this.upgrades,
       this.resetButton,
@@ -86,6 +90,8 @@ export class UpgradeDialog {
     const coins = formatNumber(snapshot.coins);
     this.coins.textContent = `Coins: ${coins.text}`;
     this.coins.title = coins.exact;
+    const { playerStats } = snapshot;
+    this.currentStats.textContent = `Damage: ${formatNumber(playerStats.damage).text} · Armor penetration: ${(playerStats.armorPenetration * 100).toFixed(1)}% · Critical chance: ${(playerStats.criticalChance * 100).toFixed(1)}% · Double reward: ${(playerStats.doubleRewardChance * 100).toFixed(1)}% · Automatic attacks: ${playerStats.automaticAttacksPerSecond.toFixed(2)} APS`;
     for (const upgrade of snapshot.upgrades) {
       let entry = this.upgradeButtons.get(upgrade.id);
       if (entry === undefined) {

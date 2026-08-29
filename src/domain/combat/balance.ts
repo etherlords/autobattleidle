@@ -1,6 +1,4 @@
 export const COMBAT_BALANCE = {
-  automaticAttackIntervalMs: 1_000,
-  automaticAttackMinimumIntervalMs: 100,
   bossInterval: 35,
   eliteAutomaticSlowMs: 500,
   baseEnemyHealth: 140,
@@ -17,7 +15,9 @@ export const MAX_ENCOUNTER = Math.floor(Number.MAX_SAFE_INTEGER / 3);
 
 export const COMBAT_FORMULAS = {
   armorPenetrationLimit: 0.75,
-  automaticSpeedReductionMs: 600,
+  automaticAttacksPerSecondBase: 0.1,
+  automaticAttacksPerSecondBonus: 2.9,
+  automaticAttacksPerSecondLevelScale: 150,
   bossHealthBaseMultiplier: 10,
   bossHealthIndexLinearMultiplier: 120,
   bossHealthIndexQuadraticMultiplier: 5,

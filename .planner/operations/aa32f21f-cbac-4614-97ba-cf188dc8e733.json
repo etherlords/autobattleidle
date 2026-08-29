@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "aa32f21f-cbac-4614-97ba-cf188dc8e733",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T13:20:01.021Z",
+  "itemId": "ABI-018",
+  "idempotencyKey": "abi018-ready-to-in-progress-20260829-v2",
+  "requestFingerprint": "38dfa51a6f4f2d7dbb06799f4cc7be48b09fbbff6ed7bab48f52688377555e82",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md.planner-tmp-aa32f21f-cbac-4614-97ba-cf188dc8e733-0",
+      "beforeHash": "daa926f0a39cc315bf6c53e49a5930e710520db4fca46aac16874623f2ed7faf",
+      "afterHash": "4cc2fa23b16ef7b020b93aba46f2e2a2f9e936f96f6442571a872bdf0779dfd5"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/PROGRESS.md.planner-tmp-aa32f21f-cbac-4614-97ba-cf188dc8e733-1",
+      "beforeHash": "fb39aa0b684a13ae6239fcd8e17b755a0592959e164aafd5505005234f5888ba",
+      "afterHash": "b1bf3586fa9f4fd2d4cbfb35c74a13214b046cf52d741fb43abcd7bcb12e5672"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-aa32f21f-cbac-4614-97ba-cf188dc8e733-2",
+      "beforeHash": "9d5b34a0c35ec3bfa03876a94608deb45a7009354cd4908ccd2a504eda17db22",
+      "afterHash": "496a0bd5f36ce62e97d254203cfdcf4bc790946647f3684c8edf229369e8dd08"
+    }
+  ],
+  "committedAt": "2026-08-29T13:20:01.186Z"
+}

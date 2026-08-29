@@ -73,7 +73,7 @@ describe("persistence boundary", () => {
     expect(raw).not.toContain("events");
     expect(decodeSave(JSON.parse(raw) as unknown, fallback(), 200)).toEqual({
       ...state,
-      nextAutomaticAttackAtMs: 1_200,
+      nextAutomaticAttackAtMs: 10_200,
     });
     expect(decodeSave({ version: SAVE_VERSION + 1 }, fallback(), 0)).toEqual(fallback());
     expect(decodeSave({ ...JSON.parse(raw), timer: 1 }, fallback(), 0)).toEqual(fallback());

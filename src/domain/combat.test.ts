@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   armorPenetrationForLevel,
   attack,
+  automaticAttacksPerSecond,
   automaticInterval,
   COMBAT_BALANCE,
   criticalChanceForLevel,
@@ -44,6 +45,23 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
 };
 
 describe("endless combat progression", () => {
+  it("uses the bounded automatic APS curve and retains the elite slow interval", () => {
+    const levels = [0, 1, 10, 50, 100, 200, 500, 1_000];
+    const aps = levels.map(automaticAttacksPerSecond);
+    expect(aps[0]).toBe(0.1);
+    expect(aps[4]).toBeCloseTo(1, 1);
+    expect(aps[5]).toBeCloseTo(2, 1);
+    for (const value of aps) expect(value).toBeGreaterThan(0);
+    for (let index = 1; index < aps.length; index += 1)
+      expect(aps[index]).toBeGreaterThan(aps[index - 1] ?? 0);
+    expect(automaticAttacksPerSecond(1_000)).toBeLessThan(3);
+    expect(automaticAttacksPerSecond(Number.MAX_SAFE_INTEGER)).toBeLessThan(3);
+    const player = { ...createCombatState().player, automaticSpeedLevel: 200 };
+    expect(automaticInterval(spawnEnemy(3, 0.67), player)).toBeCloseTo(
+      1_000 / automaticAttacksPerSecond(200) + COMBAT_BALANCE.eliteAutomaticSlowMs,
+    );
+  });
+
   it("spawns one Golden Bug after encounter 50, resumes encounter 51, and awards its fixed reward once", () => {
     const ordinary = spawnEnemy(50, 0);
     const initial = { ...createCombatState(), enemy: { ...ordinary, health: 1 } };
@@ -318,14 +336,14 @@ describe("endless combat progression", () => {
     expect(simulateProgression()).toEqual(first);
     expect(first).toEqual({
       armorPreventedDamage: 142681,
-      automaticAttacks: 2885,
+      automaticAttacks: 2780,
       bosses: [
-        { elapsedMs: 777468.7521174462, encounter: 35 },
-        { elapsedMs: 1736457.3179502685, encounter: 70 },
-        { elapsedMs: 2448779.8985953485, encounter: 105 },
+        { elapsedMs: 8079407.359888906, encounter: 35 },
+        { elapsedMs: 18222883.009831183, encounter: 70 },
+        { elapsedMs: 25581417.26164943, encounter: 105 },
       ],
       coins: 36501,
-      elapsedMs: 2448779.8985953485,
+      elapsedMs: 25581417.26164943,
       encounters: 106,
       manualAttacks: 0,
       penetration: 0.35526315789473684,

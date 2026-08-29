@@ -100,6 +100,13 @@ const snapshot: BattleSnapshot = {
   encounter: "Test",
   enemy: { grade: "normal", health: 9, level: 1, maxHealth: 10, modifier: null, name: "Ash Wisp" },
   events: [{ id: 1, message: "Manual hit: 1 damage" }],
+  playerStats: {
+    armorPenetration: 0.375,
+    automaticAttacksPerSecond: 1,
+    criticalChance: 0.3,
+    damage: 22,
+    doubleRewardChance: 0.3,
+  },
   upgrades: UPGRADES.map((upgrade, index) => ({
     cost: upgrade.baseCost,
     disabledReason: index === 1 ? "Need 45 coins" : null,
@@ -180,8 +187,17 @@ describe("createHud", () => {
     expect(battlefield.tabIndex).toBe(0);
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
+    expect(element(host, "hud-status").children[3]?.textContent).toBe(
+      "Automatic attack: 1.00 APS · 0.500s",
+    );
     expect(element(host, "upgrades-dialog").attributes.get("role")).toBe("dialog");
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 2");
+    expect(element(host, "current-upgrade-stats").textContent).toBe(
+      "Damage: 22 · Armor penetration: 37.5% · Critical chance: 30.0% · Double reward: 30.0% · Automatic attacks: 1.00 APS",
+    );
+    expect(element(host, "current-upgrade-stats").attributes.get("aria-label")).toBe(
+      "Current upgrade stats",
+    );
     expect(element(host, "upgrade-bulk-hint").textContent).toBe(
       "Shift-click buys x10. Ctrl-click buys x100.",
     );

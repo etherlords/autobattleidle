@@ -41,7 +41,7 @@ export class BattleStatus {
   }
 
   render(snapshot: BattleSnapshot): void {
-    const { automatic, coins, enemy, goldenBug } = snapshot;
+    const { automatic, coins, enemy, goldenBug, playerStats } = snapshot;
     const level = formatNumber(enemy.level);
     const health = formatNumber(enemy.health);
     const maxHealth = formatNumber(enemy.maxHealth);
@@ -66,8 +66,8 @@ export class BattleStatus {
       ? `${Math.min(100, (automatic.remainingMs / automatic.intervalMs) * 100)}%`
       : "0%";
     this.automaticText.textContent = automatic.unlocked
-      ? `Automatic attack: ${(automatic.remainingMs / 1000).toFixed(3)}s`
-      : "Automatic attack: locked";
+      ? `Automatic attack: ${playerStats.automaticAttacksPerSecond.toFixed(2)} APS · ${(automatic.remainingMs / 1000).toFixed(3)}s`
+      : `Automatic attack: locked · ${playerStats.automaticAttacksPerSecond.toFixed(2)} APS`;
     this.coins.textContent = `Coins: ${formattedCoins.text}`;
     this.coins.title = formattedCoins.exact;
     this.goldenBug.textContent =

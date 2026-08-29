@@ -17,6 +17,13 @@ const snapshot = (grade: EnemyGrade, level: number, health = 10): BattleSnapshot
   encounter: "Test",
   enemy: { grade, health, level, maxHealth: 10, modifier: null, name: "Test enemy" },
   events: [],
+  playerStats: {
+    armorPenetration: 0,
+    automaticAttacksPerSecond: 0.1,
+    criticalChance: 0,
+    damage: 1,
+    doubleRewardChance: 0,
+  },
   upgrades: [],
 });
 

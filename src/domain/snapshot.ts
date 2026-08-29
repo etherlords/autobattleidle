@@ -1,4 +1,11 @@
-import { automaticInterval } from "./combat";
+import {
+  armorPenetrationForLevel,
+  automaticAttacksPerSecond,
+  automaticInterval,
+  criticalChanceForLevel,
+  damageForLevel,
+  doubleRewardChanceForLevel,
+} from "./combat";
 import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
@@ -29,6 +36,13 @@ export type BattleSnapshot = {
   readonly encounter: string;
   readonly enemy: BattleEnemySnapshot;
   readonly goldenBug?: { readonly remainingMs: number } | null;
+  readonly playerStats: {
+    readonly armorPenetration: number;
+    readonly automaticAttacksPerSecond: number;
+    readonly criticalChance: number;
+    readonly damage: number;
+    readonly doubleRewardChance: number;
+  };
   readonly events: readonly BattleEvent[];
   readonly upgrades: readonly UpgradeSnapshot[];
 };
@@ -68,6 +82,13 @@ export const createBattleSnapshot = (
             goldenBugRemainingMs ?? COMBAT_BALANCE.goldenBugWindowMs,
           ),
         },
+  playerStats: {
+    armorPenetration: armorPenetrationForLevel(state.player.armorPenetrationLevel ?? 0),
+    automaticAttacksPerSecond: automaticAttacksPerSecond(state.player.automaticSpeedLevel ?? 0),
+    criticalChance: criticalChanceForLevel(state.player.criticalLevel ?? 0),
+    damage: damageForLevel(state.player.damageLevel ?? 0),
+    doubleRewardChance: doubleRewardChanceForLevel(state.player.doubleRewardLevel ?? 0),
+  },
   events,
   upgrades,
 });

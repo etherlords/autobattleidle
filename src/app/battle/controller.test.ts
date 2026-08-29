@@ -91,7 +91,7 @@ describe("BattleController", () => {
     controller.dispatch(battleCommands.attack("manual"));
     controller.dispatch(battleCommands.purchase("automatic-unlock"));
     controller.dispatch(battleCommands.purchase("automatic-unlock"));
-    controller.dispatch(battleCommands.frame(1_000));
+    controller.dispatch(battleCommands.frame(10_000));
     controller.dispatch(battleCommands.purchase("automatic-unlock"));
     controller.dispatch(battleCommands.purchase("automatic-unlock"));
     controller.dispatch(battleCommands.purchase("automatic-unlock"));

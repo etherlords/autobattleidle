@@ -25,6 +25,7 @@ export {
 } from "./combat/progression";
 export {
   armorPenetrationForLevel,
+  automaticAttacksPerSecond,
   automaticInterval,
   createCombatState,
   criticalChanceForLevel,
