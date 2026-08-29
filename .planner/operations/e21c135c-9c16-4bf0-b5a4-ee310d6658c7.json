@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e21c135c-9c16-4bf0-b5a4-ee310d6658c7",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:24:46.439Z",
+  "itemId": "ABI-014",
+  "idempotencyKey": "abi-014-starter-gates-start-20260829",
+  "requestFingerprint": "f0ed3d859e0a397cfaca45bd8842b2ea13daa9878add8fcb098ffb5c164e16d1",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md.planner-tmp-e21c135c-9c16-4bf0-b5a4-ee310d6658c7-0",
+      "beforeHash": "83347fd42477b8ddc94598bcce108771c41741c42945700ef32d3f3678784a92",
+      "afterHash": "89ded1c163f6ea46ca6571ea3ebabcb87efb192462be8cbccb3fed1b3db6c895"
+    }
+  ],
+  "committedAt": "2026-08-29T00:24:46.513Z"
+}

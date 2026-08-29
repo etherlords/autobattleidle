@@ -18,6 +18,7 @@ import {
 } from "./combat";
 import { simulateProgression } from "./progression-simulator";
 import { UPGRADE_DISPLAY_ORDER } from "./combat/upgrades";
+import { MAX_ENCOUNTER } from "./combat/balance";
 
 const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>): void => {
   const [firstBoss, secondBoss, thirdBoss] = report.bosses;
@@ -41,6 +42,78 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
 };
 
 describe("endless combat progression", () => {
+  it("defeats only the fresh starter enemy on the tenth baseline manual attack", () => {
+    let state = createCombatState();
+    expect(state.enemy).toMatchObject({ encounter: 1, health: 10, maxHealth: 10 });
+    for (let index = 0; index < 9; index += 1) {
+      const result = attack(state, {
+        atMs: index,
+        enemyId: state.enemy.id,
+        rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+        source: "manual",
+      });
+      expect(result.event).toMatchObject({ critical: false, damage: 1, defeated: false });
+      state = result.state;
+    }
+    expect(state.enemy.health).toBe(1);
+    const result = attack(state, {
+      atMs: 9,
+      enemyId: state.enemy.id,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    expect(result.event).toMatchObject({ critical: false, damage: 1, defeated: true });
+    expect(result.state.enemy).toEqual(spawnEnemy(2, 0));
+  });
+
+  it("keeps representative later enemies on their existing balance", () => {
+    expect(spawnEnemy(2, 0)).toEqual({
+      armor: 0,
+      encounter: 2,
+      grade: "veteran",
+      health: 210,
+      id: 2,
+      maxHealth: 210,
+      modifier: null,
+      reward: 4,
+    });
+    expect(spawnEnemy(3, 0.34)).toEqual({
+      armor: 0,
+      encounter: 3,
+      grade: "elite",
+      health: 423,
+      id: 3,
+      maxHealth: 423,
+      modifier: "health",
+      reward: 7,
+    });
+    expect(spawnEnemy(35, 0)).toEqual({
+      armor: 35,
+      encounter: 35,
+      grade: "boss",
+      health: 1500,
+      id: 35,
+      maxHealth: 1500,
+      modifier: null,
+      reward: 420,
+    });
+  });
+
+  it("uses normal encounter-1 balance after the safe rollover", () => {
+    const state = {
+      ...createCombatState(),
+      enemy: { ...spawnEnemy(MAX_ENCOUNTER, 0), health: 1 },
+    };
+    const result = attack(state, {
+      atMs: 0,
+      enemyId: MAX_ENCOUNTER,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    expect(result.state.enemy).toEqual(spawnEnemy(1, 0));
+    expect(result.state.enemy).toMatchObject({ health: 140, maxHealth: 140 });
+  });
+
   it("keeps display order and behavior in one complete upgrade strategy registry", () => {
     expect(UPGRADES.map((upgrade) => upgrade.id)).toEqual(UPGRADE_DISPLAY_ORDER);
     expect(new Set(UPGRADE_DISPLAY_ORDER).size).toBe(UPGRADE_DISPLAY_ORDER.length);
@@ -192,14 +265,14 @@ describe("endless combat progression", () => {
     expect(simulateProgression()).toEqual(first);
     expect(first).toEqual({
       armorPreventedDamage: 387767,
-      automaticAttacks: 5842,
+      automaticAttacks: 5712,
       bosses: [
-        { elapsedMs: 907468.752117449, encounter: 35 },
-        { elapsedMs: 2960992.2615383873, encounter: 70 },
-        { elapsedMs: 4824837.422828496, encounter: 105 },
+        { elapsedMs: 777468.7521174462, encounter: 35 },
+        { elapsedMs: 2830992.261538386, encounter: 70 },
+        { elapsedMs: 4694837.4228284955, encounter: 105 },
       ],
       coins: 37715,
-      elapsedMs: 4824837.422828496,
+      elapsedMs: 4694837.4228284955,
       encounters: 106,
       manualAttacks: 0,
       penetration: 0.375,

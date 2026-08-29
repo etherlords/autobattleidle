@@ -72,3 +72,12 @@ export const spawnEnemy = (encounter: number, eliteModifierRoll: number): Combat
     ),
   };
 };
+
+export const spawnStarterEnemy = (eliteModifierRoll: number): CombatEnemy => {
+  const enemy = spawnEnemy(1, eliteModifierRoll);
+  return {
+    ...enemy,
+    health: COMBAT_BALANCE.starterEnemyHealth,
+    maxHealth: COMBAT_BALANCE.starterEnemyHealth,
+  };
+};

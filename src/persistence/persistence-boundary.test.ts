@@ -238,11 +238,13 @@ describe("persistence boundary", () => {
     ).toEqual(fallback());
   });
 
-  it("accepts an ambiguity-policy save only when current and historical semantics agree", () => {
-    const sharedEncounter = { ...fallback(), enemy: spawnEnemy(1, 0) };
-    expect(decodeSave(JSON.parse(encodeSave(sharedEncounter)), fallback(), 0)).toEqual(
-      sharedEncounter,
-    );
+  it("round-trips the new starter save and accepts the historical encounter-1 fixture", () => {
+    const freshStarter = fallback();
+    expect(freshStarter.enemy).toMatchObject({ health: 10, maxHealth: 10 });
+    expect(decodeSave(JSON.parse(encodeSave(freshStarter)), fallback(), 0)).toEqual(freshStarter);
+    expect(decodeSave(v2Fixture, fallback(), 0)).toMatchObject({
+      enemy: v2Fixture.enemy,
+    });
   });
 
   it("prefers direct legacy V2 over versioned V1 when the current slot is unusable", () => {

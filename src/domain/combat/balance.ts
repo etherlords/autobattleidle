@@ -4,6 +4,7 @@ export const COMBAT_BALANCE = {
   bossInterval: 35,
   eliteAutomaticSlowMs: 500,
   baseEnemyHealth: 140,
+  starterEnemyHealth: 10,
   enemyHealthGrowth: 1.002,
   baseReward: 1.2,
 } as const;

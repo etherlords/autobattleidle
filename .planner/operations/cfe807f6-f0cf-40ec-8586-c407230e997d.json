@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "cfe807f6-f0cf-40ec-8586-c407230e997d",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:23:11.904Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md.planner-tmp-cfe807f6-f0cf-40ec-8586-c407230e997d"
+    }
+  ],
+  "committedAt": "2026-08-29T00:23:11.964Z"
+}

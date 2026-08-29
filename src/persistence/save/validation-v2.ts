@@ -4,6 +4,7 @@ import {
   damageForLevel,
   doubleRewardChanceForLevel,
   spawnEnemy,
+  spawnStarterEnemy,
   type CombatEnemy,
   type CombatPlayer,
   type CombatState,
@@ -179,8 +180,9 @@ const sameEnemySemantics = (left: CombatEnemy, right: CombatEnemy): boolean =>
 
 const recognizeEnemy = (enemy: CombatEnemy): EnemyRecognition => {
   const current = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
+  const starter = enemy.encounter === 1 ? spawnStarterEnemy(modifierRoll(enemy.modifier)) : current;
   const historical = previousCadenceEnemy(enemy.encounter, modifierRoll(enemy.modifier));
-  const currentMatches = matchesCurrentEnemy(current, enemy);
+  const currentMatches = matchesCurrentEnemy(current, enemy) || matchesCurrentEnemy(starter, enemy);
   const historicalMatches = matchesCurrentEnemy(historical, enemy);
   if (currentMatches && historicalMatches)
     return sameEnemySemantics(current, historical) ? "current" : "invalid";

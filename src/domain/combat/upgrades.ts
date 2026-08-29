@@ -14,7 +14,7 @@ import {
   doubleRewardLevelFor,
   normalizeLevel,
 } from "./player-stats";
-import { spawnEnemy } from "./progression";
+import { spawnStarterEnemy } from "./progression";
 
 const diminishingChance = (level: number): number =>
   (COMBAT_FORMULAS.chanceLimit * normalizeLevel(level)) /
@@ -71,7 +71,7 @@ export const createCombatState = (
 ): CombatState => ({
   automaticUnlocked,
   coins: 0,
-  enemy: spawnEnemy(1, firstEliteModifierRoll),
+  enemy: spawnStarterEnemy(firstEliteModifierRoll),
   nextAutomaticAttackAtMs: 0,
   player: normalizedPlayer(player),
 });

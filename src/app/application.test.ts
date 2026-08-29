@@ -333,7 +333,7 @@ describe("startApplication", () => {
     expect(suppliedBattlefield).toBeDefined();
     expect(snapshots.at(-1)?.automatic.remainingMs).toBe(1_000);
     frames.get(1)?.(1_200);
-    expect(snapshots.at(-1)?.enemy.health).toBe(140);
+    expect(snapshots.at(-1)?.enemy.health).toBe(10);
     expect(snapshots.at(-1)?.automatic.remainingMs).toBe(300);
     app.dispose();
   });
@@ -454,11 +454,11 @@ describe("startApplication", () => {
       "Requires automatic attack unlock",
     ]);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(100);
-    expect(lastSnapshot().coins).toBe(1);
-    expect(lastSnapshot().events.at(-1)?.message).toBe("Manual hit: 40 damage");
+    expect(lastSnapshot().enemy.health).toBe(210);
+    expect(lastSnapshot().coins).toBe(2);
+    expect(lastSnapshot().events.at(-1)?.message).toBe("Manual kill: +1 coins");
     expect(lastSnapshot().upgrades).toHaveLength(6);
-    expect(savedCoins).toEqual([1]);
+    expect(savedCoins).toEqual([2]);
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
       null,
       "Need 45 coins",
@@ -468,15 +468,15 @@ describe("startApplication", () => {
       "Requires automatic attack unlock",
     ]);
     upgrade("automatic-unlock");
-    expect(savedCoins).toEqual([1, 0]);
+    expect(savedCoins).toEqual([2, 1]);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(60);
+    expect(lastSnapshot().enemy.health).toBe(170);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     const firstFrame = callbacks.values().next().value as FrameRequestCallback;
     callbacks.delete(1);
     firstFrame(1000);
-    expect(snapshots.at(-1)?.enemy.health).toBe(20);
+    expect(snapshots.at(-1)?.enemy.health).toBe(130);
     expect(lastSnapshot().automatic.remainingMs).toBe(1000);
     reset();
     expect(calls.persistenceReset).toBe(0);

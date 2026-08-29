@@ -15,7 +15,7 @@ export type {
   UpgradeId,
   UpgradePurchase,
 } from "./combat/contracts";
-export { spawnEnemy } from "./combat/progression";
+export { spawnEnemy, spawnStarterEnemy } from "./combat/progression";
 export {
   armorPenetrationForLevel,
   automaticInterval,

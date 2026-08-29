@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b726de21-f99f-4419-a708-41e2c28e1fd7",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:22:54.913Z",
+  "itemId": "ABI-014",
+  "idempotencyKey": "abi-014-starter-rule-complete-20260829",
+  "requestFingerprint": "748590aab3728fc0324da3c2fcffbd5506b9902a31d8f3be03811b3e21c1b4b6",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md.planner-tmp-b726de21-f99f-4419-a708-41e2c28e1fd7-0",
+      "beforeHash": "066e8a65ed73cfc31d15378821d40992b4da866515e32cd096cb308fdb08b92c",
+      "afterHash": "a9535818538d2d1cd76cc519d4af74d3f4ab58b249185f28cc3d93524b6ca84b"
+    }
+  ],
+  "committedAt": "2026-08-29T00:22:54.948Z"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "d5c3e3c1-8d06-438e-b8fd-47bbb63a9e26",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:16:56.407Z",
+  "itemId": "ABI-014",
+  "idempotencyKey": "abi-014-ready-to-in-progress-20260829",
+  "requestFingerprint": "9631a469567e0558ed473abdbc476d5d848328b24366bc6320f7f6b98da31b39",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/BRIEF.md.planner-tmp-d5c3e3c1-8d06-438e-b8fd-47bbb63a9e26-0",
+      "beforeHash": "131c854e1ddcfca8a3ffb5b90f79ecdd4dada4bb6e1c5d1bb72291696a99f38d",
+      "afterHash": "91c6be193ea2abb5fc05a4afe7f4d4dbd0d2f52455c7c2d6a80e605dc0467c0e"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-014-reduce-only-the-fresh-game-starter-enemy-to-about-ten-manual/PROGRESS.md.planner-tmp-d5c3e3c1-8d06-438e-b8fd-47bbb63a9e26-1",
+      "beforeHash": "c710bb65388de95867c39ea3ceb8f2763ab302edae3ee57f4cd7fe81e9ed87b4",
+      "afterHash": "eb2f2f39e47845a10162adc38f04f0762a6a0fd0b2072e9ba0e38b041e11fb5e"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-d5c3e3c1-8d06-438e-b8fd-47bbb63a9e26-2",
+      "beforeHash": "94d817ddd1b28833e67fdccaa52ae02aef4eb31ccd7e7fe3a796206643a38773",
+      "afterHash": "a4ef7f76f3c1dfc00300f53a4efe5a4b8949d7d4aa232448d991c000c1022e57"
+    }
+  ],
+  "committedAt": "2026-08-29T00:16:56.472Z"
+}
