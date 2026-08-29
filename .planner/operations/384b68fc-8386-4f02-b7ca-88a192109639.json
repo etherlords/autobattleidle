@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "384b68fc-8386-4f02-b7ca-88a192109639",
+  "operation": "claim.release",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:04:18.438Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md.planner-tmp-384b68fc-8386-4f02-b7ca-88a192109639"
+    }
+  ],
+  "committedAt": "2026-08-29T03:04:18.500Z"
+}

@@ -4,8 +4,8 @@ id: ABI-021
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 37
-status: In QA
+revision: 44
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 37
-- Last update: Begin Manager publication and exact-SHA verification after Vault sync and independent gates.
+- Status: Done
+- Revision: 44
+- Last update: Released task claim: Release ABI-021 after canonical Done closure and exact-SHA verification
 
 ## Execution plan
 
@@ -33,7 +33,7 @@ requiredGates:
 - [x] alias-decision: Reviewer records keep-relative-paths or alias decision from measured depth and toolchain/layer-lint consequences
 - [x] self-check: Implementation owner proves red/green hook behavior without real commit and runs pnpm check
 - [x] independent-gates: Independent Reviewer verifies bypass/CI parity and QA verifies Windows installation/smoke
-- [~] manager-closure: Manager updates Vault workflow, publishes, and proves exact-SHA CI
+- [x] manager-closure: Manager updates Vault workflow, publishes, and proves exact-SHA CI
 - [x] review-repair: Implementation owner forces LF/executable hook checkout semantics and adds checkout-aware proof
 
 ## Events
@@ -663,3 +663,134 @@ requiredGates:
   - REVIEW.md PASS
   - QA.md PASS
   - verification receipt pending
+
+### evt-2b3d8a6e-a72d-4f27-96c1-b9c7f269858b
+
+- Timestamp: 2026-08-29T03:03:03.932Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: EVENT checkpoint — root-manager — Coherent checkpoint 7c855367735fe293d3881f6b57101601d1dca526 is pushed; exact-SHA CI and Pages succeeded, and deployed unchanged health matches the fresh local build.
+- Idempotency key: abi-021-exact-sha-receipts-20260829
+- Evidence:
+  - CI run 33230356531 success for 7c855367735fe293d3881f6b57101601d1dca526
+  - Pages run 33230356479 success for exact SHA
+  - https://etherlords.github.io/autobattleidle/ HTTP 200
+  - deployed assets index-opAdi5gC.js and index-CoUfL1zx.css match local build
+  - VERIFICATION.md exact-SHA receipt narrow fallback
+
+### evt-338e0aa2-3f18-46a8-b67c-6d0ccbf95bc0
+
+- Timestamp: 2026-08-29T03:03:13.750Z
+- Actor: root-manager-verifier
+- Operation: gate.record
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Verification passes on fresh local hook/check evidence, exact pushed SHA CI/Pages receipts, clean Vault sync, and deployed unchanged health.
+- Idempotency key: abi-021-verification-pass-20260829
+- Request fingerprint: 99dd74a012098ff74596e1bf4071c7715877a5fcbf75645a3de839c7c7f7aeae
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - 7c855367735fe293d3881f6b57101601d1dca526 pushed to origin/main
+  - CI 33230356531 success exact SHA
+  - Pages 33230356479 success exact SHA
+  - public URL HTTP 200 and build asset parity
+  - Vault hash 6f087dc6440941f630f1c2b0c8453ab55d6f7f020899929e2d64aa2911661ff0
+
+### evt-573566a4-25db-4fee-9527-104de2cf1501
+
+- Timestamp: 2026-08-29T03:03:22.871Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: All independent gates and exact-SHA verification pass; ABI-021 is ready for Manager closure.
+- Idempotency key: abi-021-ready-manager-after-verification-20260829
+- Request fingerprint: f123960b0a4eaa2f04954cff008f167ba734557da786852949eef933eaa78888
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - exact SHA 7c855367735fe293d3881f6b57101601d1dca526
+
+### evt-6b7fa627-b91c-4ac4-b3f3-7ba11a01c89f
+
+- Timestamp: 2026-08-29T03:03:57.231Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Manager mapped every acceptance criterion and completed Vault sync, coherent publication, exact-SHA CI/Pages, deployed unchanged proof, and closure sign-off.
+- Idempotency key: abi-021-manager-closure-step-complete-20260829
+- Request fingerprint: 0430913da4ba892d867f935d91ec63cb0ff090c87bd0a96072762ae7db9c9d3f
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - VERIFICATION.md complete
+  - 7c855367735fe293d3881f6b57101601d1dca526 pushed
+  - CI 33230356531 success
+  - Pages 33230356479 success
+  - Vault doctor/index clean
+
+### evt-86177704-7092-42d3-a2d1-efc17b45addc
+
+- Timestamp: 2026-08-29T03:04:03.641Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Manager closure passes: scope is complete, all independent gates pass, Vault is synchronized, and exact-SHA CI/Pages plus deployed unchanged proof are recorded.
+- Idempotency key: abi-021-manager-closure-pass-20260829
+- Request fingerprint: 497de8774586bb4659b53c2e1fbe2cfc7dec8f0b5c00eff3efb4324682ef05ef
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md Manager close PASS
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - no other ABI task started
+
+### evt-bfa48bbc-7b6e-48bf-8a7a-c7cfbe31334c
+
+- Timestamp: 2026-08-29T03:04:11.772Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: EVENT closed — root-manager — ABI-021 completed with native canonical pre-commit enforcement, no aliases, one repaired portability finding, all gates passed, Vault synced, and exact-SHA CI/Pages proof.
+- Idempotency key: abi-021-done-20260829
+- Request fingerprint: 70e9568e32acbe3e171fbad1573e150312e96420f588eb81650a17df79719410
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS after one repair
+  - independent-qa PASS
+  - verification PASS
+  - manager-closure PASS
+  - 7c855367735fe293d3881f6b57101601d1dca526
+
+### evt-72090f0b-a551-46a9-8737-9a86963016db
+
+- Timestamp: 2026-08-29T03:04:18.437Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Released task claim: Release ABI-021 after canonical Done closure and exact-SHA verification
+- Idempotency key: abi-021-release-20260829
+- Request fingerprint: f5e988a99c2468f5544350f36b1c47838e0031836ce64171c2ed8ece8a56ab32
+- Agent ID: root-manager
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release ABI-021 after canonical Done closure and exact-SHA verification
+- Branch: main
+- Evidence:
+  - None

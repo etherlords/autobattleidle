@@ -30,10 +30,11 @@ requiredGates:
 - Architecture enforcement: installed ESLint/TypeScript rules already cover all reliable zero-baseline AST rules; no scanner, dependency, lockfile, alias, or lint-config change was added.
 - Alias decision: keep relative imports; measured production traversal is at most two parent segments. Reconsider only with repeated deeper paths, measured friction, shared TypeScript/Vite/Vitest mapping, and preserved layer lint.
 - Vault: `AUTOBATTLEIDLE-DOC-20260828-ECBD82` synchronized at content hash `6f087dc6440941f630f1c2b0c8453ab55d6f7f020899929e2d64aa2911661ff0`; Vault doctor/index are clean.
-- Publication receipt: pending the coherent implementation checkpoint and exact-SHA CI/Pages readback.
+- Publication receipt: coherent checkpoint `7c855367735fe293d3881f6b57101601d1dca526` is pushed to `origin/main`. CI run `33230356531` and Pages run `33230356479` both completed successfully for that exact SHA.
+- Deployed unchanged proof: `https://etherlords.github.io/autobattleidle/` returned HTTP 200 with title `Etherlords Autobattle Idle`; deployed assets `index-opAdi5gC.js` and `index-CoUfL1zx.css` match the fresh local build. No application behavior changed in ABI-021.
 
 ## Sign-off
 
 - Reviewer: PASS after one bounded checkout-portability repair and fresh re-review
 - QA: PASS on Windows installer, isolated and actual hook paths, canonical check, and CI independence
-- Manager close: pending
+- Manager close: PASS — every acceptance criterion is mapped above; review, QA, Vault sync, coherent publication, exact-SHA CI/Pages, and deployed unchanged proof are complete.
