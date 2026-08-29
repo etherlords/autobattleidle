@@ -3,20 +3,27 @@ import { describe, expect, it } from "vitest";
 
 import {
   createBattlefieldWithRenderer,
+  enemyAnimationForEffects,
   effectEvictions,
   enemyVisualSpec,
   nextBattlefieldFrame,
 } from "./battlefield";
 import { cameraScaleForAspect } from "./battlefield/config";
 import type { EnemyGrade } from "../domain/combat/contracts";
-import type { BattleSnapshot } from "../domain/snapshot";
+import type { BattleSnapshot, BattleVisualCue } from "../domain/snapshot";
 
-const snapshot = (grade: EnemyGrade, level: number, health = 10): BattleSnapshot => ({
+const snapshot = (
+  grade: EnemyGrade,
+  level: number,
+  health = 10,
+  visualCues: readonly BattleVisualCue[] = [],
+): BattleSnapshot => ({
   automatic: { intervalMs: 1_000, remainingMs: 0, unlocked: false },
   coins: 0,
   encounter: "Test",
   enemy: { grade, health, level, maxHealth: 10, modifier: null, name: "Test enemy" },
   events: [],
+  visualCues,
   playerStats: {
     armorPenetration: 0,
     automaticAttacksPerSecond: 0.1,
@@ -47,18 +54,19 @@ describe("nextBattlefieldFrame", () => {
   it("derives bounded visual effects from immutable snapshots", () => {
     const initial = snapshot("normal", 1);
     expect(nextBattlefieldFrame(undefined, initial).effects).toEqual(["spawn"]);
-    expect(nextBattlefieldFrame(initial, snapshot("normal", 1, 8)).effects).toEqual(["hit"]);
-    expect(nextBattlefieldFrame(initial, snapshot("boss", 10)).effects).toEqual([
-      "spawn",
-      "boss",
-      "death",
-    ]);
-    expect(nextBattlefieldFrame(initial, snapshot("boss", 10)).effects).toEqual([
-      "spawn",
-      "boss",
-      "death",
-    ]);
+    expect(nextBattlefieldFrame(initial, snapshot("normal", 1, 8)).effects).toEqual([]);
+    expect(
+      nextBattlefieldFrame(initial, snapshot("boss", 10, 10, ["death", "coin", "boss"])).effects,
+    ).toEqual(["death", "coin", "boss"]);
+    expect(nextBattlefieldFrame(initial, snapshot("boss", 10)).effects).toEqual([]);
     expect(effectEvictions(11, 3)).toBe(2);
+  });
+
+  it("restores enemy hit animation only from immutable combat cues", () => {
+    expect(enemyAnimationForEffects(["hit"])).toBe("hit");
+    expect(enemyAnimationForEffects(["armor"])).toBe("hit");
+    expect(enemyAnimationForEffects(["critical", "armor"])).toBe("critical");
+    expect(enemyAnimationForEffects(["death", "coin"])).toBeNull();
   });
 
   it("disposes retired visuals and clears the scene through one renderer seam", () => {

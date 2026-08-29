@@ -8,6 +8,7 @@ import { createHud, type Hud } from "../ui/hud";
 import type { HudIntent } from "../ui/hud/intents";
 import { BattleController } from "./battle/controller";
 import { battleCommands } from "./battle/commands";
+import type { BattleControllerEvent } from "./battle/contracts";
 import { presentBattleUpdate } from "./battle/presenter";
 
 type AnimationFrameHost = {
@@ -104,14 +105,14 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     initialState: dependencies.initialState,
     rolls: dependencies.rolls,
   });
-  const render = (): void => {
-    const current = presentBattleUpdate(controller.currentUpdate());
+  const render = (event?: BattleControllerEvent): void => {
+    const current = presentBattleUpdate(controller.currentUpdate(), event);
     dependencies.game.render(current);
     dependencies.hud.render(current);
   };
   const unsubscribe = controller.subscribe((event) => {
     if (event.persistenceChanged) dependencies.persistence.onStateChanged(event.state);
-    render();
+    render(event);
   });
   const resize = (): void => {
     const viewport = dependencies.viewport();

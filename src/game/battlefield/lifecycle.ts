@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 import type { BattleEnemySnapshot, BattleSnapshot } from "../../domain/snapshot";
-import type { EnemyUnit, EnemyUnitEvent, EnemyUnitEventType } from "../units/enemy";
+import type { EnemyUnit } from "../units/enemy";
 import { UNIT_FACTORIES } from "../units/factories";
 import type { PlayerUnit } from "../units/player";
 import { BATTLEFIELD_CONFIG, cameraScaleForAspect } from "./config";
@@ -36,30 +36,23 @@ export type BattlefieldRenderer = {
 const enemyKey = (enemy: BattleEnemySnapshot): string =>
   `${enemy.grade}:${enemy.level}:${enemy.modifier ?? "none"}:${enemy.goldenBug}`;
 
-const ENEMY_EVENT_EFFECTS: Readonly<Record<EnemyUnitEventType, EffectKind | null>> = {
-  spawned: "spawn",
-  hit: "hit",
-  critical: "hit",
-  death: "death",
-  synchronized: null,
-  disposed: null,
-};
-
 export const nextBattlefieldFrame = (
   previous: BattleSnapshot | undefined,
   current: BattleSnapshot,
 ): BattlefieldFrame => {
   const enemyChanged =
     previous !== undefined && enemyKey(previous.enemy) !== enemyKey(current.enemy);
-  const effects: EffectKind[] = [];
-  if (previous === undefined || enemyChanged) {
-    effects.push("spawn");
-    if (current.enemy.grade === "boss") effects.push("boss");
-  } else if (current.enemy.health < previous.enemy.health) {
-    effects.push("hit");
-  }
-  if (enemyChanged) effects.push("death");
-  return { effects, enemyChanged };
+  return {
+    effects: previous === undefined ? ["spawn"] : [...(current.visualCues ?? [])],
+    enemyChanged,
+  };
+};
+
+export const enemyAnimationForEffects = (
+  effects: readonly EffectKind[],
+): "critical" | "hit" | null => {
+  if (effects.includes("critical")) return "critical";
+  return effects.includes("armor") || effects.includes("hit") ? "hit" : null;
 };
 
 const disposeObject = (object: THREE.Object3D): void =>
@@ -89,13 +82,15 @@ class ThreeBattlefield implements Battlefield {
   private readonly player: PlayerUnit = UNIT_FACTORIES.player.create();
   private enemy: EnemyUnit | undefined;
   private unsubscribeEnemy: (() => void) | undefined;
-  private pendingEnemyEffects: EffectKind[] = [];
   private previous: BattleSnapshot | undefined;
   private effects: BattlefieldEffect[] = [];
   private aspect = 1;
   private azimuth = 0;
   private bossOrbitEnabled = false;
   private disposed = false;
+  private readonly reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
   constructor(
     host: HTMLElement,
@@ -119,9 +114,12 @@ class ThreeBattlefield implements Battlefield {
     this.enemy?.tick();
     const frame = nextBattlefieldFrame(this.previous, snapshot);
     if (this.enemy === undefined || frame.enemyChanged) this.replaceEnemy(snapshot.enemy);
-    else this.enemy.dispatchEnemy({ type: "sync", snapshot: snapshot.enemy });
-    if (frame.effects.includes("hit")) this.enemy?.dispatchEnemy({ type: "hit" });
-    this.addEffects(this.effectsForFrame(frame.effects));
+    else {
+      this.enemy.dispatchEnemy({ type: "sync", snapshot: snapshot.enemy });
+      const animation = enemyAnimationForEffects(frame.effects);
+      if (animation !== null) this.enemy.dispatchEnemy({ type: animation });
+    }
+    this.addEffects(frame.effects);
     this.bossOrbitEnabled = snapshot.enemy.grade === "boss";
     this.frameCamera(this.aspect);
     this.previous = snapshot;
@@ -158,7 +156,6 @@ class ThreeBattlefield implements Battlefield {
     this.effects = [];
     this.enemy = undefined;
     this.unsubscribeEnemy = undefined;
-    this.pendingEnemyEffects = [];
     this.previous = undefined;
   }
 
@@ -203,36 +200,15 @@ class ThreeBattlefield implements Battlefield {
     this.enemy?.dispatchEnemy({ type: "dispose" });
     this.unsubscribeEnemy?.();
     this.enemy = UNIT_FACTORIES.enemy.create(snapshot);
-    this.unsubscribeEnemy = this.enemy.subscribeEnemy((event) => this.receiveEnemyEvent(event));
+    this.unsubscribeEnemy = undefined;
     this.enemy.dispatchEnemy({ type: "spawn", parent: this.scene });
-  }
-
-  private receiveEnemyEvent(event: EnemyUnitEvent): void {
-    const effect = ENEMY_EVENT_EFFECTS[event.type];
-    if (effect !== null) this.pendingEnemyEffects.push(effect);
-  }
-
-  private effectsForFrame(expected: readonly EffectKind[]): readonly EffectKind[] {
-    const effects: EffectKind[] = [];
-    for (const effect of expected) {
-      if (effect === "boss") {
-        effects.push(effect);
-        continue;
-      }
-      const index = this.pendingEnemyEffects.indexOf(effect);
-      if (index < 0) continue;
-      this.pendingEnemyEffects.splice(index, 1);
-      effects.push(effect);
-    }
-    this.pendingEnemyEffects = [];
-    return effects;
   }
 
   private addEffects(kinds: readonly EffectKind[]): void {
     const evicted = this.effects.splice(0, effectEvictions(this.effects.length, kinds.length));
     for (const effect of evicted) this.retire(effect.mesh);
     for (const kind of kinds) {
-      const effect = createBattlefieldEffect(kind);
+      const effect = createBattlefieldEffect(kind, this.reducedMotion);
       this.effects.push(effect);
       this.scene.add(effect.mesh);
     }

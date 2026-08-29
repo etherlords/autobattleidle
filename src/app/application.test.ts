@@ -4,6 +4,11 @@ import { createApplication, startApplication } from "./application";
 import { createCombatState, type UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 
+const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly string[] => {
+  if (snapshot === undefined) throw new Error("Expected rendered snapshot");
+  return snapshot.visualCues ?? [];
+};
+
 const originalDocument = globalThis.document;
 
 afterEach(() => {
@@ -140,7 +145,9 @@ describe("startApplication", () => {
     const beforeManualHit = snapshots.length;
     attack();
     expect(snapshots).toHaveLength(beforeManualHit + 1);
+    expect(visualCuesOf(snapshots.at(-1))).toEqual(["hit"]);
     attack();
+    expect(visualCuesOf(snapshots.at(-1))).toEqual(["death", "coin"]);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
       "Manual hit: 40 damage",
       "Manual kill: +1 coins",
@@ -154,6 +161,7 @@ describe("startApplication", () => {
     idleFrame(99);
     expect(snapshots).toHaveLength(beforeIdleFrame + 1);
     expect(snapshots.at(-1)?.events).toHaveLength(2);
+    expect(visualCuesOf(snapshots.at(-1))).toEqual([]);
     expect(savedCoins).toEqual([100, 101]);
 
     upgrade("automatic-unlock");

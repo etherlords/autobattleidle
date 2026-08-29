@@ -10,6 +10,8 @@ import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
 export type BattleEvent = { readonly id: number; readonly message: string };
+export type BattleVisualCue =
+  "armor" | "boss" | "coin" | "critical" | "death" | "golden-escape" | "golden-kill" | "hit";
 export type UpgradeSnapshot = {
   readonly cost: number;
   readonly disabledReason: string | null;
@@ -44,6 +46,7 @@ export type BattleSnapshot = {
     readonly doubleRewardChance: number;
   };
   readonly events: readonly BattleEvent[];
+  readonly visualCues?: readonly BattleVisualCue[];
   readonly upgrades: readonly UpgradeSnapshot[];
 };
 
@@ -56,6 +59,7 @@ export const createBattleSnapshot = (
   events: readonly BattleEvent[],
   upgrades: readonly UpgradeSnapshot[],
   goldenBugRemainingMs: number | null = null,
+  visualCues: readonly BattleVisualCue[] = [],
 ): BattleSnapshot => ({
   automatic: {
     intervalMs: automaticInterval(state.enemy, state.player),
@@ -90,5 +94,6 @@ export const createBattleSnapshot = (
     doubleRewardChance: doubleRewardChanceForLevel(state.player.doubleRewardLevel ?? 0),
   },
   events,
+  visualCues,
   upgrades,
 });

@@ -5,9 +5,13 @@ import {
   upgradeLevel,
   type AttackEvent,
 } from "../../domain/combat";
-import { createBattleSnapshot, type BattleSnapshot } from "../../domain/snapshot";
+import {
+  createBattleSnapshot,
+  type BattleSnapshot,
+  type BattleVisualCue,
+} from "../../domain/snapshot";
 import { formatNumber } from "../../ui/number-format";
-import type { BattleUpdate } from "./contracts";
+import type { BattleControllerEvent, BattleUpdate } from "./contracts";
 
 const attackMessage = (
   source: "manual" | "automatic",
@@ -30,7 +34,41 @@ export const battleEventMessages = {
   restore: (): undefined => undefined,
 } as const;
 
-export const presentBattleUpdate = (update: BattleUpdate): BattleSnapshot =>
+const attackVisualCue = (outcome: AttackEvent): BattleVisualCue[] => {
+  if (outcome.type === "ignored") return [];
+  if (outcome.defeated) return outcome.reward > 0 ? ["death", "coin"] : ["death"];
+  if (outcome.critical) return ["critical"];
+  return outcome.armorPreventedDamage > 0 ? ["armor"] : ["hit"];
+};
+
+const eventOutcome = (event: BattleControllerEvent): AttackEvent | null => {
+  if (event.type === "attack") return event.outcome;
+  return event.type === "frame" ? event.automaticOutcome : null;
+};
+
+const defeatVisualCues = (
+  event: BattleControllerEvent,
+  cues: BattleVisualCue[],
+): BattleVisualCue[] => {
+  if (event.type !== "attack" && event.type !== "frame") return cues;
+  if (event.previousEnemy?.grade === "boss" || event.state.enemy.grade === "boss")
+    cues.push("boss");
+  if (event.goldenBugBefore) cues.push("golden-kill");
+  return cues;
+};
+
+export const battleVisualCues = (event: BattleControllerEvent): readonly BattleVisualCue[] => {
+  if (event.type === "frame" && event.goldenBugEscaped) return ["golden-escape"];
+  const outcome = eventOutcome(event);
+  if (outcome === null || outcome.type === "ignored") return [];
+  const cues = attackVisualCue(outcome);
+  return outcome.defeated ? defeatVisualCues(event, cues) : cues;
+};
+
+export const presentBattleUpdate = (
+  update: BattleUpdate,
+  event?: BattleControllerEvent,
+): BattleSnapshot =>
   createBattleSnapshot(
     update.state,
     update.nowMs,
@@ -43,4 +81,5 @@ export const presentBattleUpdate = (update: BattleUpdate): BattleSnapshot =>
       level: upgradeLevel(update.state, upgrade.id),
     })),
     update.goldenBugRemainingMs,
+    event === undefined ? [] : battleVisualCues(event),
   );

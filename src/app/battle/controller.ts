@@ -60,11 +60,20 @@ export class BattleController {
   }
 
   private performAttack(source: AttackSource): boolean {
+    const expiredEnemy = this.state.enemy;
     if (this.expireGoldenBug())
       return this.publishMessage(
-        { ...this.update(true), automaticOutcome: null, type: "frame" },
+        {
+          ...this.update(true),
+          automaticOutcome: null,
+          goldenBugEscaped: true,
+          previousEnemy: expiredEnemy,
+          type: "frame",
+        },
         "Golden Bug escaped.",
       );
+    const previousEnemy = this.state.enemy;
+    const goldenBugBefore = this.state.goldenBug !== null;
     const result = resolveAttack(this.state, {
       atMs: this.nowMs,
       enemyId: this.state.enemy.id,
@@ -78,6 +87,8 @@ export class BattleController {
       {
         ...this.update(true),
         outcome: result.event,
+        goldenBugBefore,
+        previousEnemy,
         source,
         type: "attack",
       },
@@ -87,19 +98,30 @@ export class BattleController {
 
   private performFrame(nowMs: number): boolean {
     this.nowMs = nowMs;
+    const expiredEnemy = this.state.enemy;
     if (this.expireGoldenBug())
       return this.publishMessage(
-        { ...this.update(true), automaticOutcome: null, type: "frame" },
+        {
+          ...this.update(true),
+          automaticOutcome: null,
+          goldenBugEscaped: true,
+          previousEnemy: expiredEnemy,
+          type: "frame",
+        },
         "Golden Bug escaped.",
       );
     if (!this.state.automaticUnlocked || this.nowMs < this.state.nextAutomaticAttackAtMs)
       return false;
+    const previousEnemy = this.state.enemy;
+    const goldenBugBefore = this.state.goldenBug !== null;
     const automaticOutcome = this.automaticAttack();
     if (automaticOutcome.type === "ignored") return false;
     return this.publishMessage(
       {
         ...this.update(true),
         automaticOutcome,
+        goldenBugBefore,
+        previousEnemy,
         type: "frame",
       },
       battleEventMessages.frame(automaticOutcome),

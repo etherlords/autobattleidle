@@ -2,6 +2,7 @@ import type {
   AttackEvent,
   AttackRolls,
   AttackSource,
+  CombatEnemy,
   CombatState,
   UpgradeId,
 } from "../../domain/combat";
@@ -41,8 +42,16 @@ export type BattleControllerEvent =
       readonly type: "attack";
       readonly outcome: AttackEvent;
       readonly source: AttackSource;
+      readonly previousEnemy: CombatEnemy;
+      readonly goldenBugBefore: boolean;
     })
-  | (BattleUpdate & { readonly type: "frame"; readonly automaticOutcome: AttackEvent | null })
+  | (BattleUpdate & {
+      readonly type: "frame";
+      readonly automaticOutcome: AttackEvent | null;
+      readonly previousEnemy?: CombatEnemy;
+      readonly goldenBugBefore?: boolean;
+      readonly goldenBugEscaped?: boolean;
+    })
   | (BattleUpdate & {
       readonly type: "purchase";
       readonly id: UpgradeId;

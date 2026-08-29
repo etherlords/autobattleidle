@@ -2,6 +2,7 @@ export { effectEvictions } from "./battlefield/effects";
 export {
   createBattlefield,
   createBattlefieldWithRenderer,
+  enemyAnimationForEffects,
   nextBattlefieldFrame,
   type Battlefield,
   type BattlefieldFrame,
