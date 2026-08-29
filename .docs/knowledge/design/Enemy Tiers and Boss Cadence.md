@@ -66,20 +66,8 @@ The accepted rate must come from a deterministic headless simulation of at least
 
 ## Presentation
 
-The accepted implementation uses one snapshot-driven enemy-model factory in `src/game`. It owns
-only its Three.js group and inspectable composition metadata; combat remains in `src/domain`.
-Battlefield replacement retains the snapshot identity key and deterministically disposes retired
-geometry and materials.
+The accepted implementation uses one snapshot-driven enemy-model factory in `src/game`. It owns only its Three.js group and inspectable composition metadata; combat remains in `src/domain`. Battlefield replacement retains snapshot identity and deterministically disposes retired geometry and materials.
 
-Desktop 1440x900 and 390x844 browser QA covered all eight families by all three authored profiles,
-every active modifier, representative front/side composition, stable reloads, historical-save recovery,
-and real manual/automatic combat transitions. Critical Guard suppressed the critical multiplier in the
-browser; Manual Guard reduced only manual damage; Hardened completed a defeat/reward transition. After
-a receipt-discovered Sentinel cylinder argument defect was corrected and independently reviewed, the
-390px cue recheck was compact and non-overlapping. Uninterrupted automatic progression kept DOM nodes
-at 59 and canvas count at one while heap remained bounded; focused tests cover every rendered profile,
-animation, idempotent disposal, and subtree resource bounds. Console and network health remained clean.
+Golden Bug uses a dedicated compact beetle body, metallic gold material that reacts to scene lighting, and crown/orbital silhouette cues so event identity does not depend on color. Its immutable snapshot identity and countdown replace through the same unit lifecycle as progression enemies.
 
-A rare `Golden Bug` is a timed event enemy with a dedicated compact body and metallic gold material
-that reacts to scene lighting with readable highlights. Its event rules, timer, reward and escape path
-are separate from ordinary grade cadence and belong to ABI-010.
+Independent browser QA at 1440x900 and 390x844 proved readable Golden Bug identity, passive countdown/input ownership, one canvas, 55 DOM nodes, zero console errors or warnings, no failed requests, auto-only escape, manual kill, ordinary and boss resume, and historical-save recovery. Focused tests cover visual selection, metallic/non-color composition, replacement, and idempotent disposal.

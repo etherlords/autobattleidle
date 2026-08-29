@@ -34,7 +34,7 @@ export type BattlefieldRenderer = {
 };
 
 const enemyKey = (enemy: BattleEnemySnapshot): string =>
-  `${enemy.grade}:${enemy.level}:${enemy.modifier ?? "none"}`;
+  `${enemy.grade}:${enemy.level}:${enemy.modifier ?? "none"}:${enemy.goldenBug}`;
 
 const ENEMY_EVENT_EFFECTS: Readonly<Record<EnemyUnitEventType, EffectKind | null>> = {
   spawned: "spawn",

@@ -7,6 +7,10 @@ export const COMBAT_BALANCE = {
   starterEnemyHealth: 10,
   enemyHealthGrowth: 1.002,
   baseReward: 1.2,
+  goldenBugEncounterInterval: 50,
+  goldenBugWindowMs: 10_000,
+  goldenBugHealthFactor: 5,
+  goldenBugRewardFactor: 10,
 } as const;
 
 export const MAX_ENCOUNTER = Math.floor(Number.MAX_SAFE_INTEGER / 3);

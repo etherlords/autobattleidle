@@ -11,7 +11,6 @@ import {
   type EliteModifier,
   type EnemyGrade,
 } from "../../domain/combat";
-import { SAVE_VERSION } from "./contracts";
 import {
   chance,
   hasExactKeys,
@@ -22,7 +21,7 @@ import {
 } from "./validation-primitives";
 
 // eslint-disable-next-line complexity -- each persisted derived field must be validated at the boundary.
-const parseV2Player = (value: unknown): Required<CombatPlayer> | undefined => {
+export const parseV2Player = (value: unknown): Required<CombatPlayer> | undefined => {
   if (
     !isRecord(value) ||
     !hasExactKeys(value, [
@@ -83,7 +82,7 @@ const parseV2Player = (value: unknown): Required<CombatPlayer> | undefined => {
 const isCurrentSaveEnvelope = (value: unknown): value is Record<string, unknown> =>
   isRecord(value) &&
   hasExactKeys(value, ["automaticUnlocked", "coins", "enemy", "player", "version"]) &&
-  value.version === SAVE_VERSION &&
+  value.version === 2 &&
   integer(value.coins, 0) &&
   typeof value.automaticUnlocked === "boolean";
 
@@ -208,5 +207,6 @@ export const decodeV2 = (value: unknown, nowMs: number): CombatState | undefined
     enemy,
     nextAutomaticAttackAtMs: value.automaticUnlocked ? nowMs + automaticInterval(enemy, player) : 0,
     player,
+    goldenBug: null,
   };
 };

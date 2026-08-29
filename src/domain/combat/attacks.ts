@@ -7,7 +7,8 @@ import {
   doubleRewardLevelFor,
   normalizeLevel,
 } from "./player-stats";
-import { spawnEnemy } from "./progression";
+import { spawnEnemy, spawnGoldenBug } from "./progression";
+import { COMBAT_BALANCE } from "./balance";
 import { ENEMY_MODIFIERS } from "./enemy-modifiers";
 
 const modifierFor = (state: CombatState) =>
@@ -45,6 +46,7 @@ import {
   effectiveArmor,
 } from "./upgrades";
 
+// eslint-disable-next-line complexity -- defeat resolves ordinary and timed-event transitions together.
 export const attack = (state: CombatState, command: AttackCommand): AttackResult => {
   if (
     command.enemyId !== state.enemy.id ||
@@ -80,13 +82,27 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       state: { ...state, enemy: { ...state.enemy, health }, nextAutomaticAttackAtMs },
     };
   const requestedReward =
-    state.enemy.reward *
-    (command.rolls.doubleReward <
-    doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
-      ? COMBAT_FORMULAS.doubleRewardMultiplier
-      : 1);
+    state.goldenBug === null
+      ? state.enemy.reward *
+        (command.rolls.doubleReward <
+        doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
+          ? COMBAT_FORMULAS.doubleRewardMultiplier
+          : 1)
+      : state.enemy.reward;
   const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);
   const nextEncounter = state.enemy.encounter === MAX_ENCOUNTER ? 1 : state.enemy.encounter + 1;
+  const resumeEncounter = state.goldenBug?.resumeEncounter;
+  const goldenBug =
+    state.goldenBug === null &&
+    state.enemy.encounter % COMBAT_BALANCE.goldenBugEncounterInterval === 0
+      ? { id: state.enemy.id, resumeEncounter: nextEncounter }
+      : null;
+  const nextEnemy = (): typeof state.enemy => {
+    if (resumeEncounter !== undefined)
+      return spawnEnemy(resumeEncounter, command.rolls.nextEliteModifier);
+    if (goldenBug !== null) return spawnGoldenBug(goldenBug.resumeEncounter, state.player);
+    return spawnEnemy(nextEncounter, command.rolls.nextEliteModifier);
+  };
   return {
     event: {
       type: "hit",
@@ -100,7 +116,8 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
     state: {
       ...state,
       coins: state.coins + reward,
-      enemy: spawnEnemy(nextEncounter, command.rolls.nextEliteModifier),
+      enemy: nextEnemy(),
+      goldenBug,
       nextAutomaticAttackAtMs,
     },
   };

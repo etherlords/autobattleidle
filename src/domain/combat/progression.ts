@@ -1,5 +1,12 @@
 import { COMBAT_BALANCE, COMBAT_FORMULAS, MAX_ENCOUNTER } from "./balance";
-import type { CombatEnemy, EliteModifier, EnemyGrade } from "./contracts";
+import type {
+  CombatEnemy,
+  CombatPlayer,
+  CombatState,
+  EliteModifier,
+  EnemyGrade,
+} from "./contracts";
+import { damageForLevel, automaticInterval } from "./upgrades";
 import { modifierForRoll } from "./enemy-modifiers";
 import { ENEMY_TIERS } from "./enemy-definitions";
 
@@ -81,3 +88,41 @@ export const spawnStarterEnemy = (eliteModifierRoll: number): CombatEnemy => {
     maxHealth: COMBAT_BALANCE.starterEnemyHealth,
   };
 };
+
+export const goldenBugHealth = (player: CombatPlayer): number =>
+  Math.min(
+    Number.MAX_SAFE_INTEGER,
+    Math.max(
+      COMBAT_FORMULAS.minimumDamage,
+      Math.ceil(COMBAT_BALANCE.goldenBugWindowMs / automaticInterval(spawnEnemy(1, 0), player)) *
+        damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1)) *
+        COMBAT_BALANCE.goldenBugHealthFactor,
+    ),
+  );
+
+export const spawnGoldenBug = (resumeEncounter: number, player: CombatPlayer): CombatEnemy => {
+  const resumed = spawnEnemy(resumeEncounter, 0);
+  const maxHealth = goldenBugHealth(player);
+  return {
+    armor: 0,
+    encounter: resumeEncounter,
+    grade: "normal",
+    health: maxHealth,
+    id: Math.min(Number.MAX_SAFE_INTEGER, resumeEncounter + MAX_ENCOUNTER),
+    maxHealth,
+    modifier: null,
+    reward: Math.min(
+      Number.MAX_SAFE_INTEGER,
+      resumed.reward * COMBAT_BALANCE.goldenBugRewardFactor,
+    ),
+  };
+};
+
+export const expireGoldenBug = (state: CombatState): CombatState =>
+  state.goldenBug === null
+    ? state
+    : {
+        ...state,
+        enemy: spawnEnemy(state.goldenBug.resumeEncounter, 0),
+        goldenBug: null,
+      };

@@ -4,6 +4,7 @@ export type EnemyVisualInput = {
   readonly grade: EnemyGrade;
   readonly level: number;
   readonly modifier: PresentationModifier;
+  readonly goldenBug?: boolean;
 };
 export type PresentationModifier = EliteModifier | "wealth" | null;
 export type BodyFamily =
@@ -26,6 +27,7 @@ export type EnemyVisualProfile = {
   readonly decorations: readonly [Decoration, Decoration];
   readonly palette: { readonly accent: string; readonly core: string; readonly emissive: string };
   readonly variant: 0 | 1 | 2;
+  readonly metallic?: boolean;
 };
 export type EnemyVisualSpec = {
   readonly body: BodyFamily;
@@ -268,17 +270,29 @@ const visualScaleRegistry: Readonly<Record<EnemyGrade, number>> = {
   elite: 1.12,
   boss: 1.45,
 };
+const visualModifierCue = (enemy: EnemyVisualInput): ModifierCue => {
+  if (enemy.goldenBug) return "wealth-orbitals";
+  return enemy.modifier === null ? null : modifierCueRegistry[enemy.modifier];
+};
 
 export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
   const seed = stableEnemySeed(enemy);
   const body = bodyFamily(enemy);
-  const profile = FAMILY_PROFILES[body][seed % 3];
+  const profile = enemy.goldenBug
+    ? {
+        attachment: [0.6, 0.2, 0] as const,
+        decorations: ["horns", "orbitals"] as const,
+        metallic: true,
+        palette: { core: "#d4af37", emissive: "#5c4300", accent: "#fff1a3" },
+        variant: 0 as const,
+      }
+    : FAMILY_PROFILES[body][seed % 3];
   if (profile === undefined) throw new RangeError("Enemy visual seed did not select a profile");
   return {
     body,
     decorations: profile.decorations,
-    gradeCue: gradeCueRegistry[enemy.grade],
-    modifierCue: enemy.modifier === null ? null : modifierCueRegistry[enemy.modifier],
+    gradeCue: enemy.goldenBug ? "crown" : gradeCueRegistry[enemy.grade],
+    modifierCue: visualModifierCue(enemy),
     profile,
     scale: visualScaleRegistry[enemy.grade],
     seed,

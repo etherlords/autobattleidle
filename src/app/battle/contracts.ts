@@ -33,6 +33,7 @@ export type BattleUpdate = {
   readonly nowMs: number;
   readonly persistenceChanged: boolean;
   readonly state: CombatState;
+  readonly goldenBugRemainingMs: number | null;
 };
 
 export type BattleControllerEvent =

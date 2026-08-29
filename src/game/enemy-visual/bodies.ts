@@ -17,8 +17,9 @@ const core = (
   color: string,
   emissive: string,
   body: BodyFamily,
+  profile?: EnemyVisualProfile,
 ) => {
-  const node = mesh(geometry, color, emissive);
+  const node = mesh(geometry, color, emissive, profile?.metallic);
   node.name = `enemy-body-${body}`;
   return node;
 };
@@ -44,6 +45,7 @@ const beetle: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "beetle",
+    profile,
   );
   const shell = mesh(
     new THREE.SphereGeometry(...enemyVisualGeometry.body.beetleShell),
@@ -60,6 +62,7 @@ const brute: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "brute",
+    profile,
   );
   return component("body-brute", "body", [body], undefined, bodyCommands(body));
 };
@@ -70,6 +73,7 @@ const wisp: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "wisp",
+    profile,
   );
   return component("body-wisp", "body", [body], undefined, bodyCommands(body));
 };
@@ -80,6 +84,7 @@ const colossus: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "boss-colossus",
+    profile,
   );
   return component("body-boss-colossus", "body", [body], undefined, bodyCommands(body));
 };
@@ -90,6 +95,7 @@ const hydra: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "boss-hydra",
+    profile,
   );
   const heads = enemyVisualLayout.body.hydraHeadOffsets.map((offset) => {
     const head = mesh(
@@ -109,6 +115,7 @@ const mantis: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "mantis",
+    profile,
   );
   const scythes = [-1, 1].map((side) => {
     const scythe = mesh(
@@ -128,6 +135,7 @@ const sentinel: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "sentinel",
+    profile,
   );
   const pylons = [-1, 1].map((side) => {
     const pylon = mesh(
@@ -152,6 +160,7 @@ const drake: EnemyBodyFactory = (profile = defaultProfile) => {
     profile.palette.core,
     profile.palette.emissive,
     "drake",
+    profile,
   );
   torso.scale.set(1.2, 0.65, 0.8);
   const wings = [-1, 1].map((side) => {

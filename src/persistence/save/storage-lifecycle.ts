@@ -1,9 +1,9 @@
 import type { CombatState } from "../../domain/combat";
-import { LEGACY_SAVE_KEY, SAVE_V1_KEY, SAVE_V2_KEY } from "./contracts";
+import { LEGACY_SAVE_KEY, SAVE_V1_KEY, SAVE_V2_KEY, SAVE_V3_KEY } from "./contracts";
 import type { PersistenceBoundary, PersistenceOptions, RestoreResult, SaveV1 } from "./contracts";
 import { encodeSave } from "./codecs";
 import { decodeLegacySave, isPublicationValid, migrateV1 } from "./migrations";
-import { decodeV2, parseV1 } from "./validation";
+import { decodeV2, decodeV3, parseV1 } from "./validation";
 
 export const createStorageLifecycle = (options: PersistenceOptions = {}): PersistenceBoundary => {
   const storage = options.storage ?? globalThis.localStorage;
@@ -16,7 +16,7 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
   const flush = (): void => {
     if (pending === undefined) return;
     try {
-      storage.setItem(SAVE_V2_KEY, pending);
+      storage.setItem(SAVE_V3_KEY, pending);
       pending = undefined;
     } catch {
       /* retain the valid payload for retry */
@@ -52,11 +52,19 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
       return undefined;
     }
   };
+  const readV2 = (nowMs: number): CombatState | undefined => {
+    try {
+      const raw = storage.getItem(SAVE_V2_KEY);
+      return raw === null ? undefined : decodeV2(JSON.parse(raw) as unknown, nowMs);
+    } catch {
+      return undefined;
+    }
+  };
   const needsV2Repair = (nowMs: number): boolean => {
     try {
       const raw = storage.getItem(SAVE_V2_KEY);
       return (
-        raw === null || raw === "" || decodeV2(JSON.parse(raw) as unknown, nowMs) === undefined
+        raw === null || raw === "" || decodeV3(JSON.parse(raw) as unknown, nowMs) === undefined
       );
     } catch {
       return true;
@@ -65,7 +73,7 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
   const publish = (state: CombatState): boolean => {
     const encoded = encodeSave(state);
     try {
-      storage.setItem(SAVE_V2_KEY, encoded);
+      storage.setItem(SAVE_V3_KEY, encoded);
       return true;
     } catch {
       pending = encoded;
@@ -74,6 +82,8 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
     }
   };
   const readRepairSource = (nowMs: number): CombatState | undefined => {
+    const v2 = readV2(nowMs);
+    if (v2 !== undefined) return v2;
     const legacy = readLegacy(nowMs);
     if (legacy !== undefined) return legacy;
     const source = readV1();
@@ -93,9 +103,9 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
   return {
     load: (fallback, nowMs) => {
       try {
-        const raw = storage.getItem(SAVE_V2_KEY);
+        const raw = storage.getItem(SAVE_V3_KEY);
         if (raw !== null && raw !== "") {
-          const current = decodeV2(JSON.parse(raw) as unknown, nowMs);
+          const current = decodeV3(JSON.parse(raw) as unknown, nowMs);
           if (current !== undefined) return current;
         }
       } catch {
@@ -105,7 +115,10 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
     },
     hasPreviousVersionSave: () => {
       try {
-        return storage.getItem(SAVE_V1_KEY) !== null && needsV2Repair(0);
+        return (
+          (storage.getItem(SAVE_V2_KEY) !== null || storage.getItem(SAVE_V1_KEY) !== null) &&
+          needsV2Repair(0)
+        );
       } catch {
         return false;
       }
@@ -128,7 +141,7 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
         timer = undefined;
       }
       try {
-        storage.removeItem(SAVE_V2_KEY);
+        storage.removeItem(SAVE_V3_KEY);
       } catch {
         /* live reset remains usable */
       }

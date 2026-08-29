@@ -21,6 +21,7 @@ export class BattleStatus {
   private readonly automaticFill = document.createElement("div");
   private readonly automaticText = makeText("p", "");
   private readonly coins = makeText("p", "");
+  private readonly goldenBug = makeText("p", "");
 
   constructor() {
     this.element.className = "hud-status";
@@ -28,11 +29,19 @@ export class BattleStatus {
     this.health.append(this.healthFill, this.healthText);
     this.automaticFill.className = "automatic-progress-fill";
     this.automatic.append(this.automaticFill);
-    this.element.append(this.enemy, this.health, this.automatic, this.automaticText, this.coins);
+    this.goldenBug.className = "golden-bug-countdown";
+    this.element.append(
+      this.enemy,
+      this.health,
+      this.automatic,
+      this.automaticText,
+      this.goldenBug,
+      this.coins,
+    );
   }
 
   render(snapshot: BattleSnapshot): void {
-    const { automatic, coins, enemy } = snapshot;
+    const { automatic, coins, enemy, goldenBug } = snapshot;
     const level = formatNumber(enemy.level);
     const health = formatNumber(enemy.health);
     const maxHealth = formatNumber(enemy.maxHealth);
@@ -61,5 +70,9 @@ export class BattleStatus {
       : "Automatic attack: locked";
     this.coins.textContent = `Coins: ${formattedCoins.text}`;
     this.coins.title = formattedCoins.exact;
+    this.goldenBug.textContent =
+      goldenBug === null || goldenBug === undefined
+        ? ""
+        : `Golden Bug escaping in ${(goldenBug.remainingMs / 1000).toFixed(1)}s`;
   }
 }

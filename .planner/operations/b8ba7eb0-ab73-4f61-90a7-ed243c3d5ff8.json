@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "b8ba7eb0-ab73-4f61-90a7-ed243c3d5ff8",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T11:46:38.678Z",
+  "itemId": "ABI-010",
+  "idempotencyKey": "abi010-gold-material-complete-20260829-01",
+  "requestFingerprint": "3bd20c0ed34f45df25e0c0c87823cd1edc3f4dfabd6cc48737f0f5f2eb4de019",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md.planner-tmp-b8ba7eb0-ab73-4f61-90a7-ed243c3d5ff8-0",
+      "beforeHash": "1d11944e9797fbc2504dfbacad68953065623ddce27ef93843f4169016ad6920",
+      "afterHash": "b6008bc86ae99c0b2b869e343d2d08592fbac32f1aa02e672936b2a513b2912f"
+    }
+  ],
+  "committedAt": "2026-08-29T11:46:38.727Z"
+}

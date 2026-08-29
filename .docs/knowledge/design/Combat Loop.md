@@ -40,18 +40,14 @@ Defeat rewards are granted exactly once, with a 2x request when the roll is belo
 
 ## State transitions
 
-1. Spawn an ordinary enemy, boss, or eligible timed event from deterministic progression state.
-2. Accept canvas/keyboard manual attacks and scheduled automatic attacks through one command path.
-3. Apply armor penetration, armor, critical and damage formulas; emit one presentation event.
-4. On ordinary death, grant reward once, advance encounter and spawn the next enemy.
-5. On Golden Bug death, grant the event reward once and resume ordinary progression.
-6. On Golden Bug timeout, grant nothing, emit escape feedback and resume ordinary progression.
-7. Emit bounded presentation cues for hit, armored hit, critical hit, death, reward, boss transition and
-   Golden Bug outcomes; effects never alter simulation state.
-8. Continue without a terminal encounter or repeatable-upgrade cap.
+1. Spawn progression enemies with the existing ordinary/boss cadence. After each 50th defeated progression encounter, interrupt before the next spawn with one Golden Bug and retain that exact next encounter as `resumeEncounter`.
+2. Give the bug one fixed 10,000 ms live deadline. Accepted manual and automatic hits use the shared attack path and never move that deadline or the automatic cooldown schedule.
+3. Derive bug health as `ceil(10000 / automaticInterval) * baseDamage * 5`. Even the automatic-only envelope cannot kill it; the measured 10 Hz manual envelope plus automatic attacks can.
+4. On Golden Bug death, grant exactly one safe-saturated reward equal to ten times the resumed enemy base reward, clear event state, and spawn `resumeEncounter`.
+5. At deadline equality, timeout wins before automatic damage: grant nothing, emit escape feedback, clear event state, and spawn the same `resumeEncounter`.
+6. Ordinary/boss death, reward, rollover, and progression otherwise retain their existing rules. Presentation consumes immutable event identity/countdown and never changes outcomes.
 
-Pure formulas and transitions require focused unit tests. Presentation owns effect lifetime and
-deterministic cleanup.
+Focused tests cover spawn/kill/escape, deadline anchoring/equality, reward/saturation, envelopes, stale attacks, and progression. Independent browser QA proved 9.9 s immediately after reload, auto-only escape after 10.2 s with zero reward, exactly 50 baseline manual hits for a +1,220 reward once, and boss resume at encounter 70.
 
 ## Planned automatic timing and pause follow-ups
 

@@ -7,6 +7,7 @@ export type {
   AttackRolls,
   AttackSource,
   CombatEnemy,
+  GoldenBugEvent,
   CombatPlayer,
   CombatState,
   EliteModifier,
@@ -15,7 +16,13 @@ export type {
   UpgradeId,
   UpgradePurchase,
 } from "./combat/contracts";
-export { spawnEnemy, spawnStarterEnemy } from "./combat/progression";
+export {
+  expireGoldenBug,
+  goldenBugHealth,
+  spawnEnemy,
+  spawnGoldenBug,
+  spawnStarterEnemy,
+} from "./combat/progression";
 export {
   armorPenetrationForLevel,
   automaticInterval,

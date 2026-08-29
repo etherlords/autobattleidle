@@ -74,6 +74,7 @@ export const createCombatState = (
   enemy: spawnStarterEnemy(firstEliteModifierRoll),
   nextAutomaticAttackAtMs: 0,
   player: normalizedPlayer(player),
+  goldenBug: null,
 });
 
 export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>

@@ -11,14 +11,24 @@ export type EnemyVisualComponent = {
   readonly dispose?: () => void;
 };
 
-export const material = (color: string, emissive = "#000000"): THREE.MeshStandardMaterial =>
-  new THREE.MeshStandardMaterial({ color, emissive, roughness: 0.55 });
+export const material = (
+  color: string,
+  emissive = "#000000",
+  metallic = false,
+): THREE.MeshStandardMaterial =>
+  new THREE.MeshStandardMaterial({
+    color,
+    emissive,
+    metalness: metallic ? 0.8 : 0,
+    roughness: metallic ? 0.25 : 0.55,
+  });
 
 export const mesh = (
   geometry: THREE.BufferGeometry,
   color: string,
   emissive?: string,
-): THREE.Mesh => new THREE.Mesh(geometry, material(color, emissive));
+  metallic = false,
+): THREE.Mesh => new THREE.Mesh(geometry, material(color, emissive, metallic));
 
 export const component = (
   key: string,

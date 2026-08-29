@@ -1,4 +1,5 @@
 import { automaticInterval } from "./combat";
+import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
 export type BattleEvent = { readonly id: number; readonly message: string };
@@ -16,6 +17,7 @@ export type BattleEnemySnapshot = {
   readonly maxHealth: number;
   readonly modifier: EliteModifier | null;
   readonly name: string;
+  readonly goldenBug?: boolean;
 };
 export type BattleSnapshot = {
   readonly automatic: {
@@ -26,6 +28,7 @@ export type BattleSnapshot = {
   readonly coins: number;
   readonly encounter: string;
   readonly enemy: BattleEnemySnapshot;
+  readonly goldenBug?: { readonly remainingMs: number } | null;
   readonly events: readonly BattleEvent[];
   readonly upgrades: readonly UpgradeSnapshot[];
 };
@@ -38,6 +41,7 @@ export const createBattleSnapshot = (
   nowMs: number,
   events: readonly BattleEvent[],
   upgrades: readonly UpgradeSnapshot[],
+  goldenBugRemainingMs: number | null = null,
 ): BattleSnapshot => ({
   automatic: {
     intervalMs: automaticInterval(state.enemy, state.player),
@@ -53,7 +57,17 @@ export const createBattleSnapshot = (
     maxHealth: state.enemy.maxHealth,
     modifier: state.enemy.modifier,
     name: enemyName(state.enemy.grade),
+    goldenBug: state.goldenBug !== null,
   },
+  goldenBug:
+    state.goldenBug === null
+      ? null
+      : {
+          remainingMs: Math.min(
+            COMBAT_BALANCE.goldenBugWindowMs,
+            goldenBugRemainingMs ?? COMBAT_BALANCE.goldenBugWindowMs,
+          ),
+        },
   events,
   upgrades,
 });

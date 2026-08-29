@@ -6,7 +6,8 @@ export class EnemyUnitModel extends UnitModel<EnemyVisualInput> {
     return (
       previous.grade === next.grade &&
       previous.level === next.level &&
-      previous.modifier === next.modifier
+      previous.modifier === next.modifier &&
+      previous.goldenBug === next.goldenBug
     );
   }
 }

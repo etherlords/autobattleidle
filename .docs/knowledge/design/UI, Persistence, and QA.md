@@ -77,13 +77,13 @@ Manual attacks, upgrades, modal interaction, rendering, persistence, and enemy a
 
 ## Persistence
 
-Progress is stored in version-addressed `localStorage` slots after meaningful state changes with a short debounce and on page hide. The current V2 slot is `etherlords.autobattleidle.save.v2`; retained V1 is `etherlords.autobattleidle.save.v1`; `etherlords.autobattleidle.save` is the historical unversioned compatibility source. Normal saves and reset affect only V2.
+Progress is stored in version-addressed `localStorage` slots after meaningful state changes with a short debounce and on page hide. Current V3 is `etherlords.autobattleidle.save.v3`; retained predecessors are `.v2` and `.v1`; `etherlords.autobattleidle.save` remains the unversioned compatibility source. Normal saves and reset affect only V3.
 
-Every task preflight classifies persistence impact as `no schema change`, `compatible extension`, or `schema migration`. A task with no schema change must still prove that the supported historical save fixtures load without semantic progress loss. A task that changes the shape or meaning of saved data ships the version bump, the next-version migration adapter, source and target fixtures, and load -> migrate -> save -> reload proof in the same delivery.
+V3 adds canonical `goldenBug` identity plus `resumeEncounter`. It never stores the absolute ten-second deadline, Three.js objects, DOM state, or presentation objects. Loading an active event reconstructs a fresh deadline at load time; independent browser QA read 9.9 s 100 ms after reload. Manual input never resets the event deadline or automatic cooldown.
 
-Supported saves never silently reset. Before gameplay, HUD, timers, or autosave, a valid versioned V2 wins. When it is missing, empty, or invalid, a valid schema-V2 document from the unversioned compatibility key is validated as V2 and published to the V2 slot without changing the original bytes; only then may bootstrap fall back to migrating V1. Failed publication leaves the valid in-memory state and every source value intact for bounded retry.
+Bootstrap prefers valid V3. If V3 is missing/invalid, it validates V2, preserves its raw bytes, migrates one version to V3, validates and publishes V3, then reloads stably. V1 composes through V2 to V3; the unversioned V2 source remains byte-for-byte intact. Failed publication preserves valid in-memory state and every source. Restore repairs only missing/invalid V3 from supported prior sources. Malformed/future values recover safely; explicit reset removes only V3.
 
-A visible native Restore from previous version action may explicitly repair a missing, empty, or invalid V2 from V1: it rereads/revalidates V1, remigrates, validates, and writes V2 before replacing live state; its accessible status reports success or failure. Malformed data and unsupported future versions fall back safely without crashing. A user-confirmed reset removes only V2.
+Every task still classifies persistence impact. No-schema work proves historical loads; schema work ships one-version adapters, fixtures, and load -> migrate -> save -> reload proof. ABI-010 direct tests and browser QA prove V1/V2 retention, active-event reload, malformed V3 plus valid V2 recovery, and unchanged semantic progress.
 
 ## Delivery lifecycle
 

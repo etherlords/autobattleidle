@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "e0752e29-5c75-45f3-94b1-f02abb7a2615",
+  "operation": "gate.record",
+  "state": "committed",
+  "createdAt": "2026-08-29T11:55:40.295Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md.planner-tmp-e0752e29-5c75-45f3-94b1-f02abb7a2615"
+    }
+  ],
+  "committedAt": "2026-08-29T11:55:40.338Z"
+}

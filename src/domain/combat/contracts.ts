@@ -15,6 +15,11 @@ export type CombatEnemy = {
   readonly reward: number;
 };
 
+export type GoldenBugEvent = {
+  readonly id: number;
+  readonly resumeEncounter: number;
+};
+
 export type CombatPlayer = {
   readonly automaticSpeedLevel: number;
   readonly criticalChance: number;
@@ -46,6 +51,7 @@ export type CombatState = {
   readonly enemy: CombatEnemy;
   readonly nextAutomaticAttackAtMs: number;
   readonly player: CombatPlayer;
+  readonly goldenBug: GoldenBugEvent | null;
 };
 
 export type AttackRolls = {

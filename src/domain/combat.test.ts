@@ -10,6 +10,8 @@ import {
   damageForLevel,
   doubleRewardChanceForLevel,
   purchaseUpgrade,
+  spawnGoldenBug,
+  type CombatState,
   spawnEnemy,
   UPGRADES,
   upgradeCost,
@@ -42,6 +44,57 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
 };
 
 describe("endless combat progression", () => {
+  it("spawns one Golden Bug after encounter 50, resumes encounter 51, and awards its fixed reward once", () => {
+    const ordinary = spawnEnemy(50, 0);
+    const initial = { ...createCombatState(), enemy: { ...ordinary, health: 1 } };
+    const spawned = attack(initial, {
+      atMs: 0,
+      enemyId: ordinary.id,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    expect(spawned.state.goldenBug).toEqual({ id: 50, resumeEncounter: 51 });
+    expect(spawned.state.enemy).toEqual(spawnGoldenBug(51, initial.player));
+    const killed = attack(
+      { ...spawned.state, enemy: { ...spawned.state.enemy, health: 1 } },
+      {
+        atMs: 1,
+        enemyId: spawned.state.enemy.id,
+        rolls: { critical: 1, doubleReward: 0, nextEliteModifier: 0 },
+        source: "manual",
+      },
+    );
+    expect(killed.event).toMatchObject({ defeated: true, reward: spawnEnemy(51, 0).reward * 10 });
+    expect(killed.state).toMatchObject({ goldenBug: null, enemy: spawnEnemy(51, 0) });
+  });
+
+  it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
+    const player = createCombatState().player;
+    let state: CombatState = {
+      ...createCombatState(player, 0, true),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 1_000,
+    };
+    for (let atMs = 1_000; atMs <= 10_000; atMs += 1_000)
+      state = attack(state, {
+        atMs,
+        enemyId: state.enemy.id,
+        rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+        source: "automatic",
+      }).state;
+    expect(state.enemy.health).toBeGreaterThan(0);
+    const beforeCooldown = state.nextAutomaticAttackAtMs;
+    for (let atMs = 0; atMs < 10_000 && state.goldenBug !== null; atMs += 100)
+      state = attack(state, {
+        atMs,
+        enemyId: state.enemy.id,
+        rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+        source: "manual",
+      }).state;
+    expect(state.goldenBug).toBeNull();
+    expect(state.nextAutomaticAttackAtMs).toBe(beforeCooldown);
+  });
   it("defeats only the fresh starter enemy on the tenth baseline manual attack", () => {
     let state = createCombatState();
     expect(state.enemy).toMatchObject({ encounter: 1, health: 10, maxHealth: 10 });
@@ -264,24 +317,24 @@ describe("endless combat progression", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
     expect(first).toEqual({
-      armorPreventedDamage: 387767,
-      automaticAttacks: 5712,
+      armorPreventedDamage: 142681,
+      automaticAttacks: 2885,
       bosses: [
         { elapsedMs: 777468.7521174462, encounter: 35 },
-        { elapsedMs: 2830992.261538386, encounter: 70 },
-        { elapsedMs: 4694837.4228284955, encounter: 105 },
+        { elapsedMs: 1736457.3179502685, encounter: 70 },
+        { elapsedMs: 2448779.8985953485, encounter: 105 },
       ],
-      coins: 37715,
-      elapsedMs: 4694837.4228284955,
+      coins: 36501,
+      elapsedMs: 2448779.8985953485,
       encounters: 106,
       manualAttacks: 0,
-      penetration: 0.375,
+      penetration: 0.35526315789473684,
       purchases: {
-        "armor-penetration": 20,
+        "armor-penetration": 18,
         "automatic-speed": 11,
         "automatic-unlock": 1,
-        "critical-chance": 9,
-        damage: 64,
+        "critical-chance": 3,
+        damage: 72,
         "double-reward": 0,
       },
     });

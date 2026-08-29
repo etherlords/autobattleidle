@@ -3,7 +3,12 @@ import { describe, expect, it } from "vitest";
 import { BattleController } from "./controller";
 import { battleCommands } from "./commands";
 import { presentBattleUpdate } from "./presenter";
-import { createCombatState, purchaseUpgrade, type CombatState } from "../../domain/combat";
+import {
+  createCombatState,
+  purchaseUpgrade,
+  spawnGoldenBug,
+  type CombatState,
+} from "../../domain/combat";
 import type { BattleControllerEvent } from "./contracts";
 
 const rolls = () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 });
@@ -15,6 +20,56 @@ const stateWith = (state: CombatState, health: number, coins = state.coins): Com
 });
 
 describe("BattleController", () => {
+  it("expires Golden Bug at the exact deadline before automatic damage and publishes one zero-reward transition", () => {
+    const player = createCombatState().player;
+    const initial = {
+      ...createCombatState(player, 0, true),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 10_000,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    const events: BattleControllerEvent[] = [];
+    controller.subscribe((event) => events.push(event));
+    expect(controller.dispatch(battleCommands.frame(10_000))).toBe(true);
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      persistenceChanged: true,
+      state: { goldenBug: null, enemy: { encounter: 51 } },
+    });
+    expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
+    expect(events).toHaveLength(2);
+    expect(events[0]?.events.at(-1)?.message).toBe("Golden Bug escaped.");
+  });
+
+  it("keeps a Golden Bug deadline fixed across nonlethal manual and automatic hits", () => {
+    const player = createCombatState().player;
+    const initial = {
+      ...createCombatState(player, 0, true),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 1_000,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    controller.dispatch(battleCommands.attack("manual"));
+    controller.dispatch(battleCommands.frame(1_000));
+    expect(controller.currentUpdate().goldenBugRemainingMs).toBe(9_000);
+    controller.dispatch(battleCommands.frame(10_000));
+    expect(controller.currentUpdate().state).toMatchObject({
+      goldenBug: null,
+      enemy: { encounter: 51 },
+    });
+  });
   it("publishes complete synchronous commands with exact history and persistence flags", () => {
     const initial = stateWith(
       createCombatState({ criticalChance: 0, damage: 10, doubleRewardChance: 0 }),

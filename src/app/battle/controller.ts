@@ -1,4 +1,5 @@
-import { attack as resolveAttack, purchaseUpgrade } from "../../domain/combat";
+import { attack as resolveAttack, expireGoldenBug, purchaseUpgrade } from "../../domain/combat";
+import { COMBAT_BALANCE } from "../../domain/combat";
 import type { AttackEvent, AttackSource, CombatState, UpgradeId } from "../../domain/combat";
 import type { BattleEvent } from "../../domain/snapshot";
 import { battleEventMessages } from "./presenter";
@@ -28,10 +29,13 @@ export class BattleController {
   private nextEventId = 1;
   private nowMs: number;
   private state: CombatState;
+  private goldenBugDeadlineMs: number | undefined;
+  private goldenBugDeadlineEventId: number | undefined;
 
   constructor(private readonly options: BattleControllerOptions) {
     this.nowMs = options.initialNowMs;
     this.state = options.initialState;
+    this.syncGoldenBugDeadline();
   }
 
   dispatch(command: BattleCommand): boolean {
@@ -56,6 +60,11 @@ export class BattleController {
   }
 
   private performAttack(source: AttackSource): boolean {
+    if (this.expireGoldenBug())
+      return this.publishMessage(
+        { ...this.update(true), automaticOutcome: null, type: "frame" },
+        "Golden Bug escaped.",
+      );
     const result = resolveAttack(this.state, {
       atMs: this.nowMs,
       enemyId: this.state.enemy.id,
@@ -63,6 +72,7 @@ export class BattleController {
       source,
     });
     this.state = result.state;
+    this.syncGoldenBugDeadline();
     if (result.event.type === "ignored") return false;
     return this.publishMessage(
       {
@@ -77,6 +87,11 @@ export class BattleController {
 
   private performFrame(nowMs: number): boolean {
     this.nowMs = nowMs;
+    if (this.expireGoldenBug())
+      return this.publishMessage(
+        { ...this.update(true), automaticOutcome: null, type: "frame" },
+        "Golden Bug escaped.",
+      );
     if (!this.state.automaticUnlocked || this.nowMs < this.state.nextAutomaticAttackAtMs)
       return false;
     const automaticOutcome = this.automaticAttack();
@@ -99,6 +114,7 @@ export class BattleController {
       source: "automatic",
     });
     this.state = result.state;
+    this.syncGoldenBugDeadline();
     return result.event;
   }
 
@@ -129,12 +145,14 @@ export class BattleController {
   private performReset(): boolean {
     this.state = this.options.createInitialState();
     this.resetEvents();
+    this.syncGoldenBugDeadline();
     return this.publishMessage({ ...this.update(), type: "reset" }, battleEventMessages.reset());
   }
 
   private performRestore(state: CombatState): boolean {
     this.state = state;
     this.resetEvents();
+    this.syncGoldenBugDeadline();
     return this.publishMessage(
       { ...this.update(), type: "restore" },
       battleEventMessages.restore(),
@@ -142,7 +160,40 @@ export class BattleController {
   }
 
   private update(persistenceChanged = false): BattleUpdate {
-    return { events: this.events, nowMs: this.nowMs, persistenceChanged, state: this.state };
+    return {
+      events: this.events,
+      goldenBugRemainingMs:
+        this.goldenBugDeadlineMs === undefined
+          ? null
+          : Math.max(0, this.goldenBugDeadlineMs - this.nowMs),
+      nowMs: this.nowMs,
+      persistenceChanged,
+      state: this.state,
+    };
+  }
+
+  private expireGoldenBug(): boolean {
+    if (
+      this.state.goldenBug === null ||
+      this.goldenBugDeadlineMs === undefined ||
+      this.nowMs < this.goldenBugDeadlineMs
+    )
+      return false;
+    this.state = expireGoldenBug(this.state);
+    this.goldenBugDeadlineMs = undefined;
+    this.goldenBugDeadlineEventId = undefined;
+    return true;
+  }
+
+  private syncGoldenBugDeadline(): void {
+    if (this.state.goldenBug === null) {
+      this.goldenBugDeadlineMs = undefined;
+      this.goldenBugDeadlineEventId = undefined;
+      return;
+    }
+    if (this.goldenBugDeadlineEventId === this.state.goldenBug.id) return;
+    this.goldenBugDeadlineEventId = this.state.goldenBug.id;
+    this.goldenBugDeadlineMs = this.nowMs + COMBAT_BALANCE.goldenBugWindowMs;
   }
 
   private publishMessage(event: BattleControllerEvent, message: string | undefined): boolean {

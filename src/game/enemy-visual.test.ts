@@ -26,6 +26,25 @@ const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
 };
 
 describe("enemy visual factory", () => {
+  it("selects a compact metallic non-color Golden Bug composition and disposes it", () => {
+    const visual = createEnemyVisual({
+      grade: "normal",
+      level: 51,
+      modifier: null,
+      goldenBug: true,
+    });
+    expect(visual.spec).toMatchObject({
+      body: "beetle",
+      gradeCue: "crown",
+      modifierCue: "wealth-orbitals",
+    });
+    const body = visual.group.getObjectByName("enemy-body-beetle");
+    if (!(body instanceof THREE.Mesh) || Array.isArray(body.material))
+      throw new Error("Expected Golden Bug body");
+    expect(body.material.metalness).toBeGreaterThan(0);
+    visual.dispose();
+    expect(visual.group.parent).toBeNull();
+  });
   it("selects stable varied ordinary bodies and decorations from snapshot identity", () => {
     const families = new Set<string>();
     const decorations = new Set<string>();

@@ -4,8 +4,8 @@ id: ABI-018
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 13
-status: Blocked
+revision: 14
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 13
-- Last update: Append corrected ABI-018 stats/APS execution step without stale ABI-016 cadence coupling.
+- Status: Ready
+- Revision: 14
+- Last update: Reconcile dependency-resolved lifecycle drift: all declared dependencies are Done and no live lease or recovery blocker exists.
 
 ## Execution plan
 
@@ -234,3 +234,21 @@ requiredGates:
 - Step ID: stats-aps-manager-closure-v2
 - Evidence:
   - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-018-show-current-upgrade-stats-and-rebalance-automatic-attack-sp/BRIEF.md
+
+### evt-cadd148c-3995-490e-99e1-b781718ba0ba
+
+- Timestamp: 2026-08-29T11:27:37.772Z
+- Actor: replacement-manager-root
+- Operation: task.advance
+- Prior revision: 13
+- Resulting revision: 14
+- Summary: Reconcile dependency-resolved lifecycle drift: all declared dependencies are Done and no live lease or recovery blocker exists.
+- Idempotency key: abi-s1-reconcile-abi018-ready-replacement-20260829-01
+- Request fingerprint: 3f9a16a3893647d7a4f5c021201839365de807a22acaa866753c4ccf560548dc
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - Planner tasks_list: ABI-018 status Blocked, openDependencies=[], lease=null, revision=3
+  - Planner doctor: recovery.required=false and journalPaths=[]
+  - ABI-018 canonical activity has no lifecycle transition after its 2026-08-28 plan correction
+  - All declared dependencies ABI-015, ABI-017, ABI-023 are Done

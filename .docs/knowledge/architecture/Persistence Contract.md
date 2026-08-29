@@ -21,13 +21,11 @@ The browser stores one versioned canonical game-state document in localStorage. 
 
 ## Write and load
 
-Save after meaningful state changes using a short debounce and on page hide. Version 1 lives at `etherlords.autobattleidle.save.v1`; version 2 lives at `etherlords.autobattleidle.save.v2`. The historical unversioned key is `etherlords.autobattleidle.save`.
+Save after meaningful state changes using a short debounce and on page hide. Version 1 lives at `etherlords.autobattleidle.save.v1`, version 2 at `.save.v2`, and current version 3 at `.save.v3`; the historical unversioned key remains `etherlords.autobattleidle.save`.
 
-Bootstrap first loads a valid version-addressed V2 slot. If that slot is missing, empty, or invalid, bootstrap next parses the unversioned value once: a valid schema-V2 document is imported into the V2 slot without applying the V1 adapter, while its original raw bytes remain unchanged. Only when neither source supplies valid V2 does bootstrap parse the V1 slot, validate the historical shape, apply the V1-to-V2 adapter, validate/reconstruct V2 domain state, and publish V2. A valid version-addressed V2 always wins and no compatibility source may overwrite it.
+Bootstrap first loads valid V3. Otherwise it validates a supported V2 source, preserves its exact bytes, applies the deterministic V2-to-V3 adapter, validates/reconstructs V3, and only then publishes V3. V1 upgrades compose one version at a time through V2; a valid unversioned schema-V2 document follows the same validation and publication rule without changing its source bytes. Valid V3 always wins.
 
-A deployment that does not change the schema must continue to load the current payload unchanged. A schema bump ships a deterministic one-version adapter for each supported predecessor; longer upgrades compose those adapters. Do not scatter version checks through application or UI code.
-
-Migration and compatibility import preserve player progress: coins, encounter and remaining-health progress, automatic unlock, upgrade levels, armor penetration, and other canonical domain values. New fields receive explicit safe defaults only during schema migration. Derived damage/chance/cooldown fields are recomputed from canonical levels instead of trusting stale serialized copies.
+V3 persists progression, currency, upgrades, enemy, and optional Golden Bug identity/resume encounter. It excludes the live event deadline and all presentation state; an active event receives a fresh ten-second deadline at load. Derived damage/chance/cooldown fields are recomputed or cross-validated from canonical levels. A schema bump must continue to provide one deterministic adapter per supported predecessor.
 
 ## Migration commit and recovery
 
@@ -37,9 +35,9 @@ Malformed JSON, wrong types, invalid values, unsupported future versions, unavai
 
 ## Historical V1 to V2 requirement
 
-Repository history contains schema version 1 before armor-penetration and expanded level fields, while the current runtime writes schema version 2. The V1 to V2 adapter must preserve coins, encounter/enemy state, automatic unlock, damage, critical chance, double-reward chance, and automatic speed; it derives the corresponding levels where required and defaults armor penetration to level 0.
+Repository history contains schema V1 before armor-penetration/expanded levels, V2 before timed-event state, and current V3. V1-to-V2 preserves coins, enemy/progression, automatic unlock, damage, critical, double reward, and automatic speed while deriving levels and defaulting armor penetration to zero. V2-to-V3 preserves every V2 field and defaults `goldenBug` to null.
 
-Golden V1 and V2 fixtures must prove load, migration, save, reload, and unchanged semantic progress. Browser QA must seed an actual historical payload, load the deployed application, observe the same progress plus safe new defaults, reload again, and confirm the upgraded V2 payload remains stable.
+Golden V1/V2 fixtures prove one-version-at-a-time load, migration, save, reload, and unchanged semantic progress. A direct version-addressed V2 test proves its raw bytes remain intact while V3 is published and stably reloaded. Active V3 tests prove event identity/resume encounter round-trip without a stored deadline; load reconstructs a fresh ten-second window. Browser QA additionally proved malformed V3 plus valid V2 recovery and historical enemy/coin preservation.
 
 ## V1 gameplay limit
 

@@ -3,7 +3,7 @@ import v1Fixture from "./fixtures/save-v1.json";
 import v2Fixture from "./fixtures/save-v2.json";
 import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 
-import { COMBAT_BALANCE, createCombatState, spawnEnemy } from "../domain/combat";
+import { COMBAT_BALANCE, createCombatState, spawnEnemy, spawnGoldenBug } from "../domain/combat";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -12,6 +12,7 @@ import {
   LEGACY_SAVE_KEY,
   SAVE_V1_KEY,
   SAVE_V2_KEY,
+  SAVE_V3_KEY,
   SAVE_VERSION,
 } from "./persistence-boundary";
 
@@ -23,6 +24,42 @@ const fallback = () =>
   );
 
 describe("persistence boundary", () => {
+  it("retains a versioned V2 source byte-for-byte while publishing and reloading V3", () => {
+    const v2 = JSON.stringify(v2Fixture);
+    const values = new Map<string, string>([[SAVE_V2_KEY, v2]]);
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+    const migrated = boundary.load(fallback(), 100);
+    expect(values.get(SAVE_V2_KEY)).toBe(v2);
+    expect(values.get(SAVE_V3_KEY)).toBe(encodeSave(migrated));
+    expect(boundary.load(fallback(), 200)).toMatchObject({
+      coins: migrated.coins,
+      enemy: migrated.enemy,
+    });
+  });
+
+  it("persists an active Golden Bug in V3 without a deadline and reloads a fresh event window", () => {
+    const player = fallback().player;
+    const state = {
+      ...fallback(),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 4_000,
+    };
+    const raw = encodeSave(state);
+    expect(raw).not.toContain("deadline");
+    expect(decodeSave(JSON.parse(raw), fallback(), 123)).toMatchObject({
+      goldenBug: state.goldenBug,
+      enemy: state.enemy,
+      nextAutomaticAttackAtMs: 0,
+    });
+  });
   it("round-trips only canonical state and rejects malformed or unsupported values", () => {
     const state = {
       ...fallback(),
@@ -137,7 +174,7 @@ describe("persistence boundary", () => {
     expect(storageRemoves).toBe(1);
   });
 
-  it("migrates the authentic V1 shape into V2 without changing the prior bytes", () => {
+  it("migrates the authentic V1 shape through V2 into V3 without changing the prior bytes", () => {
     const v1 = JSON.stringify(v1Fixture);
     const values = new Map<string, string>([[SAVE_V1_KEY, v1]]);
     const boundary = createPersistenceBoundary({
@@ -162,13 +199,14 @@ describe("persistence boundary", () => {
       },
     });
     expect(values.get(SAVE_V1_KEY)).toBe(v1);
-    expect(values.get(SAVE_V2_KEY)).toBe(encodeSave(migrated));
-    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(v2Fixture);
-    expect(boundary.hasPreviousVersionSave()).toBe(false);
-    expect(boundary.restorePreviousVersion(200)).toEqual({
-      message: "Current-version progress is already valid.",
-      state: undefined,
+    expect(values.get(SAVE_V3_KEY)).toBe(encodeSave(migrated));
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({
+      ...v2Fixture,
+      goldenBug: null,
+      version: SAVE_VERSION,
     });
+    expect(boundary.hasPreviousVersionSave()).toBe(true);
+    expect(boundary.restorePreviousVersion(200).state).toMatchObject({ coins: 7 });
     expect(boundary.load(fallback(), 200)).toMatchObject({ coins: 7, enemy: { health: 84 } });
     boundary.reset();
     expect(values.has(SAVE_V2_KEY)).toBe(false);
@@ -185,7 +223,7 @@ describe("persistence boundary", () => {
     };
     const values = new Map<string, string>([
       [LEGACY_SAVE_KEY, legacy],
-      [SAVE_V2_KEY, "invalid current payload"],
+      [SAVE_V3_KEY, "invalid current payload"],
     ]);
     const boundary = createPersistenceBoundary({
       page: { addEventListener: () => undefined, removeEventListener: () => undefined },
@@ -197,7 +235,11 @@ describe("persistence boundary", () => {
     });
     expect(boundary.load(fallback(), 100)).toMatchObject(expectedState);
     expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
-    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({
+      ...legacyV2Fixture,
+      goldenBug: null,
+      version: SAVE_VERSION,
+    });
     expect(boundary.load(fallback(), 200)).toMatchObject(expectedState);
     values.set(LEGACY_SAVE_KEY, JSON.stringify({ ...legacyV2Fixture, coins: 1 }));
     expect(boundary.load(fallback(), 300)).toMatchObject({ coins: 25 });
@@ -284,7 +326,7 @@ describe("persistence boundary", () => {
     const values = new Map<string, string>([
       [SAVE_V1_KEY, v1],
       [LEGACY_SAVE_KEY, legacy],
-      [SAVE_V2_KEY, "invalid current payload"],
+      [SAVE_V3_KEY, "invalid current payload"],
     ]);
     const timers = new Map<number, () => void>();
     let writes = 0;
@@ -312,18 +354,26 @@ describe("persistence boundary", () => {
     expect(boundary.restorePreviousVersion(100).state).toMatchObject({
       coins: legacyV2Fixture.coins,
     });
-    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({
+      ...legacyV2Fixture,
+      goldenBug: null,
+      version: SAVE_VERSION,
+    });
     expect(values.get(SAVE_V1_KEY)).toBe(v1);
     expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
     timers.get(1)?.();
-    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toEqual(legacyV2Fixture);
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({
+      ...legacyV2Fixture,
+      goldenBug: null,
+      version: SAVE_VERSION,
+    });
   });
 
   it("repairs only an invalid current slot and keeps the in-memory migration on write failure", () => {
     const v1 = JSON.stringify({ ...v1Fixture, coins: 3 });
     const values = new Map<string, string>([
       [SAVE_V1_KEY, v1],
-      [SAVE_V2_KEY, "not json"],
+      [SAVE_V3_KEY, "not json"],
     ]);
     let writesFail = true;
     const timers = new Map<number, () => void>();
@@ -347,11 +397,11 @@ describe("persistence boundary", () => {
     });
     expect(boundary.load(fallback(), 0)).toMatchObject({ coins: 3 });
     expect(values.get(SAVE_V1_KEY)).toBe(v1);
-    expect(values.get(SAVE_V2_KEY)).toBe("not json");
+    expect(values.get(SAVE_V3_KEY)).toBe("not json");
     expect(timers.size).toBe(1);
     writesFail = false;
     timers.get(1)?.();
-    expect(JSON.parse(values.get(SAVE_V2_KEY) ?? "")).toMatchObject({
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({
       version: SAVE_VERSION,
       coins: 3,
     });

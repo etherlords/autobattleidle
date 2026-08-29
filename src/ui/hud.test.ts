@@ -116,6 +116,16 @@ afterEach(() => {
 });
 
 describe("createHud", () => {
+  it("renders a passive Golden Bug countdown", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    hud.render({ ...snapshot, goldenBug: { remainingMs: 9_900 } });
+    expect(element(host, "golden-bug-countdown").textContent).toContain("9.9s");
+    hud.dispose();
+  });
   it("keeps a hidden upgrades modal out of the flex layout", () => {
     expect(stylesheet).toContain(".upgrades-modal[hidden] {\n  display: none;\n}");
     expect(stylesheet).toContain(".upgrades-dialog {");

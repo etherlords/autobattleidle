@@ -1,10 +1,11 @@
 import type { CombatEnemy, CombatPlayer, CombatState } from "../../domain/combat";
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 export const LEGACY_SAVE_KEY = "etherlords.autobattleidle.save";
 export const SAVE_V1_KEY = "etherlords.autobattleidle.save.v1";
 export const SAVE_V2_KEY = "etherlords.autobattleidle.save.v2";
-export const SAVE_KEY = SAVE_V2_KEY;
+export const SAVE_V3_KEY = "etherlords.autobattleidle.save.v3";
+export const SAVE_KEY = SAVE_V3_KEY;
 
 export type StorageLike = {
   getItem(key: string): string | null;
@@ -68,4 +69,13 @@ export type SaveV2 = {
   readonly enemy: CombatEnemy;
   readonly player: CombatPlayer;
   readonly version: 2;
+};
+
+export type SaveV3 = {
+  readonly automaticUnlocked: boolean;
+  readonly coins: number;
+  readonly enemy: CombatEnemy;
+  readonly goldenBug: { readonly id: number; readonly resumeEncounter: number } | null;
+  readonly player: CombatPlayer;
+  readonly version: 3;
 };

@@ -42,4 +42,5 @@ export const presentBattleUpdate = (update: BattleUpdate): BattleSnapshot =>
       label: upgrade.label,
       level: upgradeLevel(update.state, upgrade.id),
     })),
+    update.goldenBugRemainingMs,
   );

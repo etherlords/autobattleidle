@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "a4d64825-3a9b-4f1a-a908-bbd3dc287596",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T12:10:34.410Z",
+  "itemId": "ABI-010",
+  "idempotencyKey": "abi010-ready-for-manager-20260829-01",
+  "requestFingerprint": "273fc9e8a6653393fdcd44c265d997d8077ad439f933dda95a633bf14a903e2a",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/BRIEF.md.planner-tmp-a4d64825-3a9b-4f1a-a908-bbd3dc287596-0",
+      "beforeHash": "dd312198b27a7995ddbb086e2b01aa440f695d1afa8fbdd0012bae24660cc4b4",
+      "afterHash": "8025179a5aec7d5578d9cf8bd35cde89ff0fcfa30af8aa542b127adde9ba9986"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-010-add-the-timed-golden-bug-reward-encounter/PROGRESS.md.planner-tmp-a4d64825-3a9b-4f1a-a908-bbd3dc287596-1",
+      "beforeHash": "2afad5c2c1c1fccdabcee2c3cf1ee313a66edace84110573d7d5a6290499a1dc",
+      "afterHash": "57bf69d23b8562c0da34c0897efbf556d8a4def092c247caa59cbc158974955c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-a4d64825-3a9b-4f1a-a908-bbd3dc287596-2",
+      "beforeHash": "71cae13ed9073db28c19933471fee57f9b70f31a0d26c4ef84d9e39c44421512",
+      "afterHash": "69e43c33ec9398a02392513b52dc4c45c326bae21c9c7ed66981aa4a5c26be21"
+    }
+  ],
+  "committedAt": "2026-08-29T12:10:34.520Z"
+}

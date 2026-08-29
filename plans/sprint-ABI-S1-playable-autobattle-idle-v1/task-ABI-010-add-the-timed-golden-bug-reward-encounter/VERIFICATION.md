@@ -23,10 +23,16 @@ requiredGates:
 
 ## Acceptance evidence
 
-_Pending._
+- Deterministic event rule: direct tests spawn after progression encounter 50 only, preserve the resume encounter, and cover ordinary/boss continuation.
+- Ten-second window: controller tests anchor one 10,000 ms deadline across manual/automatic hits and make timeout win at equality; independent browser reload reads 9.9 s after a 100 ms post-reload wait and auto-only escape passes at 10.2 s.
+- Balance: health is five times the base automatic window envelope; auto-only fails while the measured 10 Hz/manual scenario succeeds. Fixed reward is ten times the resumed enemy reward, safely saturated and awarded exactly once; browser observed exactly +1,220 once.
+- Presentation: snapshot/HUD countdown, compact metallic body, crown/orbital non-color cue, passive input ownership, desktop/narrow layouts, and deterministic disposal are covered by tests and browser receipts.
+- Persistence impact: schema migration to V3. Active event identity/resume encounter are stored without a deadline; V1 -> V2 -> V3 and direct byte-preserving V2 -> V3 publication/reload pass; malformed V3 recovers valid V2.
+- Quality: implementation self-check PASS; fresh independent re-review APPROVE after one bounded repair; independent QA PASS; `pnpm check` 88/88 and `git diff --check` PASS.
+- Publication proof remains Manager closure work: coherent commit/push, exact-SHA CI/Pages, and deployed functional confirmation are not claimed here.
 
 ## Sign-off
 
-- Reviewer: pending
-- QA: pending
-- Manager close: pending
+- Reviewer: APPROVE — no P0-P3 after fixed-deadline and V2-retention repairs.
+- QA: PASS — local desktop/narrow functional and persistence evidence.
+- Manager close: pending publication, deployed proof, and final audit.
