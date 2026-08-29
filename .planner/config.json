@@ -35,6 +35,9 @@
     "ABI-022": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c",
     "ABI-023": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp",
     "ABI-024": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-024-give-enemies-deterministic-names-that-match-their-rendered-a",
-    "ABI-025": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only"
+    "ABI-025": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only",
+    "ABI-026": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-026-audit-and-repair-every-enemy-family-decoration-and-combat-ef",
+    "ABI-027": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-027-make-golden-bug-rewards-visibly-valuable-relative-to-encount",
+    "ABI-028": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-028-distribute-ordinary-enemy-time-to-kill-bands-across-every-no"
   }
 }
