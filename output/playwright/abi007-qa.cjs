@@ -5,6 +5,8 @@ const {
 } = require("C:/Users/Asfel/AppData/Local/OpenAI/Codex/runtimes/cua_node/e4d75eceaa042f20/bin/node_modules/playwright");
 const fs = require("fs");
 const base = process.env.ABI007_BASE_URL ?? "https://etherlords.github.io/autobattleidle/";
+const publishedSha = process.env.ABI007_PUBLISHED_SHA;
+if (!publishedSha) throw new Error("ABI007_PUBLISHED_SHA is required for exact-SHA QA receipts");
 const key = "etherlords.autobattleidle.save.v3";
 const v1Fixture = fs.readFileSync("src/persistence/fixtures/save-v1.json", "utf8");
 const v2Fixture = fs.readFileSync("src/persistence/fixtures/save-v2.json", "utf8");
@@ -451,7 +453,7 @@ const all = [];
       {
         base,
         observedAt: new Date().toISOString(),
-        publishedSha: "5a1b1eaec70a64e7906795886e44f557b9c09665",
+        publishedSha,
         cases: all,
       },
       null,

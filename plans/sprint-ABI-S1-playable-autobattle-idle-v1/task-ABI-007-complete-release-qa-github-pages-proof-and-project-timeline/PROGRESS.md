@@ -4,8 +4,8 @@ id: ABI-007
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 121
-status: Ready for Manager
+revision: 127
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 121
-- Last update: Advance ABI-007 to Manager closure after all pre-publication gates passed.
+- Status: Done
+- Revision: 127
+- Last update: Close ABI-007 after all actor-separated gates passed and exact-SHA CI, Pages, asset hashes, and deployed functional receipts were proven.
 
 ## Execution plan
 
@@ -33,10 +33,10 @@ requiredGates:
 - [x] deployed-hud-responsive: Independent QA: prove deployed enemy identity/current-max HP, shrinking bar, bounded reward log, accessibility, desktop and narrow layouts
 - [x] deployed-progression-persistence: Independent QA: prove upgrades, all grades, bosses, multiple-boss endless progression, save/reload, malformed-save recovery, and confirmed reset
 - [x] stability-health: Independent QA: run bounded long-session checks for six-entry log cap, scene/listener/RAF stability, network health, and zero blocking console errors
-- [ ] release-receipts: Manager: bind exact main commit, CI run, Pages deployment, public URL, deployed asset names, and functional observations into verification evidence
+- [x] release-receipts: Manager: bind exact main commit, CI run, Pages deployment, public URL, deployed asset names, and functional observations into verification evidence
 - [x] timeline-visualization: Manager: derive the Planner task/gate timeline and produce the requested user-facing progress visualization without inventing missing evidence
 - [x] independent-review: Independent Reviewer: audit the complete release matrix, receipts, timeline accuracy, scope, and unresolved debt
-- [ ] manager-close: Manager: address one bounded gate return if needed, finalize QA/verification, commit/push evidence, confirm final Pages state, and close the sprint
+- [x] manager-close: Manager: address one bounded gate return if needed, finalize QA/verification, commit/push evidence, confirm final Pages state, and close the sprint
 - [x] review-repair: Implementation owner: repair QA traceability table, exact-SHA Pages binding procedure, and canonical timeline schema after independent review
 - [x] independent-rereview: Fresh independent Reviewer: verify the single evidence-plan repair and release QA readiness
 - [x] user-authorized-oracle-repair: Implementation owner: correct the automatic-bar container-versus-fill oracle after explicit user direction
@@ -2079,3 +2079,121 @@ requiredGates:
   - independent-qa PASS
   - Vault sync complete
   - VERIFICATION.md timeline
+
+### evt-c953046a-c64f-46e0-a635-837c5baf6004
+
+- Timestamp: 2026-08-29T22:25:36.183Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 121
+- Resulting revision: 122
+- Summary: Manager began exact-SHA publication receipt binding after candidate push and successful CI/Pages.
+- Idempotency key: abi007-release-receipts-start-6e3ba6d
+- Request fingerprint: d0e0e3314db65952f603270dc8fb893a4ec5f9348f943a38807508cd95aa3e7e
+- Action: set_state
+- Step ID: release-receipts
+- State: in_progress
+- Evidence:
+  - commit 6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3
+  - CI run 33278273871
+  - Pages run 33278273941
+
+### evt-5a978060-f632-467d-b562-c35cda5ae92b
+
+- Timestamp: 2026-08-29T22:25:53.967Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 122
+- Resulting revision: 123
+- Summary: Exact candidate SHA, successful CI/Pages, public asset hashes, and 21-case deployed Manager recheck were bound into verification evidence.
+- Idempotency key: abi007-release-receipts-complete-6e3ba6d
+- Request fingerprint: 3d9bd8714e5fdd82feffc3409d12ac85e46465767025e992994d52a6d5eb51f5
+- Action: set_state
+- Step ID: release-receipts
+- State: complete
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/VERIFICATION.md
+  - output/playwright/abi007-summary.json
+  - https://github.com/etherlords/autobattleidle/actions/runs/33278273871
+  - https://github.com/etherlords/autobattleidle/actions/runs/33278273941
+
+### evt-43236860-daba-4f3e-860a-49b4be6cf922
+
+- Timestamp: 2026-08-29T22:26:45.474Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 123
+- Resulting revision: 124
+- Summary: Manager began final closure after exact-SHA publication, deployed functional proof, and a fresh green local check.
+- Idempotency key: abi007-manager-close-start-6e3ba6d
+- Request fingerprint: da15b68421fc288b1cd693ced59b3cebadcdaf0b45ca3779467c720515049fd9
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - commit 6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3
+  - pnpm check PASS: 17 files / 99 tests
+  - pnpm hooks:smoke PASS
+  - output/playwright/abi007-summary.json
+
+### evt-9234623d-fb8e-4a61-9587-7e8e96dea3d4
+
+- Timestamp: 2026-08-29T22:27:34.880Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 124
+- Resulting revision: 125
+- Summary: PASS: ABI-007 candidate is published on main, exact-SHA CI and Pages succeeded, public assets are hash-bound, deployed 21-case Manager recheck is green, independent publication re-review passed, Vault is synchronized, and unrelated ABI-019/020 work remains preserved.
+- Idempotency key: abi007-manager-closure-pass-6e3ba6d
+- Request fingerprint: 436eed544a219396fe036170449966fc3e3cae9777e1f74e23dce7129ecdd5db
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - commit 6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3
+  - https://github.com/etherlords/autobattleidle/actions/runs/33278273871
+  - https://github.com/etherlords/autobattleidle/actions/runs/33278273941
+  - https://etherlords.github.io/autobattleidle/
+  - output/playwright/abi007-summary.json
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-007-complete-release-qa-github-pages-proof-and-project-timeline/VERIFICATION.md
+  - fresh independent publication re-review PASS
+
+### evt-d4c68f05-329b-4952-babe-8dfaa9f3007a
+
+- Timestamp: 2026-08-29T22:27:54.423Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 125
+- Resulting revision: 126
+- Summary: Manager closure completed with exact-SHA publication, deployed functional evidence, actor-separated PASS gates, and preserved unrelated dirty work.
+- Idempotency key: abi007-manager-close-complete-6e3ba6d
+- Request fingerprint: 9eadb75be03a2f9b254c8fead264ddc407b7afc56ccd67c424ae269b46f37e79
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - manager-closure PASS
+  - commit 6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3
+  - CI 33278273871 PASS
+  - Pages 33278273941 PASS
+  - deployed matrix 21/21 bad=0
+
+### evt-590c6223-ab27-498a-9f60-91c75a23b2a5
+
+- Timestamp: 2026-08-29T22:28:09.484Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 126
+- Resulting revision: 127
+- Summary: Close ABI-007 after all actor-separated gates passed and exact-SHA CI, Pages, asset hashes, and deployed functional receipts were proven.
+- Idempotency key: abi007-done-after-manager-closure-6e3ba6d
+- Request fingerprint: b15ff3e38e8cc06436ccc41022c0039915faa2375ca9fb13403d95d92969a4b0
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS at progress revision 125
+  - manager-close execution step complete at progress revision 126
+  - commit 6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3
+  - CI run 33278273871 PASS
+  - Pages run 33278273941 PASS
+  - deployed 21-case matrix bad=0
+  - fresh independent publication-evidence re-review PASS

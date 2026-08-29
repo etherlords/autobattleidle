@@ -30,7 +30,9 @@ requiredGates:
 - Independent QA: final PASS against the local production candidate at 1280x800 and 390x844. The repeatable 21-scenario production-codec matrix reports `count=21`, `bad=0`, one canvas, no console errors, no failed requests, and no overflow.
 - QA coverage: real pointer drag/cancel/tap, Enter/Space, normal and slowed automatic timing, manual independence, upgrade interaction, bosses 35/70/105, Golden Bug kill/escape/reload, V1/V2/V3 recovery and future/reset behavior, all eight families before/after reload, named effect traces, reduced motion, and bounded resources.
 - Vault sync: `Enemy Tiers and Boss Cadence` and `UI, Persistence, and QA` now record the accepted visual/receipt and candidate-versus-exact-SHA contracts; Vault remains the canonical design source.
-- Publication gate: exact candidate commit, CI run, Pages deployment, loaded asset hashes, and public functional recheck are intentionally Manager-owned and must be appended after push before manager closure.
+- Publication gate: candidate `6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3` was pushed to `origin/main`; exact-SHA CI run `33278273871` and Pages run `33278273941` both completed successfully.
+- Public asset binding: `https://etherlords.github.io/autobattleidle/` loaded `index-C9N9aOn-.js` (`599351` bytes, SHA-256 `1225f6472e81f26a02501f6d52e2ea78bce5f63954ec2b3c187d08b61c25d90c`) and `index-Bv0br866.css` (`2756` bytes, SHA-256 `959ac20905a934abc2c25d7ae43fdcbcee0f3f6f7d2c59e4bf15bc395857c148`).
+- Manager deployed recheck: the repeatable production-codec matrix was rerun against the public URL with `ABI007_PUBLISHED_SHA=6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3`; all 21 cases passed with `bad=0`, one canvas, no console errors, no failed requests, and no overflow. Receipts covered desktop/narrow input, automatic normal/slow timing, bosses, Golden Bug kill/escape/reload, persistence recovery/migration/reset, and all eight rendered family identities with stable variant/seed metadata.
 
 ## Planner-derived timeline
 
@@ -43,11 +45,11 @@ requiredGates:
 | Independent review | One P1 fixture-label finding returned; production-policy fixtures and receipt assertions repaired; fresh re-review passed. |
 | Independent QA | Initial candidate runs returned missing-receipt and fixture-overwrite findings; bounded harness repairs separated inputs from receipts and completed a repeatable 21-scenario matrix. |
 | Final candidate verdict | Independent QA PASS at progress revision 109; accepted QA plan steps reconciled through revision 116. |
-| Publication and deployed proof | Pending exact commit/push, CI/Pages success, public asset/SHA binding, and Manager browser recheck. |
+| Publication and deployed proof | Candidate `6e3ba6d4cec1073c25a863c13f5e198fe1f4daa3` pushed to `origin/main`; exact-SHA CI/Pages succeeded; public JS/CSS hashes and 21/21 Manager browser recheck recorded. |
 
 ## Sign-off
 
 - Reviewer: PASS (`abi007-review`)
 - QA: PASS (`abi007-qa`, 21 scenarios, `bad=0`)
-- Verification: pre-publication acceptance PASS; exact-SHA publication proof pending Manager
-- Manager close: pending exact-SHA CI/Pages and deployed recheck
+- Verification: PASS; candidate, exact-SHA CI/Pages, public assets, and deployed functional receipts are bound above
+- Manager close: ready; all required acceptance and publication evidence is present

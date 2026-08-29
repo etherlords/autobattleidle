@@ -1,318 +1,38 @@
 {
   "name": "persistence-v1-migration",
-  "url": "http://127.0.0.1:4173/autobattleidle/",
+  "url": "https://etherlords.github.io/autobattleidle/",
   "viewport": {
     "width": 1280,
     "height": 800
   },
   "reducedMotion": false,
-  "initial": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 9.239s\n\nCoins: 7",
-  "result": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 8.725s\n\nCoins: 7",
+  "initial": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 9.291s\n\nCoins: 7",
+  "result": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 8.757s\n\nCoins: 7",
   "before": {
-    "text": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 9.239s\n\nCoins: 7\n\nUpgrades",
+    "text": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 9.285s\n\nCoins: 7\n\nUpgrades",
     "width": 1280,
     "height": 800,
     "innerWidth": 1280,
     "canvases": 1
   },
   "after": {
-    "text": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 8.725s\n\nCoins: 7\n\nUpgrades",
+    "text": "Ember Brute · Level 1 · normal\n84 / 140\n\nAutomatic attack: 0.10 APS · 8.757s\n\nCoins: 7\n\nUpgrades",
     "width": 1280,
     "height": 800,
     "innerWidth": 1280,
     "canvases": 1,
     "resources": [
       {
-        "name": "http://127.0.0.1:4173/src/main.ts?t=1788038531042",
-        "duration": 7
+        "name": "https://etherlords.github.io/autobattleidle/assets/index-C9N9aOn-.js",
+        "duration": 425
       },
       {
-        "name": "http://127.0.0.1:4173/@vite/client",
-        "duration": 7
+        "name": "https://etherlords.github.io/autobattleidle/assets/index-Bv0br866.css",
+        "duration": 195
       },
       {
-        "name": "http://127.0.0.1:4173/src/style.css",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/app/application.ts?t=1788038531042",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/node_modules/.pnpm/vite@8.2.2/node_modules/vite/dist/client/env.mjs",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat.ts?t=1788037897860",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/battlefield.ts?t=1788038531042",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/persistence-boundary.ts?t=1788037897860",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/hud.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/app/battle/controller.ts?t=1788038065786",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/app/battle/commands.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/app/battle/presenter.ts?t=1788038065786",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/attacks.ts?t=1788017977076",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/balance.ts?t=1788017965561",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/progression.ts?t=1788017977076",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/family-identity.ts",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/upgrades.ts?t=1788017977076",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/battlefield/effects.ts?t=1788019527991",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/battlefield/lifecycle.ts?t=1788038531042",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual.ts?t=1788038531042",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/contracts.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/codecs.ts",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/validation.ts?t=1788037897860",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/storage-lifecycle.ts?t=1788037897860",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/hud/event-log.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/hud/battle-status.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/snapshot.ts?t=1788038065786",
-        "duration": 5
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/hud/upgrade-dialog.ts",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/number-format.ts",
-        "duration": 5
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/player-stats.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers.ts?t=1788017965567",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-definitions.ts?t=1788017965561",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/factories.ts?t=1788038531042",
-        "duration": 33
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/spec.ts?t=1788038097184",
-        "duration": 33
-      },
-      {
-        "name": "http://127.0.0.1:4173/node_modules/.vite/deps/three.js?v=f98ac3c1",
-        "duration": 62
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/builder.ts",
-        "duration": 34
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/battlefield/config.ts",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v2.ts?t=1788037897860",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/bodies.ts?t=1788038507801",
-        "duration": 34
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v1.ts",
-        "duration": 36
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/validation-primitives.ts",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v3.ts?t=1788037897860",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/ui/hud/elements.ts",
-        "duration": 36
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/persistence/save/migrations.ts?t=1788037897860",
-        "duration": 37
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/armor-enemy-modifier.ts?t=1788017965563",
-        "duration": 32
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/automatic-slow-enemy-modifier.ts",
-        "duration": 32
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/health-enemy-modifier.ts?t=1788017965561",
-        "duration": 32
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/hardened-enemy-modifier.ts?t=1788017965567",
-        "duration": 32
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/critical-guard-enemy-modifier.ts",
-        "duration": 33
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/manual-guard-enemy-modifier.ts",
-        "duration": 34
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/enemy-modifier-registry.ts?t=1788017965567",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/enemy-modifier-strategy.ts",
-        "duration": 35
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/player/factory.ts",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/enemy/factory.ts?t=1788038531042",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/components.ts",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/config.ts?t=1788038390255",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/player/player-unit.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/core/index.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/enemy/builder.ts?t=1788038507801",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/enemy/model.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/enemy/view.ts?t=1788038531042",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/core/controller.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/core/model.ts",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/core/view.ts",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/core/unit.ts",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/player/model.ts",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/player/view.ts",
-        "duration": 3
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators.ts?t=1788038428666",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/units/enemy/unit.ts",
-        "duration": 5
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/grade-cue-decorator.ts?t=1788038390255",
-        "duration": 1
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/seeded-decoration-decorator.ts?t=1788038420654",
-        "duration": 4
-      },
-      {
-        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/modifier-cue-decorator.ts?t=1788038428666",
-        "duration": 2
-      },
-      {
-        "name": "http://127.0.0.1:4173/favicon.svg",
-        "duration": 2
+        "name": "https://etherlords.github.io/autobattleidle/favicon.svg",
+        "duration": 104
       }
     ]
   },
