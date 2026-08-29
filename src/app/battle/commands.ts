@@ -18,9 +18,10 @@ export const battleCommands = {
     nowMs,
     type: "frame",
   }),
-  purchase: (id: UpgradeId): PurchaseCommand => ({
-    execute: (context) => context.purchase(id),
+  purchase: (id: UpgradeId, quantity = 1): PurchaseCommand => ({
+    execute: (context) => context.purchase(id, quantity),
     id,
+    quantity,
     type: "purchase",
   }),
   reset: (): ResetCommand => ({ execute: (context) => context.reset(), type: "reset" }),

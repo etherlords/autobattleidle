@@ -89,6 +89,11 @@ const element = (root: FakeElement, className: string): FakeElement => {
   throw new Error(`Could not find ${className}`);
 };
 
+const clickUpgrade = (button: FakeElement | undefined, detail: Record<string, unknown>): void => {
+  if (button === undefined) throw new Error("Expected an upgrade button");
+  button.dispatch("click", detail);
+};
+
 const snapshot: BattleSnapshot = {
   automatic: { intervalMs: 1_000, remainingMs: 500, unlocked: true },
   coins: 2,
@@ -135,9 +140,9 @@ describe("createHud", () => {
     let resets = 0;
     let restores = 0;
     let upgrades = 0;
-    const intents: string[] = [];
+    const intents: HudIntent[] = [];
     if (hud.subscribe === undefined) throw new Error("Expected HUD intent subscription");
-    const unsubscribe = hud.subscribe((intent) => intents.push(intent.type));
+    const unsubscribe = hud.subscribe((intent) => intents.push(intent));
     hud.onAttack(() => {
       attacks += 1;
     });
@@ -167,6 +172,9 @@ describe("createHud", () => {
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
     expect(element(host, "upgrades-dialog").attributes.get("role")).toBe("dialog");
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 2");
+    expect(element(host, "upgrade-bulk-hint").textContent).toBe(
+      "Shift-click buys x10. Ctrl-click buys x100.",
+    );
     hud.render({ ...snapshot, coins: 3 });
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 3");
     hud.render({
@@ -245,10 +253,14 @@ describe("createHud", () => {
     expect(modal.hidden).toBe(true);
     expect(launcher.focusCalls).toBeGreaterThan(3);
 
-    upgradeButtons[0]?.dispatch("click");
+    clickUpgrade(upgradeButtons[0], { detail: 1 });
+    clickUpgrade(upgradeButtons[0], { detail: 1, shiftKey: true });
+    clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 1 });
+    clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 1, shiftKey: true });
+    clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 0, shiftKey: true });
     reset.dispatch("click");
     restore.dispatch("click");
-    expect(upgrades).toBe(1);
+    expect(upgrades).toBe(5);
     expect(upgradeButtons[1]?.disabled).toBe(true);
     expect(upgradeButtons[1]?.title).toContain("Need 45 coins");
     expect(resets).toBe(1);
@@ -257,14 +269,18 @@ describe("createHud", () => {
     expect(element(host, "persistence-status").textContent).toBe("Restored");
     expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
     expect(intents).toEqual([
-      "attack",
-      "attack",
-      "attack",
-      "rotate-camera",
-      "rotate-camera",
-      "upgrade",
-      "reset",
-      "restore",
+      { type: "attack" },
+      { type: "attack" },
+      { type: "attack" },
+      { delta: 0.12, type: "rotate-camera" },
+      { delta: -0.12, type: "rotate-camera" },
+      { id: "automatic-unlock", quantity: 1, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 10, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 100, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 100, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 1, type: "upgrade" },
+      { type: "reset" },
+      { type: "restore" },
     ]);
     unsubscribe();
 
@@ -281,16 +297,7 @@ describe("createHud", () => {
     reset.dispatch("click");
     restore.dispatch("click");
     expect(attacks).toBe(3);
-    expect(intents).toEqual([
-      "attack",
-      "attack",
-      "attack",
-      "rotate-camera",
-      "rotate-camera",
-      "upgrade",
-      "reset",
-      "restore",
-    ]);
+    expect(intents).toHaveLength(12);
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(launcher.focusCalls).toBe(launcherFocusAtDispose);

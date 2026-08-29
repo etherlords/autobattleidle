@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "9897d0f7-223a-40f8-8ba0-9a3c1fd69a10",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:28:56.117Z",
+  "itemId": "ABI-017",
+  "idempotencyKey": "abi-017-return-to-review-2",
+  "requestFingerprint": "eb0be4d647f8ff156d22ef72de0b3bd9fac2d1fcfd9ee9184ec75ea8ce59da90",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/BRIEF.md.planner-tmp-9897d0f7-223a-40f8-8ba0-9a3c1fd69a10-0",
+      "beforeHash": "8e610956dbd2ba9f85bee605150b765f60db667c09d150f76a1774601a8d2874",
+      "afterHash": "b0d2b8f339f906cd3f2be4a41f177211219f087768f11f3fc94d651663426f6f"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md.planner-tmp-9897d0f7-223a-40f8-8ba0-9a3c1fd69a10-1",
+      "beforeHash": "7dc48c89583d33165d68f0fe71ab47b5dbdb669ed9796d3cd0f1779fab21e6d0",
+      "afterHash": "d86ac09c55254c2eec88455888dcd00055eefd7e4602d6f4c3da0b66d01b2963"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-9897d0f7-223a-40f8-8ba0-9a3c1fd69a10-2",
+      "beforeHash": "d71db67c95526a4865cae95d365d9cee7742b4a3126aa11175253458f2d71796",
+      "afterHash": "87fc145732ad81a9d588b9fe6e80e8e87dfec450800d6fcd0cdb54eaf4154b8b"
+    }
+  ],
+  "committedAt": "2026-08-29T03:28:56.169Z"
+}

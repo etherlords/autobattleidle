@@ -18,7 +18,7 @@ export class BattleController {
   private readonly commandContext: BattleCommandContext = {
     attack: (source) => this.performAttack(source),
     frame: (nowMs) => this.performFrame(nowMs),
-    purchase: (id) => this.performPurchase(id),
+    purchase: (id, quantity) => this.performPurchase(id, quantity),
     reset: () => this.performReset(),
     restore: (state) => this.performRestore(state),
   };
@@ -102,18 +102,28 @@ export class BattleController {
     return result.event;
   }
 
-  private performPurchase(id: UpgradeId): boolean {
-    const result = purchaseUpgrade(this.state, id, this.nowMs);
-    this.state = result.state;
-    return this.publishMessage(
-      {
-        ...this.update(result.reason === null),
-        id,
-        reason: result.reason,
-        type: "purchase",
-      },
-      battleEventMessages.purchase(id, result.reason),
-    );
+  private performPurchase(id: UpgradeId, quantity: number): boolean {
+    const requestedQuantity = Math.min(100, Math.max(1, Math.floor(quantity)));
+    let successfulPurchases = 0;
+    let reason: string | null = null;
+    for (let index = 0; index < requestedQuantity; index += 1) {
+      const result = purchaseUpgrade(this.state, id, this.nowMs);
+      if (result.reason !== null) {
+        reason = result.reason;
+        break;
+      }
+      this.state = result.state;
+      successfulPurchases += 1;
+      this.addEvent(battleEventMessages.purchase(id, null));
+    }
+    if (successfulPurchases === 0) return false;
+    return this.publish({
+      ...this.update(true),
+      id,
+      quantity: successfulPurchases,
+      reason,
+      type: "purchase",
+    });
   }
 
   private performReset(): boolean {

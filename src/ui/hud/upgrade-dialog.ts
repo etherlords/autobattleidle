@@ -3,12 +3,20 @@ import type { BattleSnapshot } from "../../domain/snapshot";
 import { button, makeText } from "./elements";
 import { formatNumber } from "../number-format";
 
+const upgradeQuantity = (event: MouseEvent): 1 | 10 | 100 => {
+  if (event.detail === 0) return 1;
+  if (event.ctrlKey) return 100;
+  if (event.shiftKey) return 10;
+  return 1;
+};
+
 export class UpgradeDialog {
   readonly launcher = button("upgrades-launcher", "Upgrades");
   readonly modal = document.createElement("section");
   private readonly dialog = document.createElement("section");
   private readonly close = button("upgrades-close", "Close upgrades");
   private readonly coins = makeText("p", "");
+  private readonly bulkHint = makeText("p", "Shift-click buys x10. Ctrl-click buys x100.");
   private readonly upgrades = document.createElement("div");
   private readonly resetButton = button("reset-progress", "Reset progress");
   private readonly restoreButton = button("restore-progress", "Restore from previous version");
@@ -17,12 +25,12 @@ export class UpgradeDialog {
     UpgradeId,
     {
       readonly button: HTMLButtonElement;
-      readonly listener: () => void;
+      readonly listener: (event: MouseEvent) => void;
       readonly price: HTMLSpanElement;
       readonly title: HTMLSpanElement;
     }
   >();
-  private upgradeListener: ((id: UpgradeId) => void) | undefined;
+  private upgradeListener: ((id: UpgradeId, quantity: 1 | 10 | 100) => void) | undefined;
   private resetListener: (() => void) | undefined;
   private restoreListener: (() => void) | undefined;
 
@@ -35,6 +43,7 @@ export class UpgradeDialog {
     this.dialog.setAttribute("aria-modal", "true");
     this.dialog.setAttribute("role", "dialog");
     this.coins.className = "upgrades-coins";
+    this.bulkHint.className = "upgrade-bulk-hint";
     this.upgrades.className = "upgrades";
     this.restoreButton.hidden = true;
     this.persistenceStatus.className = "persistence-status";
@@ -42,6 +51,7 @@ export class UpgradeDialog {
     this.dialog.append(
       this.close,
       this.coins,
+      this.bulkHint,
       this.upgrades,
       this.resetButton,
       this.restoreButton,
@@ -56,7 +66,7 @@ export class UpgradeDialog {
     document.addEventListener("keydown", this.toggleModal);
   }
 
-  onUpgrade(listener: (id: UpgradeId) => void): void {
+  onUpgrade(listener: (id: UpgradeId, quantity: 1 | 10 | 100) => void): void {
     this.upgradeListener = listener;
   }
   onReset(listener: () => void): void {
@@ -86,7 +96,8 @@ export class UpgradeDialog {
         const price = document.createElement("span");
         price.className = "upgrade-price";
         upgradeButton.append(title, price);
-        const listener = (): void => this.upgradeListener?.(upgrade.id);
+        const listener = (event: MouseEvent): void =>
+          this.upgradeListener?.(upgrade.id, upgradeQuantity(event));
         upgradeButton.addEventListener("click", listener);
         entry = { button: upgradeButton, listener, price, title };
         this.upgradeButtons.set(upgrade.id, entry);

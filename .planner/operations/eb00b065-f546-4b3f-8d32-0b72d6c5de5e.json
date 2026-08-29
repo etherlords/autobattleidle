@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "eb00b065-f546-4b3f-8d32-0b72d6c5de5e",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:46:38.193Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md.planner-tmp-eb00b065-f546-4b3f-8d32-0b72d6c5de5e"
+    }
+  ],
+  "committedAt": "2026-08-29T03:46:38.225Z"
+}

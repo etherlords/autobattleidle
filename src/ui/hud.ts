@@ -9,7 +9,7 @@ export type Hud = {
   render(snapshot: BattleSnapshot): void;
   subscribe(listener: HudIntentListener): HudUnsubscribe;
   onAttack(listener: () => void): void;
-  onUpgrade(listener: (id: UpgradeId) => void): void;
+  onUpgrade(listener: (id: UpgradeId, quantity?: 1 | 10 | 100) => void): void;
   onReset(listener: () => void): void;
   onRestore(listener: () => void): void;
   setRestoreAvailable(available: boolean): void;
@@ -84,7 +84,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   battlefield.addEventListener("pointerup", pointerUp);
   battlefield.addEventListener("pointercancel", pointerCancel);
   battlefield.addEventListener("keydown", keyboardAttack);
-  dialog.onUpgrade((id) => emit({ id, type: "upgrade" }));
+  dialog.onUpgrade((id, quantity) => emit({ id, quantity, type: "upgrade" }));
   dialog.onReset(() => emit({ type: "reset" }));
   dialog.onRestore(() => emit({ type: "restore" }));
 
@@ -107,7 +107,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       }),
     onUpgrade: (listener) =>
       subscribe((intent) => {
-        if (intent.type === "upgrade") listener(intent.id);
+        if (intent.type === "upgrade") listener(intent.id, intent.quantity);
       }),
     onReset: (listener) =>
       subscribe((intent) => {

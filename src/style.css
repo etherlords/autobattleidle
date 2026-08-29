@@ -147,6 +147,10 @@ body {
   margin: 0.75rem 0;
 }
 
+.upgrade-bulk-hint {
+  margin: 0.5rem 0;
+}
+
 .upgrades {
   display: grid;
   gap: 0.4rem;

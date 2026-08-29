@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "ed17af2e-86b6-4e83-a379-5d37f1bd568c",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:42:25.594Z",
+  "itemId": "ABI-017",
+  "idempotencyKey": "abi-017-independent-gates-complete",
+  "requestFingerprint": "9d8c2a74c0a1407018baa1194fbcce5cdcb341c794753cd2fc349c945a29af58",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md.planner-tmp-ed17af2e-86b6-4e83-a379-5d37f1bd568c-0",
+      "beforeHash": "e8dc16f7188fa4ae463a3552760ab030574abdc48ac24ac2ca9a3a7b21293755",
+      "afterHash": "1112ac8723fc2bbd93108b825c43cc995a6f27fdba13e75d977a509fd63819b2"
+    }
+  ],
+  "committedAt": "2026-08-29T03:42:25.686Z"
+}

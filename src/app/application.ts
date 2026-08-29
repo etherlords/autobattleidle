@@ -132,7 +132,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       return;
     }
     if (intent.type === "upgrade") {
-      controller.dispatch(battleCommands.purchase(intent.id));
+      controller.dispatch(battleCommands.purchase(intent.id, intent.quantity));
       return;
     }
     if (intent.type === "reset") {

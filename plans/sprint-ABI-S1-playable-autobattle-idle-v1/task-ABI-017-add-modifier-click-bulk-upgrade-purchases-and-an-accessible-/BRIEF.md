@@ -4,8 +4,8 @@ id: ABI-017
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
-status: Ready
+revision: 9
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -28,7 +28,7 @@ Add modifier-click bulk upgrade purchases and an accessible modal hint
 
 - Type: task
 - Priority: normal
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 

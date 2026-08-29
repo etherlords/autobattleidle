@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "a20d7c83-9358-417f-9a91-af5235332c44",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:47:01.357Z",
+  "itemId": "ABI-017",
+  "idempotencyKey": "abi-017-manager-closure-start",
+  "requestFingerprint": "a04501384a9c59c7d333007b7efb9c8191ec555121184dc7edca0ca46f4b6047",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-017-add-modifier-click-bulk-upgrade-purchases-and-an-accessible-/PROGRESS.md.planner-tmp-a20d7c83-9358-417f-9a91-af5235332c44-0",
+      "beforeHash": "8d4996b4652509881f4344d171f90cdfc939d2c869b5e9c2037b8e41e79c78ad",
+      "afterHash": "a632d844a8d2302a8b21012795444ef9076f7b15860a72fa3130eea939b7bb33"
+    }
+  ],
+  "committedAt": "2026-08-29T03:47:01.444Z"
+}

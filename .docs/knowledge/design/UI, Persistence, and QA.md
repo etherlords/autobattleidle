@@ -57,11 +57,11 @@ selection, accidental double attack, camera-input leak, page scroll, or layout g
 
 ## Planned modifier-click bulk purchasing
 
-ABI-017 is a blocked follow-up after the behavior-preserving ABI-015 refactor; this section is a planned contract, not current deployed behavior. A default upgrade click requests one level, Shift-click requests up to 10, and Ctrl-click requests up to 100, with Ctrl taking precedence when both modifiers are present. The HUD emits one named `(upgradeId, quantity)` request and shows one compact aria-readable modifier hint in the existing dialog space.
+ABI-017 implements modifier-click bulk purchasing after the behavior-preserving ABI-015/ABI-023 architecture work. A default pointer click requests one level, Shift-click requests up to 10, and Ctrl-click requests up to 100, with Ctrl taking precedence when both pointer modifiers are present. Keyboard activation always requests one level. The HUD emits one named `(upgradeId, quantity)` request and shows one compact aria-readable modifier hint in the existing dialog space.
 
-The application applies the existing pure single-level purchase sequentially and stops on the first disabled or unaffordable result. Every successful level keeps the existing `Purchased ...` event in order. The failed attempt emits no event, debit, or level change. After the loop, the application performs one coherent render and persistence update; summarizing the events requires a separate product decision.
+The controller applies the existing pure single-level purchase sequentially and stops on the first disabled or unaffordable result. Every successful level keeps the existing `Purchased ...` event in order within the bounded event history. The failed attempt emits no event, debit, or level change. A non-empty batch publishes once, so the application performs one coherent battlefield render, HUD render, and persistence update; there is no summarized batch event.
 
-The follow-up does not change the save schema, modal layout model, focus trap, keyboard activation, dismissal, disabled reasons, or listener ownership. Focused tests and desktop/390px browser QA prove modifier precedence, caps, partial-stop parity with repeated single purchases, event count/order, failed-attempt identity, coherent persistence, accessibility, and no modal/focus regression.
+The implementation does not change the save schema, balance, modal layout model, focus trap, keyboard activation, dismissal, disabled reasons, or listener ownership. Focused tests and desktop/390px browser QA prove modifier precedence, x100 parity, partial-stop behavior, bounded event order, failed-attempt identity, coherent persistence/reload, accessibility, responsive layout, and no modal/focus regression.
 
 ## Planned current upgrade stats and automatic-speed balance
 

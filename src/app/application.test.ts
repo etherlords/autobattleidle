@@ -66,8 +66,9 @@ describe("startApplication", () => {
     const frames = new Map<number, FrameRequestCallback>();
     const snapshots: BattleSnapshot[] = [];
     const savedCoins: number[] = [];
+    let gameRenders = 0;
     let attack: (() => void) | undefined;
-    let upgrade: ((id: UpgradeId) => void) | undefined;
+    let upgrade: ((id: UpgradeId, quantity?: 1 | 10 | 100) => void) | undefined;
     let intentUnsubscribes = 0;
     let nextFrame = 1;
     const initialState = createCombatState({
@@ -89,7 +90,9 @@ describe("startApplication", () => {
       },
       game: {
         dispose: () => undefined,
-        render: () => undefined,
+        render: () => {
+          gameRenders += 1;
+        },
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -97,7 +100,7 @@ describe("startApplication", () => {
         dispose: () => undefined,
         subscribe: (listener) => {
           attack = () => listener({ type: "attack" });
-          upgrade = (id) => listener({ id, type: "upgrade" });
+          upgrade = (id, quantity = 1) => listener({ id, quantity, type: "upgrade" });
           return () => {
             intentUnsubscribes += 1;
           };
@@ -124,7 +127,7 @@ describe("startApplication", () => {
       },
       initialState: {
         ...initialState,
-        coins: 2,
+        coins: 100,
         enemy: { ...initialState.enemy, health: 70 },
         nextAutomaticAttackAtMs: 100,
       },
@@ -142,7 +145,7 @@ describe("startApplication", () => {
       "Manual hit: 40 damage",
       "Manual kill: +1 coins",
     ]);
-    expect(savedCoins).toEqual([2, 3]);
+    expect(savedCoins).toEqual([100, 101]);
 
     const beforeIdleFrame = snapshots.length;
     const idleFrame = frames.get(1);
@@ -151,7 +154,7 @@ describe("startApplication", () => {
     idleFrame(99);
     expect(snapshots).toHaveLength(beforeIdleFrame + 1);
     expect(snapshots.at(-1)?.events).toHaveLength(2);
-    expect(savedCoins).toEqual([2, 3]);
+    expect(savedCoins).toEqual([100, 101]);
 
     upgrade("automatic-unlock");
     upgrade("automatic-unlock");
@@ -159,9 +162,18 @@ describe("startApplication", () => {
       "Manual hit: 40 damage",
       "Manual kill: +1 coins",
       "Purchased Unlock automatic attack",
-      "Already unlocked",
     ]);
-    expect(savedCoins).toEqual([2, 3, 2]);
+    expect(savedCoins).toEqual([100, 101, 100]);
+    const beforeBulkSnapshots = snapshots.length;
+    const beforeBulkGameRenders = gameRenders;
+    const beforeBulkSaves = savedCoins.length;
+    upgrade("damage", 10);
+    expect(snapshots).toHaveLength(beforeBulkSnapshots + 1);
+    expect(gameRenders).toBe(beforeBulkGameRenders + 1);
+    expect(savedCoins).toHaveLength(beforeBulkSaves + 1);
+    expect(savedCoins.at(-1)).toBeLessThan(100);
+    expect(snapshots.at(-1)?.events.at(-1)?.message).toBe("Purchased Damage");
+    expect(snapshots.at(-1)?.events.map((event) => event.message)).not.toContain("Need 3 coins");
     app.dispose();
     expect(intentUnsubscribes).toBe(1);
   });
@@ -420,7 +432,7 @@ describe("startApplication", () => {
     let nextFrame = 1;
     let attack: (() => void) | undefined;
     let reset: (() => void) | undefined;
-    let upgrade: ((id: UpgradeId) => void) | undefined;
+    let upgrade: ((id: UpgradeId, quantity?: 1 | 10 | 100) => void) | undefined;
     const snapshots: BattleSnapshot[] = [];
     const savedCoins: number[] = [];
     let confirmed = false;
@@ -462,7 +474,7 @@ describe("startApplication", () => {
         },
         subscribe: (listener) => {
           attack = () => listener({ type: "attack" });
-          upgrade = (id) => listener({ id, type: "upgrade" });
+          upgrade = (id, quantity = 1) => listener({ id, quantity, type: "upgrade" });
           reset = () => listener({ type: "reset" });
           return () => undefined;
         },
