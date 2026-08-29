@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "33bb4f21-ac12-4e99-93ac-784411049ab6",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T03:00:16.084Z",
+  "itemId": "ABI-021",
+  "idempotencyKey": "abi-021-manager-closure-start-20260829",
+  "requestFingerprint": "b6cc7e1b68c242c73a9cfcca495bbcb9906070f061781ef148842aa19d8aeb57",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md.planner-tmp-33bb4f21-ac12-4e99-93ac-784411049ab6-0",
+      "beforeHash": "ae8f9711afd974d2a0ba9879eabea638786c94ffc028f3765aec7a00dbac1686",
+      "afterHash": "0c75a38fe6c7a0d4b774e46a874bd1d841de12a26d39a977dd3c5f7f5570c4f5"
+    }
+  ],
+  "committedAt": "2026-08-29T03:00:16.153Z"
+}

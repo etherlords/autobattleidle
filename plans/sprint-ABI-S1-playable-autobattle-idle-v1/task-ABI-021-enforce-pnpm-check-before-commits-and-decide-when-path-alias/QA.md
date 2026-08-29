@@ -21,8 +21,15 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS — independent Windows/PowerShell QA found no blockers.
 
 ## Evidence
 
-_Pending._
+- `pnpm hooks:install` run twice; repository-local `core.hooksPath` remained `.githooks`.
+- Staged hook mode is `100755`; cached attributes are `text: set`, `eol: lf`; hook bytes contain zero CR bytes.
+- `pnpm hooks:smoke` passed: autocrlf checkout, red block, green permit, unchanged index, and no commit/publication.
+- `git hook run pre-commit` passed against the actual tracked hook and ran the canonical `pnpm check` only.
+- Fresh `pnpm check` passed: ESLint, Prettier check, 13 test files / 71 tests, TypeScript, and production build.
+- `.github/workflows/ci.yml` independently runs `pnpm check`; it is unchanged.
+- Checks did not mutate the pre-existing ABI-021 worktree/index. No aliases, dependency, lockfile, or lint-config changes were added.
+- Browser QA is not applicable because ABI-021 changes no application behavior. The existing Vite chunk-size warning is non-blocking and unchanged.

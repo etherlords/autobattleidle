@@ -12,7 +12,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm format:check && pnpm test && pnpm build"
+    "check": "pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "hooks:install": "node scripts/install-git-hooks.mjs",
+    "hooks:smoke": "node scripts/smoke-git-hooks.mjs"
   },
   "dependencies": {
     "three": "0.185.1"

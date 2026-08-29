@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "779008d5-0a56-4150-be77-af356798dd6b",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T02:41:31.654Z",
+  "itemId": "ABI-021",
+  "idempotencyKey": "abi-021-start-20260829",
+  "requestFingerprint": "9c93e38abc22319e778920ab38e11c2bd00c2f8243c3c2ef63ba9369c3e0ac62",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/BRIEF.md.planner-tmp-779008d5-0a56-4150-be77-af356798dd6b-0",
+      "beforeHash": "868925a9c96d3b5080ebe225edbe7e295ea9b5a43a07b6d34888be14f5c6d11f",
+      "afterHash": "5355fdd5ffcb47b6223a31d52d0408fa7db7763712470397258f4c7893892880"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md.planner-tmp-779008d5-0a56-4150-be77-af356798dd6b-1",
+      "beforeHash": "ace0f1acc708d24cbbae17bb04f75a813896cd4fddfba9859b709e77f5870a1c",
+      "afterHash": "c04a83efd7a0566eab9382bf907a80def16c37ee5c80fa604d36f57bf2054737"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-779008d5-0a56-4150-be77-af356798dd6b-2",
+      "beforeHash": "d41ff91004d8dbb12276facd565677cacbaea34bf0a479b0fac3469fce739a24",
+      "afterHash": "75b2128d2f8b5ca0c5e1f1628246962ed0b4587a38c2bf5663d8dbbcb4ade186"
+    }
+  ],
+  "committedAt": "2026-08-29T02:41:31.730Z"
+}

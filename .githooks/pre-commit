@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if ! pnpm check; then
+  echo >&2 "Pre-commit check failed. Repair with: pnpm check"
+  echo >&2 "If formatting is needed: pnpm format; git add <files>; git commit"
+  exit 1
+fi

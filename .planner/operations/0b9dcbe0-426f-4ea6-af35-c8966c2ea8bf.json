@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "0b9dcbe0-426f-4ea6-af35-c8966c2ea8bf",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T02:58:25.421Z",
+  "itemId": "ABI-021",
+  "idempotencyKey": "abi-021-independent-gates-complete-20260829",
+  "requestFingerprint": "f48462b7db3a698fef0e9d1d568646ffd7fdd4ddad0423fc32f39895686d53e7",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias/PROGRESS.md.planner-tmp-0b9dcbe0-426f-4ea6-af35-c8966c2ea8bf-0",
+      "beforeHash": "66d915e8af4904b47c647f354f8b83c58a066f6f9fa17b3321a9235ba194f2ea",
+      "afterHash": "fa44266870ab6307263c33a1d0be6786ca407d78ebaf6518b0d0d83c8c59089f"
+    }
+  ],
+  "committedAt": "2026-08-29T02:58:25.491Z"
+}

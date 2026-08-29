@@ -11,6 +11,20 @@ pnpm dev
 
 Run all quality gates with `pnpm check`.
 
+## Git hook
+
+Install the tracked pre-commit hook once per clone:
+
+```powershell
+pnpm hooks:install
+git config --local --get core.hooksPath
+pnpm hooks:smoke
+```
+
+The hook runs only `pnpm check`; it never formats or changes staged files. If it fails, run
+`pnpm check`, optionally `pnpm format`, stage the intended fixes, and retry the commit. `git commit
+--no-verify` bypasses only the local hook; CI independently runs `pnpm check`.
+
 ## Planner and Vault
 
 Code, `plans/`, and `.docs/knowledge/` are one in-repository Git checkpoint. Runtime packages and
