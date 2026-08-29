@@ -4,8 +4,8 @@ id: ABI-014
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: In QA
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-013
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 30
-- Last update: EVENT checkpoint — manager-root — Release candidate verified locally; QA receipt formatted, pnpm check 68/68 and diff-check pass. Verification remains pending exact-SHA CI/Pages and public browser proof.
+- Status: Done
+- Revision: 36
+- Last update: Released task claim: Release completed ABI-014 lease after Done closure and deployed verification
 
 ## Execution plan
 
@@ -32,7 +32,7 @@ requiredGates:
 - [x] starter-tests: Implementation owner: prove 8-12 baseline manual attacks, unchanged later samples, persistence compatibility, numeric safety, and pnpm check.
 - [x] starter-docs: Implementation owner: update the canonical Vault balance article with the starter exception and measured target.
 - [x] starter-gates: Independent Reviewer and QA: audit scope and reproduce fresh-game defeat plus reload and later-enemy invariants in a real browser.
-- [~] starter-delivery: Manager: verify evidence, commit/push, wait CI/Pages, prove deployed behavior, and close.
+- [x] starter-delivery: Manager: verify evidence, commit/push, wait CI/Pages, prove deployed behavior, and close.
 
 ## Events
 
@@ -560,3 +560,120 @@ requiredGates:
   - independent review and QA passed
   - Vault index synced
   - verification gate intentionally pending publication
+
+### evt-6551d0e4-f4ee-4302-8fff-ac5e4c67e35b
+
+- Timestamp: 2026-08-29T01:01:02.968Z
+- Actor: manager-root
+- Operation: gate.record
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Manager verification PASS: local acceptance, exact-SHA CI/Pages, and public fresh/current/historical browser proof are complete.
+- Idempotency key: abi-014-verification-pass-deployed-20260829
+- Request fingerprint: b38228459b06ebe146498d6191b22e222607d6025f157f30dac29f38381a344a
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - checkpoint 195e965704aac142194fb3e877c4a911bb4af410 pushed
+  - CI run 33224695027 job 99025886653 success
+  - Pages run 33224695066 job 99025886908 success
+  - public fresh 10/10 -> nine actions 1/10 -> tenth encounter2 210/210
+  - public current 6/10 reload
+  - public historical 84/140 stable across two reloads
+  - console 0 errors/warnings; no failed requests
+  - VERIFICATION.md and output/playwright/abi014-deployed-receipt.md
+
+### evt-0454030b-e4f1-4ed6-926e-0480c7349c08
+
+- Timestamp: 2026-08-29T01:01:10.203Z
+- Actor: manager-root
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Move ABI-014 to final Manager closure after deployed verification PASS.
+- Idempotency key: abi-014-qa-to-ready-manager-after-verification-20260829
+- Request fingerprint: 5a888ea104d2451be63e2bc3fc7f7834a0636f39ad115c614c66ea5570a06608
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification PASS progress revision 31
+  - CI and Pages exact SHA success
+  - public browser proof complete
+  - all required non-closure gates passed
+
+### evt-d88896de-7ee8-4a58-8846-1443225f96e0
+
+- Timestamp: 2026-08-29T01:01:23.953Z
+- Actor: manager-root
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Complete reviewed implementation, Vault sync, coherent publication, exact-SHA CI/Pages, and public deployed proof; ready for typed Manager closure.
+- Idempotency key: abi-014-delivery-complete-20260829
+- Request fingerprint: 6d0ae8398373cbde58ad072eabd7d48fcf2346fbcc525bb8438efc8bc1ebd564
+- Action: set_state
+- Step ID: starter-delivery
+- State: complete
+- Evidence:
+  - checkpoint 195e965... published
+  - CI 33224695027 success
+  - Pages 33224695066 success
+  - public fresh/current/historical proof
+  - verification PASS
+
+### evt-d15ea66b-18b8-47b9-8e97-3b957357febb
+
+- Timestamp: 2026-08-29T01:01:30.474Z
+- Actor: abi014-manager-closure
+- Operation: gate.record
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: Manager closure PASS: every acceptance criterion, independent gate, publication receipt, and deployed proof is complete.
+- Idempotency key: abi-014-manager-closure-pass-20260829
+- Request fingerprint: ef2d66fdcaad0e5747f28b749fd52e78939ae932b44e85ba181c7bb62a882fbb
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - all execution-plan steps complete
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - checkpoint 195e965 public and green
+  - no other ABI task started
+
+### evt-a9475b45-e512-4d10-afdf-bfa43576bf22
+
+- Timestamp: 2026-08-29T01:01:38.979Z
+- Actor: abi014-manager-closure
+- Operation: task.advance
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: EVENT closed — abi014-manager-closure — ABI-014 accepted, published, deployed, and verified without starting another task.
+- Idempotency key: abi-014-ready-manager-to-done-20260829
+- Request fingerprint: 3b5e2ac3b53a71dab5bae645f40748fe65ac29a92ab39e2e558082f4c23f9acf
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - all required gates PASS
+  - all execution-plan steps complete
+  - checkpoint 195e965 exact-SHA CI/Pages success
+  - public deployed fresh/current/historical proof
+  - scope preserved
+
+### evt-cc1cb3db-95be-4c60-ba2b-ba54fa64261a
+
+- Timestamp: 2026-08-29T01:02:00.387Z
+- Actor: manager-root
+- Operation: claim.release
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Released task claim: Release completed ABI-014 lease after Done closure and deployed verification
+- Idempotency key: abi-014-release-lease-after-close-20260829
+- Request fingerprint: 3a81075b0caa922c8c728a1e55a0066d3ee3beff6ac932655a583702972cd76a
+- Agent ID: manager-root
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-014 lease after Done closure and deployed verification
+- Branch: main
+- Evidence:
+  - None
