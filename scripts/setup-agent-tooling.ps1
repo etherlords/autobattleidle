@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
-$plannerVersion = "1.1.1"
-$plannerSha256 = "191c094082f6fc7bd98320b0c60ea56d040d54723950c87e54fdf62af011b1ad"
+$plannerVersion = "1.1.2"
+$plannerSha256 = "685d971c4f97db613c18135e4249bf64f39fd31f60b084c94ecc2043626c1ac3"
 $vaultVersion = "1.1.0"
 $vaultSha256 = "1f25d8a2930b661bf577d9ae7eed0e137664f348b068ad3b3ac41e523e601034"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
@@ -22,12 +22,19 @@ function Install-ReleaseRuntime {
 
   New-Item -ItemType Directory -Force $ReleaseDirectory, $RuntimeDirectory | Out-Null
   $archive = Join-Path $ReleaseDirectory $ArchiveName
+  $sidecar = "$archive.sha256"
   if (-not (Test-Path -LiteralPath $archive)) {
     gh release download "v$Version" -R $Repository --pattern $ArchiveName --dir $ReleaseDirectory
     if ($LASTEXITCODE -ne 0) { throw "Failed to download $Repository v$Version" }
   }
+  if (-not (Test-Path -LiteralPath $sidecar)) {
+    gh release download "v$Version" -R $Repository --pattern "$ArchiveName.sha256" --dir $ReleaseDirectory
+    if ($LASTEXITCODE -ne 0) { throw "Failed to download $Repository v$Version checksum" }
+  }
   $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+  $declared = ((Get-Content -Raw -LiteralPath $sidecar).Trim() -split '\s+')[0].ToLowerInvariant()
   if ($actual -ne $ExpectedSha256) { throw "Pinned checksum mismatch for $archive" }
+  if ($actual -ne $declared) { throw "Release sidecar checksum mismatch for $archive" }
 
   Set-Content -LiteralPath (Join-Path $RuntimeDirectory "package.json") -Encoding utf8 -Value '{"private":true,"packageManager":"pnpm@11.21.0"}'
   Set-Content -LiteralPath (Join-Path $RuntimeDirectory ".npmrc") -Encoding utf8 -Value '@etherlords:registry=https://npm.pkg.github.com'

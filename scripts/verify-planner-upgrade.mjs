@@ -28,8 +28,9 @@ const packageRoot = await realpath(
 );
 const serverEntrypoint = path.join(packageRoot, "dist", "server.js");
 const setupEntrypoint = path.join(packageRoot, "scripts", "setup-project.mjs");
-const archive = path.join(projectRoot, ".release", "planner", "etherlords-planner-mcp-1.1.1.tgz");
-const expectedSha256 = "191c094082f6fc7bd98320b0c60ea56d040d54723950c87e54fdf62af011b1ad";
+const archive = path.join(projectRoot, ".release", "planner", "etherlords-planner-mcp-1.1.2.tgz");
+const sidecar = `${archive}.sha256`;
+const expectedSha256 = "685d971c4f97db613c18135e4249bf64f39fd31f60b084c94ecc2043626c1ac3";
 const fixture = await mkdtemp(path.join(os.tmpdir(), "autobattleidle-planner-acceptance-"));
 
 try {
@@ -39,25 +40,30 @@ try {
   const archiveSha256 = createHash("sha256")
     .update(await readFile(archive))
     .digest("hex");
+  const declaredSha256 = (await readFile(sidecar, "utf8")).trim().split(/\s+/)[0].toLowerCase();
   assert(
-    packageManifest.version === "1.1.1",
-    `Expected Planner 1.1.1, got ${packageManifest.version}`,
+    packageManifest.version === "1.1.2",
+    `Expected Planner 1.1.2, got ${packageManifest.version}`,
   );
   assert(archiveSha256 === expectedSha256, `Archive SHA-256 mismatch: ${archiveSha256}`);
+  assert(declaredSha256 === expectedSha256, `Sidecar SHA-256 mismatch: ${declaredSha256}`);
   await verifyConfigReceipt();
   await bootstrapFixture();
   const doctor = await verifyCanonicalDoctor();
   const mcp = await verifyMcpAndTaskUpdate();
   const recovery = await verifyInterruptedRecovery();
   const transientRename = await verifyTransientRenameRetry();
+  const shortIndexLock = await verifyIndexReadLock(500, "short-index-lock", true);
+  const longIndexLock = await verifyIndexReadLock(2_500, "long-index-lock", false);
   const ui = await verifyExistingUi();
   process.stdout.write(
     `${JSON.stringify(
       {
         schemaVersion: 1,
         artifact: {
-          url: "https://github.com/etherlords/planner/releases/download/v1.1.1/etherlords-planner-mcp-1.1.1.tgz",
+          url: "https://github.com/etherlords/planner/releases/download/v1.1.2/etherlords-planner-mcp-1.1.2.tgz",
           sha256: archiveSha256,
+          sidecarSha256: declaredSha256,
           bytes: (await readFile(archive)).byteLength,
           package: "@etherlords/planner-mcp",
           version: packageManifest.version,
@@ -72,6 +78,8 @@ try {
         mcp,
         recovery,
         transientRename,
+        shortIndexLock,
+        longIndexLock,
         ui,
       },
       null,
@@ -175,6 +183,9 @@ async function verifyCanonicalDoctor() {
   const { client, close } = await connect("autobattleidle-planner-canonical-doctor", projectRoot);
   try {
     const doctor = result(await client.callTool({ name: "planner_doctor", arguments: {} })).data;
+    const current = result(
+      await client.callTool({ name: "planner_get_current", arguments: {} }),
+    ).data;
     assert(doctor.healthy, "Canonical Planner doctor is unhealthy");
     assert(!doctor.recovery.required, "Canonical Planner requires recovery");
     assert(doctor.recovery.journalPaths.length === 0, "Canonical Planner has a pending journal");
@@ -183,6 +194,9 @@ async function verifyCanonicalDoctor() {
       projectId: doctor.projectId,
       sprintId: doctor.sprintId,
       pendingRecovery: false,
+      currentTask: current.current?.id ?? null,
+      currentTaskReadable: current.current !== null,
+      indexAvailable: current.index.available,
       warningCodes: doctor.findings.map((finding) => finding.code),
     };
   } finally {
@@ -332,6 +346,117 @@ async function verifyTransientRenameRetry() {
   assert(virtualMilliseconds === 675, `Expected 675 virtual ms, got ${virtualMilliseconds}`);
   assert((await readFile(target, "utf8")) === "preserved bytes\n", "Renamed bytes changed");
   return { code: "EBUSY", attempts, virtualMilliseconds, dataLoss: false };
+}
+
+async function verifyIndexReadLock(lockMilliseconds, idempotencyKey, expectImmediateIndex) {
+  const { client, close } = await connect(`autobattleidle-planner-${idempotencyKey}`);
+  try {
+    const before = result(
+      await client.callTool({
+        name: "planner_get_execution_context",
+        arguments: { itemId: "ACCEPT-001", artifacts: ["BRIEF.md"] },
+      }),
+    );
+    const beforeRevision = before.data.task.revision;
+    const beforeBrief = before.data.artifacts[0].content;
+    const lock = await holdSqliteReadLock(
+      path.join(fixture, ".planner-cache", "index.sqlite"),
+      lockMilliseconds,
+    );
+    const startedAt = Date.now();
+    const update = result(
+      await client.callTool({
+        name: "planner_task_update",
+        arguments: updateArguments(beforeRevision, idempotencyKey, idempotencyKey),
+      }),
+    );
+    const updateElapsedMilliseconds = Date.now() - startedAt;
+    assert(
+      update.data.taskRevision === beforeRevision + 1,
+      "Lock canary revision did not advance once",
+    );
+    const canonical = result(
+      await client.callTool({
+        name: "planner_get_execution_context",
+        arguments: { itemId: "ACCEPT-001", artifacts: ["BRIEF.md"] },
+      }),
+    );
+    assert(
+      canonical.data.task.revision === beforeRevision + 1,
+      "Canonical readback revision mismatch",
+    );
+    assert(
+      count(canonical.data.artifacts[0].content, `Criterion ${idempotencyKey}`) === 1,
+      "Canonical lock-canary value was not rendered exactly once",
+    );
+    assert(
+      canonical.data.artifacts[0].content !== beforeBrief,
+      "Canonical Markdown did not change under the SQLite read lock",
+    );
+    const lockedRead = result(
+      await client.callTool({ name: "planner_get_current", arguments: {} }),
+    );
+    if (expectImmediateIndex) {
+      await lock.released;
+      assert(
+        updateElapsedMilliseconds >= lockMilliseconds - 100 && updateElapsedMilliseconds < 1_500,
+        `Short-lock retry was not bounded: ${updateElapsedMilliseconds}ms`,
+      );
+      assert(lockedRead.data.index.available, "Short-lock index did not become available");
+      assert(
+        lockedRead.data.index.fingerprint === (await canonicalFingerprint()),
+        "Short-lock index fingerprint is stale",
+      );
+    } else {
+      assert(
+        updateElapsedMilliseconds >= 900 && updateElapsedMilliseconds < lockMilliseconds,
+        `Long-lock fallback was not bounded: ${updateElapsedMilliseconds}ms`,
+      );
+      assert(!lockedRead.data.index.available, "Long-lock index unexpectedly remained available");
+      assert(!lockedRead.data.index.recoveryRequired, "Long-lock index requested recovery");
+      await lock.released;
+    }
+    const rebuilt = expectImmediateIndex
+      ? lockedRead
+      : result(await client.callTool({ name: "planner_get_current", arguments: {} }));
+    assert(rebuilt.data.index.available, "Index did not rebuild after lock release");
+    assert(!rebuilt.data.index.recoveryRequired, "Rebuilt index requested recovery");
+    assert(
+      rebuilt.data.index.fingerprint === (await canonicalFingerprint()),
+      "Rebuilt index fingerprint is stale",
+    );
+    const journals = (await new MarkdownStore(fixture).listOperationJournals()).filter(
+      (journal) => journal.idempotencyKey === idempotencyKey,
+    );
+    assert(journals.length === 1, `Expected one ${idempotencyKey} journal, got ${journals.length}`);
+    assert(journals[0].state === "committed", `${idempotencyKey} journal is not committed`);
+    return {
+      sqliteReadLockMilliseconds: lockMilliseconds,
+      updateElapsedMilliseconds,
+      canonicalRevision: canonical.data.task.revision,
+      canonicalMutationCount: 1,
+      committedJournals: journals.length,
+      indexAvailableAfterRelease: rebuilt.data.index.available,
+      indexCurrentAfterRelease: true,
+      ...(expectImmediateIndex
+        ? {
+            boundedRetrySucceeded: true,
+            indexAvailableAfterBoundedRetry: lockedRead.data.index.available,
+            indexCurrentAfterBoundedRetry: true,
+          }
+        : {
+            indexAvailableWhileLocked: lockedRead.data.index.available,
+            recoveryRequiredWhileLocked: lockedRead.data.index.recoveryRequired,
+          }),
+    };
+  } finally {
+    await close();
+  }
+}
+
+async function canonicalFingerprint() {
+  const store = new MarkdownStore(fixture);
+  return store.canonicalFingerprint(await store.loadConfig());
 }
 
 async function verifyExistingUi() {
@@ -502,6 +627,45 @@ async function holdExclusiveLock(file, milliseconds) {
     child.on("error", reject);
     child.on("close", (code) => {
       if (!stdout.includes("locked")) reject(new Error(stderr || `Lock process exited ${code}`));
+    });
+  });
+  return {
+    released: new Promise((resolve, reject) => {
+      child.on("error", reject);
+      child.on("close", (code) => (code === 0 ? resolve() : reject(new Error(stderr))));
+    }),
+  };
+}
+
+async function holdSqliteReadLock(file, milliseconds) {
+  const child = spawn(
+    process.execPath,
+    [
+      "--input-type=module",
+      "--eval",
+      `import { DatabaseSync } from "node:sqlite"; const database = new DatabaseSync(process.argv[1], { readOnly: true }); database.prepare("SELECT value FROM meta WHERE key = 'canonicalFingerprint'").get(); process.stdout.write("locked\\n"); setTimeout(() => database.close(), Number(process.argv[2]));`,
+      file,
+      String(milliseconds),
+    ],
+    { cwd: fixture, env: process.env, windowsHide: true },
+  );
+  let stdout = "";
+  let stderr = "";
+  child.stdout.on("data", (chunk) => (stdout += chunk));
+  child.stderr.on("data", (chunk) => (stderr += chunk));
+  await new Promise((resolve, reject) => {
+    const timeout = setTimeout(
+      () => reject(new Error("SQLite read lock did not initialize")),
+      3_000,
+    );
+    child.stdout.on("data", () => {
+      if (!stdout.includes("locked")) return;
+      clearTimeout(timeout);
+      resolve();
+    });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (!stdout.includes("locked")) reject(new Error(stderr || `SQLite lock exited ${code}`));
     });
   });
   return {
