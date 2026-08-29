@@ -4,8 +4,8 @@ id: ABI-018
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 9
-status: In QA
+revision: 11
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -29,7 +29,7 @@ Show current upgrade stats and rebalance automatic attack speed
 
 - Type: task
 - Priority: high
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

@@ -4,8 +4,8 @@ id: ABI-018
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 42
-status: In QA
+revision: 48
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 42
-- Last update: Start Manager verification/publication stage without bypassing the pending verification gate.
+- Status: Done
+- Revision: 48
+- Last update: ABI-018 is fully accepted after scoped implementation, bounded repair and re-review, independent QA, verification, Vault synchronization, exact-SHA CI/Pages, deployed browser proof, and Manager closure.
 
 ## Execution plan
 
@@ -39,7 +39,7 @@ requiredGates:
 - [x] automatic-speed-curve-v2: Implementation owner applies the calibrated bounded APS curve and preserves cooldown and automatic-slow semantics
 - [x] stats-aps-self-check-v2: Implementation owner adds formula table, monotonicity, HUD, save, starter progression, and long-run automation regressions then runs pnpm check
 - [x] stats-aps-independent-gates-v2: Independent Reviewer and desktop/390px browser QA verify formulas, accessibility, layout, persistence, and long-run automation
-- [~] stats-aps-manager-closure-v2: Manager records verification, updates accepted Vault formulas, publishes coherently, and proves exact-SHA CI/Pages
+- [x] stats-aps-manager-closure-v2: Manager records verification, updates accepted Vault formulas, publishes coherently, and proves exact-SHA CI/Pages
 
 ## Events
 
@@ -739,3 +739,108 @@ requiredGates:
   - Independent review and QA passed
   - Verification remains pending before Ready for Manager
   - Vault sync, coherent commit/push, exact-SHA CI/Pages and deployed browser proof required
+
+### evt-a4b164f0-ef4e-4e8c-96ad-305ee11a2202
+
+- Timestamp: 2026-08-29T14:09:46.252Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: EVENT checkpoint — root-manager — authorize narrow Markdown fallback for ABI-018 VERIFICATION.md evidence only; gate and lifecycle remain Planner-tool owned.
+- Idempotency key: abi018-verification-artifact-fallback-20260829
+- Evidence:
+  - planner_doctor healthy, recovery.required=false
+  - Planner 1.1.2 exposes verification gate but no VERIFICATION.md section writer
+  - Exact SHA df32e4ff9d7006dc9084d099d09236311262a3ea CI/Pages and deployed browser evidence ready
+
+### evt-f0e5bac1-1c33-45cc-aee8-b9344c1bc5e3
+
+- Timestamp: 2026-08-29T14:11:57.027Z
+- Actor: abi018-verification-agent
+- Operation: gate.record
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: PASS — exact-SHA CI and Pages succeeded; deployed desktop and 390px behavior, console health, supported-save continuity, Reviewer approval, and independent QA acceptance are recorded.
+- Idempotency key: abi018-verification-pass-df32e4ff-20260829
+- Request fingerprint: 83b13e6fa43ce9aa6fd2128cf36bfa5a2b4bd5742fe59f8f16dafae4d12914da
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md exact release SHA df32e4ff9d7006dc9084d099d09236311262a3ea
+  - CI run 33256713258 job 99111613731 success
+  - Pages run 33256713311 job 99111614020 success
+  - https://etherlords.github.io/autobattleidle/
+  - Reviewer APPROVE; independent QA PASS; no schema change with V3 reload and V2 migration proof
+
+### evt-3a23abe6-282d-4393-8422-4bb8aedf9860
+
+- Timestamp: 2026-08-29T14:12:03.128Z
+- Actor: abi018-verification-agent
+- Operation: task.advance
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Verification passed with exact-SHA CI, Pages, deployed browser, persistence, review, and QA evidence; hand off to the distinct Manager closure actor.
+- Idempotency key: abi018-inqa-to-ready-manager-20260829
+- Request fingerprint: 28a15bc67e6aad6b821c24bcee28d7b52e022591821b04cb43517937ec0fc62e
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification gate evt-f0e5bac1-1c33-45cc-aee8-b9344c1bc5e3
+  - VERIFICATION.md exact-SHA/deployed acceptance readback
+
+### evt-8b94ba19-2430-45ca-a5de-aff60e48b030
+
+- Timestamp: 2026-08-29T14:12:13.232Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: PASS — Manager accepts the scoped implementation, bounded repair history, independent gates, Vault updates, exact-SHA release proof, deployed behavior, and no-schema persistence evidence.
+- Idempotency key: abi018-manager-closure-pass-20260829
+- Request fingerprint: 9da36eac32ba2b7b1e376d94b9bfa90f5ea17b37d2bb0085285ec5cdd5989295
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - verification gate evt-f0e5bac1-1c33-45cc-aee8-b9344c1bc5e3
+  - Ready for Manager transition evt-3a23abe6-282d-4393-8422-4bb8aedf9860
+  - Reviewer APPROVE after bounded repair and fresh re-review
+  - Independent QA PASS
+  - Vault doctor 0 errors/0 warnings; index fresh with 14 articles
+  - release candidate df32e4ff9d7006dc9084d099d09236311262a3ea exact-SHA CI/Pages and deployed proof
+
+### evt-f0323578-0074-4185-b0b7-ccd4b2769c21
+
+- Timestamp: 2026-08-29T14:12:21.554Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Manager closure evidence is complete: accepted Vault knowledge, typed gates, release candidate publication, exact-SHA CI/Pages, and deployed browser proof.
+- Idempotency key: abi018-complete-manager-closure-step-20260829
+- Request fingerprint: 619651928a59ff7fea4566de8fb103381946d3983e79ebf59262d3db02297054
+- Action: set_state
+- Step ID: stats-aps-manager-closure-v2
+- State: complete
+- Evidence:
+  - manager-closure gate evt-8b94ba19-2430-45ca-a5de-aff60e48b030
+  - verification gate evt-f0e5bac1-1c33-45cc-aee8-b9344c1bc5e3
+  - release candidate df32e4ff9d7006dc9084d099d09236311262a3ea published and deployed
+
+### evt-f97bfa91-390f-4945-a851-f7cf67cecafc
+
+- Timestamp: 2026-08-29T14:12:28.926Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: ABI-018 is fully accepted after scoped implementation, bounded repair and re-review, independent QA, verification, Vault synchronization, exact-SHA CI/Pages, deployed browser proof, and Manager closure.
+- Idempotency key: abi018-ready-manager-to-done-20260829
+- Request fingerprint: 8d3735a4d31b871d10b013ff11999de1a804a5ea27981aa3fdd95dfc371e2bdf
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure gate evt-8b94ba19-2430-45ca-a5de-aff60e48b030
+  - managed closure step evt-f0323578-0074-4185-b0b7-ccd4b2769c21
+  - verification gate evt-f0e5bac1-1c33-45cc-aee8-b9344c1bc5e3
+  - exact-SHA release candidate df32e4ff9d7006dc9084d099d09236311262a3ea
