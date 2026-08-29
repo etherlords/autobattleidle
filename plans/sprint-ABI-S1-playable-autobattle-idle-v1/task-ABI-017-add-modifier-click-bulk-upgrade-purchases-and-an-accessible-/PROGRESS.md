@@ -4,8 +4,8 @@ id: ABI-017
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 38
-status: Ready for Manager
+revision: 43
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 38
-- Last update: Begin coherent task-only commit/push and exact-SHA CI/Pages/deployed proof.
+- Status: Done
+- Revision: 43
+- Last update: Released task claim: Release completed ABI-017 manager lease
 
 ## Execution plan
 
@@ -32,7 +32,7 @@ requiredGates:
 - [x] batch-application: Implementation owner applies sequential purchases in application and renders/persists once with frozen per-level events
 - [x] self-check: Implementation owner adds focused HUD/application parity and failure tests and runs pnpm check
 - [x] independent-gates: Independent Reviewer and browser QA verify desktop/narrow interaction, focus, events, and persistence
-- [~] manager-closure: Manager syncs accepted Vault behavior, closes Planner, publishes, and proves exact-SHA CI/Pages
+- [x] manager-closure: Manager syncs accepted Vault behavior, closes Planner, publishes, and proves exact-SHA CI/Pages
 - [x] review-repair-1: Implementation owner fixes keyboard modality and completes explicit bulk atomicity proof from independent review 1
 
 ## Events
@@ -672,3 +672,92 @@ requiredGates:
   - REVIEW.md
   - QA.md
   - Vault content hash 59127295bc5e5d6b8a7c335afe1cd72f93fe91bb018685d4dac3a103777f9a97
+
+### evt-3cbe8252-494c-4fb3-876d-c270d7ecf462
+
+- Timestamp: 2026-08-29T03:51:34.866Z
+- Actor: manager-closer
+- Operation: progress.append
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: EVENT checkpoint — manager-closer — Feature SHA 24568d61594947b14fae3f13a9b1263385f0dc56 pushed; exact-SHA CI and Pages succeeded; deployed Shift x10, V2 persistence/reload, 390px hint, and zero-console proof passed.
+- Idempotency key: abi-017-deployed-proof
+- Evidence:
+  - VERIFICATION.md
+  - CI run 33232282725 job 99047053447
+  - Pages run 33232282719 job 99047053364
+  - https://etherlords.github.io/autobattleidle/
+  - Playwright deployed snapshots
+
+### evt-16ea2b75-eab2-4959-9919-d98d72a3d5c5
+
+- Timestamp: 2026-08-29T03:51:36.969Z
+- Actor: manager-closer
+- Operation: execution_plan.update
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Vault sync, coherent publish, exact-SHA CI/Pages, and deployed functional proof complete.
+- Idempotency key: abi-017-manager-closure-complete
+- Request fingerprint: 6828026d85ec5a4accc3cd022ff9ccbb6b811011bba55ce4eb8a131981bb3b3b
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - VERIFICATION.md
+  - 24568d61594947b14fae3f13a9b1263385f0dc56
+  - CI 33232282725
+  - Pages 33232282719
+  - deployed browser proof
+
+### evt-06659b83-5b70-404b-85fb-48bf776265b3
+
+- Timestamp: 2026-08-29T03:51:38.086Z
+- Actor: manager-closer
+- Operation: gate.record
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Distinct Manager closure accepts all criteria with exact-SHA publication and deployed proof.
+- Idempotency key: abi-017-gate-manager-closure
+- Request fingerprint: dc9bb43fd13e7194ac9aeec6fe93d89182c4516855bb40dfa8fe4f48fad71d48
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - implementation-self-check: pass
+  - independent-review: pass
+  - independent-qa: pass
+  - verification: pass
+  - CI/Pages/deployed proof
+
+### evt-82edc100-b89b-4c6f-bc15-c01b4d8f1c4c
+
+- Timestamp: 2026-08-29T03:51:39.191Z
+- Actor: manager-closer
+- Operation: task.advance
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: ABI-017 accepted and closed after all required gates, Vault sync, coherent publish, exact-SHA CI/Pages, and deployed functional verification.
+- Idempotency key: abi-017-ready-manager-to-done
+- Request fingerprint: 770014f916094087dab74e72a9c421a8cfeea22e19cb3ca2e3ec9237ff61c7db
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure: pass
+  - VERIFICATION.md
+  - 24568d61594947b14fae3f13a9b1263385f0dc56
+
+### evt-9652dd3a-dbfb-423f-9738-3774b1a561ed
+
+- Timestamp: 2026-08-29T03:51:40.807Z
+- Actor: manager-root
+- Operation: claim.release
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Released task claim: Release completed ABI-017 manager lease
+- Idempotency key: abi-017-release-lease
+- Request fingerprint: 53863e197fd03a83758a748ec27bfddac34f0659aa49a2e4ea60ea5693c7822a
+- Agent ID: manager-root
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: Release completed ABI-017 manager lease
+- Evidence:
+  - None

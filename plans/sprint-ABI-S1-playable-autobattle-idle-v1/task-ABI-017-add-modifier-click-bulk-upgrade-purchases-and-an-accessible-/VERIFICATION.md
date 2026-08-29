@@ -29,11 +29,14 @@ requiredGates:
 - Independent review: first review failed keyboard modality/proof; one bounded repair and fresh re-review passed with no P1-P3 findings.
 - Independent QA: real browser desktop and 390x844 passed functional modifier flows, partial stop, keyboard x1, hint/accessibility, focus/dismissal, responsive overflow, V2 reload, and zero console issues; deterministic persistence tests cover V1/V2 and malformed saves.
 - Vault `AUTOBATTLEIDLE-DOC-20260827-85CBFC` is synchronized to accepted behavior; Vault status is fresh and doctor reports zero findings.
-- Exact commit SHA, GitHub CI/Pages receipts, and deployed URL proof are appended during Manager closure after publish.
+- Feature commit: `24568d61594947b14fae3f13a9b1263385f0dc56`, pushed to `origin/main`.
+- Exact-SHA CI: run `33232282725`, job `99047053447`, success.
+- Exact-SHA GitHub Pages: run `33232282719`, job `99047053364`, success.
+- Deployed `https://etherlords.github.io/autobattleidle/`: seeded V2 Damage 1/501 coins; Shift-click produced Damage 11 and a single coherent persisted V2 state; 390x844 reload restored Damage 11, kept the hint readable, and reported zero console errors/warnings.
 
 ## Sign-off
 
 - Reviewer: PASS — independent re-review
 - QA: PASS — independent browser/regression QA
 - Verification: PASS — manager-verifier
-- Manager close: pending exact-SHA publish/deployed proof
+- Manager close: PASS — manager-closer, exact-SHA CI/Pages and deployed functional proof
