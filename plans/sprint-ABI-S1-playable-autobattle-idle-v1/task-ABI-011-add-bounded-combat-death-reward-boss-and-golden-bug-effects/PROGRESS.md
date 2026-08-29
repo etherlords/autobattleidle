@@ -4,8 +4,8 @@ id: ABI-011
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 51
-status: Ready for Manager
+revision: 54
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-009
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 51
-- Last update: Advance ABI-011 to Manager delivery after independent QA and fresh verification pass.
+- Status: Done
+- Revision: 54
+- Last update: Close ABI-011 after all high-assurance gates, exact-SHA delivery, deployed browser proof, Vault sync, and final audit pass.
 
 ## Execution plan
 
@@ -911,3 +911,58 @@ requiredGates:
   - evt-aacc0295-7e08-474d-a957-76c2d55b1b12 independent-qa PASS
   - evt-68a41ce8-7f5e-427c-8e89-709fb05a3bba verification PASS
   - pnpm check 15 files / 93 tests / build
+
+### evt-29ddd728-d55a-4afb-8c17-d22ff4e6644c
+
+- Timestamp: 2026-08-29T19:56:12.103Z
+- Actor: abi011-recovery-manager
+- Operation: progress.append
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: Exact-SHA release proof passed: CI, Pages, full deployed browser matrix, and final independent audit are green.
+- Idempotency key: abi011-exact-sha-deployed-proof-20260830
+- Evidence:
+  - commit 1c13456c057b6954c66b979dd18ab75d9493fa3d == origin/main
+  - CI run 33271382844 success at exact SHA
+  - Pages run 33271382868 success at exact SHA
+  - https://etherlords.github.io/autobattleidle/ six-case isolated deployed QA PASS
+  - Final independent release audit APPROVE; Planner/Vault healthy
+
+### evt-db5e5e30-eaf1-4dff-b745-c318f037fc84
+
+- Timestamp: 2026-08-29T19:56:27.239Z
+- Actor: abi011-recovery-manager
+- Operation: gate.record
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Manager closure passes after actor-separated review, QA, verification, Vault sync, exact-SHA CI/Pages, deployed browser proof, and final audit.
+- Idempotency key: abi011-manager-closure-pass-20260830
+- Request fingerprint: 2f5917837b82e083a92d1c7d25d4bef5e5ef6f1ad85d5de99399cea0f62e8982
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS evt-620456bf-dae2-42ba-af91-66a79f889eefd
+  - independent-qa PASS evt-aacc0295-7e08-474d-a957-76c2d55b1b12
+  - verification PASS evt-68a41ce8-7f5e-427c-8e89-709fb05a3bba
+  - commit 1c13456c057b6954c66b979dd18ab75d9493fa3d
+  - CI 33271382844 and Pages 33271382868 success
+  - deployed six-case browser QA and final audit APPROVE
+  - Vault AUTOBATTLEIDLE-DOC-20260827-A7FD1F synced
+
+### evt-ddf3419b-25dd-4253-8589-3e1502da9a0b
+
+- Timestamp: 2026-08-29T19:56:34.816Z
+- Actor: abi011-recovery-manager
+- Operation: task.advance
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Close ABI-011 after all high-assurance gates, exact-SHA delivery, deployed browser proof, Vault sync, and final audit pass.
+- Idempotency key: abi011-ready-manager-done-20260830
+- Request fingerprint: e015acbb3d510fd006f10d4ff83bba037e4c3cb8b3de4fe91b91ab011a5f5d2e
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-db5e5e30-eaf1-4dff-b745-c318f037fc84 manager-closure PASS
+  - commit 1c13456c057b6954c66b979dd18ab75d9493fa3d
+  - CI/Pages/deployed proof green

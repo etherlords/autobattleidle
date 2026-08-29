@@ -4,8 +4,8 @@ id: ABI-011
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 14
-status: Ready for Manager
+revision: 15
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-009
@@ -28,7 +28,7 @@ Add bounded combat, death, reward, boss, and Golden Bug effects
 
 - Type: task
 - Priority: normal
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
