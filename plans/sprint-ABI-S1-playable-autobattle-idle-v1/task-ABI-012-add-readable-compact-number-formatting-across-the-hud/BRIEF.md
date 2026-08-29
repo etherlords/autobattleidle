@@ -4,8 +4,8 @@ id: ABI-012
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 8
-status: In QA
+revision: 10
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -30,7 +30,7 @@ Add readable compact number formatting across the HUD
 
 - Type: task
 - Priority: high
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

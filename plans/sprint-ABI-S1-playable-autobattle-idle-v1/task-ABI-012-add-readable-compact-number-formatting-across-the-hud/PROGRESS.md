@@ -4,8 +4,8 @@ id: ABI-012
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 25
-status: In QA
+revision: 33
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 25
-- Last update: Start publication and exact-SHA deployed verification while ABI-012 remains In QA; do not advance before verification passes.
+- Status: Done
+- Revision: 33
+- Last update: Released task claim: Release completed ABI-012 finite manager lease
 
 ## Execution plan
 
@@ -33,7 +33,7 @@ requiredGates:
 - [x] hud-integration: Implementation owner: route HP, damage, mitigation, rewards, coins, costs, and numeric logs through the shared formatter without changing timers or saved values.
 - [x] number-tests: Implementation owner: add boundary, promotion, invalid-value, accessibility, and narrow-layout regression coverage; run pnpm check.
 - [x] number-gates: Independent Reviewer and QA: audit shared ownership and verify exact/compact transitions, ARIA values, logs, persistence neutrality, desktop and 390px behavior.
-- [~] number-delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed number-format scenarios, and close.
+- [x] number-delivery: Manager: verify evidence, commit/push, wait CI/Pages, repeat deployed number-format scenarios, and close.
 
 ## Events
 
@@ -456,3 +456,145 @@ requiredGates:
   - Independent review and QA pass
   - Verification gate intentionally pending exact-SHA deployment
   - ABI-012 remains In QA
+
+### evt-cb50410b-d611-49f7-871e-fcf53911d6e6
+
+- Timestamp: 2026-08-29T00:01:44.309Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: EVENT checkpoint — root-manager — exact-SHA Pages and deployed desktop/narrow repetition passed; canonical QA and VERIFICATION artifacts recorded through the explicit narrow fallback.
+- Idempotency key: abi-012-deployed-verification-artifacts-20260829
+- Evidence:
+  - QA.md and VERIFICATION.md narrow fallback
+  - published SHA 4e4c6e9a7341adaa9b596305a595acad14bfd339
+  - Pages run 33222069018 success
+  - deployed URL https://etherlords.github.io/autobattleidle/
+  - desktop 1440x900 PASS
+  - narrow 390x844 PASS
+  - zero console/network/overflow
+
+### evt-9a7876ae-96b0-4e0f-8c0a-7292480d3bc4
+
+- Timestamp: 2026-08-29T00:01:45.916Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Manager verifies all ABI-012 unit, integration, persistence, accessibility, exact-SHA Pages, and deployed acceptance evidence.
+- Idempotency key: abi-012-verification-pass-20260829
+- Request fingerprint: 9db296c21146b3146e490206ec319dbb371774b1792bc7b913f37890ff71e6c5
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md acceptance mapping
+  - implementation SHA 4e4c6e9a7341adaa9b596305a595acad14bfd339
+  - Pages run 33222069018 success
+  - deployed desktop and 390px PASS
+  - Vault policy hash consistent
+  - pnpm check 65/65
+
+### evt-613868dd-e2cb-4ece-aeb3-248e8e9ec667
+
+- Timestamp: 2026-08-29T00:01:47.011Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: Move fully verified ABI-012 to Ready for Manager closure.
+- Idempotency key: abi-012-qa-to-ready-manager-after-verification-20260829
+- Request fingerprint: 7843cc8c62813815adc562f9b51ded21a2efd3372fc77aba6792243c5fa6f331
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification pass
+  - independent-review pass
+  - independent-qa pass
+  - exact-SHA deployed proof pass
+
+### evt-653f8905-f241-4565-b7a5-551cafc2a657
+
+- Timestamp: 2026-08-29T00:02:08.925Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Complete ABI-012 publication, exact-SHA Pages, deployed repetition, Vault consistency, and closure evidence.
+- Idempotency key: abi-012-delivery-complete-20260829
+- Request fingerprint: 9050af031070fe9a74a0d47c93c83c4add6f157e9a7f460ff64dd3e74d68966a
+- Action: set_state
+- Step ID: number-delivery
+- State: complete
+- Evidence:
+  - implementation SHA 4e4c6e9a7341adaa9b596305a595acad14bfd339 published
+  - Pages run 33222069018 success
+  - deployed desktop and 390px PASS
+  - verification gate pass
+
+### evt-09a2dae1-3b65-4123-92e4-48055dfa5741
+
+- Timestamp: 2026-08-29T00:02:31.424Z
+- Actor: manager-close-abi012
+- Operation: gate.record
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Dedicated Manager closure actor accepts ABI-012 after all gates, exact-SHA Pages, and deployed proof.
+- Idempotency key: abi-012-manager-closure-pass-dedicated-actor-20260829
+- Request fingerprint: 9688e53db28ee3b2d29903fd1405dd8ef4a232fb9c86d13007040b3e6d640693
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - All managed steps complete
+  - implementation-self-check pass
+  - independent-review pass
+  - independent-qa pass
+  - verification pass
+  - published/deployed SHA 4e4c6e9a7341adaa9b596305a595acad14bfd339
+
+### evt-318018f8-5ccd-43d2-a8a6-7db4a460894a
+
+- Timestamp: 2026-08-29T00:02:32.558Z
+- Actor: manager-close-abi012
+- Operation: task.advance
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: EVENT closed — manager-close-abi012 — ABI-012 accepted, published, deployed, and closed with no unresolved findings.
+- Idempotency key: abi-012-ready-manager-to-done-dedicated-actor-20260829
+- Request fingerprint: 68540760a105469f32fb31d98f07996f9b1cea9b871f66e8066563292a46fd20
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required gates pass
+  - All managed steps complete
+  - Exact-SHA CI/Pages and deployed proof pass
+
+### evt-7bef8d46-4712-4a32-ab3c-aaeeb03473d8
+
+- Timestamp: 2026-08-29T00:02:47.598Z
+- Actor: manager-close-abi012
+- Operation: progress.append
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: EVENT checkpoint — manager-close-abi012 — final VERIFICATION sign-off recorded through the explicit narrow fallback after canonical Done transition.
+- Idempotency key: abi-012-final-verification-signoff-fallback-20260829
+- Evidence:
+  - VERIFICATION.md final sign-off fallback
+  - ABI-012 Done revision 10
+  - manager-closure pass
+
+### evt-c85e4239-2b7a-4ede-81b0-52089b4bf8af
+
+- Timestamp: 2026-08-29T00:03:06.066Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Released task claim: Release completed ABI-012 finite manager lease
+- Idempotency key: abi-012-release-claim-after-done-20260829
+- Request fingerprint: 52911ebf74bc64bec651476f3ff1f08c047ad3b40c8345f0ae8dcb576c349347
+- Agent ID: root-manager
+- Session ID: abi-s1-manager-20260829
+- Intent: Release completed ABI-012 finite manager lease
+- Evidence:
+  - None
