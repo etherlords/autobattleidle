@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -23,6 +24,10 @@ describe("battlefield effects", () => {
   it("uses distinct geometry for every readable combat cue", () => {
     const geometries = effectKinds.map((kind) => createBattlefieldEffect(kind).mesh.geometry.type);
     expect(new Set(geometries).size).toBe(8);
+  });
+
+  it("uses a circular critical cue rather than a triangular attack marker", () => {
+    expect(createBattlefieldEffect("critical").mesh.geometry).toBeInstanceOf(THREE.TorusGeometry);
   });
 
   it("caps, expires, preserves reduced-motion scale, and disposes each resource once", () => {

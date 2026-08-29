@@ -1,0 +1,26 @@
+{
+  "before": {
+    "engine": "three.js r185",
+    "enemyFamily": "beetle",
+    "enemyVariant": "1",
+    "enemySeed": "230678965",
+    "enemyGrade": "elite",
+    "enemyModifier": "armor",
+    "goldenBug": "false",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "after": {
+    "engine": "three.js r185",
+    "enemyFamily": "beetle",
+    "enemyVariant": "1",
+    "enemySeed": "230678965",
+    "enemyGrade": "elite",
+    "enemyModifier": "armor",
+    "goldenBug": "false",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "errors": [],
+  "failed": []
+}

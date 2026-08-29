@@ -39,13 +39,17 @@ const riggedBody = (
   family: BodyFamily,
   root: THREE.Mesh,
   parts: readonly THREE.Object3D[],
+  head: THREE.Object3D,
   motion: Motion = "standard",
+  deathDrop = 0.2,
 ): EnemyVisualComponent => {
+  const pose = new THREE.Group();
+  pose.name = `enemy-pose-${family}`;
   const rig = new THREE.Group();
   rig.name = `enemy-rig-${family}`;
-  rig.add(...parts);
-  const nodes = [root, rig];
-  const bases = nodes.map((node) => ({
+  rig.add(root, ...parts);
+  pose.add(rig);
+  const bases = [pose].map((node) => ({
     position: node.position.clone(),
     rotation: node.rotation.clone(),
     scale: node.scale.clone(),
@@ -54,7 +58,7 @@ const riggedBody = (
   let frames = 0;
   let phase = 0;
   const reset = (): void => {
-    nodes.forEach((node, index) => {
+    [pose].forEach((node, index) => {
       const base = bases[index];
       if (base === undefined) return;
       node.position.copy(base.position);
@@ -63,13 +67,13 @@ const riggedBody = (
     });
   };
   const scale = (x: number, y: number, z: number): void => {
-    nodes.forEach((node) => node.scale.multiply(new THREE.Vector3(x, y, z)));
+    pose.scale.multiply(new THREE.Vector3(x, y, z));
   };
   const lift = (y: number): void => {
-    nodes.forEach((node) => (node.position.y += y));
+    pose.position.y += y;
   };
   const tilt = (z: number): void => {
-    nodes.forEach((node) => (node.rotation.z += z));
+    pose.rotation.z += z;
   };
   const commands: Readonly<Record<EnemyVisualCommand, () => void>> = {
     spawn: () => {
@@ -96,7 +100,7 @@ const riggedBody = (
   return component(
     `body-${family}`,
     "body",
-    nodes,
+    [pose],
     {
       [`body-${family}-motion`]: () => {
         phase += enemyVisualAnimation.idleRadians;
@@ -106,20 +110,27 @@ const riggedBody = (
           return;
         }
         const total = enemyVisualAnimation.commandFrames[command ?? "hit"];
-        const progress = 1 - frames / total;
-        if (command === "spawn")
-          scale(0.72 + 0.28 * progress, 0.72 + 0.28 * progress, 0.72 + 0.28 * progress);
-        if (command === "hit") scale(1.1, motion === "wisp" ? 0.78 : 0.9, 1.1);
-        if (command === "critical") scale(1.2, motion === "wisp" ? 0.68 : 0.82, 1.2);
+        const progress = (total - frames) / (total - 1);
+        const peak = Math.sin(Math.PI * progress);
+        if (command === "spawn") {
+          const spawnScale = 0.72 + 0.28 * (1 - Math.cos(Math.PI * progress)) * 0.5;
+          scale(spawnScale, spawnScale, spawnScale);
+        }
+        if (command === "hit")
+          scale(1 + 0.08 * peak, 1 - (motion === "wisp" ? 0.16 : 0.08) * peak, 1 + 0.08 * peak);
+        if (command === "critical")
+          scale(1 + 0.15 * peak, 1 - (motion === "wisp" ? 0.25 : 0.14) * peak, 1 + 0.15 * peak);
         if (command === "death") {
-          scale(1.1, 0.86 - 0.62 * progress, 1.1);
-          lift(-0.28 * progress);
+          scale(1 + 0.1 * peak, 0.86 - 0.62 * progress, 1 + 0.1 * peak);
+          lift(-deathDrop * progress);
           tilt(0.3 * progress);
         }
         frames -= 1;
       },
     },
     commands,
+    undefined,
+    { pose, head, side: pose },
   );
 };
 
@@ -151,7 +162,7 @@ const beetle: EnemyBodyFactory = (profile = defaultProfile) => {
       return leg;
     }),
   );
-  return riggedBody("beetle", body, [shell, head, ...legs]);
+  return riggedBody("beetle", body, [shell, head, ...legs], head);
 };
 
 const brute: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -177,7 +188,7 @@ const brute: EnemyBodyFactory = (profile = defaultProfile) => {
     foot.position.set(side * 0.34, -0.64, 0.06);
     return foot;
   });
-  return riggedBody("brute", body, [head, ...arms, ...feet]);
+  return riggedBody("brute", body, [head, ...arms, ...feet], head);
 };
 
 const wisp: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -197,7 +208,7 @@ const wisp: EnemyBodyFactory = (profile = defaultProfile) => {
     spark.position.set(side * 0.48, 0.18, 0.08);
     return spark;
   });
-  return riggedBody("wisp", body, [aura, tail, ...sparks], "wisp");
+  return riggedBody("wisp", body, [aura, tail, ...sparks], body, "wisp");
 };
 
 const mantis: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -222,7 +233,7 @@ const mantis: EnemyBodyFactory = (profile = defaultProfile) => {
     scythe.rotation.z = side * 1.18;
     return scythe;
   });
-  return riggedBody("mantis", thorax, [head, abdomen, ...scythes]);
+  return riggedBody("mantis", thorax, [head, abdomen, ...scythes], head);
 };
 
 const sentinel: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -251,7 +262,7 @@ const sentinel: EnemyBodyFactory = (profile = defaultProfile) => {
     leg.position.set(side * 0.32, -0.58, 0);
     return leg;
   });
-  return riggedBody("sentinel", coreBody, [visor, ...pylons, ...legs]);
+  return riggedBody("sentinel", coreBody, [visor, ...pylons, ...legs], visor);
 };
 
 const drake: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -280,7 +291,7 @@ const drake: EnemyBodyFactory = (profile = defaultProfile) => {
   );
   tail.position.set(0, -0.16, -0.72);
   tail.rotation.x = -Math.PI / 2;
-  return riggedBody("drake", torso, [head, ...wings, tail]);
+  return riggedBody("drake", torso, [head, ...wings, tail], head);
 };
 
 const colossus: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -309,7 +320,7 @@ const colossus: EnemyBodyFactory = (profile = defaultProfile) => {
     arm.position.set(side * 0.92, -0.18, 0);
     return arm;
   });
-  return riggedBody("boss-colossus", body, [head, ...shoulders, ...arms]);
+  return riggedBody("boss-colossus", body, [head, ...shoulders, ...arms], head, "standard", 0.1);
 };
 
 const hydra: EnemyBodyFactory = (profile = defaultProfile) => {
@@ -341,7 +352,9 @@ const hydra: EnemyBodyFactory = (profile = defaultProfile) => {
     horn.position.set(offset * 1.24, 1.32, 0.08);
     return [neck, head, horn];
   });
-  return riggedBody("boss-hydra", body, heads);
+  const centerHead = heads[4];
+  if (centerHead === undefined) throw new Error("Hydra requires a center head");
+  return riggedBody("boss-hydra", body, heads, centerHead);
 };
 
 export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> = {

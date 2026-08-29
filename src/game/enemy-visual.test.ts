@@ -25,6 +25,16 @@ const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
   return count;
 };
 
+const assertMantisBandAttachment = (
+  family: string,
+  visual: ReturnType<typeof createEnemyVisual>,
+): void => {
+  if (family !== "mantis") return;
+  const band = visual.group.getObjectByName("reinforced-band");
+  if (band === undefined) throw new Error("Expected hardened Mantis band");
+  expect(band.position.toArray()).toEqual([...visual.spec.profile.attachment]);
+};
+
 describe("enemy visual factory", () => {
   it("selects a compact metallic non-color Golden Bug composition and disposes it", () => {
     const visual = createEnemyVisual({
@@ -197,12 +207,12 @@ describe("enemy visual factory", () => {
         markers[family]?.forEach((marker) =>
           expect(visual.group.getObjectByName(marker)).toBeDefined(),
         );
+        assertMantisBandAttachment(family, visual);
         const shields = new EnemyViewBuilder();
         shields.add(enemyBodyFactories[visual.spec.body](visual.spec.profile));
         shields.add(decorateModifier("shield-plates", visual.spec.profile));
         const shielded = shields.build();
-        expect(shielded.roots.modifier.children).toHaveLength(3);
-        const firstShield = shielded.roots.modifier.children[0];
+        const firstShield = shielded.group.getObjectByName("armor-shield-0");
         if (firstShield === undefined) throw new Error("Expected shield group");
         expect(
           firstShield.children.some((node) => node.name.startsWith("armor-shield-face-")),
@@ -225,12 +235,10 @@ describe("enemy visual factory", () => {
       ["manual-guard", "directional-barrier"],
     ] as const) {
       const visual = createEnemyVisual({ grade: "elite", level: 3, modifier });
-      expect(visual.group.getObjectByName(cue)).toBeDefined();
-      expect(visual.group.getObjectByName(cue)?.position).toMatchObject({
-        x: visual.spec.profile.attachment[0],
-        y: visual.spec.profile.attachment[1],
-        z: visual.spec.profile.attachment[2],
-      });
+      const modifierNode = visual.group.getObjectByName(cue);
+      expect(modifierNode).toBeDefined();
+      expect(modifierNode?.parent?.name).toBe(`enemy-pose-${visual.spec.body}`);
+      expect(modifierNode?.position.length()).toBeLessThanOrEqual(1.2);
       visual.dispose();
     }
   });
@@ -343,10 +351,10 @@ describe("enemy visual factory", () => {
       "enemy-layer-modifier",
       "enemy-layer-decoration",
     ]);
-    expect(built.roots.body.children).toHaveLength(2);
-    expect(built.roots.grade.children).toHaveLength(2);
-    expect(built.roots.modifier.children).toHaveLength(1);
-    expect(built.roots.decoration.children).toHaveLength(2);
+    expect(built.roots.body.children).toHaveLength(1);
+    expect(built.roots.grade.children).toHaveLength(0);
+    expect(built.roots.modifier.children).toHaveLength(0);
+    expect(built.roots.decoration.children).toHaveLength(0);
     const ring = built.group.getObjectByName("time-ring");
     if (ring === undefined) throw new Error("Expected decorator time ring");
     const before = ring.rotation.z;
@@ -393,20 +401,70 @@ describe("enemy visual factory", () => {
   it("applies command motion without transform accumulation and restores the authored rig", () => {
     const unit = new EnemyUnitFactory().create({ grade: "normal", level: 2, modifier: null });
     expect(unit.spec.body).toBe("wisp");
-    const rig = unit.view.group.getObjectByName("enemy-rig-wisp");
-    if (rig === undefined) throw new Error("Expected wisp rig");
-    const initialScale = rig.scale.clone();
+    const pose = unit.view.group.getObjectByName("enemy-pose-wisp");
+    if (pose === undefined) throw new Error("Expected wisp pose");
+    const initialScale = pose.scale.clone();
     unit.dispatchEnemy({ type: "hit" });
     unit.tick();
-    expect(rig.scale.y).toBeLessThan(initialScale.y);
+    unit.tick();
+    expect(pose.scale.y).toBeLessThan(initialScale.y);
     for (let frame = 0; frame < 10; frame += 1) unit.tick();
-    expect(rig.scale).toEqual(initialScale);
+    expect(pose.scale).toEqual(initialScale);
     unit.dispatchEnemy({ type: "critical" });
     unit.tick();
-    expect(rig.scale.y).toBeLessThan(initialScale.y);
+    unit.tick();
+    expect(pose.scale.y).toBeLessThan(initialScale.y);
     for (let frame = 0; frame < 10; frame += 1) unit.tick();
-    expect(rig.scale).toEqual(initialScale);
+    expect(pose.scale).toEqual(initialScale);
     unit.dispose();
+  });
+
+  it("samples hit and critical at neutral endpoints with one bounded shared peak", () => {
+    const hydra = new EnemyUnitFactory().create({ grade: "boss", level: 35, modifier: null });
+    const pose = hydra.view.group.getObjectByName("enemy-pose-boss-hydra");
+    if (pose === undefined) throw new Error("Expected Hydra pose");
+    const neutral = pose.scale.clone();
+    for (const [command, frames] of [
+      ["hit", 6],
+      ["critical", 8],
+    ] as const) {
+      hydra.dispatchEnemy({ type: command });
+      hydra.tick();
+      expect(pose.scale).toEqual(neutral);
+      hydra.tick();
+      expect(pose.scale.y).toBeLessThan(neutral.y);
+      for (let frame = 0; frame < frames - 2; frame += 1) hydra.tick();
+      expect(pose.scale).toEqual(neutral);
+      hydra.tick();
+      expect(pose.scale).toEqual(neutral);
+    }
+    hydra.dispose();
+  });
+
+  it("anchors head cues to deforming family poses and keeps shared boss motion bounded", () => {
+    const hydra = new EnemyUnitFactory().create({ grade: "boss", level: 35, modifier: "armor" });
+    const crown = hydra.view.group.getObjectByName("boss-crown");
+    const centerHead = hydra.view.group.getObjectByName("enemy-part-hydra-head-1");
+    const shield = hydra.view.group.getObjectByName("armor-shield-0");
+    if (crown === undefined || centerHead === undefined || shield === undefined)
+      throw new Error("Expected Hydra semantic anchors");
+    expect(crown.parent).toBe(centerHead);
+    expect(shield.parent?.name).toBe("enemy-pose-boss-hydra");
+    hydra.view.group.updateMatrixWorld(true);
+    const crownBefore = crown.getWorldPosition(new THREE.Vector3());
+    hydra.dispatchEnemy({ type: "critical" });
+    hydra.tick();
+    hydra.tick();
+    hydra.view.group.updateMatrixWorld(true);
+    expect(crown.getWorldPosition(new THREE.Vector3()).distanceTo(crownBefore)).toBeGreaterThan(0);
+    const colossus = new EnemyUnitFactory().create({ grade: "boss", level: 70, modifier: null });
+    const colossusPose = colossus.view.group.getObjectByName("enemy-pose-boss-colossus");
+    if (colossusPose === undefined) throw new Error("Expected Colossus pose");
+    colossus.dispatchEnemy({ type: "death" });
+    for (let frame = 0; frame < 12; frame += 1) colossus.tick();
+    expect(colossusPose.position.y).toBeGreaterThanOrEqual(-0.1);
+    hydra.dispose();
+    colossus.dispose();
   });
 
   it("rebuilds the same seeded visual tree after a reload-style disposal", () => {

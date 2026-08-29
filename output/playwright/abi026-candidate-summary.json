@@ -1,0 +1,624 @@
+{
+  "candidate": {
+    "candidateDiffSha256": "2b6497e5f502d33cc19c0b60747c37ebd387717934d8ece4d083e9efe3efb2fc",
+    "currentHead": "3df566a2987cea7c633c1354acfdc4f43ecd6908",
+    "generatedAt": "2026-08-29T23:23:26.997Z",
+    "sourceMtimesUtc": {
+      "src/game/enemy-visual/bodies.ts": "2026-08-29T22:59:17.997Z",
+      "src/game/enemy-visual/builder.ts": "2026-08-29T22:57:27.605Z",
+      "src/game/enemy-visual/components.ts": "2026-08-29T22:57:15.988Z",
+      "src/game/enemy-visual/decorators/grade-cue-decorator.ts": "2026-08-29T22:55:42.330Z",
+      "src/game/enemy-visual/decorators/modifier-cue-decorator.ts": "2026-08-29T23:09:25.444Z",
+      "src/game/enemy-visual/decorators/seeded-decoration-decorator.ts": "2026-08-29T22:57:36.882Z",
+      "src/game/battlefield/effects.ts": "2026-08-29T22:54:39.580Z"
+    },
+    "base": "http://127.0.0.1:4173/autobattleidle/"
+  },
+  "assetBinding": {
+    "entries": [
+      {
+        "kind": "development-module",
+        "url": "http://127.0.0.1:4173/src/main.ts?t=1788044965457",
+        "sha256": "5f18782b23ff0c2a1b2072690002099129d93ff4e0ee5a110cfba66ab498cb75"
+      }
+    ],
+    "mode": "development-modules"
+  },
+  "cases": [
+    {
+      "beforeHealth": "1500",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["hit"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "1500",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["critical"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "1500",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["critical"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "21465",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["hit"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "21465",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["critical"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "21465",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["critical"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "beforeHealth": "10",
+      "idle": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "mid": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "final": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "nextIdle": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "effects": [["hit"]],
+      "layout": {
+        "canvasCount": 1,
+        "overflow": false,
+        "resources": 73
+      },
+      "errors": [],
+      "failed": []
+    }
+  ],
+  "families": [
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "beetle",
+        "enemyVariant": "1",
+        "enemySeed": "230678965",
+        "enemyGrade": "elite",
+        "enemyModifier": "armor",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "beetle",
+        "enemyVariant": "1",
+        "enemySeed": "230678965",
+        "enemyGrade": "elite",
+        "enemyModifier": "armor",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "brute",
+        "enemyVariant": "0",
+        "enemySeed": "4128564042",
+        "enemyGrade": "normal",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "wisp",
+        "enemyVariant": "1",
+        "enemySeed": "1678139413",
+        "enemyGrade": "veteran",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "wisp",
+        "enemyVariant": "1",
+        "enemySeed": "1678139413",
+        "enemyGrade": "veteran",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "mantis",
+        "enemyVariant": "1",
+        "enemySeed": "1749158461",
+        "enemyGrade": "elite",
+        "enemyModifier": "hardened",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "mantis",
+        "enemyVariant": "1",
+        "enemySeed": "1749158461",
+        "enemyGrade": "elite",
+        "enemyModifier": "hardened",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "sentinel",
+        "enemyVariant": "2",
+        "enemySeed": "2330450753",
+        "enemyGrade": "elite",
+        "enemyModifier": "critical-guard",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "sentinel",
+        "enemyVariant": "2",
+        "enemySeed": "2330450753",
+        "enemyGrade": "elite",
+        "enemyModifier": "critical-guard",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "drake",
+        "enemyVariant": "0",
+        "enemySeed": "3437681832",
+        "enemyGrade": "elite",
+        "enemyModifier": "manual-guard",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "drake",
+        "enemyVariant": "0",
+        "enemySeed": "3437681832",
+        "enemyGrade": "elite",
+        "enemyModifier": "manual-guard",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-hydra",
+        "enemyVariant": "0",
+        "enemySeed": "3186514530",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "before": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "after": {
+        "engine": "three.js r185",
+        "enemyFamily": "boss-colossus",
+        "enemyVariant": "0",
+        "enemySeed": "603509151",
+        "enemyGrade": "boss",
+        "enemyModifier": "none",
+        "goldenBug": "false",
+        "activeEffectCount": "0",
+        "lastEffectKinds": ""
+      },
+      "errors": [],
+      "failed": []
+    }
+  ]
+}

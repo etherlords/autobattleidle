@@ -56,7 +56,7 @@ const effectGeometry = (kind: EffectKind, size: number): THREE.BufferGeometry =>
   if (kind === "armor") return new THREE.IcosahedronGeometry(size, 0);
   if (kind === "boss") return new THREE.TorusKnotGeometry(size * 0.55, size * 0.12, 32, 8);
   if (kind === "coin") return new THREE.CylinderGeometry(size, size, 0.08, 16);
-  if (kind === "critical") return new THREE.ConeGeometry(size, size * 1.4, 4);
+  if (kind === "critical") return new THREE.TorusGeometry(size * 0.72, size * 0.11, 6, 16);
   if (kind === "death") return new THREE.SphereGeometry(size, 12, 8);
   if (kind === "golden-escape") return new THREE.DodecahedronGeometry(size, 0);
   if (kind === "golden-kill") return new THREE.OctahedronGeometry(size, 0);

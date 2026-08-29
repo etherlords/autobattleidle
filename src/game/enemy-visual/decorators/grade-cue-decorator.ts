@@ -21,8 +21,8 @@ const gradeComponentFactories: Readonly<Record<GradeCue, GradeComponentFactory>>
       new THREE.ConeGeometry(...enemyVisualGeometry.grade.crest),
       enemyVisualPalette.grade.crest,
     );
-    crest.position.y = enemyVisualLayout.grade.crestY;
-    return component("grade-crest", "grade", [crest]);
+    crest.position.y = enemyVisualLayout.grade.crestY * 0.42;
+    return component("grade-crest", "grade", [crest], undefined, undefined, "head");
   },
   spikes: () =>
     component(
@@ -33,9 +33,12 @@ const gradeComponentFactories: Readonly<Record<GradeCue, GradeComponentFactory>>
           new THREE.ConeGeometry(...enemyVisualGeometry.grade.spike),
           enemyVisualPalette.grade.spikes,
         );
-        spike.position.set(offset, enemyVisualLayout.grade.spikeY, 0);
+        spike.position.set(offset * 0.55, enemyVisualLayout.grade.spikeY * 0.42, 0);
         return spike;
       }),
+      undefined,
+      undefined,
+      "head",
     ),
   crown: () => {
     const crown = mesh(
@@ -44,9 +47,9 @@ const gradeComponentFactories: Readonly<Record<GradeCue, GradeComponentFactory>>
       enemyVisualPalette.grade.crownEmissive,
     );
     crown.name = "boss-crown";
-    crown.position.y = enemyVisualLayout.grade.crownY;
+    crown.position.y = enemyVisualLayout.grade.crownY * 0.35;
     crown.rotation.y = enemyVisualTransforms.crownYRadians;
-    return component("grade-crown", "grade", [crown]);
+    return component("grade-crown", "grade", [crown], undefined, undefined, "head");
   },
 };
 

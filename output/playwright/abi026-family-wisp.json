@@ -1,0 +1,26 @@
+{
+  "before": {
+    "engine": "three.js r185",
+    "enemyFamily": "wisp",
+    "enemyVariant": "1",
+    "enemySeed": "1678139413",
+    "enemyGrade": "veteran",
+    "enemyModifier": "none",
+    "goldenBug": "false",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "after": {
+    "engine": "three.js r185",
+    "enemyFamily": "wisp",
+    "enemyVariant": "1",
+    "enemySeed": "1678139413",
+    "enemyGrade": "veteran",
+    "enemyModifier": "none",
+    "goldenBug": "false",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "errors": [],
+  "failed": []
+}

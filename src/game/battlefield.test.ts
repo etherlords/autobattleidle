@@ -146,8 +146,7 @@ describe("nextBattlefieldFrame", () => {
       !(spawnEffect instanceof THREE.Mesh)
     )
       throw new Error("Expected unit roots and spawn effect");
-    const bodyLayer = enemy.getObjectByName("enemy-layer-body");
-    const enemyBody = bodyLayer?.children.find((child) => child instanceof THREE.Mesh);
+    const enemyBody = enemy.getObjectByName("enemy-body-brute");
     if (!(enemyBody instanceof THREE.Mesh)) throw new Error("Expected enemy body");
     const playerCore = player.getObjectByName("unit-layer-body")?.children[0];
     if (!(playerCore instanceof THREE.Mesh)) throw new Error("Expected player core");

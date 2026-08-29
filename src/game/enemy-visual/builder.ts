@@ -1,6 +1,11 @@
 import * as THREE from "three";
 
-import type { EnemyVisualCommand, EnemyVisualComponent, EnemyVisualLayer } from "./components";
+import type {
+  EnemyVisualAnchor,
+  EnemyVisualCommand,
+  EnemyVisualComponent,
+  EnemyVisualLayer,
+} from "./components";
 
 export type EnemyViewBuild = {
   readonly group: THREE.Group;
@@ -26,6 +31,7 @@ export class EnemyViewBuilder {
   };
   private readonly animations = new Map<string, () => void>();
   private readonly componentKeys = new Set<string>();
+  private readonly anchors = new Map<EnemyVisualAnchor, THREE.Object3D>();
   private readonly commandHandlers: Record<EnemyVisualCommand, Array<() => void>> = {
     spawn: [],
     hit: [],
@@ -43,7 +49,8 @@ export class EnemyViewBuilder {
       throw new Error("Enemy view already has a body");
     if (component.layer !== "decoration" && this.attached[component.layer])
       throw new Error(`Enemy view already has a ${component.layer} root`);
-    component.nodes.forEach((node) => this.roots[component.layer].add(node));
+    this.attachNodes(component);
+    this.registerAnchors(component);
     this.componentKeys.add(component.key);
     if (component.dispose !== undefined) this.disposers.push(component.dispose);
     for (const command of ["spawn", "hit", "critical", "death"] as const) {
@@ -84,6 +91,24 @@ export class EnemyViewBuilder {
     if (this.animations.has(name))
       throw new Error(`Enemy view animation ${name} is already registered`);
     this.animations.set(name, tick);
+  }
+
+  private attachNodes(component: EnemyVisualComponent): void {
+    const parent =
+      component.anchor === undefined
+        ? this.roots[component.layer]
+        : this.anchors.get(component.anchor);
+    if (parent === undefined)
+      throw new Error(
+        `Enemy view component ${component.key} requires a ${component.anchor} anchor`,
+      );
+    component.nodes.forEach((node) => parent.add(node));
+  }
+
+  private registerAnchors(component: EnemyVisualComponent): void {
+    Object.entries(component.anchors ?? {}).forEach(([name, anchor]) =>
+      this.anchors.set(name as EnemyVisualAnchor, anchor),
+    );
   }
 
   private assertOpen(): void {

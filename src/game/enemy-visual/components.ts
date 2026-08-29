@@ -1,11 +1,14 @@
 import * as THREE from "three";
 
 export type EnemyVisualLayer = "body" | "grade" | "modifier" | "decoration";
+export type EnemyVisualAnchor = "pose" | "head" | "side";
 export type EnemyVisualCommand = "spawn" | "hit" | "critical" | "death";
 export type EnemyVisualComponent = {
   readonly key: string;
   readonly layer: EnemyVisualLayer;
   readonly nodes: readonly THREE.Object3D[];
+  readonly anchor?: EnemyVisualAnchor;
+  readonly anchors?: Partial<Readonly<Record<EnemyVisualAnchor, THREE.Object3D>>>;
   readonly animations?: Readonly<Record<string, () => void>>;
   readonly commands?: Partial<Readonly<Record<EnemyVisualCommand, () => void>>>;
   readonly dispose?: () => void;
@@ -36,10 +39,16 @@ export const component = (
   nodes: readonly THREE.Object3D[],
   animations?: Readonly<Record<string, () => void>>,
   commands?: Partial<Readonly<Record<EnemyVisualCommand, () => void>>>,
+  anchor?: EnemyVisualAnchor,
+  anchors?: Partial<Readonly<Record<EnemyVisualAnchor, THREE.Object3D>>>,
 ): EnemyVisualComponent => {
-  if (animations !== undefined && commands !== undefined)
-    return { key, layer, nodes, animations, commands };
-  if (animations !== undefined) return { key, layer, nodes, animations };
-  if (commands !== undefined) return { key, layer, nodes, commands };
-  return { key, layer, nodes };
+  return {
+    key,
+    layer,
+    nodes,
+    ...(animations === undefined ? {} : { animations }),
+    ...(commands === undefined ? {} : { commands }),
+    ...(anchor === undefined ? {} : { anchor }),
+    ...(anchors === undefined ? {} : { anchors }),
+  };
 };

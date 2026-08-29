@@ -30,20 +30,23 @@ const decorationComponentFactories: Readonly<Record<Decoration, DecorationCompon
     );
     fin.position.set(offset * profile.attachment[0], profile.attachment[1], profile.attachment[2]);
     fin.rotation.z = offset * enemyVisualTransforms.finZRadians;
-    return component(`decoration-fins-${index}`, "decoration", [fin]);
+    return component(`decoration-fins-${index}`, "decoration", [fin], undefined, undefined, "side");
   },
-  horns: (index, profile) => {
+  horns: (index, _profile) => {
     const offset = index === 0 ? -1 : 1;
     const horn = mesh(
       new THREE.ConeGeometry(...enemyVisualGeometry.decoration.horn),
       enemyVisualPalette.decoration.horns,
     );
-    horn.position.set(
-      offset * profile.attachment[0],
-      profile.attachment[1] + 0.3,
-      profile.attachment[2],
+    horn.position.set(offset * 0.24, 0.3, 0.08);
+    return component(
+      `decoration-horns-${index}`,
+      "decoration",
+      [horn],
+      undefined,
+      undefined,
+      "head",
     );
-    return component(`decoration-horns-${index}`, "decoration", [horn]);
   },
   orbitals: (index, profile) => {
     const offset = index === 0 ? -1 : 1;
@@ -58,13 +61,20 @@ const decorationComponentFactories: Readonly<Record<Decoration, DecorationCompon
     );
     orbital.rotation.x = enemyVisualTransforms.flatRingXRadians;
     let phase = index * Math.PI;
-    return component(`decoration-orbitals-${index}`, "decoration", [orbital], {
-      [`decoration-orbital-${index}`]: () => {
-        phase += enemyVisualAnimation.decorationOrbitRadians;
-        orbital.position.x = Math.cos(phase) * profile.attachment[0] * 0.55;
-        orbital.position.y = profile.attachment[1] + Math.sin(phase) * 0.08;
+    return component(
+      `decoration-orbitals-${index}`,
+      "decoration",
+      [orbital],
+      {
+        [`decoration-orbital-${index}`]: () => {
+          phase += enemyVisualAnimation.decorationOrbitRadians;
+          orbital.position.x = Math.cos(phase) * profile.attachment[0] * 0.55;
+          orbital.position.y = profile.attachment[1] + Math.sin(phase) * 0.08;
+        },
       },
-    });
+      undefined,
+      "pose",
+    );
   },
   satellites: (index, profile) => {
     const offset = index === 0 ? -1 : 1;
@@ -78,26 +88,36 @@ const decorationComponentFactories: Readonly<Record<Decoration, DecorationCompon
       profile.attachment[2],
     );
     let phase = index * Math.PI;
-    return component(`decoration-satellites-${index}`, "decoration", [satellite], {
-      [`decoration-satellite-${index}`]: () => {
-        phase += enemyVisualAnimation.decorationOrbitRadians;
-        satellite.position.y = profile.attachment[1] + 0.15 + Math.sin(phase) * 0.08;
+    return component(
+      `decoration-satellites-${index}`,
+      "decoration",
+      [satellite],
+      {
+        [`decoration-satellite-${index}`]: () => {
+          phase += enemyVisualAnimation.decorationOrbitRadians;
+          satellite.position.y = profile.attachment[1] + 0.15 + Math.sin(phase) * 0.08;
+        },
       },
-    });
+      undefined,
+      "pose",
+    );
   },
-  scar: (index, profile) => {
+  scar: (index, _profile) => {
     const offset = index === 0 ? -1 : 1;
     const scar = mesh(
       new THREE.BoxGeometry(...enemyVisualGeometry.decoration.scar),
       enemyVisualPalette.decoration.scar,
     );
-    scar.position.set(
-      offset * profile.attachment[0] * 0.35,
-      profile.attachment[1],
-      profile.attachment[2],
-    );
+    scar.position.set(offset * 0.1, 0, 0.28);
     scar.rotation.z = offset * enemyVisualTransforms.scarZRadians;
-    return component(`decoration-scar-${index}`, "decoration", [scar]);
+    return component(
+      `decoration-scar-${index}`,
+      "decoration",
+      [scar],
+      undefined,
+      undefined,
+      "head",
+    );
   },
 };
 

@@ -47,12 +47,19 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       });
     };
     arrange();
-    return component("modifier-shield-plates", "modifier", shields, {
-      "shield-plate-orbit": () => {
-        phase += enemyVisualAnimation.shieldOrbitRadians;
-        arrange();
+    return component(
+      "modifier-shield-plates",
+      "modifier",
+      shields,
+      {
+        "shield-plate-orbit": () => {
+          phase += enemyVisualAnimation.shieldOrbitRadians;
+          arrange();
+        },
       },
-    });
+      undefined,
+      "side",
+    );
   },
   "vitality-core": () => {
     const core = mesh(
@@ -61,7 +68,8 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       enemyVisualPalette.modifier.healthEmissive,
     );
     core.name = "vitality-core";
-    return component("modifier-vitality-core", "modifier", [core]);
+    core.position.z = 0.58;
+    return component("modifier-vitality-core", "modifier", [core], undefined, undefined, "pose");
   },
   "time-ring": () => {
     const ring = mesh(
@@ -78,13 +86,20 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
     hand.position.y = enemyVisualLayout.modifier.timeHandY;
     ring.add(hand);
     let phase = 0;
-    return component("modifier-time-ring", "modifier", [ring], {
-      "time-ring": () => {
-        phase += enemyVisualAnimation.timeRingTickRadians;
-        ring.rotation.z += enemyVisualAnimation.timeRingTickRadians;
-        ring.position.y = Math.sin(phase * 2) * enemyVisualAnimation.shieldLift;
+    return component(
+      "modifier-time-ring",
+      "modifier",
+      [ring],
+      {
+        "time-ring": () => {
+          phase += enemyVisualAnimation.timeRingTickRadians;
+          ring.rotation.z += enemyVisualAnimation.timeRingTickRadians;
+          ring.position.y = Math.sin(phase * 2) * enemyVisualAnimation.shieldLift;
+        },
       },
-    });
+      undefined,
+      "pose",
+    );
   },
   "wealth-orbitals": () => {
     const coins = enemyVisualLayout.modifier.wealthOffsets.map((offset) => {
@@ -98,22 +113,30 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       return coin;
     });
     let phase = 0;
-    return component("modifier-wealth-orbitals", "modifier", coins, {
-      "wealth-orbit": () => {
-        phase += enemyVisualAnimation.decorationOrbitRadians;
-        coins.forEach((coin, index) => {
-          coin.position.x = Math.cos(phase + index * Math.PI) * 0.65;
-          coin.position.y = enemyVisualLayout.modifier.wealthY + Math.sin(phase * 2 + index) * 0.08;
-        });
+    return component(
+      "modifier-wealth-orbitals",
+      "modifier",
+      coins,
+      {
+        "wealth-orbit": () => {
+          phase += enemyVisualAnimation.decorationOrbitRadians;
+          coins.forEach((coin, index) => {
+            coin.position.x = Math.cos(phase + index * Math.PI) * 0.65;
+            coin.position.y =
+              enemyVisualLayout.modifier.wealthY + Math.sin(phase * 2 + index) * 0.08;
+          });
+        },
       },
-    });
+      undefined,
+      "pose",
+    );
   },
   "reinforced-band": (profile) => {
     const band = mesh(new THREE.TorusGeometry(0.72, 0.11, 6, 12), profile.palette.accent);
     band.name = "reinforced-band";
     band.rotation.x = enemyVisualTransforms.flatRingXRadians;
     band.position.set(...profile.attachment);
-    return component("modifier-reinforced-band", "modifier", [band]);
+    return component("modifier-reinforced-band", "modifier", [band], undefined, undefined, "pose");
   },
   "prism-guard": (profile) => {
     const prism = mesh(
@@ -123,13 +146,20 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
     );
     prism.name = "prism-guard";
     prism.position.set(...profile.attachment);
-    return component("modifier-prism-guard", "modifier", [prism]);
+    return component("modifier-prism-guard", "modifier", [prism], undefined, undefined, "side");
   },
   "directional-barrier": (profile) => {
     const barrier = mesh(new THREE.BoxGeometry(0.15, 0.82, 0.14), profile.palette.accent);
     barrier.name = "directional-barrier";
     barrier.position.set(profile.attachment[0], profile.attachment[1], profile.attachment[2]);
-    return component("modifier-directional-barrier", "modifier", [barrier]);
+    return component(
+      "modifier-directional-barrier",
+      "modifier",
+      [barrier],
+      undefined,
+      undefined,
+      "side",
+    );
   },
 };
 
