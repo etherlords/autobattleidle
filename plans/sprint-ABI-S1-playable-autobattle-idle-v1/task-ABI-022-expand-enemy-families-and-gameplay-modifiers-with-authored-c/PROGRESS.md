@@ -4,8 +4,8 @@ id: ABI-022
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 54
-status: Ready for Manager
+revision: 58
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-015
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 54
-- Last update: Acceptance, review, QA, and verification are green; advance to Manager publication and deployed closure.
+- Status: Done
+- Revision: 58
+- Last update: All required actor-separated gates, publication, exact-SHA CI/Pages, deployed behavior, Vault, and resource evidence are complete.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [x] view-composition: Implementation owner registers new body factories and modifier decorators through the existing builder lifecycle
 - [x] self-check: Implementation owner adds deterministic domain/save/factory/animation/disposal tests and runs pnpm check
 - [-] independent-gates: Independent Reviewer and full desktop/narrow visual QA verify extensibility, authored quality, interactions, and resource bounds
-- [ ] manager-closure: Manager syncs Vault, publishes coherently, proves exact-SHA CI/Pages/deployed behavior, and hands telemetry to ABI-020
+- [x] manager-closure: Manager syncs Vault, publishes coherently, proves exact-SHA CI/Pages/deployed behavior, and hands telemetry to ABI-020
 - [x] visual-audit-variants: Design and implementation owners audit shields and every decoration, then author at least three deterministic coordinated palette/decor variants per shipped family
 - [x] review-repair-1: Implementation owner repairs shield/scar surface anchors and rendered 8 x 3 matrix/cue bounds, then reruns pnpm check
 - [x] qa-visual-repair: Implementation owner corrects Sentinel cylinder dimensions and adds a geometry-bounds regression, then reruns pnpm check
@@ -958,3 +958,80 @@ requiredGates:
   - independent review PASS
   - independent QA PASS
   - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/VERIFICATION.md
+
+### evt-917e870a-49d9-43e9-98ee-c8f381951402
+
+- Timestamp: 2026-08-29T05:14:46.417Z
+- Actor: abi-022-manager-closer
+- Operation: execution_plan.update
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Manager closure publication proof is green; finalize deployed evidence and canonical closure.
+- Idempotency key: abi-022-manager-closure-in-progress-v1
+- Request fingerprint: 80c61283a2c1aa7dc8288886fbdfbb8c13d760b91a246090174e142be952e90f
+- Action: set_state
+- Step ID: manager-closure
+- State: in_progress
+- Evidence:
+  - feature SHA ece6b8df8e62213593112db4cfd012f670308e9e pushed to origin/main
+  - CI 33235325828 / job 99055195626 success
+  - Pages 33235325827 / job 99055195616 success
+
+### evt-ca388616-484f-4911-adeb-247e8e89a0e3
+
+- Timestamp: 2026-08-29T05:14:55.251Z
+- Actor: abi-022-manager-closer
+- Operation: execution_plan.update
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Published exact-SHA feature passed CI and Pages; deployed 390px Critical Guard rendered correctly and completed a functional HP transition with clean console/network.
+- Idempotency key: abi-022-manager-closure-complete-v1
+- Request fingerprint: 14f0002d43c901f68f95ba6451d08e65c9c3b5b44a87aa8722548a5eb46b9fbd
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - feature SHA ece6b8df8e62213593112db4cfd012f670308e9e on origin/main
+  - CI https://github.com/etherlords/autobattleidle/actions/runs/33235325828
+  - Pages https://github.com/etherlords/autobattleidle/actions/runs/33235325827
+  - .playwright-cli/abi-022/deployed-critical-guard-hit-390.png
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/VERIFICATION.md
+
+### evt-5b124b3f-c08f-4b02-a765-f46c71dd7569
+
+- Timestamp: 2026-08-29T05:15:05.971Z
+- Actor: abi-022-manager-closer
+- Operation: gate.record
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: PASS: coherent feature published, exact-SHA CI and Pages succeeded, deployed mobile Critical Guard rendered and completed a functional hit transition, and all canonical gates are green.
+- Idempotency key: abi-022-manager-closure-pass-v1
+- Request fingerprint: 4d0bc1ee571aa6cc261513c4f259a077395c1d48c46a550eec85fd5401972a4f
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - feature SHA ece6b8df8e62213593112db4cfd012f670308e9e pushed to origin/main
+  - CI run 33235325828 job 99055195626 success
+  - Pages run 33235325827 job 99055195616 success
+  - deployed https://etherlords.github.io/autobattleidle/ Critical Guard HP 282 -> 281
+  - Vault fresh; doctor zero findings
+  - manager-closure step evt-ca388616-484f-4911-adeb-247e8e89a0e3 complete
+
+### evt-629940a3-d774-42c4-8f3c-825dbb7a2c6d
+
+- Timestamp: 2026-08-29T05:15:14.879Z
+- Actor: abi-022-manager-closer
+- Operation: task.advance
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: All required actor-separated gates, publication, exact-SHA CI/Pages, deployed behavior, Vault, and resource evidence are complete.
+- Idempotency key: abi-022-ready-for-manager-to-done-v1
+- Request fingerprint: b4c5afd00ad2cbca00cf2f5fdc9e3fc2d4f21a9bc4df933cda935d1e27dd5d23
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure gate evt-5b124b3f-c08f-4b02-a765-f46c71dd7569
+  - verification gate evt-0885daa7-72b8-4a8e-973d-83a5ff6d9109
+  - feature SHA ece6b8df8e62213593112db4cfd012f670308e9e
+  - CI 33235325828 success
+  - Pages 33235325827 success

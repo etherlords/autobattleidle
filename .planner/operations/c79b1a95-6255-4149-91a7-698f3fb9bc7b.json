@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "c79b1a95-6255-4149-91a7-698f3fb9bc7b",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T05:14:55.253Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi-022-manager-closure-complete-v1",
+  "requestFingerprint": "14f0002d43c901f68f95ba6451d08e65c9c3b5b44a87aa8722548a5eb46b9fbd",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-c79b1a95-6255-4149-91a7-698f3fb9bc7b-0",
+      "beforeHash": "1dcc26b7234de088c709b97db3a6ebc06bf64be505d80f7b7bf86ee00f8ab1b2",
+      "afterHash": "ef7a89d71158717cc8c1906df16e8c6209c0aea4c5f3e98b56975ad47f0796b6"
+    }
+  ],
+  "committedAt": "2026-08-29T05:14:55.341Z"
+}

@@ -31,11 +31,14 @@ requiredGates:
 - Supplementary browser proof: Critical Guard changed comparable events from `36, 72 critical, 36` to `42, 42, 42`; Manual Guard changed manual `42` to `21` while automatic noncritical `42` remained; Hardened completed defeat/progression. The corrected 390px Sentinel is compact, centered, attached, and non-overlapping.
 - Resource proof: uninterrupted encounter 69 elite to encounter 70 boss progression kept DOM nodes at 59 and canvas count at one; heap fluctuated from 16,793,956 to 17,756,260 bytes without monotonic runaway. Browser tooling cannot expose listener/renderer internals, so reviewed focused disposal tests provide that bounded internal evidence.
 - Vault synchronized: `AUTOBATTLEIDLE-DOC-20260827-A7FD1F` hash `a06e7059fa413568d6cf3b60ccf10d486db37f9152c9c771f5f417da901831b6`; `AUTOBATTLEIDLE-DOC-20260827-D74E4E` hash `f286e85da9535c491893d41c14a6ac9dc140f0b7ff3eb4076413c33f885257d8`. Index is fresh and Vault doctor reports zero findings.
-- Publication: pending coherent commit/push, exact-SHA CI/Pages success, and deployed functional proof.
+- Publication: coherent feature checkpoint `ece6b8df8e62213593112db4cfd012f670308e9e` is pushed to `origin/main`.
+- Exact-SHA CI: run `33235325828`, job `99055195626`, success for `ece6b8df8e62213593112db4cfd012f670308e9e`.
+- Exact-SHA GitHub Pages: run `33235325827`, job `99055195616`, success for the same SHA.
+- Deployed `https://etherlords.github.io/autobattleidle/` proof at 390x844 loaded the hashed assets `index-CdiTjGnD.js` and `index-DxOeR0DC.css` with HTTP 200, rendered the compact Critical Guard Sentinel without overlap, and accepted a focused battlefield keyboard event: HP changed `282 -> 281` with `Manual hit: 1 damage`. Console errors were empty. Receipts: `.playwright-cli/abi-022/deployed-critical-guard-390.png` and `deployed-critical-guard-hit-390.png`.
 
 ## Sign-off
 
 - Reviewer: PASS — independent repair re-review plus separate Sentinel-fix review
 - QA: PASS — independent full-matrix browser QA plus bounded supplementary functional/resource retest
 - Verification: PASS — `abi-022-manager-verifier`; pre-publication acceptance is complete
-- Manager close: pending
+- Manager close: PASS — gate `evt-5b124b3f-c08f-4b02-a765-f46c71dd7569`; ABI-022 is Done at task revision 14 / progress revision 58 with no live lease
