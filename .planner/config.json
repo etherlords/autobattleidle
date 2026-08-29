@@ -33,6 +33,8 @@
     "ABI-020": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-",
     "ABI-021": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-021-enforce-pnpm-check-before-commits-and-decide-when-path-alias",
     "ABI-022": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c",
-    "ABI-023": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp"
+    "ABI-023": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-023-correct-abi-015-with-a-concrete-extensible-unit-mvc-and-comp",
+    "ABI-024": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-024-give-enemies-deterministic-names-that-match-their-rendered-a",
+    "ABI-025": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only"
   }
 }
