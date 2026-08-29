@@ -4,8 +4,8 @@ id: ABI-010
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 45
-status: Ready for Manager
+revision: 49
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 45
-- Last update: Begin coherent native-hook commit/push, exact-SHA CI/Pages, deployed functional proof, and final closure audit.
+- Status: Done
+- Revision: 49
+- Last update: Released task claim: Release completed ABI-010 Manager lease after canonical Done readback
 
 ## Execution plan
 
@@ -37,7 +37,7 @@ requiredGates:
 - [x] gold-material: Implementation owner: add the dedicated bug body, metallic gold highlights and bounded spawn/escape/death presentation
 - [x] event-tests: Implementation owner: add deterministic spawn/timing/damage/reward/persistence/cleanup tests, simulator report, and pnpm check
 - [-] event-gates: Independent Reviewer and browser QA: prove auto-only failure, active-click success, exact timeout/reward, reload behavior and desktop/narrow visuals
-- [~] event-delivery: Manager: update balance/design evidence, commit/push, wait CI/Pages, repeat public timed encounter proof, and close
+- [x] event-delivery: Manager: update balance/design evidence, commit/push, wait CI/Pages, repeat public timed encounter proof, and close
 - [x] review-repair-1: Implementation owner: repair fixed-deadline anchoring and direct V2-slot retention proof; rerun focused and full checks
 - [x] independent-rereview-1: Independent Reviewer: fresh re-review of both repairs and complete ABI-010 diff
 - [x] independent-qa-1: Independent QA: local browser timing, active-click, reload, responsive, and resource acceptance
@@ -827,3 +827,79 @@ requiredGates:
   - ABI-010 Ready for Manager
   - all pre-publication gates green
   - Vault synced
+
+### evt-f1f5caba-9884-46fc-8f4e-0527e5e6933a
+
+- Timestamp: 2026-08-29T12:16:51.409Z
+- Actor: replacement-manager-root
+- Operation: execution_plan.update
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Publication and deployed proof complete for exact SHA 143adc743399a367361ea91a831809cfcb61c39a.
+- Idempotency key: abi010-event-delivery-complete-20260829-143adc
+- Request fingerprint: 08be7bc953859b1dc0477a0f2ae4fcdfbce794a48a0621e4688980c4a49244f3
+- Action: set_state
+- Step ID: event-delivery
+- State: complete
+- Evidence:
+  - CI run 33251891054 success
+  - Pages run 33251891086 success
+  - Deployment 6155549282 SHA 143adc743399a367361ea91a831809cfcb61c39a
+  - Deployed V3 reload countdown 9.9s; timeout resumed Level 51 with zero reward
+  - Console errors/warnings=0; failed requests=0
+  - VERIFICATION.md publication section
+
+### evt-8bda9c9e-a02a-404e-92d8-f00d73fc4dd6
+
+- Timestamp: 2026-08-29T12:17:06.318Z
+- Actor: manager-closure-replacement
+- Operation: gate.record
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: PASS: all required gates, exact-SHA CI/Pages, deployed timed-event behavior, Vault health, and publication evidence are complete.
+- Idempotency key: abi010-manager-closure-pass-20260829-143adc
+- Request fingerprint: 2b187634f86dca740e9f027e3580936d1afbe110573160591909b0c39db5237b
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS: pnpm check 14 files/88 tests
+  - independent-review APPROVE after bounded repair
+  - independent-qa PASS including exact 9.9s reload receipt
+  - CI 33251891054 success for 143adc743399a367361ea91a831809cfcb61c39a
+  - Pages 33251891086 success and deployment 6155549282 for same SHA
+  - deployed timeout/resume retained Coins 100; goldenBug persisted null; zero console/network failures
+  - Vault status fresh and doctor 0 findings
+
+### evt-00a8fd5b-5dda-4478-aa01-464d4915124c
+
+- Timestamp: 2026-08-29T12:17:22.291Z
+- Actor: manager-closure-replacement
+- Operation: task.advance
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Close ABI-010 after clean implementation self-check, independent review, independent QA, exact-SHA publication, deployed proof, and Manager closure.
+- Idempotency key: abi010-ready-manager-to-done-20260829-143adc
+- Request fingerprint: 611d180a4d6cd3d248ab1261fd97c451f141062323a76d0f49bf267841735b0d
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS at progress revision 47
+  - CI/Pages success for 143adc743399a367361ea91a831809cfcb61c39a
+  - Deployed Golden Bug countdown, timeout, zero reward, and resume PASS
+  - VERIFICATION.md publication receipt
+
+### evt-4589cc65-0bf4-4f2e-93aa-8eff83f08202
+
+- Timestamp: 2026-08-29T12:17:37.315Z
+- Actor: replacement-manager-root
+- Operation: claim.release
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Released task claim: Release completed ABI-010 Manager lease after canonical Done readback
+- Idempotency key: abi010-release-manager-lease-20260829-done
+- Request fingerprint: 3368fac14449b48dc0c406952b0b967a9870ccdfdca7de25ac9d972db4150ea1
+- Agent ID: replacement-manager-root
+- Session ID: 01a04c18-d3f0-7f90-828b-0bcdf9e03362
+- Intent: Release completed ABI-010 Manager lease after canonical Done readback
+- Evidence:
+  - None

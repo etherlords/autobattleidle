@@ -4,8 +4,8 @@ id: ABI-010
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 11
-status: Ready for Manager
+revision: 12
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -32,7 +32,7 @@ Add the timed Golden Bug reward encounter
 
 - Type: task
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
