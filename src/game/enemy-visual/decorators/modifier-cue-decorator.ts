@@ -23,23 +23,37 @@ const defaultProfile: EnemyVisualProfile = {
   variant: 0,
 };
 const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierComponentFactory>> = {
-  "shield-plates": (profile) =>
-    component(
-      "modifier-shield-plates",
-      "modifier",
-      [-1, 1].map((side) => {
-        const plate = mesh(
-          new THREE.BoxGeometry(...enemyVisualGeometry.modifier.plate),
-          enemyVisualPalette.modifier.armor,
+  "shield-plates": (profile) => {
+    const shields = [-1, 0, 1].map((side) => {
+      const shield = new THREE.Group();
+      shield.name = `armor-shield-${side + 1}`;
+      const face = mesh(new THREE.CircleGeometry(0.3, 8), enemyVisualPalette.modifier.armor);
+      face.name = `armor-shield-face-${side + 1}`;
+      const rim = mesh(new THREE.TorusGeometry(0.3, 0.045, 5, 8), profile.palette.accent);
+      rim.name = `armor-shield-rim-${side + 1}`;
+      shield.add(face, rim);
+      return shield;
+    });
+    let phase = 0;
+    const arrange = (): void => {
+      shields.forEach((shield, index) => {
+        const angle = phase + index * ((Math.PI * 2) / shields.length);
+        shield.position.set(
+          Math.cos(angle) * (profile.attachment[0] + 0.16),
+          profile.attachment[1] + Math.sin(angle * 2) * enemyVisualAnimation.shieldLift,
+          profile.attachment[2] + 0.55 + Math.sin(angle) * 0.18,
         );
-        plate.position.set(
-          side * profile.attachment[0],
-          profile.attachment[1],
-          profile.attachment[2] + 0.55,
-        );
-        return plate;
-      }),
-    ),
+        shield.rotation.y = -angle;
+      });
+    };
+    arrange();
+    return component("modifier-shield-plates", "modifier", shields, {
+      "shield-plate-orbit": () => {
+        phase += enemyVisualAnimation.shieldOrbitRadians;
+        arrange();
+      },
+    });
+  },
   "vitality-core": () => {
     const core = mesh(
       new THREE.SphereGeometry(...enemyVisualGeometry.modifier.core),
@@ -63,25 +77,37 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
     );
     hand.position.y = enemyVisualLayout.modifier.timeHandY;
     ring.add(hand);
+    let phase = 0;
     return component("modifier-time-ring", "modifier", [ring], {
-      "time-ring": () => (ring.rotation.z += enemyVisualAnimation.timeRingTickRadians),
+      "time-ring": () => {
+        phase += enemyVisualAnimation.timeRingTickRadians;
+        ring.rotation.z += enemyVisualAnimation.timeRingTickRadians;
+        ring.position.y = Math.sin(phase * 2) * enemyVisualAnimation.shieldLift;
+      },
     });
   },
-  "wealth-orbitals": () =>
-    component(
-      "modifier-wealth-orbitals",
-      "modifier",
-      enemyVisualLayout.modifier.wealthOffsets.map((offset) => {
-        const coin = mesh(
-          new THREE.CylinderGeometry(...enemyVisualGeometry.modifier.coin),
-          enemyVisualPalette.modifier.wealth,
-          enemyVisualPalette.modifier.wealthEmissive,
-        );
-        coin.rotation.x = enemyVisualTransforms.flatRingXRadians;
-        coin.position.set(offset, enemyVisualLayout.modifier.wealthY, 0);
-        return coin;
-      }),
-    ),
+  "wealth-orbitals": () => {
+    const coins = enemyVisualLayout.modifier.wealthOffsets.map((offset) => {
+      const coin = mesh(
+        new THREE.CylinderGeometry(...enemyVisualGeometry.modifier.coin),
+        enemyVisualPalette.modifier.wealth,
+        enemyVisualPalette.modifier.wealthEmissive,
+      );
+      coin.rotation.x = enemyVisualTransforms.flatRingXRadians;
+      coin.position.set(offset, enemyVisualLayout.modifier.wealthY, 0);
+      return coin;
+    });
+    let phase = 0;
+    return component("modifier-wealth-orbitals", "modifier", coins, {
+      "wealth-orbit": () => {
+        phase += enemyVisualAnimation.decorationOrbitRadians;
+        coins.forEach((coin, index) => {
+          coin.position.x = Math.cos(phase + index * Math.PI) * 0.65;
+          coin.position.y = enemyVisualLayout.modifier.wealthY + Math.sin(phase * 2 + index) * 0.08;
+        });
+      },
+    });
+  },
   "reinforced-band": (profile) => {
     const band = mesh(new THREE.TorusGeometry(0.72, 0.11, 6, 12), profile.palette.accent);
     band.name = "reinforced-band";

@@ -1,16 +1,20 @@
-import type { EliteModifier, EnemyGrade } from "../../domain/combat/contracts";
+import {
+  selectEnemyFamilyIdentity,
+  type EnemyFamily,
+  type EnemyPresentationModifier,
+} from "../../domain/combat";
+import type { EnemyGrade } from "../../domain/combat/contracts";
+
+export { stableEnemySeed } from "../../domain/combat";
 
 export type EnemyVisualInput = {
   readonly grade: EnemyGrade;
   readonly level: number;
-  readonly modifier: PresentationModifier;
+  readonly modifier: EnemyPresentationModifier;
   readonly goldenBug?: boolean;
 };
-export type PresentationModifier = EliteModifier | "wealth" | null;
-export type BodyFamily =
-  "beetle" | "brute" | "wisp" | "mantis" | "sentinel" | "drake" | "boss-colossus" | "boss-hydra";
-type OrdinaryBodyFamily = Exclude<BodyFamily, "boss-colossus" | "boss-hydra">;
-type ExistingOrdinaryBodyFamily = "beetle" | "brute" | "wisp";
+export type PresentationModifier = EnemyPresentationModifier;
+export type BodyFamily = EnemyFamily;
 export type Decoration = "fins" | "horns" | "orbitals" | "satellites" | "scar";
 export type GradeCue = "none" | "crest" | "spikes" | "crown";
 export type ModifierCue =
@@ -39,28 +43,6 @@ export type EnemyVisualSpec = {
   readonly seed: number;
 };
 
-export const stableEnemySeed = (enemy: EnemyVisualInput): number => {
-  if (!Number.isFinite(enemy.level)) throw new RangeError("Enemy visual level must be finite");
-  let seed = Math.abs(Math.trunc(enemy.level)) || 1;
-  for (const character of `${enemy.grade}:${enemy.modifier ?? "none"}`)
-    seed = (seed * 31 + character.charCodeAt(0)) >>> 0;
-  return seed;
-};
-
-type MissingOrdinaryBodies<Order extends readonly ExistingOrdinaryBodyFamily[]> =
-  Order extends readonly (infer Body extends ExistingOrdinaryBodyFamily)[]
-    ? Exclude<ExistingOrdinaryBodyFamily, Body>
-    : ExistingOrdinaryBodyFamily;
-const BODY_FAMILY_VALUES = [
-  "beetle",
-  "brute",
-  "wisp",
-] as const satisfies readonly ExistingOrdinaryBodyFamily[];
-type CompleteOrdinaryBodyOrder =
-  MissingOrdinaryBodies<typeof BODY_FAMILY_VALUES> extends never
-    ? typeof BODY_FAMILY_VALUES
-    : never;
-const BODY_FAMILIES: CompleteOrdinaryBodyOrder = BODY_FAMILY_VALUES;
 const p = <const T extends readonly [EnemyVisualProfile, EnemyVisualProfile, EnemyVisualProfile]>(
   values: T,
 ): T => values;
@@ -231,22 +213,6 @@ const FAMILY_PROFILES: Readonly<
   ]),
 };
 
-const modifierBodies: Readonly<
-  Partial<Record<Exclude<PresentationModifier, null>, OrdinaryBodyFamily>>
-> = {
-  hardened: "mantis",
-  "critical-guard": "sentinel",
-  "manual-guard": "drake",
-};
-const bodyFamily = (enemy: EnemyVisualInput): BodyFamily => {
-  const level = Math.abs(Math.trunc(enemy.level));
-  if (enemy.grade === "boss") return level % 2 === 0 ? "boss-colossus" : "boss-hydra";
-  const modifierBody = enemy.modifier === null ? undefined : modifierBodies[enemy.modifier];
-  if (modifierBody !== undefined) return modifierBody;
-  const body = BODY_FAMILIES[level % BODY_FAMILIES.length];
-  if (body === undefined) throw new RangeError("Enemy visual level did not select a body family");
-  return body;
-};
 const modifierCueRegistry: Readonly<
   Record<Exclude<PresentationModifier, null>, Exclude<ModifierCue, null>>
 > = {
@@ -276,8 +242,9 @@ const visualModifierCue = (enemy: EnemyVisualInput): ModifierCue => {
 };
 
 export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
-  const seed = stableEnemySeed(enemy);
-  const body = bodyFamily(enemy);
+  const identity = selectEnemyFamilyIdentity(enemy);
+  const body = identity.family;
+  const seed = identity.seed;
   const profile = enemy.goldenBug
     ? {
         attachment: [0.6, 0.2, 0] as const,
@@ -286,7 +253,7 @@ export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
         palette: { core: "#d4af37", emissive: "#5c4300", accent: "#fff1a3" },
         variant: 0 as const,
       }
-    : FAMILY_PROFILES[body][seed % 3];
+    : FAMILY_PROFILES[body][identity.variant];
   if (profile === undefined) throw new RangeError("Enemy visual seed did not select a profile");
   return {
     body,

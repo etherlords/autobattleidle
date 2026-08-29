@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { enemyVisualSpec } from "./spec";
+import { selectEnemyFamilyIdentity } from "../../domain/combat";
 
 describe("enemy visual specification selection", () => {
   it("keeps valid body and decoration selection deterministic without fallback values", () => {
@@ -15,5 +16,15 @@ describe("enemy visual specification selection", () => {
     expect(() => enemyVisualSpec({ grade: "normal", level: Number.NaN, modifier: null })).toThrow(
       RangeError,
     );
+  });
+
+  it("uses the shared snapshot family identity policy", () => {
+    const input = { grade: "elite" as const, level: 3, modifier: "manual-guard" as const };
+    const identity = selectEnemyFamilyIdentity(input);
+    expect(enemyVisualSpec(input)).toMatchObject({
+      body: identity.family,
+      seed: identity.seed,
+      profile: { variant: identity.variant },
+    });
   });
 });

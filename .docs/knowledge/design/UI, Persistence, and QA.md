@@ -89,11 +89,13 @@ Every task still classifies persistence impact. No-schema work proves historical
 
 ## Delivery lifecycle
 
-Every task follows `implement -> independent review -> independent QA -> manager close`. A failed gate returns concrete findings to the implementation owner; one new independent gate run follows the fix. There is no unbounded review/QA loop.
+Every task follows `implement -> independent review -> independent QA -> manager close`. A failed gate returns concrete findings to the implementation owner, followed by one bounded repair and one fresh independent gate run. Gate history remains append-only; a later PASS does not erase prior blocked or failed evidence.
 
-The manager records the persistence-impact classification during preflight. Reviewer verifies that a feature did not bypass the save boundary; QA loads the oldest supported fixture affected by the task and proves semantic progress after reload. When a schema changed, QA also proves the migrated current-version payload survives a second reload. These checks are required even when persistence is not the feature's main UI surface.
+The manager records persistence impact during preflight. Reviewer verifies that behavior did not bypass the save boundary; QA loads the oldest supported affected fixture and proves semantic progress after reload. Schema changes additionally require migrated current-version payload survival across a second reload.
 
-Each task records short timestamped high-level events in `PROGRESS.md`, including claim, implementation checkpoint, review result, QA result, return-to-implementation reason, and close. Review and QA details remain in their dedicated artifacts. Final release QA includes reload persistence, malformed save recovery, long-running progression, input behavior, responsive layout, and the deployed GitHub Pages build.
+Release QA uses production-codec fixtures and must bind claimed visual identity to read-only canvas receipts before accepting screenshots. Fixture inputs and generated receipts use distinct filenames so a rerun cannot overwrite its own source. Candidate QA may target a local production preview explicitly; the public Pages URL remains the default. Candidate PASS and post-push exact-SHA proof are separate gates.
+
+Each task records concise lifecycle events in `PROGRESS.md`; detailed review, QA, and verification evidence remains in the dedicated artifacts. Final release QA covers real pointer and keyboard input, automatic timing and slow semantics, responsive/reduced-motion layouts, upgrades, repeated boss progression, Golden Bug, supported migrations and recovery, bounded effects/resources, clean console/network state, and all shipped visual families before and after reload. The Manager then binds the exact commit, CI run, Pages deployment, loaded assets, and public functional observations before closure.
 
 ## Related
 

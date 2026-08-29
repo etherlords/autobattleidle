@@ -69,6 +69,39 @@ describe("nextBattlefieldFrame", () => {
     expect(enemyAnimationForEffects(["death", "coin"])).toBeNull();
   });
 
+  it("publishes bounded read-only rendered identity and effect receipts", () => {
+    const dataset: Record<string, string> = {};
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const renderer = {
+      domElement: {
+        className: "",
+        dataset,
+        remove: () => undefined,
+      } as unknown as HTMLCanvasElement,
+      dispose: () => undefined,
+      render: () => undefined,
+      setPixelRatio: () => undefined,
+      setSize: () => undefined,
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.render(snapshot("normal", 1));
+    expect(dataset).toMatchObject({
+      activeEffectCount: "1",
+      enemyFamily: "brute",
+      enemyGrade: "normal",
+      enemyModifier: "none",
+      goldenBug: "false",
+      lastEffectKinds: "spawn",
+    });
+    battlefield.render(snapshot("normal", 1, 9, ["hit", "armor"]));
+    expect(dataset).toMatchObject({
+      activeEffectCount: "3",
+      lastEffectKinds: "hit,armor",
+    });
+    battlefield.dispose();
+    expect(dataset).toEqual({});
+  });
+
   it("disposes retired visuals and clears the scene through one renderer seam", () => {
     let scene: THREE.Scene | undefined;
     let camera: THREE.Camera | undefined;
@@ -78,6 +111,7 @@ describe("nextBattlefieldFrame", () => {
     const renderer = {
       domElement: {
         className: "",
+        dataset: {},
         remove: () => {
           canvasRemovals += 1;
         },
@@ -151,7 +185,11 @@ describe("nextBattlefieldFrame", () => {
     let scene: THREE.Scene | undefined;
     const host = { append: () => undefined } as unknown as HTMLElement;
     const renderer = {
-      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      domElement: {
+        className: "",
+        dataset: {},
+        remove: () => undefined,
+      } as unknown as HTMLCanvasElement,
       dispose: () => undefined,
       render: (nextScene: THREE.Scene) => {
         scene = nextScene;
@@ -177,7 +215,11 @@ describe("nextBattlefieldFrame", () => {
     let camera: THREE.Camera | undefined;
     const host = { append: () => undefined } as unknown as HTMLElement;
     const renderer = {
-      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      domElement: {
+        className: "",
+        dataset: {},
+        remove: () => undefined,
+      } as unknown as HTMLCanvasElement,
       dispose: () => undefined,
       render: (_scene: THREE.Scene, nextCamera: THREE.Camera) => {
         camera = nextCamera;
@@ -201,7 +243,11 @@ describe("nextBattlefieldFrame", () => {
     let camera: THREE.Camera | undefined;
     const host = { append: () => undefined } as unknown as HTMLElement;
     const renderer = {
-      domElement: { className: "", remove: () => undefined } as unknown as HTMLCanvasElement,
+      domElement: {
+        className: "",
+        dataset: {},
+        remove: () => undefined,
+      } as unknown as HTMLCanvasElement,
       dispose: () => undefined,
       render: (_scene: THREE.Scene, nextCamera: THREE.Camera) => {
         camera = nextCamera;

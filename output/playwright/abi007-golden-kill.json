@@ -1,0 +1,347 @@
+{
+  "name": "golden-kill",
+  "url": "http://127.0.0.1:4173/autobattleidle/",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "reducedMotion": false,
+  "initial": "Golden Bug · Level 51 · normal\n1 / 6,585\n\nAutomatic attack: locked · 0.10 APS\n\nGolden Bug escaping in 9.3s\n\nCoins: 0",
+  "result": "Cinder Beetle · Level 51 · elite · Armored\n308 / 308\n\nAutomatic attack: locked · 0.10 APS\n\nCoins: 1,220",
+  "before": {
+    "text": "Golden Bug · Level 51 · normal\n1 / 6,585\n\nAutomatic attack: locked · 0.10 APS\n\nGolden Bug escaping in 9.3s\n\nCoins: 0\n\nUpgrades",
+    "width": 1280,
+    "height": 800,
+    "innerWidth": 1280,
+    "canvases": 1
+  },
+  "after": {
+    "text": "Cinder Beetle · Level 51 · elite · Armored\n308 / 308\n\nAutomatic attack: locked · 0.10 APS\n\nCoins: 1,220\n\nUpgrades\nManual kill: +1,220 coins",
+    "width": 1280,
+    "height": 800,
+    "innerWidth": 1280,
+    "canvases": 1,
+    "resources": [
+      {
+        "name": "http://127.0.0.1:4173/@vite/client",
+        "duration": 7
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/main.ts?t=1788038531042",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/style.css",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/app/application.ts?t=1788038531042",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:4173/node_modules/.pnpm/vite@8.2.2/node_modules/vite/dist/client/env.mjs",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat.ts?t=1788037897860",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/battlefield.ts?t=1788038531042",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/persistence-boundary.ts?t=1788037897860",
+        "duration": 1
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/hud.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/app/battle/controller.ts?t=1788038065786",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/app/battle/commands.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/app/battle/presenter.ts?t=1788038065786",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/attacks.ts?t=1788017977076",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/balance.ts?t=1788017965561",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/family-identity.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/progression.ts?t=1788017977076",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/upgrades.ts?t=1788017977076",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/battlefield/effects.ts?t=1788019527991",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual.ts?t=1788038531042",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/battlefield/lifecycle.ts?t=1788038531042",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/codecs.ts",
+        "duration": 4
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/contracts.ts",
+        "duration": 4
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/validation.ts?t=1788037897860",
+        "duration": 6
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/storage-lifecycle.ts?t=1788037897860",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/hud/event-log.ts",
+        "duration": 7
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/hud/battle-status.ts",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/hud/upgrade-dialog.ts",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/snapshot.ts?t=1788038065786",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/number-format.ts",
+        "duration": 8
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/player-stats.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers.ts?t=1788017965567",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-definitions.ts?t=1788017965561",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/factories.ts?t=1788038531042",
+        "duration": 35
+      },
+      {
+        "name": "http://127.0.0.1:4173/node_modules/.vite/deps/three.js?v=f98ac3c1",
+        "duration": 63
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/spec.ts?t=1788038097184",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/bodies.ts?t=1788038507801",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/builder.ts",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/battlefield/config.ts",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v2.ts?t=1788037897860",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v3.ts?t=1788037897860",
+        "duration": 37
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/validation-v1.ts",
+        "duration": 38
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/validation-primitives.ts",
+        "duration": 37
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/persistence/save/migrations.ts?t=1788037897860",
+        "duration": 38
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/ui/hud/elements.ts",
+        "duration": 37
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/armor-enemy-modifier.ts?t=1788017965563",
+        "duration": 35
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/health-enemy-modifier.ts?t=1788017965561",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/automatic-slow-enemy-modifier.ts",
+        "duration": 35
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/hardened-enemy-modifier.ts?t=1788017965567",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/enemy-modifier-strategy.ts",
+        "duration": 38
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/enemy-modifier-registry.ts?t=1788017965567",
+        "duration": 38
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/manual-guard-enemy-modifier.ts",
+        "duration": 38
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/domain/combat/enemy-modifiers/critical-guard-enemy-modifier.ts",
+        "duration": 36
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/enemy/factory.ts?t=1788038531042",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/player/factory.ts",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/components.ts",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/config.ts?t=1788038390255",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/core/index.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/enemy/builder.ts?t=1788038507801",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/enemy/model.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/enemy/view.ts?t=1788038531042",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/player/player-unit.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/core/controller.ts",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/core/model.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/core/unit.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/core/view.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators.ts?t=1788038428666",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/enemy/unit.ts",
+        "duration": 3
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/player/model.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/units/player/view.ts",
+        "duration": 2
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/grade-cue-decorator.ts?t=1788038390255",
+        "duration": 7
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/seeded-decoration-decorator.ts?t=1788038420654",
+        "duration": 9
+      },
+      {
+        "name": "http://127.0.0.1:4173/src/game/enemy-visual/decorators/modifier-cue-decorator.ts?t=1788038428666",
+        "duration": 9
+      },
+      {
+        "name": "http://127.0.0.1:4173/favicon.svg",
+        "duration": 1
+      }
+    ]
+  },
+  "initialCanvas": {
+    "engine": "three.js r185",
+    "enemyFamily": "beetle",
+    "enemyVariant": "0",
+    "enemySeed": "1992765400",
+    "enemyGrade": "normal",
+    "enemyModifier": "none",
+    "goldenBug": "true",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "resultCanvas": {
+    "engine": "three.js r185",
+    "enemyFamily": "beetle",
+    "enemyVariant": "0",
+    "enemySeed": "2131682181",
+    "enemyGrade": "elite",
+    "enemyModifier": "armor",
+    "goldenBug": "false",
+    "activeEffectCount": "0",
+    "lastEffectKinds": ""
+  },
+  "actionResult": {
+    "effects": ["death", "coin", "golden-kill"]
+  },
+  "errors": [],
+  "failed": [],
+  "storage": "{\"automaticUnlocked\":false,\"coins\":1220,\"enemy\":{\"armor\":102,\"encounter\":51,\"grade\":\"elite\",\"health\":308,\"id\":51,\"maxHealth\":308,\"modifier\":\"armor\",\"reward\":122},\"goldenBug\":null,\"player\":{\"automaticSpeedLevel\":0,\"armorPenetrationLevel\":0,\"criticalChance\":0,\"criticalLevel\":0,\"damage\":1317,\"damageLevel\":1000,\"doubleRewardChance\":0,\"doubleRewardLevel\":0},\"version\":3}"
+}

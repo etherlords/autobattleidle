@@ -5,6 +5,8 @@ import {
   criticalChanceForLevel,
   damageForLevel,
   doubleRewardChanceForLevel,
+  selectEnemyFamilyIdentity,
+  type EnemyFamily,
 } from "./combat";
 import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
@@ -20,6 +22,7 @@ export type UpgradeSnapshot = {
   readonly level: number;
 };
 export type BattleEnemySnapshot = {
+  readonly family?: EnemyFamily;
   readonly grade: EnemyGrade;
   readonly health: number;
   readonly level: number;
@@ -27,6 +30,8 @@ export type BattleEnemySnapshot = {
   readonly modifier: EliteModifier | null;
   readonly name: string;
   readonly goldenBug?: boolean;
+  readonly seed?: number;
+  readonly variant?: 0 | 1 | 2;
 };
 export type BattleSnapshot = {
   readonly automatic: {
@@ -50,9 +55,6 @@ export type BattleSnapshot = {
   readonly upgrades: readonly UpgradeSnapshot[];
 };
 
-const enemyName = (grade: EnemyGrade): string =>
-  `${grade[0]?.toUpperCase() ?? "E"}${grade.slice(1)} Ash Wisp`;
-
 export const createBattleSnapshot = (
   state: CombatState,
   nowMs: number,
@@ -60,40 +62,51 @@ export const createBattleSnapshot = (
   upgrades: readonly UpgradeSnapshot[],
   goldenBugRemainingMs: number | null = null,
   visualCues: readonly BattleVisualCue[] = [],
-): BattleSnapshot => ({
-  automatic: {
-    intervalMs: automaticInterval(state.enemy, state.player),
-    remainingMs: state.automaticUnlocked ? Math.max(0, state.nextAutomaticAttackAtMs - nowMs) : 0,
-    unlocked: state.automaticUnlocked,
-  },
-  coins: state.coins,
-  encounter: "Scout the Emberfields",
-  enemy: {
-    grade: state.enemy.grade,
-    health: state.enemy.health,
-    level: state.enemy.encounter,
-    maxHealth: state.enemy.maxHealth,
-    modifier: state.enemy.modifier,
-    name: enemyName(state.enemy.grade),
+): BattleSnapshot => {
+  const identity = selectEnemyFamilyIdentity({
     goldenBug: state.goldenBug !== null,
-  },
-  goldenBug:
-    state.goldenBug === null
-      ? null
-      : {
-          remainingMs: Math.min(
-            COMBAT_BALANCE.goldenBugWindowMs,
-            goldenBugRemainingMs ?? COMBAT_BALANCE.goldenBugWindowMs,
-          ),
-        },
-  playerStats: {
-    armorPenetration: armorPenetrationForLevel(state.player.armorPenetrationLevel ?? 0),
-    automaticAttacksPerSecond: automaticAttacksPerSecond(state.player.automaticSpeedLevel ?? 0),
-    criticalChance: criticalChanceForLevel(state.player.criticalLevel ?? 0),
-    damage: damageForLevel(state.player.damageLevel ?? 0),
-    doubleRewardChance: doubleRewardChanceForLevel(state.player.doubleRewardLevel ?? 0),
-  },
-  events,
-  visualCues,
-  upgrades,
-});
+    grade: state.enemy.grade,
+    level: state.enemy.encounter,
+    modifier: state.enemy.modifier,
+  });
+  return {
+    automatic: {
+      intervalMs: automaticInterval(state.enemy, state.player),
+      remainingMs: state.automaticUnlocked ? Math.max(0, state.nextAutomaticAttackAtMs - nowMs) : 0,
+      unlocked: state.automaticUnlocked,
+    },
+    coins: state.coins,
+    encounter: "Scout the Emberfields",
+    enemy: {
+      family: identity.family,
+      goldenBug: state.goldenBug !== null,
+      grade: state.enemy.grade,
+      health: state.enemy.health,
+      level: state.enemy.encounter,
+      maxHealth: state.enemy.maxHealth,
+      modifier: state.enemy.modifier,
+      name: identity.label,
+      seed: identity.seed,
+      variant: identity.variant,
+    },
+    goldenBug:
+      state.goldenBug === null
+        ? null
+        : {
+            remainingMs: Math.min(
+              COMBAT_BALANCE.goldenBugWindowMs,
+              goldenBugRemainingMs ?? COMBAT_BALANCE.goldenBugWindowMs,
+            ),
+          },
+    playerStats: {
+      armorPenetration: armorPenetrationForLevel(state.player.armorPenetrationLevel ?? 0),
+      automaticAttacksPerSecond: automaticAttacksPerSecond(state.player.automaticSpeedLevel ?? 0),
+      criticalChance: criticalChanceForLevel(state.player.criticalLevel ?? 0),
+      damage: damageForLevel(state.player.damageLevel ?? 0),
+      doubleRewardChance: doubleRewardChanceForLevel(state.player.doubleRewardLevel ?? 0),
+    },
+    events,
+    visualCues,
+    upgrades,
+  };
+};

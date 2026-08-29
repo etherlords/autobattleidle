@@ -82,7 +82,15 @@ export const enemyVisualGeometry = {
   },
 } as const;
 
-export const enemyVisualAnimation = { timeRingTickRadians: 0.035 } as const;
+export const enemyVisualAnimation = {
+  timeRingTickRadians: 0.035,
+  idleRadians: 0.12,
+  idleLift: 0.035,
+  commandFrames: { spawn: 12, hit: 6, critical: 8, death: 14 },
+  shieldOrbitRadians: 0.045,
+  shieldLift: 0.08,
+  decorationOrbitRadians: 0.03,
+} as const;
 export const enemyVisualTransforms = {
   beetleShellZScale: 1.15,
   beetleShellY: 0.15,

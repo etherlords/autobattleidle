@@ -1,0 +1,26 @@
+{
+  "automaticUnlocked": false,
+  "coins": 0,
+  "enemy": {
+    "armor": 0,
+    "encounter": 2,
+    "grade": "veteran",
+    "health": 210,
+    "id": 2,
+    "maxHealth": 210,
+    "modifier": null,
+    "reward": 4
+  },
+  "goldenBug": null,
+  "player": {
+    "automaticSpeedLevel": 0,
+    "armorPenetrationLevel": 0,
+    "criticalChance": 0,
+    "criticalLevel": 0,
+    "damage": 1,
+    "damageLevel": 0,
+    "doubleRewardChance": 0,
+    "doubleRewardLevel": 0
+  },
+  "version": 3
+}

@@ -8,6 +8,7 @@ import {
   type EnemyVisualInput,
   type EnemyVisualSpec,
 } from "../../enemy-visual/spec";
+import type { EnemyVisualCommand } from "../../enemy-visual/components";
 
 export type EnemyViewComposition = {
   readonly build: EnemyViewBuild;
@@ -34,9 +35,11 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
   constructor(private readonly compose: EnemyViewComposer) {
     super();
     this.registerAnimation("enemy-view", () => this.build?.tick());
-    for (const command of ["spawn", "hit", "critical", "death"] as const) {
-      this.registerAnimation(command, () => this.build?.command(command));
-    }
+  }
+
+  override animate(name: string): boolean {
+    if (isEnemyVisualCommand(name)) return this.build?.command(name) ?? false;
+    return super.animate(name);
   }
 
   get spec(): EnemyVisualSpec {
@@ -74,3 +77,6 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
     this.build = undefined;
   }
 }
+
+const isEnemyVisualCommand = (name: string): name is EnemyVisualCommand =>
+  name === "spawn" || name === "hit" || name === "critical" || name === "death";

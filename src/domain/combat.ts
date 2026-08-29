@@ -1,5 +1,6 @@
 export { attack } from "./combat/attacks";
 export { COMBAT_BALANCE } from "./combat/balance";
+export { selectEnemyFamilyIdentity, stableEnemySeed } from "./combat/family-identity";
 export type {
   AttackCommand,
   AttackEvent,
@@ -16,6 +17,12 @@ export type {
   UpgradeId,
   UpgradePurchase,
 } from "./combat/contracts";
+export type {
+  EnemyFamily,
+  EnemyFamilyIdentity,
+  EnemyFamilyInput,
+  EnemyPresentationModifier,
+} from "./combat/family-identity";
 export {
   expireGoldenBug,
   goldenBugHealth,

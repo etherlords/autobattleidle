@@ -1,0 +1,26 @@
+{
+  "automaticUnlocked": false,
+  "coins": 0,
+  "enemy": {
+    "armor": 0,
+    "encounter": 1,
+    "grade": "normal",
+    "health": 140,
+    "id": 1,
+    "maxHealth": 140,
+    "modifier": null,
+    "reward": 1
+  },
+  "goldenBug": null,
+  "player": {
+    "automaticSpeedLevel": 0,
+    "armorPenetrationLevel": 0,
+    "criticalChance": 0,
+    "criticalLevel": 0,
+    "damage": 1,
+    "damageLevel": 0,
+    "doubleRewardChance": 0,
+    "doubleRewardLevel": 0
+  },
+  "version": 3
+}

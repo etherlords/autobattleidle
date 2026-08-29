@@ -120,6 +120,7 @@ class ThreeBattlefield implements Battlefield {
       if (animation !== null) this.enemy.dispatchEnemy({ type: animation });
     }
     this.addEffects(frame.effects);
+    this.updateCanvasReceipt(snapshot, frame.effects);
     this.bossOrbitEnabled = snapshot.enemy.grade === "boss";
     this.frameCamera(this.aspect);
     this.previous = snapshot;
@@ -153,6 +154,7 @@ class ThreeBattlefield implements Battlefield {
     this.scene.clear();
     this.renderer.dispose();
     this.renderer.domElement.remove();
+    this.clearCanvasReceipt();
     this.effects = [];
     this.enemy = undefined;
     this.unsubscribeEnemy = undefined;
@@ -212,6 +214,31 @@ class ThreeBattlefield implements Battlefield {
       this.effects.push(effect);
       this.scene.add(effect.mesh);
     }
+  }
+
+  private updateCanvasReceipt(snapshot: BattleSnapshot, effects: readonly EffectKind[]): void {
+    const visual = this.enemy?.spec;
+    const dataset = this.renderer.domElement.dataset;
+    dataset.enemyFamily = visual?.body ?? snapshot.enemy.family ?? "";
+    dataset.enemyVariant = String(visual?.profile.variant ?? snapshot.enemy.variant ?? "");
+    dataset.enemySeed = String(visual?.seed ?? snapshot.enemy.seed ?? "");
+    dataset.enemyGrade = snapshot.enemy.grade;
+    dataset.enemyModifier = snapshot.enemy.modifier ?? "none";
+    dataset.goldenBug = String(snapshot.enemy.goldenBug === true);
+    dataset.activeEffectCount = String(this.effects.length);
+    dataset.lastEffectKinds = effects.slice(0, 8).join(",");
+  }
+
+  private clearCanvasReceipt(): void {
+    const dataset = this.renderer.domElement.dataset;
+    delete dataset.enemyFamily;
+    delete dataset.enemyVariant;
+    delete dataset.enemySeed;
+    delete dataset.enemyGrade;
+    delete dataset.enemyModifier;
+    delete dataset.goldenBug;
+    delete dataset.activeEffectCount;
+    delete dataset.lastEffectKinds;
   }
 
   private retire(object: THREE.Object3D): void {

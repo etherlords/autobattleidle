@@ -2,7 +2,12 @@ import * as THREE from "three";
 
 import type { EnemyViewBuilder } from "../builder";
 import { component, mesh, type EnemyVisualComponent } from "../components";
-import { enemyVisualGeometry, enemyVisualPalette, enemyVisualTransforms } from "../config";
+import {
+  enemyVisualAnimation,
+  enemyVisualGeometry,
+  enemyVisualPalette,
+  enemyVisualTransforms,
+} from "../config";
 import type { Decoration, EnemyVisualProfile } from "../spec";
 
 type DecorationComponentFactory = (
@@ -52,7 +57,14 @@ const decorationComponentFactories: Readonly<Record<Decoration, DecorationCompon
       profile.attachment[2],
     );
     orbital.rotation.x = enemyVisualTransforms.flatRingXRadians;
-    return component(`decoration-orbitals-${index}`, "decoration", [orbital]);
+    let phase = index * Math.PI;
+    return component(`decoration-orbitals-${index}`, "decoration", [orbital], {
+      [`decoration-orbital-${index}`]: () => {
+        phase += enemyVisualAnimation.decorationOrbitRadians;
+        orbital.position.x = Math.cos(phase) * profile.attachment[0] * 0.55;
+        orbital.position.y = profile.attachment[1] + Math.sin(phase) * 0.08;
+      },
+    });
   },
   satellites: (index, profile) => {
     const offset = index === 0 ? -1 : 1;
@@ -65,7 +77,13 @@ const decorationComponentFactories: Readonly<Record<Decoration, DecorationCompon
       profile.attachment[1] + 0.15,
       profile.attachment[2],
     );
-    return component(`decoration-satellites-${index}`, "decoration", [satellite]);
+    let phase = index * Math.PI;
+    return component(`decoration-satellites-${index}`, "decoration", [satellite], {
+      [`decoration-satellite-${index}`]: () => {
+        phase += enemyVisualAnimation.decorationOrbitRadians;
+        satellite.position.y = profile.attachment[1] + 0.15 + Math.sin(phase) * 0.08;
+      },
+    });
   },
   scar: (index, profile) => {
     const offset = index === 0 ? -1 : 1;

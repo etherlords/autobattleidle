@@ -4,8 +4,8 @@ id: ABI-007
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
-status: Ready
+revision: 25
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -31,7 +31,7 @@ Complete release QA, GitHub Pages proof, and project timeline
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 
