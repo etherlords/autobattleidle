@@ -27,19 +27,24 @@ Enemy presentation is composed from independent deterministic layers:
 3. one gameplay modifier attachment;
 4. seeded decorative ornaments chosen from several variants.
 
-The live modifier catalog contains armor (paired shield plates), vitality (a visible core), and
-automatic slow (an animated time ring). The factory also contains a gold-orbital wealth composition
-for explicitly labeled synthetic visual proof, but it is dormant: the current domain has no wealth
-enemy modifier or wealth reward multiplier. Runtime reward semantics remain the deterministic enemy
-base reward plus the player-owned double-reward roll applied on defeat. Wealth must not activate until
-a domain rule and balance proof supply it through the snapshot. Warded and regenerating remain
-candidates only when their domain rules are implemented.
+The live modifier catalog contains armor (paired shield plates), vitality (a visible core), automatic
+slow (an animated time ring), hardened (combined bounded health and armor plus a reinforced band),
+critical guard (critical-multiplier suppression plus a prism guard), and manual guard (manual-only
+post-armor reduction plus a directional barrier). All six use deterministic finite roll ranges and
+serializable derived enemy state. Existing armor, vitality, automatic-slow, cadence, and reward formulas
+remain unchanged. The factory also contains a gold-orbital wealth composition for explicitly labeled
+synthetic visual proof, but it is dormant: the current domain has no wealth enemy modifier or wealth
+reward multiplier. Wealth must not activate until a domain rule and balance proof supply it through the
+snapshot. Regeneration, ward charges, thorns, lifesteal, and evasion remain excluded because they require
+unsupported mutable state, player health, or hidden randomness.
 
-Ordinary enemies use three body families: beetle, brute, and wisp. Bosses use dedicated colossus and
-hydra bodies plus the same composable modifier layer. Decorative horns, fins, orbitals, satellites,
-scars, and grade crowns are selected from stable enemy identity so reload-equivalent snapshots
-reproduce the same model. Color supports identity, while silhouette, motion, and attachments carry
-the primary cue.
+Ordinary enemies retain beetle, brute, and wisp for existing modifier/null identities. Hardened,
+critical-guard, and manual-guard elites select authored mantis, sentinel, and drake families
+respectively; bosses retain dedicated colossus and hydra bodies. Every shipped family has three
+family-local authored palette/decor/attachment profiles selected from stable enemy identity, so
+reload-equivalent snapshots reproduce the same composition. Grade and modifier cues remain independent
+non-color layers. Shields and ornaments attach through family surface anchors with bounded mesh counts;
+random primitive placement and detached global offsets are rejected.
 
 ## Boss cadence
 
@@ -66,10 +71,14 @@ only its Three.js group and inspectable composition metadata; combat remains in 
 Battlefield replacement retains the snapshot identity key and deterministically disposes retired
 geometry and materials.
 
-Desktop and 390px browser QA covered all ordinary bodies, both dedicated bosses, every active
-modifier, boss/modifier compositions, and the explicitly synthetic dormant wealth cue. A 120-replacement
-real WebGL run kept scene children bounded at 12, preserved stable seeds, disposed retired groups, and
-reported no console or network errors.
+Desktop 1440x900 and 390x844 browser QA covered all eight families by all three authored profiles,
+every active modifier, representative front/side composition, stable reloads, historical-save recovery,
+and real manual/automatic combat transitions. Critical Guard suppressed the critical multiplier in the
+browser; Manual Guard reduced only manual damage; Hardened completed a defeat/reward transition. After
+a receipt-discovered Sentinel cylinder argument defect was corrected and independently reviewed, the
+390px cue recheck was compact and non-overlapping. Uninterrupted automatic progression kept DOM nodes
+at 59 and canvas count at one while heap remained bounded; focused tests cover every rendered profile,
+animation, idempotent disposal, and subtree resource bounds. Console and network health remained clean.
 
 A rare `Golden Bug` is a timed event enemy with a dedicated compact body and metallic gold material
 that reacts to scene lighting with readable highlights. Its event rules, timer, reward and escape path

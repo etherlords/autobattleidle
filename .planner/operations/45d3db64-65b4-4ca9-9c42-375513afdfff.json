@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "45d3db64-65b4-4ca9-9c42-375513afdfff",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T04:49:05.968Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi-022-qa-visual-repair-in-progress-20260829-v1",
+  "requestFingerprint": "bfc2d5c1ec8e8a827b251d25eb189b3a919affef5f8dae84473233ac17971038",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-45d3db64-65b4-4ca9-9c42-375513afdfff-0",
+      "beforeHash": "5d15a349b3de77d63a72029f1ad1991319b98b1ce5e4b6e9c8789d4eb3c3aa2a",
+      "afterHash": "d61885460eca0103cd777bed444b671b0d09a4d5c0a44403659c5a35e8dfa8cf"
+    }
+  ],
+  "committedAt": "2026-08-29T04:49:06.014Z"
+}

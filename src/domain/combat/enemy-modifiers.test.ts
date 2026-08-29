@@ -9,6 +9,9 @@ describe("enemy modifier registry", () => {
     expect(modifierForRoll(0.34).id).toBe("health");
     expect(modifierForRoll(0.67).id).toBe("automatic-slow");
     expect(modifierForRoll(1).id).toBe("automatic-slow");
+    expect(modifierForRoll(0.76).id).toBe("hardened");
+    expect(modifierForRoll(0.85).id).toBe("critical-guard");
+    expect(modifierForRoll(0.96).id).toBe("manual-guard");
   });
 
   it("rejects invalid elite rolls instead of choosing a fallback modifier", () => {

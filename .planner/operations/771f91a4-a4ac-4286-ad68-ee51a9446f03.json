@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "771f91a4-a4ac-4286-ad68-ee51a9446f03",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T04:15:06.410Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi-022-reconcile-visual-audit-variants-complete-20260829-v1",
+  "requestFingerprint": "08d88e289c53c88bc04e14dfc65e0b17de5d36b1b243c85e468b907496c1ccdd",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-771f91a4-a4ac-4286-ad68-ee51a9446f03-0",
+      "beforeHash": "243f0841cf347bad9391afd92a144693177112a119c7cd6f1c15928754cac7bb",
+      "afterHash": "d7cd854035a1577cc06cf8998a28d306cfed5786326eaa519b5489dacb9750de"
+    }
+  ],
+  "committedAt": "2026-08-29T04:15:06.491Z"
+}

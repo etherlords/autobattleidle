@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "operationId": "902bf5c3-6bf4-4eb1-80c0-a362a5ba91c4",
+  "operation": "progress.append",
+  "state": "committed",
+  "createdAt": "2026-08-29T04:19:18.177Z",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-902bf5c3-6bf4-4eb1-80c0-a362a5ba91c4"
+    }
+  ],
+  "committedAt": "2026-08-29T04:19:18.219Z"
+}

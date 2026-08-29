@@ -21,11 +21,20 @@ const grade = (value: unknown): value is EnemyGrade =>
   value === "normal" || value === "veteran" || value === "elite" || value === "boss";
 
 const modifier = (value: unknown): value is EliteModifier | null =>
-  value === null || value === "armor" || value === "health" || value === "automatic-slow";
+  value === null ||
+  value === "armor" ||
+  value === "health" ||
+  value === "automatic-slow" ||
+  value === "hardened" ||
+  value === "critical-guard" ||
+  value === "manual-guard";
 
 export const modifierRoll = (value: EliteModifier | null): number => {
   if (value === "health") return 0.34;
   if (value === "automatic-slow") return 0.67;
+  if (value === "hardened") return 0.76;
+  if (value === "critical-guard") return 0.85;
+  if (value === "manual-guard") return 0.96;
   return 0;
 };
 

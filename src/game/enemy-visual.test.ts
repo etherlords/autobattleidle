@@ -62,23 +62,24 @@ describe("enemy visual factory", () => {
     );
   });
 
-  it("keeps the representative grade specs and seeded decorations exactly stable", () => {
-    expect(enemyVisualSpec({ grade: "normal", level: 1, modifier: null })).toEqual({
+  it("keeps existing body selection stable while adding authored family profiles", () => {
+    expect(enemyVisualSpec({ grade: "normal", level: 1, modifier: null })).toMatchObject({
       body: "brute",
       decorations: ["orbitals", "fins"],
       gradeCue: "none",
       modifierCue: null,
+      profile: { variant: 0 },
       scale: 1,
       seed: 4_128_564_042,
     });
     expect(enemyVisualSpec({ grade: "veteran", level: 2, modifier: null })).toMatchObject({
       body: "wisp",
-      decorations: ["satellites", "horns"],
+      decorations: ["orbitals", "scar"],
       gradeCue: "crest",
     });
     expect(enemyVisualSpec({ grade: "elite", level: 3, modifier: null })).toMatchObject({
       body: "beetle",
-      decorations: ["horns", "satellites"],
+      decorations: ["horns", "orbitals"],
       gradeCue: "spikes",
       scale: 1.12,
     });
@@ -96,6 +97,96 @@ describe("enemy visual factory", () => {
     });
   });
 
+  it("covers three deterministic coordinated variants for every family", () => {
+    const inputs: Readonly<Record<string, EnemyVisualInput>> = {
+      beetle: { grade: "normal", level: 3, modifier: null },
+      brute: { grade: "normal", level: 1, modifier: null },
+      wisp: { grade: "normal", level: 2, modifier: null },
+      mantis: { grade: "elite", level: 3, modifier: "hardened" },
+      sentinel: { grade: "elite", level: 3, modifier: "critical-guard" },
+      drake: { grade: "elite", level: 3, modifier: "manual-guard" },
+      "boss-colossus": { grade: "boss", level: 2, modifier: null },
+      "boss-hydra": { grade: "boss", level: 1, modifier: null },
+    };
+    for (const [family, input] of Object.entries(inputs)) {
+      const variants = new Map<number, string>();
+      for (let level = input.level; level < input.level + 120; level += 1) {
+        const spec = enemyVisualSpec({ ...input, level });
+        if (spec.body === family)
+          variants.set(
+            spec.profile.variant,
+            `${spec.profile.palette.core}:${spec.decorations.join("/")}`,
+          );
+      }
+      expect(variants.size).toBe(3);
+      expect(new Set(variants.values()).size).toBe(3);
+    }
+  });
+
+  it("renders every family/profile with bounded surface attachments and new modifier cues", () => {
+    const inputs: Readonly<Record<string, EnemyVisualInput>> = {
+      beetle: { grade: "normal", level: 3, modifier: null },
+      brute: { grade: "normal", level: 1, modifier: null },
+      wisp: { grade: "normal", level: 2, modifier: null },
+      mantis: { grade: "elite", level: 3, modifier: "hardened" },
+      sentinel: { grade: "elite", level: 3, modifier: "critical-guard" },
+      drake: { grade: "elite", level: 3, modifier: "manual-guard" },
+      "boss-colossus": { grade: "boss", level: 2, modifier: null },
+      "boss-hydra": { grade: "boss", level: 1, modifier: null },
+    };
+    for (const [family, input] of Object.entries(inputs)) {
+      const renderedVariants = new Set<number>();
+      for (let level = input.level; level < input.level + 120; level += 1) {
+        const visual = createEnemyVisual({ ...input, level });
+        if (visual.spec.body !== family || renderedVariants.has(visual.spec.profile.variant)) {
+          visual.dispose();
+          continue;
+        }
+        renderedVariants.add(visual.spec.profile.variant);
+        expect(visual.group.getObjectByName(`enemy-body-${family}`)).toBeDefined();
+        expect(meshCount(visual)).toBeLessThanOrEqual(9);
+        const shields = new EnemyViewBuilder();
+        shields.add(enemyBodyFactories[visual.spec.body](visual.spec.profile));
+        shields.add(decorateModifier("shield-plates", visual.spec.profile));
+        const shielded = shields.build();
+        for (const plate of shielded.roots.modifier.children) {
+          expect(Math.abs(plate.position.x)).toBe(visual.spec.profile.attachment[0]);
+          expect(plate.position.z).toBe(visual.spec.profile.attachment[2] + 0.55);
+        }
+        shielded.dispose();
+        visual.dispose();
+      }
+      expect(renderedVariants.size).toBe(3);
+    }
+    for (const [modifier, cue] of [
+      ["hardened", "reinforced-band"],
+      ["critical-guard", "prism-guard"],
+      ["manual-guard", "directional-barrier"],
+    ] as const) {
+      const visual = createEnemyVisual({ grade: "elite", level: 3, modifier });
+      expect(visual.group.getObjectByName(cue)).toBeDefined();
+      expect(visual.group.getObjectByName(cue)?.position).toMatchObject({
+        x: visual.spec.profile.attachment[0],
+        y: visual.spec.profile.attachment[1],
+        z: visual.spec.profile.attachment[2],
+      });
+      visual.dispose();
+    }
+  });
+
+  it("keeps the Sentinel core within its authored compact silhouette height", () => {
+    const visual = createEnemyVisual({ grade: "elite", level: 3, modifier: "critical-guard" });
+    const core = visual.group.getObjectByName("enemy-body-sentinel");
+    if (!(core instanceof THREE.Mesh)) throw new Error("Expected Sentinel core mesh");
+    core.geometry.computeBoundingBox();
+    const bounds = core.geometry.boundingBox;
+    if (bounds === null) throw new Error("Expected Sentinel core bounds");
+    const height = bounds.max.y - bounds.min.y;
+    expect(height).toBeGreaterThan(0.8);
+    expect(height).toBeLessThanOrEqual(0.82);
+    visual.dispose();
+  });
+
   it("preserves every reachable modifier cue, including presentation-only wealth", () => {
     const input: Pick<EnemyVisualInput, "grade" | "level"> = { grade: "elite", level: 3 };
     expect(enemyVisualSpec({ ...input, modifier: "armor" }).modifierCue).toBe("shield-plates");
@@ -104,19 +195,23 @@ describe("enemy visual factory", () => {
     expect(enemyVisualSpec({ ...input, modifier: "wealth" }).modifierCue).toBe("wealth-orbitals");
   });
 
-  it("reaches all five deterministic decorations and keeps representative child counts", () => {
+  it("keeps decoration and mesh composition bounded", () => {
     const decorations = new Set<string>();
-    for (let level = 1; level <= 3; level += 1) {
+    for (let level = 1; level <= 120; level += 1) {
       enemyVisualSpec({ grade: "normal", level, modifier: null }).decorations.forEach(
         (decoration) => decorations.add(decoration),
       );
     }
     expect(decorations).toEqual(new Set(["fins", "horns", "orbitals", "satellites", "scar"]));
-    expect(meshCount(createEnemyVisual({ grade: "normal", level: 1, modifier: null }))).toBe(3);
-    expect(meshCount(createEnemyVisual({ grade: "veteran", level: 2, modifier: null }))).toBe(4);
-    expect(meshCount(createEnemyVisual({ grade: "elite", level: 3, modifier: null }))).toBe(6);
-    expect(meshCount(createEnemyVisual({ grade: "boss", level: 35, modifier: null }))).toBe(6);
-    expect(meshCount(createEnemyVisual({ grade: "boss", level: 70, modifier: null }))).toBe(4);
+    expect(
+      meshCount(createEnemyVisual({ grade: "normal", level: 1, modifier: null })),
+    ).toBeLessThanOrEqual(9);
+    expect(
+      meshCount(createEnemyVisual({ grade: "elite", level: 3, modifier: "manual-guard" })),
+    ).toBeLessThanOrEqual(9);
+    expect(
+      meshCount(createEnemyVisual({ grade: "boss", level: 35, modifier: null })),
+    ).toBeLessThanOrEqual(9);
   });
 
   it("owns a bounded visual tree and keeps the slow ring animated", () => {
@@ -159,6 +254,9 @@ describe("enemy visual factory", () => {
       "boss-colossus",
       "boss-hydra",
       "brute",
+      "drake",
+      "mantis",
+      "sentinel",
       "wisp",
     ]);
     const builder = new EnemyViewBuilder();

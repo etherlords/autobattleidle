@@ -57,6 +57,13 @@ export const enemyVisualGeometry = {
     colossus: [0.8, 1.05, 1.55, 8],
     hydraCore: [0.95, 1],
     hydraHead: [0.35, 0.7, 5],
+    mantisThorax: [0.38, 1.25, 8, 12],
+    mantisScythe: [0.17, 0.75, 4],
+    sentinelCore: [0.62, 0.62, 0.82, 8],
+    sentinelPylon: [0.22, 0.85, 0.28],
+    drakeTorso: 0.82,
+    drakeWing: [0.24, 0.9, 4],
+    drakeTail: [0.18, 0.65, 4],
   },
   grade: { crest: [0.25, 0.7, 4], spike: [0.16, 0.55, 4], crown: [0.75, 0.5, 5] },
   modifier: {

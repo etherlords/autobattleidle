@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "f0b3d404-5623-40c9-b46c-0b60ceb8af4f",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T04:49:03.333Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi-022-independent-gates-cancel-for-qa-repair-20260829-v1",
+  "requestFingerprint": "894eec938198afa57e7bd2a1797351cf7f3bf46d7dbdc43accb5ae8ce410f1c0",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-f0b3d404-5623-40c9-b46c-0b60ceb8af4f-0",
+      "beforeHash": "f4caf8c9e5c5819bd3b2f0f7dda6f98cf7fcad7c078e92827a11d2df9aaa8b64",
+      "afterHash": "70c69bc451822c13b9986386a909fc4682cce0a93246fa15803e4d6d46242d07"
+    }
+  ],
+  "committedAt": "2026-08-29T04:49:03.419Z"
+}

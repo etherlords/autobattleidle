@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "operationId": "023aba3e-bb66-4f3b-bbee-9075fe5432fd",
+  "operation": "task.advance",
+  "state": "committed",
+  "createdAt": "2026-08-29T04:19:19.976Z",
+  "itemId": "ABI-022",
+  "idempotencyKey": "abi-022-in-review-to-in-progress-repair-20260829-v1",
+  "requestFingerprint": "7f7355e04c786e0091ab3d9931f2bd745e67aeae0a9316c769b36d2ea729cda3",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/BRIEF.md.planner-tmp-023aba3e-bb66-4f3b-bbee-9075fe5432fd-0",
+      "beforeHash": "da3288563748e0fd95de5acff9032972293a542943edc13089edc6789c45e03b",
+      "afterHash": "d27f81c06650a1837d3f9098590543be6a21b65202f904086adbf2fc82cebc4c"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-022-expand-enemy-families-and-gameplay-modifiers-with-authored-c/PROGRESS.md.planner-tmp-023aba3e-bb66-4f3b-bbee-9075fe5432fd-1",
+      "beforeHash": "26667597b0ea761948e36fa4759101f23c6d2ed682fc2e24cc72ccf42276f409",
+      "afterHash": "bcc2a5557b7492882ec646671fc17ebfb2f8e39122a4772ee639d600308bb396"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-023aba3e-bb66-4f3b-bbee-9075fe5432fd-2",
+      "beforeHash": "2114f49ea66a913433e53084f08a9c8cb7b803499be6c93979189cf2aaa9f6c8",
+      "afterHash": "dd2d93359de5648ab59b458861aeaed1d07fd9ad6d2ecec242a43eb063e041d5"
+    }
+  ],
+  "committedAt": "2026-08-29T04:19:20.057Z"
+}

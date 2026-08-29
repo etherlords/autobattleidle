@@ -8,6 +8,34 @@ import {
   normalizeLevel,
 } from "./player-stats";
 import { spawnEnemy } from "./progression";
+import { ENEMY_MODIFIERS } from "./enemy-modifiers";
+
+const modifierFor = (state: CombatState) =>
+  state.enemy.modifier === null ? undefined : ENEMY_MODIFIERS[state.enemy.modifier];
+
+const resolvesCritical = (state: CombatState, command: AttackCommand): boolean => {
+  const modifier = modifierFor(state);
+  return (
+    modifier?.allowsCritical(command.source) !== false &&
+    command.rolls.critical < criticalChanceForLevel(normalizeLevel(criticalLevelFor(state.player)))
+  );
+};
+
+const resolvedDamage = (
+  state: CombatState,
+  command: AttackCommand,
+  armor: number,
+  critical: boolean,
+): number => {
+  const baseDamage = damageForLevel(normalizeLevel(damageLevelFor(state.player)));
+  const unguardedDamage =
+    Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor) *
+    (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);
+  return Math.max(
+    COMBAT_FORMULAS.minimumDamage,
+    Math.floor(unguardedDamage * (modifierFor(state)?.damageMultiplier(command.source) ?? 1)),
+  );
+};
 import {
   armorPenetrationForLevel,
   automaticInterval,
@@ -27,12 +55,9 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
   const penetrationLevel = normalizeLevel(armorPenetrationLevelFor(state.player));
   const penetration = armorPenetrationForLevel(penetrationLevel);
   const armor = effectiveArmor(state.enemy.armor, penetrationLevel);
-  const critical =
-    command.rolls.critical < criticalChanceForLevel(normalizeLevel(criticalLevelFor(state.player)));
+  const critical = resolvesCritical(state, command);
   const baseDamage = damageForLevel(normalizeLevel(damageLevelFor(state.player)));
-  const damage =
-    Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor) *
-    (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);
+  const damage = resolvedDamage(state, command, armor, critical);
   const armorPreventedDamage =
     Math.max(0, baseDamage - Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor)) *
     (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);

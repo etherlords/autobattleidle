@@ -20,11 +20,11 @@ export class EnemyUnitBuilder {
   static composeView(snapshot: EnemyVisualInput): EnemyViewComposition {
     const spec = enemyVisualSpec(snapshot);
     const builder = new EnemyViewBuilder();
-    builder.add(enemyBodyFactories[spec.body]());
+    builder.add(enemyBodyFactories[spec.body](spec.profile));
     new GradeCueDecorator(spec.gradeCue).attach(builder);
-    new ModifierCueDecorator(spec.modifierCue).attach(builder);
+    new ModifierCueDecorator(spec.modifierCue, spec.profile).attach(builder);
     spec.decorations.forEach((decoration, index) =>
-      new SeededDecorationDecorator(decoration, index).attach(builder),
+      new SeededDecorationDecorator(decoration, index, spec.profile).attach(builder),
     );
     return { build: builder.build(), spec };
   }

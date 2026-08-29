@@ -247,6 +247,13 @@ describe("persistence boundary", () => {
     });
   });
 
+  it("round-trips each new modifier without changing the save shape", () => {
+    for (const roll of [0.76, 0.85, 0.96]) {
+      const state = { ...fallback(), enemy: spawnEnemy(3, roll) };
+      expect(decodeSave(JSON.parse(encodeSave(state)) as unknown, fallback(), 0)).toEqual(state);
+    }
+  });
+
   it("prefers direct legacy V2 over versioned V1 when the current slot is unusable", () => {
     const v1 = JSON.stringify(v1Fixture);
     const legacy = JSON.stringify(legacyV2Fixture);

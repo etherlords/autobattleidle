@@ -1,7 +1,8 @@
 export type AttackSource = "manual" | "automatic";
 
 export type EnemyGrade = "normal" | "veteran" | "elite" | "boss";
-export type EliteModifier = "armor" | "health" | "automatic-slow";
+export type EliteModifier =
+  "armor" | "health" | "automatic-slow" | "hardened" | "critical-guard" | "manual-guard";
 
 export type CombatEnemy = {
   readonly id: number;

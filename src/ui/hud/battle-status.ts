@@ -2,6 +2,15 @@ import type { BattleSnapshot } from "../../domain/snapshot";
 import { makeText, progress, setProgress } from "./elements";
 import { formatNumber } from "../number-format";
 
+const modifierLabels = {
+  armor: "Armored",
+  health: "Vital",
+  "automatic-slow": "Time Warp",
+  hardened: "Hardened",
+  "critical-guard": "Critical Guard",
+  "manual-guard": "Manual Guard",
+} as const;
+
 export class BattleStatus {
   readonly element = document.createElement("section");
   private readonly enemy = makeText("h1", "");
@@ -28,7 +37,7 @@ export class BattleStatus {
     const health = formatNumber(enemy.health);
     const maxHealth = formatNumber(enemy.maxHealth);
     const formattedCoins = formatNumber(coins);
-    this.enemy.textContent = `${enemy.name} · Level ${level.text} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${enemy.modifier}`}`;
+    this.enemy.textContent = `${enemy.name} · Level ${level.text} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${modifierLabels[enemy.modifier]}`}`;
     setProgress(
       this.health,
       `${enemy.name} health ${health.exact} of ${maxHealth.exact}`,
