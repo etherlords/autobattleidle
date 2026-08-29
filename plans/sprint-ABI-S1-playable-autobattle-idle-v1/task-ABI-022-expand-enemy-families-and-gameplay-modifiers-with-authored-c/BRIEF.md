@@ -4,7 +4,7 @@ id: ABI-022
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
+revision: 4
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -41,6 +41,9 @@ Expand enemy families and gameplay modifiers with authored component visuals
 - [ ] Focused tests prove registry exhaustiveness, deterministic spawn/roll behavior, every modifier interaction, factory extension, builder/decorator attachment, animation/disposal, save round-trip, and unchanged old-family behavior.
 - [ ] Independent visual QA captures every new family and modifier on desktop and 390px, verifies no clipping/intersection/detached parts and readable silhouettes/cues/animation, while headless telemetry feeds ABI-020 before final balance is accepted.
 - [ ] Independent review has no unresolved P0-P2, pnpm check and long-run resource bounds pass, Vault design articles are updated, and exact-SHA CI/Pages/deployed proof completes before Manager closure.
+- [ ] The design preflight visually audits every shipped body family, grade cue, modifier decoration, shield, attachment, and seeded ornament for silhouette, scale, proportion, attachment point, intersection, clipping, camera readability, and composition; shields and decorations that look detached, misplaced, oversized, or structurally implausible are redesigned before adding more assets.
+- [ ] Every shipped enemy body family has at least three deterministic authored visual variants with intentionally coordinated shade/palette and decoration sets; one family may not always resolve to one fixed color, and variation must preserve non-color grade/modifier cues, stable seeds, save compatibility, and bounded component counts.
+- [ ] The visual QA matrix captures all family-by-variant combinations plus every shield/modifier decoration on desktop and 390px from representative front/side camera views, and rejects intersections, detached parts, unreadable value cues, repetitive palettes, accidental symmetry, or decoration placement that breaks the authored silhouette.
 
 ## Dependencies
 

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "operationId": "83eb2666-74fd-4cb8-b1fe-8f09dd7e2171",
+  "operation": "task.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:04:38.491Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi-020-add-armor-early-late-balance-acceptance-20260829",
+  "requestFingerprint": "b360058f18fd6f9634c8a0ca70fc6b2217dac19ea250097d26b9dc554eabfff7",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md.planner-tmp-83eb2666-74fd-4cb8-b1fe-8f09dd7e2171-0",
+      "beforeHash": "a561f7e947924897d3222c0c5bb42705c075b738c3ef0673e654b34d2d239b0e",
+      "afterHash": "2bf7824fc845d5ee1b47e0363fdefec7e6225ff98710c5f48038853a5925386b"
+    },
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/SPRINT-BOARD.md.planner-tmp-83eb2666-74fd-4cb8-b1fe-8f09dd7e2171-1",
+      "beforeHash": "8f1aaa4be02a8f6b5d1fbde539ee717a785368cf8f6d5fafb37611fd70c61488",
+      "afterHash": "5ca4d1979a25b2fc83c8506a43c8fa6ae0f8896a4274df2222b38f6721fd6f90"
+    }
+  ],
+  "committedAt": "2026-08-29T00:04:38.542Z"
+}

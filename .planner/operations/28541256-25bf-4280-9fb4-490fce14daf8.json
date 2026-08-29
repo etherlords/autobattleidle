@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "operationId": "28541256-25bf-4280-9fb4-490fce14daf8",
+  "operation": "execution_plan.update",
+  "state": "committed",
+  "createdAt": "2026-08-29T00:05:22.657Z",
+  "itemId": "ABI-020",
+  "idempotencyKey": "abi-020-add-armor-envelope-plan-step-v2-20260829",
+  "requestFingerprint": "7242d2b1257354a731b1b1cc377909b2f521e882bdbdb82ce87e64f115ad46d2",
+  "entries": [
+    {
+      "target": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md",
+      "temporary": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/PROGRESS.md.planner-tmp-28541256-25bf-4280-9fb4-490fce14daf8-0",
+      "beforeHash": "24cd3ab797ac82c8b0e7c1668e5af94ad2b7df3a585a12551c8f53e0ddf84f82",
+      "afterHash": "43921aa81bd53f2ade4c633cf47e6606c2b29ddf310be0769ad6b53dd86a6504"
+    }
+  ],
+  "committedAt": "2026-08-29T00:05:22.710Z"
+}

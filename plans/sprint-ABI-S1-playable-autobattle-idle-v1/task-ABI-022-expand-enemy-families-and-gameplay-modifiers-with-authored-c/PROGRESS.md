@@ -4,7 +4,7 @@ id: ABI-022
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -22,8 +22,8 @@ requiredGates:
 ## Current state
 
 - Status: Ready
-- Revision: 2
-- Last update: Reconcile lifecycle after ABI-023 completion: all declared dependencies are Done; move ABI-022 from Blocked to Ready.
+- Revision: 3
+- Last update: Add explicit shield/decor composition audit and three-variants-per-family step; task remains Ready and unclaimed.
 
 ## Execution plan
 
@@ -35,6 +35,7 @@ requiredGates:
 - [ ] self-check: Implementation owner adds deterministic domain/save/factory/animation/disposal tests and runs pnpm check
 - [ ] independent-gates: Independent Reviewer and full desktop/narrow visual QA verify extensibility, authored quality, interactions, and resource bounds
 - [ ] manager-closure: Manager syncs Vault, publishes coherently, proves exact-SHA CI/Pages/deployed behavior, and hands telemetry to ABI-020
+- [ ] visual-audit-variants: Design and implementation owners audit shields and every decoration, then author at least three deterministic coordinated palette/decor variants per shipped family
 
 ## Events
 
@@ -54,3 +55,19 @@ requiredGates:
   - ABI-023 Done revision 10
   - canonical openDependencies=[]
   - planner_doctor healthy; recovery.required=false
+
+### evt-25ccc406-face-4dbf-a5d6-6277375c4e3c
+
+- Timestamp: 2026-08-29T00:05:23.967Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 2
+- Resulting revision: 3
+- Summary: Add explicit shield/decor composition audit and three-variants-per-family step; task remains Ready and unclaimed.
+- Idempotency key: abi-022-add-visual-audit-variants-plan-step-v2-20260829
+- Request fingerprint: 037762f1e00bab29f0f7533aa36589a4c256ffa6ab231d00b76c4005dc6e6b93
+- Action: add
+- Step ID: visual-audit-variants
+- Evidence:
+  - User visual audit request 2026-08-29
+  - ABI-022 acceptance revision 4

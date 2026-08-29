@@ -4,7 +4,7 @@ id: ABI-020
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
+revision: 4
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -47,6 +47,9 @@ Balance ordinary enemy health with a deterministic headless progression simulato
 - [ ] Focused tests prove metric calculations, fixed-seed repeatability, round-robin one-purchase-per-defeat behavior, grade/boss separation, 0.5-versus-0.8 candidate comparison, boss-gap candidates, Golden Bug reward accounting, critical/penetration strategy alternatives, safe saturation, runtime bound, and accepted telemetry envelopes.
 - [ ] Independent review, headless QA, save-compatibility proof, pnpm check, and exact-SHA CI/Pages pass with no unresolved P0-P2.
 - [ ] Vault Enemy Tiers and Boss Cadence, Economy and Upgrade Curves, and Combat Loop are updated from planned candidates to the accepted formulas and measured report before Manager closure.
+- [ ] Armored enemies are reported as a separate modifier cohort in early, mid, and late encounter bands with raw damage, effective armor, prevented damage, minimum-one-damage hit fraction, armor-penetration level, hits-to-kill, and time-to-kill; the preflight freezes explicit acceptable early and late envelopes before tuning.
+- [ ] Measured candidates tune enemy armor growth and player armor penetration together: the accepted result must remove the early-game pattern where reachable armored encounters are dominated by repeated 1-damage hits, while late-game armored enemies still prevent a measurable nonzero share of incoming damage instead of becoming visually armored but mechanically irrelevant.
+- [ ] Focused simulator and production-path tests cover the first armored encounters, representative midgame and 1000-plus late bands, the exact minimum-damage transition, adjacent penetration upgrades, and save reload; a candidate fails if it fixes early armor only by making late armor ineffective or introduces a new progression wall.
 
 ## Dependencies
 

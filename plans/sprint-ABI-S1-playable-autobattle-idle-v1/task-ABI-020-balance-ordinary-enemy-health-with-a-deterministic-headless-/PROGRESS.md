@@ -4,7 +4,7 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 17
+revision: 18
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 17
-- Last update: Append corrected ABI-020 measured rebalance execution step after preserved cancelled history.
+- Revision: 18
+- Last update: Add explicit armor usefulness telemetry and tuning step; task remains Blocked and unclaimed.
 
 ## Execution plan
 
@@ -44,6 +44,7 @@ requiredGates:
 - [ ] rebalance-self-check-v2: Implementation owner tests repeatability, variants, envelopes, walls, boss gaps, reward, strategies, rollover, saves, and runtime then runs pnpm check
 - [ ] rebalance-independent-gates-v2: Independent Reviewer and headless QA verify telemetry, repeatability, boss multiplier stability, runtime, and save compatibility
 - [ ] rebalance-manager-closure-v2: Manager publishes accepted Vault formulas and measured report, records verification and closure, and proves exact-SHA CI and Pages
+- [ ] armor-envelope-v2: Implementation owner measures and tunes early/mid/late armored cohorts so reachable early hits are not dominated by the 1-damage floor and late armor retains meaningful mitigation
 
 ## Events
 
@@ -300,3 +301,19 @@ requiredGates:
 - Step ID: rebalance-manager-closure-v2
 - Evidence:
   - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/BRIEF.md
+
+### evt-ef855740-8958-4e11-9e59-e75aff9170d2
+
+- Timestamp: 2026-08-29T00:05:22.654Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 17
+- Resulting revision: 18
+- Summary: Add explicit armor usefulness telemetry and tuning step; task remains Blocked and unclaimed.
+- Idempotency key: abi-020-add-armor-envelope-plan-step-v2-20260829
+- Request fingerprint: 7242d2b1257354a731b1b1cc377909b2f521e882bdbdb82ce87e64f115ad46d2
+- Action: add
+- Step ID: armor-envelope-v2
+- Evidence:
+  - User balance request 2026-08-29
+  - ABI-020 acceptance revision 4
