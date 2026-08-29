@@ -4,8 +4,8 @@ id: ABI-026
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 10
-status: Ready for Manager
+revision: 11
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-007
@@ -29,7 +29,7 @@ Audit and repair every enemy family, decoration, and combat effect for semantic 
 
 - Type: bug
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 

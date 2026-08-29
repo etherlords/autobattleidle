@@ -72,8 +72,18 @@ requiredGates:
 - Asset boundary: the local receipt records `development-modules`; exact published-SHA CI, Pages assets, and public functional observations remain pending Manager closure and are not claimed by candidate QA.
 - Vault sync: `AUTOBATTLEIDLE-DOC-20260827-A7FD1F`, content hash `9b6806617c5153081bdbf8c965d9d8cc1f4249255164e4abcf9f023ea7732c29`.
 
+### Published-SHA deployment proof
+
+- Published code SHA: `8f2546ddc6fd8f015e2f521541233a1b507d18f4` on `origin/main`.
+- Exact-SHA CI: PASS, run `33281374857`; exact-SHA Pages: PASS, run `33281374863`.
+- Public URL: `https://etherlords.github.io/autobattleidle/`.
+- Deployed JS `index-Ch4K_JbE.js`: 600080 bytes, SHA-256 `b2a7481e5eb42a02d4d52b396dfab8f0c0d0d1c666fd21afc804b2c5c3923aa7`; exact match to the local production build from the published SHA.
+- Deployed CSS `index-Bv0br866.css`: 2756 bytes, SHA-256 `959ac20905a934abc2c25d7ae43fdcbcee0f3f6f7d2c59e4bf15bc395857c148`; exact match to the local production build from the published SHA.
+- Isolated deployed-browser fixtures loaded `boss-hydra` at level 35 and `boss-colossus` at level 70. Both received damage and completed bounded pose changes; the Hydra crown remained attached to the animated center head, the Colossus displacement stayed bounded, and no console warnings/errors were observed.
+- The deployed asset identity binds the public browser observations to the source/test evidence for the circular `TorusGeometry` critical cue and the candidate-bound Hydra, Colossus, shield-motion, narrow, and reduced-motion receipts.
+
 ## Sign-off
 
 - Reviewer: PASS after one bounded repair and fresh re-review.
 - QA: PASS after stale evidence was rejected, a candidate-bound harness repair, and one fresh independent rerun.
-- Manager close: pending
+- Manager close: published-SHA evidence complete; canonical closure gate pending.

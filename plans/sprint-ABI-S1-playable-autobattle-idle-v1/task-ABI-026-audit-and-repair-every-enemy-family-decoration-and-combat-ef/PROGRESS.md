@@ -4,8 +4,8 @@ id: ABI-026
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 59
-status: Ready for Manager
+revision: 64
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-007
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 59
-- Last update: Begin scoped publication, exact-SHA CI/Pages/deployed proof, final audit and closure.
+- Status: Done
+- Revision: 64
+- Last update: Released task claim: Release completed ABI-026 manager lease after canonical Done transition
 
 ## Execution plan
 
@@ -36,7 +36,7 @@ requiredGates:
 - [x] family-event-vfx-repair: Implementation owner makes spawn, attack, hit, critical, and death cues visible and family-appropriate, with reduced-motion equivalents and no command replay
 - [x] visual-self-check: Implementation owner adds matrix, transform, timing, determinism, disposal, and historical-save regressions; captures receipts and runs pnpm check and hook smoke
 - [-] visual-independent-gates: Independent Reviewer audits semantics, architecture, calculations, bounds, and tests; independent browser QA verifies the complete desktop/narrow matrix
-- [~] visual-manager-close: Manager maps all evidence, syncs accepted Vault contracts, closes Planner, publishes only scoped files, and proves exact-SHA CI, Pages, and deployed behavior
+- [x] visual-manager-close: Manager maps all evidence, syncs accepted Vault contracts, closes Planner, publishes only scoped files, and proves exact-SHA CI, Pages, and deployed behavior
 - [x] visual-review-repair: Original implementation owner restores exact hardened Mantis variant attachments and delivers the canonical visual audit matrix, then reruns focused/full checks
 - [x] visual-fresh-rereview: Independent Reviewer performs one fresh bounded re-review of the repaired Mantis attachment and canonical audit matrix before QA
 - [-] visual-independent-qa: Independent browser QA captures all QA-P runtime receipts at desktop and narrow viewports
@@ -1025,3 +1025,93 @@ requiredGates:
 - Evidence:
   - verification PASS
   - Ready for Manager
+
+### evt-3c8652dd-b72e-480f-8699-28f51a7af0dd
+
+- Timestamp: 2026-08-29T23:41:47.585Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: Published code SHA 8f2546d to origin/main; exact-SHA CI and Pages passed; deployed JS/CSS hashes match the local production build; isolated Hydra and Colossus browser fixtures loaded, animated, received damage, and produced no console warnings or errors.
+- Idempotency key: abi026-published-proof-8f2546d
+- Evidence:
+  - commit:8f2546ddc6fd8f015e2f521541233a1b507d18f4
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374857
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374863
+  - https://etherlords.github.io/autobattleidle/
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-026-audit-and-repair-every-enemy-family-decoration-and-combat-ef/VERIFICATION.md
+
+### evt-c99f300c-6be0-45df-816d-94f005f5fcc5
+
+- Timestamp: 2026-08-29T23:42:00.314Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Manager closure work completed: scoped code published, exact-SHA CI and Pages passed, deployed assets matched the local build, and public Hydra/Colossus behavior was verified.
+- Idempotency key: abi026-complete-manager-close-step-8f2546d
+- Request fingerprint: 3670e21b01e1723121d53bf6391ee17886046840dada1593ba1f82ad93138963
+- Action: set_state
+- Step ID: visual-manager-close
+- State: complete
+- Evidence:
+  - commit:8f2546ddc6fd8f015e2f521541233a1b507d18f4
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374857
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374863
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-026-audit-and-repair-every-enemy-family-decoration-and-combat-ef/VERIFICATION.md
+
+### evt-d5b403dc-cf9c-4338-990c-68f2777c423d
+
+- Timestamp: 2026-08-29T23:42:11.174Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 61
+- Resulting revision: 62
+- Summary: PASS: ABI-026 acceptance, independent review/QA, Vault sync, scoped publication, exact-SHA CI/Pages, deployed asset identity, and public Hydra/Colossus behavior are all evidenced; ABI-019/020 and unrelated artifacts remain outside the published scope.
+- Idempotency key: abi026-manager-closure-pass-8f2546d
+- Request fingerprint: eda8c449eaa3275c3ee957b7a4195459587c42304e6296ca78fdb2fa53d7a883
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - commit:8f2546ddc6fd8f015e2f521541233a1b507d18f4
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374857
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374863
+  - https://etherlords.github.io/autobattleidle/
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-026-audit-and-repair-every-enemy-family-decoration-and-combat-ef/VERIFICATION.md
+  - vault:AUTOBATTLEIDLE-DOC-20260827-A7FD1F@9b6806617c5153081bdbf8c965d9d8cc1f4249255164e4abcf9f023ea7732c29
+
+### evt-e082b847-12cb-4534-b36c-5b6c16331287
+
+- Timestamp: 2026-08-29T23:42:22.008Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 62
+- Resulting revision: 63
+- Summary: ABI-026 is complete: semantic visual repairs, bounded animation and decoration anchoring, circular critical cue, independent gates, Vault sync, exact-SHA CI/Pages, and deployed browser proof all passed.
+- Idempotency key: abi026-ready-manager-to-done-8f2546d
+- Request fingerprint: e9a9f1ce84bb2bd1abd6c1f9fb768b74a4d8882bf1b4a2bed9a2f87c946c34e1
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - commit:8f2546ddc6fd8f015e2f521541233a1b507d18f4
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374857
+  - https://github.com/etherlords/autobattleidle/actions/runs/33281374863
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-026-audit-and-repair-every-enemy-family-decoration-and-combat-ef/VERIFICATION.md
+
+### evt-6e236ffc-9c33-4f25-a9c3-a6d378b1c1be
+
+- Timestamp: 2026-08-29T23:42:32.992Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 63
+- Resulting revision: 64
+- Summary: Released task claim: Release completed ABI-026 manager lease after canonical Done transition
+- Idempotency key: abi026-release-after-done-8f2546d
+- Request fingerprint: c4598648888c5fd9e9260e42383838683d70687c02f7645636bc8f7d198e9eea
+- Agent ID: root-manager
+- Session ID: abi026-user-visual-motion-repair-20260830
+- Intent: Release completed ABI-026 manager lease after canonical Done transition
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None
