@@ -5,6 +5,8 @@ import {
   type PersistenceBoundary,
 } from "../persistence/persistence-boundary";
 import { createHud, type Hud } from "../ui/hud";
+import { LeaderboardClient } from "../leaderboard/client";
+import type { LeaderboardView } from "../leaderboard/contracts";
 import type { HudIntent } from "../ui/hud/intents";
 import { BattleController } from "./battle/controller";
 import { battleCommands } from "./battle/commands";
@@ -25,16 +27,24 @@ export type ApplicationDependencies = {
   readonly createGame: (host: HTMLElement) => Battlefield;
   readonly createHud: (host: HTMLElement, battlefield: HTMLElement) => Hud;
   readonly createPersistence: () => PersistenceBoundary;
+  readonly createLeaderboard?: () => LeaderboardPort;
   readonly rolls: () => AttackRolls;
   readonly initialState: CombatState;
   readonly createInitialState?: () => CombatState;
   readonly now?: () => number;
+};
+type LeaderboardPort = {
+  load(around?: boolean): Promise<LeaderboardView>;
+  rename(name: string): Promise<void>;
+  reset(): Promise<void>;
+  submit(level: number): Promise<void>;
 };
 
 type LifecycleDependencies = Omit<
   ApplicationDependencies,
   "createGame" | "createHud" | "createPersistence"
 > & {
+  readonly createLeaderboard?: () => LeaderboardPort;
   readonly game: Battlefield;
   readonly hud: Hud;
   readonly persistence: PersistenceBoundary;
@@ -105,6 +115,52 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     initialState: dependencies.initialState,
     rolls: dependencies.rolls,
   });
+  let submitLeaderboard: ((level: number) => void) | undefined;
+  if (dependencies.hud.onLeaderboardLoad !== undefined) {
+    const leaderboard = dependencies.createLeaderboard?.() ?? new LeaderboardClient();
+    let submittedLevel = -1;
+    submitLeaderboard = (level) => {
+      if (level <= submittedLevel) return;
+      submittedLevel = level;
+      void leaderboard
+        .submit(level)
+        .catch(() =>
+          dependencies.hud.reportLeaderboard?.("Leaderboard is offline or not configured."),
+        );
+    };
+    const showLeaderboard = async (around: boolean): Promise<void> => {
+      dependencies.hud.reportLeaderboard?.("Loading leaderboard…");
+      try {
+        dependencies.hud.renderLeaderboard?.(await leaderboard.load(around));
+      } catch (error) {
+        const rateLimited =
+          typeof error === "object" &&
+          error !== null &&
+          "kind" in error &&
+          error.kind === "rate-limited";
+        dependencies.hud.reportLeaderboard?.(
+          rateLimited
+            ? "Leaderboard is rate limited. Try again shortly."
+            : "Leaderboard is offline or not configured.",
+        );
+      }
+    };
+    dependencies.hud.onLeaderboardLoad((around) => {
+      void showLeaderboard(around);
+    });
+    dependencies.hud.onLeaderboardRename?.((name) => {
+      void leaderboard
+        .rename(name)
+        .then(() => showLeaderboard(false))
+        .catch(() => dependencies.hud.reportLeaderboard?.("Name could not be changed."));
+    });
+    dependencies.hud.onLeaderboardReset?.(() => {
+      void leaderboard
+        .reset()
+        .then(() => dependencies.hud.reportLeaderboard?.("Leaderboard identity deleted."))
+        .catch(() => dependencies.hud.reportLeaderboard?.("Identity could not be deleted."));
+    });
+  }
   const render = (event?: BattleControllerEvent): void => {
     const current = presentBattleUpdate(controller.currentUpdate(), event);
     dependencies.game.render(current);
@@ -112,6 +168,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   };
   const unsubscribe = controller.subscribe((event) => {
     if (event.persistenceChanged) dependencies.persistence.onStateChanged(event.state);
+    submitLeaderboard?.(event.state.enemy.encounter);
     render(event);
   });
   const resize = (): void => {

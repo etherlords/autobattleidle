@@ -3,6 +3,8 @@ import type { BattleSnapshot } from "../domain/snapshot";
 import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
 import { UpgradeDialog } from "./hud/upgrade-dialog";
+import { LeaderboardDialog } from "./hud/leaderboard-dialog";
+import type { LeaderboardView } from "../leaderboard/contracts";
 import type { HudIntent, HudIntentListener, HudUnsubscribe } from "./hud/intents";
 
 export type Hud = {
@@ -14,6 +16,11 @@ export type Hud = {
   onRestore(listener: () => void): void;
   setRestoreAvailable(available: boolean): void;
   reportPersistence(message: string): void;
+  onLeaderboardLoad?(listener: (around: boolean) => void): void;
+  onLeaderboardRename?(listener: (name: string) => void): void;
+  onLeaderboardReset?(listener: () => void): void;
+  renderLeaderboard?(view: LeaderboardView, status?: string): void;
+  reportLeaderboard?(message: string): void;
   dispose(): void;
 };
 
@@ -23,8 +30,16 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   panel.setAttribute("aria-label", "Battle status");
   const status = new BattleStatus();
   const dialog = new UpgradeDialog();
+  const leaderboard = new LeaderboardDialog();
   const log = new EventLog();
-  panel.append(status.element, dialog.launcher, dialog.modal, log.element);
+  panel.append(
+    status.element,
+    dialog.launcher,
+    leaderboard.launcher,
+    dialog.modal,
+    leaderboard.modal,
+    log.element,
+  );
   host.append(panel);
 
   battlefield.tabIndex = 0;
@@ -87,6 +102,17 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   dialog.onUpgrade((id, quantity) => emit({ id, quantity, type: "upgrade" }));
   dialog.onReset(() => emit({ type: "reset" }));
   dialog.onRestore(() => emit({ type: "restore" }));
+  const closeLeaderboard = (): void => leaderboard.dismissForHandoff();
+  const closeUpgrades = (): void => dialog.dismissForHandoff();
+  dialog.launcher.addEventListener("click", closeLeaderboard);
+  leaderboard.launcher.addEventListener("click", closeUpgrades);
+  const toggleUpgradeShortcut = (event: KeyboardEvent): void => {
+    if (event.repeat || event.key.toLowerCase() !== "u") return;
+    event.preventDefault();
+    leaderboard.dismissForHandoff();
+    dialog.toggleShortcut();
+  };
+  document.addEventListener("keydown", toggleUpgradeShortcut);
 
   const subscribe = (listener: HudIntentListener): HudUnsubscribe => {
     if (disposed) return () => undefined;
@@ -119,6 +145,11 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       }),
     setRestoreAvailable: (available) => dialog.setRestoreAvailable(available),
     reportPersistence: (message) => dialog.reportPersistence(message),
+    onLeaderboardLoad: (listener) => leaderboard.onLoad(listener),
+    onLeaderboardRename: (listener) => leaderboard.onRename(listener),
+    onLeaderboardReset: (listener) => leaderboard.onReset(listener),
+    renderLeaderboard: (view, message) => leaderboard.render(view, message),
+    reportLeaderboard: (message) => leaderboard.report(message),
     dispose: () => {
       if (disposed) return;
       disposed = true;
@@ -128,7 +159,11 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       battlefield.removeEventListener("pointerup", pointerUp);
       battlefield.removeEventListener("pointercancel", pointerCancel);
       battlefield.removeEventListener("keydown", keyboardAttack);
+      dialog.launcher.removeEventListener("click", closeLeaderboard);
+      leaderboard.launcher.removeEventListener("click", closeUpgrades);
+      document.removeEventListener("keydown", toggleUpgradeShortcut);
       dialog.dispose();
+      leaderboard.dispose();
       panel.remove();
     },
   };

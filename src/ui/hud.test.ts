@@ -14,12 +14,14 @@ class FakeElement {
   className = "";
   disabled = false;
   focusCalls = 0;
+  focusHandler: (() => void) | undefined;
   hidden = false;
   parent: FakeElement | undefined;
   tabIndex = -1;
   textContent = "";
   title = "";
   type = "";
+  value = "";
 
   addEventListener(type: string, listener: EventListenerOrEventListenerObject): void {
     const listeners = this.listeners.get(type) ?? new Set<EventListenerOrEventListenerObject>();
@@ -41,6 +43,7 @@ class FakeElement {
 
   focus(): void {
     this.focusCalls += 1;
+    this.focusHandler?.();
   }
 
   remove(): void {
@@ -74,7 +77,11 @@ class FakeDocument extends FakeElement {
   activeElement: FakeElement | null = null;
 
   createElement(): FakeElement {
-    return new FakeElement();
+    const element = new FakeElement();
+    element.focusHandler = () => {
+      this.activeElement = element;
+    };
+    return element;
   }
 }
 
@@ -132,6 +139,81 @@ describe("createHud", () => {
     hud.render({ ...snapshot, goldenBug: { remainingMs: 9_900 } });
     expect(element(host, "golden-bug-countdown").textContent).toContain("9.9s");
     hud.dispose();
+  });
+  it("keeps upgrade and leaderboard dialogs mutually isolated", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    hud.render(snapshot);
+    const upgrades = element(host, "upgrades-launcher");
+    const leaderboard = element(host, "leaderboard-launcher");
+    const upgradesModal = element(host, "upgrades-modal");
+    const leaderboardModal = element(host, "leaderboard-modal");
+    const upgradesClose = element(host, "upgrades-close");
+    const leaderboardClose = element(host, "leaderboard-close");
+    upgrades.dispatch("click");
+    expect(upgradesModal.hidden).toBe(false);
+    leaderboard.dispatch("click");
+    expect(upgradesModal.hidden).toBe(true);
+    expect(leaderboardModal.hidden).toBe(false);
+    expect(document.activeElement).toBe(leaderboardClose);
+    document.dispatch("keydown", { key: "u", repeat: false });
+    expect(leaderboardModal.hidden).toBe(true);
+    expect(upgradesModal.hidden).toBe(false);
+    expect(document.activeElement).toBe(upgradesClose);
+    upgrades.dispatch("click");
+    leaderboard.dispatch("click");
+    leaderboardModal.dispatch("pointerup");
+    expect(leaderboardModal.hidden).toBe(true);
+    hud.dispose();
+  });
+  it("drives leaderboard modal focus, loading states, rename, and disposal", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    let loads = 0;
+    let renamed = "";
+    hud.onLeaderboardLoad?.(() => {
+      loads += 1;
+    });
+    hud.onLeaderboardRename?.((name) => {
+      renamed = name;
+    });
+    const launcher = element(host, "leaderboard-launcher");
+    const modal = element(host, "leaderboard-modal");
+    const close = element(host, "leaderboard-close");
+    launcher.dispatch("click");
+    expect(loads).toBe(1);
+    expect(modal.hidden).toBe(false);
+    expect(close.focusCalls).toBe(1);
+    hud.reportLeaderboard?.("Loading leaderboard…");
+    expect(element(host, "leaderboard-dialog").children[3]?.textContent).toBe(
+      "Loading leaderboard…",
+    );
+    hud.renderLeaderboard?.({ entries: [], me: null });
+    expect(element(host, "leaderboard-dialog").children[3]?.textContent).toBe(
+      "No ranked players yet.",
+    );
+    const input = element(host, "leaderboard-name");
+    input.value = "  Name  ";
+    const rename = element(host, "leaderboard-rename");
+    rename.dispatch("click");
+    expect(renamed).toBe("  Name  ");
+    document.activeElement = close;
+    document.dispatch("keydown", { key: "Tab", shiftKey: true });
+    expect(element(host, "leaderboard-reset").focusCalls).toBe(1);
+    document.dispatch("keydown", { key: "Escape" });
+    expect(modal.hidden).toBe(true);
+    expect(launcher.focusCalls).toBeGreaterThan(0);
+    launcher.dispatch("click");
+    modal.dispatch("pointerup");
+    expect(modal.hidden).toBe(true);
+    hud.dispose();
+    expect(document.listeners.get("keydown")?.size ?? 0).toBe(0);
   });
   it("keeps a hidden upgrades modal out of the flex layout", () => {
     expect(stylesheet).toContain(".upgrades-modal[hidden] {\n  display: none;\n}");

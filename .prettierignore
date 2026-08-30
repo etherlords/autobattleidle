@@ -4,6 +4,7 @@ output
 .release
 .vault-cache
 .trash
+.wrangler
 pnpm-lock.yaml
 .agents
 .codex

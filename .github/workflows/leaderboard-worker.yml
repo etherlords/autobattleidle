@@ -1,0 +1,45 @@
+name: Deploy leaderboard Worker
+
+on:
+  push:
+    branches: [main]
+    paths: [worker/**, wrangler.toml, .github/workflows/leaderboard-worker.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 11.21.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Require provisioned D1 and Worker configuration
+        env:
+          LEADERBOARD_ALLOWED_ORIGINS: ${{ vars.LEADERBOARD_ALLOWED_ORIGINS }}
+          LEADERBOARD_IP_HASH_KEY: ${{ secrets.LEADERBOARD_IP_HASH_KEY }}
+        run: |
+          set -eu
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$LEADERBOARD_ALLOWED_ORIGINS"
+          test -n "$LEADERBOARD_IP_HASH_KEY"
+          ! grep -q 'REPLACE_ON_PROVISION' wrangler.toml
+      - name: Configure IP hash secret
+        env:
+          LEADERBOARD_IP_HASH_KEY: ${{ secrets.LEADERBOARD_IP_HASH_KEY }}
+        run: printf '%s' "$LEADERBOARD_IP_HASH_KEY" | npx --yes wrangler@4.127.1 secret put IP_HASH_KEY --config wrangler.toml
+      - name: Apply remote D1 migrations
+        run: npx --yes wrangler@4.127.1 d1 migrations apply autobattleidle-leaderboard --remote --config wrangler.toml
+      - name: Deploy Worker
+        env:
+          LEADERBOARD_ALLOWED_ORIGINS: ${{ vars.LEADERBOARD_ALLOWED_ORIGINS }}
+        run: npx --yes wrangler@4.127.1 deploy --var ALLOWED_ORIGINS:"$LEADERBOARD_ALLOWED_ORIGINS" --config wrangler.toml

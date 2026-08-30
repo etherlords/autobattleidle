@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createApplication, startApplication } from "./application";
 import { createCombatState, type UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
+import type { HudIntent } from "../ui/hud/intents";
 
 const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly string[] => {
   if (snapshot === undefined) throw new Error("Expected rendered snapshot");
@@ -16,6 +17,76 @@ afterEach(() => {
 });
 
 describe("startApplication", () => {
+  it("contains a rejected leaderboard submit without pausing combat", async () => {
+    let intent: ((value: HudIntent) => void) | undefined;
+    let reject: ((reason?: unknown) => void) | undefined;
+    let status = "";
+    const pending = new Promise<void>((_resolve, fail) => {
+      reject = fail;
+    });
+    const app = startApplication({
+      createLeaderboard: () => ({
+        load: async () => ({ entries: [], me: null }),
+        rename: async () => undefined,
+        reset: async () => undefined,
+        submit: async () => pending,
+      }),
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: () => undefined,
+        removeEventListener: () => undefined,
+        requestAnimationFrame: () => 1,
+      },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: () => undefined,
+        resize: () => undefined,
+      },
+      hud: {
+        dispose: () => undefined,
+        subscribe: (listener) => {
+          intent = listener;
+          return () => undefined;
+        },
+        onAttack: () => undefined,
+        onLeaderboardLoad: () => undefined,
+        onLeaderboardRename: () => undefined,
+        onLeaderboardReset: () => undefined,
+        onReset: () => undefined,
+        onRestore: () => undefined,
+        onUpgrade: () => undefined,
+        render: () => undefined,
+        reportLeaderboard: (message) => {
+          status = message;
+        },
+        reportPersistence: () => undefined,
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => undefined,
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
+        onStateChanged: () => undefined,
+        reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
+      },
+      initialState: createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }),
+      onDispose: () => undefined,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+    });
+    if (intent === undefined || reject === undefined) throw new Error("Expected application seams");
+    intent({ type: "attack" });
+    reject(new Error("network"));
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(status).toBe("Leaderboard is offline or not configured.");
+    intent({ type: "attack" });
+    app.dispose();
+  });
   it("routes presentation-only camera intents to the battlefield", () => {
     let rotate: ((delta: number) => void) | undefined;
     let rotatedBy = 0;

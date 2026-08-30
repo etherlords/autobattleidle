@@ -30,7 +30,13 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Require leaderboard endpoint
+        env:
+          VITE_LEADERBOARD_API: ${{ vars.LEADERBOARD_API_URL }}
+        run: test -n "$VITE_LEADERBOARD_API"
       - run: pnpm build
+        env:
+          VITE_LEADERBOARD_API: ${{ vars.LEADERBOARD_API_URL }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

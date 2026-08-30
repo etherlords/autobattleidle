@@ -100,7 +100,9 @@ body {
 }
 
 .upgrades-launcher,
-.upgrades-modal {
+.upgrades-modal,
+.leaderboard-launcher,
+.leaderboard-modal {
   pointer-events: auto;
 }
 
@@ -109,6 +111,16 @@ body {
   font: inherit;
   font-weight: 700;
   left: 1rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  position: fixed;
+}
+
+.leaderboard-launcher {
+  bottom: 1rem;
+  font: inherit;
+  font-weight: 700;
+  left: 9rem;
   min-height: 2.75rem;
   padding: 0.5rem 1.25rem;
   position: fixed;
@@ -124,6 +136,37 @@ body {
   place-items: center;
   position: fixed;
   z-index: 1;
+}
+
+.leaderboard-modal {
+  background: rgb(3 9 15 / 72%);
+  border: 0;
+  box-sizing: border-box;
+  display: grid;
+  inset: 0;
+  padding: 1rem;
+  place-items: center;
+  position: fixed;
+  z-index: 2;
+}
+.leaderboard-modal[hidden] {
+  display: none;
+}
+.leaderboard-dialog {
+  background: #07121f;
+  border: 1px solid #75c7ff;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1rem;
+  width: min(38rem, 100%);
+}
+.leaderboard-entries {
+  margin: 0.75rem 0;
+  max-height: 45vh;
+  overflow: auto;
+  padding-left: 1.5rem;
 }
 
 .upgrades-modal[hidden] {
@@ -209,6 +252,10 @@ body {
   .upgrades-launcher {
     bottom: 0.75rem;
     left: 0.75rem;
+  }
+  .leaderboard-launcher {
+    bottom: 0.75rem;
+    left: 8.75rem;
   }
 
   .upgrades-modal {

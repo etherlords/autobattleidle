@@ -1,0 +1,11 @@
+name = "autobattleidle-leaderboard"
+main = "worker/src/index.ts"
+compatibility_date = "2026-08-30"
+workers_dev = true
+preview_urls = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "autobattleidle-leaderboard"
+database_id = "bb93d778-d7e2-4c47-b788-64f1df1b288b"
+migrations_dir = "worker/migrations"

@@ -7,12 +7,13 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
+    "check:worker": "tsc -p worker/tsconfig.json",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run --passWithNoTests",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "check": "pnpm lint && pnpm format:check && pnpm test && pnpm check:worker && pnpm build",
     "hooks:install": "node scripts/install-git-hooks.mjs",
     "hooks:smoke": "node scripts/smoke-git-hooks.mjs"
   },

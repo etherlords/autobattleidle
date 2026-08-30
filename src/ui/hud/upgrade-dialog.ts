@@ -63,11 +63,10 @@ export class UpgradeDialog {
     );
     this.modal.append(this.dialog);
     this.launcher.addEventListener("click", this.open);
-    this.close.addEventListener("click", this.closeModal);
+    this.close.addEventListener("click", this.closeFromButton);
     this.modal.addEventListener("pointerup", this.closeFromBackdrop);
     this.resetButton.addEventListener("click", this.reset);
     this.restoreButton.addEventListener("click", this.restore);
-    document.addEventListener("keydown", this.toggleModal);
   }
 
   onUpgrade(listener: (id: UpgradeId, quantity: 1 | 10 | 100) => void): void {
@@ -84,6 +83,16 @@ export class UpgradeDialog {
   }
   reportPersistence(message: string): void {
     this.persistenceStatus.textContent = message;
+  }
+  dismiss(): void {
+    this.closeModal();
+  }
+  dismissForHandoff(): void {
+    this.closeModal(false);
+  }
+  toggleShortcut(): void {
+    if (this.modal.hidden) this.open();
+    else this.closeModal();
   }
 
   render(snapshot: BattleSnapshot): void {
@@ -126,9 +135,8 @@ export class UpgradeDialog {
 
   dispose(): void {
     this.closeModal();
-    document.removeEventListener("keydown", this.toggleModal);
     this.launcher.removeEventListener("click", this.open);
-    this.close.removeEventListener("click", this.closeModal);
+    this.close.removeEventListener("click", this.closeFromButton);
     this.modal.removeEventListener("pointerup", this.closeFromBackdrop);
     this.resetButton.removeEventListener("click", this.reset);
     this.restoreButton.removeEventListener("click", this.restore);
@@ -139,23 +147,18 @@ export class UpgradeDialog {
 
   private readonly reset = (): void => this.resetListener?.();
   private readonly restore = (): void => this.restoreListener?.();
+  private readonly closeFromButton = (): void => this.closeModal();
   private readonly open = (): void => {
     if (!this.modal.hidden) return;
     this.modal.hidden = false;
     document.addEventListener("keydown", this.modalKeydown);
     this.close.focus();
   };
-  private readonly closeModal = (): void => {
+  private readonly closeModal = (restoreFocus = true): void => {
     if (this.modal.hidden) return;
     this.modal.hidden = true;
     document.removeEventListener("keydown", this.modalKeydown);
-    this.launcher.focus();
-  };
-  private readonly toggleModal = (event: KeyboardEvent): void => {
-    if (event.repeat || event.key.toLowerCase() !== "u") return;
-    event.preventDefault();
-    if (this.modal.hidden) this.open();
-    else this.closeModal();
+    if (restoreFocus) this.launcher.focus();
   };
   private readonly closeFromBackdrop = (event: PointerEvent): void => {
     if (event.target === this.modal) this.closeModal();
