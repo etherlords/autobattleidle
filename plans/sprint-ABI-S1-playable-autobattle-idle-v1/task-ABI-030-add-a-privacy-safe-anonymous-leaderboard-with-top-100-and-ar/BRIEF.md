@@ -4,8 +4,8 @@ id: ABI-030
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Ready
+revision: 14
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -29,7 +29,7 @@ Add a privacy-safe anonymous leaderboard with Top 100 and Around Me views
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Done
 
 ## Acceptance criteria
 
@@ -52,7 +52,7 @@ Add a privacy-safe anonymous leaderboard with Top 100 and Around Me views
 
 ## Related knowledge
 
-- None
+- AUTOBATTLEIDLE-DOC-20260830-86F521
 
 ## Constraints
 
