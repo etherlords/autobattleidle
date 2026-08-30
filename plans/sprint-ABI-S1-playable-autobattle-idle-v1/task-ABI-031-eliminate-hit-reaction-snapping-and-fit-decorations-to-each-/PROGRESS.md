@@ -4,8 +4,8 @@ id: ABI-031
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 345
-status: Ready for Manager
+revision: 352
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 345
-- Last update: APPROVE: closure-hygiene change is limited to generated output ignores; fresh full quality evidence remains green and the exact preview asset is unchanged.
+- Status: Done
+- Revision: 352
+- Last update: ABI-031 complete: final visuals accepted, lethal hit-pause-death sequence and Time Ring tilt verified, all gates passed, lease released, and exact-SHA deployment proven.
 
 ## Execution plan
 
@@ -35,7 +35,7 @@ requiredGates:
 - [x] motion-fit-regressions: Add exhaustive frame-delta, repeated-command, anchor-follow, size-ratio, clearance, reduced-motion, determinism, and disposal tests; run focused checks and pnpm check
 - [x] motion-fit-independent-review: Independent Reviewer audits interpolation, bounds, profile ownership, all decoration kinds, regression coverage, and scope; one bounded repair and re-review is allowed
 - [x] motion-fit-independent-qa: Independent QA captures fresh desktop and narrow frame sequences for all families and bosses, decoration fit, repeated hits, reduced motion, and clean resource health
-- [ ] motion-fit-manager-close: Manager maps evidence, syncs Vault, closes Planner, publishes only scoped files, and proves exact-SHA CI, Pages, asset identity, and deployed public behavior
+- [x] motion-fit-manager-close: Manager maps evidence, syncs Vault, closes Planner, publishes only scoped files, and proves exact-SHA CI, Pages, asset identity, and deployed public behavior
 - [x] motion-fit-review-repair: Repair reduced motion and prove applied cue fit, then re-review
 - [x] motion-fit-independent-rereview: Fresh independent re-review of the bounded repair
 - [x] motion-fit-exhaustive-repair-2: Exhaustive cue and all-family motion proof repair
@@ -53,7 +53,7 @@ requiredGates:
 - [x] motion-user-visual-regressions-6: Add screenshot-derived semantic anchor, silhouette, symmetry, outward-normal, boss headwear, effect-live-frame, and smooth recovery regressions; run focused and full checks.
 - [x] motion-independent-review-6: Fresh independent review of user screenshot repairs, semantic cue language, easing, effect evidence, tests, and scope.
 - [x] motion-independent-qa-6: Fresh independent production-preview QA against every reported screenshot family plus full desktop/narrow motion matrix.
-- [~] motion-user-demo-2: Launch a new local production demo and await explicit user approval before publication.
+- [x] motion-user-demo-2: Launch a new local production demo and await explicit user approval before publication.
 - [x] motion-first-frame-band-repair-7: Initialize body-owned hardened-band fit during component attachment and prove the very first rendered frame.
 - [x] motion-independent-rereview-7: Fresh independent reviewer validates first-frame band fit and the complete user-screenshot repair.
 - [x] motion-visual-readability-repair-8: Repair boss/elite framing, Mantis band and horns, Hydra fin orientation, and shield readability from fresh QA screenshots.
@@ -6034,3 +6034,131 @@ requiredGates:
   - .prettierignore:3 adds only output; plans and .docs were already ignored before this diff.
   - Fresh pnpm check evidence: ESLint, Prettier, 122/122 tests, and build PASS; git diff --check PASS.
   - dist/assets/index-DBD_ILQ4.js SHA-256 remains a69c1fc554bc97d2ba154e2256b492ff87786dcac3e12ef967e759cb61e3a58a; no source or runtime behavior changes.
+
+### evt-978c6c21-4ef6-4818-b693-cb71ac3ed803
+
+- Timestamp: 2026-08-30T16:50:56.072Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 345
+- Resulting revision: 346
+- Summary: EVENT checkpoint — root-manager — Published code checkpoint 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368 passed CI, Pages, exact public asset identity, and independent deployed browser proof.
+- Idempotency key: abi031-published-proof-checkpoint-20260830-v1
+- Evidence:
+  - CI run 33323242679 success
+  - Pages run 33323242649 success
+  - https://etherlords.github.io/autobattleidle/ HTTP 200
+  - public assets/index-DBD_ILQ4.js SHA-256 a69c1fc554bc97d2ba154e2256b492ff87786dcac3e12ef967e759cb61e3a58a
+  - public Time Warp desktop/390, lethal replacement/reward, Drake v6, console/network/overflow PASS
+  - Vault AUTOBATTLEIDLE-DOC-20260827-A7FD1F updated to content hash 8a403a288f55b1f790a4b20fbdc5d07ce484b1f58c76802a15d5ed29e80afb1d; Vault doctor 0 errors/0 warnings
+
+### evt-04ad2c6a-871e-4fe6-aa17-bd8103442fb5
+
+- Timestamp: 2026-08-30T16:51:09.635Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 346
+- Resulting revision: 347
+- Summary: User accepted Drake v6 as sufficient and approved closure/deployment; final micro-fixes were incorporated and re-gated.
+- Idempotency key: abi031-user-demo-complete-20260830-v1
+- Request fingerprint: 9223b45aa2c5f4511e8bde1e2b5e6f92710decd2d900ca58e832425cae375966
+- Action: set_state
+- Step ID: motion-user-demo-2
+- State: complete
+- Evidence:
+  - User: Drake is not ideal but acceptable for now; close and deploy after pause/Time Ring fixes.
+
+### evt-13153637-3b59-4dfe-9603-4ac1eb6658ca
+
+- Timestamp: 2026-08-30T16:51:11.990Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 347
+- Resulting revision: 348
+- Summary: Begin final Manager closure after user approval, Vault sync, scoped publication, CI/Pages, and deployed proof.
+- Idempotency key: abi031-manager-close-start-20260830-v1
+- Request fingerprint: e66777d69374e80a874a46a284aba9bd61a007449006e33bd55826850289759f
+- Action: set_state
+- Step ID: motion-fit-manager-close
+- State: in_progress
+- Evidence:
+  - published checkpoint 9a75d4a0...
+  - CI/Pages/deployed proof PASS
+
+### evt-1ec236c6-2ea5-47ae-a7bd-3212424be932
+
+- Timestamp: 2026-08-30T16:52:49.558Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 348
+- Resulting revision: 349
+- Summary: Manager closure evidence mapped: user acceptance, full checks, independent gates, Vault sync, published feature SHA, exact-SHA CI/Pages, and deployed public proof all pass.
+- Idempotency key: abi031-manager-close-step-complete-20260830-v1
+- Request fingerprint: 028d219b41145555df540ce68b13284066d49a96242eeb36c174c18730342664
+- Action: set_state
+- Step ID: motion-fit-manager-close
+- State: complete
+- Evidence:
+  - User accepted Ash Drake v6 as sufficient for this task
+  - Published feature SHA 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368
+  - CI run 33323242679 success
+  - Pages run 33323242649 success
+  - Public asset assets/index-DBD_ILQ4.js SHA-256 a69c1fc554bc97d2ba154e2256b492ff87786dcac3e12ef967e759cb61e3a58a
+  - Independent deployed QA evt-2473b6d1-fa1e-46cf-8d11-4abc4bf74618 PASS
+  - Vault AUTOBATTLEIDLE-DOC-20260827-A7FD1F hash 8a403a288f55b1f790a4b20fbdc5d07ce484b1f58c76802a15d5ed29e80afb1d
+
+### evt-68a2c568-7a6e-4bd0-a917-6279bc70ea6f
+
+- Timestamp: 2026-08-30T16:52:59.273Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 349
+- Resulting revision: 350
+- Summary: PASS: all acceptance, independent gates, Vault sync, user visual acceptance, exact-SHA CI/Pages, and deployed behavior proof are satisfied.
+- Idempotency key: abi031-manager-closure-pass-20260830-v1
+- Request fingerprint: c61413b3e83da80cf157ba23876a5c2b59cd7f448a5edb47f0419bd1ab2837fd
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS with pnpm check and 122/122 tests
+  - independent-review PASS including final Ash Drake/lethal sequence/Time Ring repair
+  - independent-qa PASS evt-2473b6d1-fa1e-46cf-8d11-4abc4bf74618
+  - verification PASS evt-65323814-5414-4b73-a7d3-c6cbba15b697
+  - user accepted final Ash Drake result
+  - feature SHA 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368 published with CI 33323242679 and Pages 33323242649 success
+  - deployed asset assets/index-DBD_ILQ4.js SHA-256 a69c1fc554bc97d2ba154e2256b492ff87786dcac3e12ef967e759cb61e3a58a
+
+### evt-c31e9963-ca8c-42dd-b8f9-7a1f4192ce20
+
+- Timestamp: 2026-08-30T16:53:11.307Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 350
+- Resulting revision: 351
+- Summary: Released task claim: Release manager lease after all gates pass and before terminal lifecycle transition
+- Idempotency key: abi031-release-before-done-20260830-v1
+- Request fingerprint: a26df31c6ad0373ea2e102caceb2841b1a022acb5a0542656c860d6e2cdf3870
+- Agent ID: root-manager
+- Session ID: abi031-user-demo8-repair-20260830
+- Intent: Release manager lease after all gates pass and before terminal lifecycle transition
+- Evidence:
+  - None
+
+### evt-2e5d9739-6c1c-4174-8768-326d95bac215
+
+- Timestamp: 2026-08-30T16:53:19.742Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 351
+- Resulting revision: 352
+- Summary: ABI-031 complete: final visuals accepted, lethal hit-pause-death sequence and Time Ring tilt verified, all gates passed, lease released, and exact-SHA deployment proven.
+- Idempotency key: abi031-advance-done-20260830-v1
+- Request fingerprint: dbd58fd8feef4db58adda8a2f70c801a087340e7235b8a6ecf34fc8617e8bd5e
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS evt-68a2c568-7a6e-4bd0-a917-6279bc70ea6f
+  - lease released evt-c31e9963-ca8c-42dd-b8f9-7a1f4192ce20
+  - published feature SHA 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368
+  - CI run 33323242679 success; Pages run 33323242649 success
+  - public deployed QA PASS at https://etherlords.github.io/autobattleidle/

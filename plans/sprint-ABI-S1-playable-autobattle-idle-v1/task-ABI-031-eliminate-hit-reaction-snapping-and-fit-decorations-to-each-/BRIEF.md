@@ -4,8 +4,8 @@ id: ABI-031
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 81
-status: Ready for Manager
+revision: 82
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -28,7 +28,7 @@ Eliminate hit-reaction snapping and fit decorations to each enemy body
 
 - Type: bug
 - Priority: critical
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
