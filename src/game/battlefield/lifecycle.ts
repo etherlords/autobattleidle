@@ -4,6 +4,7 @@ import type { BattleEnemySnapshot, BattleSnapshot } from "../../domain/snapshot"
 import type { EnemyUnit } from "../units/enemy";
 import { UNIT_FACTORIES } from "../units/factories";
 import type { PlayerUnit } from "../units/player";
+import { enemyVisualAnimation } from "../enemy-visual/config";
 import { BATTLEFIELD_CONFIG, cameraScaleForAspect } from "./config";
 import {
   advanceBattlefieldEffect,
@@ -23,6 +24,14 @@ export type Battlefield = {
 export type BattlefieldFrame = {
   readonly effects: readonly EffectKind[];
   readonly enemyChanged: boolean;
+};
+
+type PendingLethalReplacement = {
+  displayed: BattleEnemySnapshot;
+  effects: readonly EffectKind[];
+  frames: number;
+  snapshot: BattleEnemySnapshot;
+  stage: "impact" | "pause" | "death";
 };
 
 export type BattlefieldRenderer = {
@@ -78,6 +87,12 @@ class ThreeBattlefield implements Battlefield {
     BATTLEFIELD_CONFIG.camera.near,
     BATTLEFIELD_CONFIG.camera.far,
   );
+  private readonly framingCamera = new THREE.PerspectiveCamera(
+    BATTLEFIELD_CONFIG.camera.fieldOfView,
+    1,
+    BATTLEFIELD_CONFIG.camera.near,
+    BATTLEFIELD_CONFIG.camera.far,
+  );
   private readonly scene = new THREE.Scene();
   private readonly player: PlayerUnit = UNIT_FACTORIES.player.create();
   private enemy: EnemyUnit | undefined;
@@ -87,6 +102,9 @@ class ThreeBattlefield implements Battlefield {
   private aspect = 1;
   private azimuth = 0;
   private bossOrbitEnabled = false;
+  private pendingLethalReplacement: PendingLethalReplacement | undefined;
+  private ordinaryFramingBounds: THREE.Box3 | undefined;
+  private ordinaryFramingScale = 1;
   private disposed = false;
   private readonly reducedMotion =
     typeof window !== "undefined" &&
@@ -113,16 +131,29 @@ class ThreeBattlefield implements Battlefield {
     this.tickEffects();
     this.enemy?.tick();
     const frame = nextBattlefieldFrame(this.previous, snapshot);
-    if (this.enemy === undefined || frame.enemyChanged) this.replaceEnemy(snapshot.enemy);
-    else {
+    const sequencedEffects = this.advanceLethalReplacement();
+    let startedEffects: readonly EffectKind[] = [];
+    if (this.pendingLethalReplacement !== undefined) {
+      this.pendingLethalReplacement.snapshot = snapshot.enemy;
+    } else if (this.enemy === undefined || frame.enemyChanged) {
+      if (this.isLethalReplacement(frame))
+        startedEffects = this.beginLethalReplacement(snapshot.enemy, frame.effects);
+      else this.replaceEnemy(snapshot.enemy);
+    } else {
       this.enemy.dispatchEnemy({ type: "sync", snapshot: snapshot.enemy });
       const animation = enemyAnimationForEffects(frame.effects);
       if (animation !== null) this.enemy.dispatchEnemy({ type: animation });
     }
-    this.addEffects(frame.effects);
-    this.updateCanvasReceipt(snapshot, frame.effects);
-    this.bossOrbitEnabled = snapshot.enemy.grade === "boss";
+    const effects =
+      sequencedEffects ??
+      (this.pendingLethalReplacement === undefined ? frame.effects : startedEffects);
+    this.addEffects(effects);
+    this.bossOrbitEnabled =
+      this.pendingLethalReplacement === undefined
+        ? snapshot.enemy.grade === "boss"
+        : this.enemy?.spec.body.startsWith("boss-") === true;
     this.frameCamera(this.aspect);
+    this.updateCanvasReceipt(snapshot, effects);
     this.previous = snapshot;
     this.renderer.render(this.scene, this.camera);
   }
@@ -131,6 +162,7 @@ class ThreeBattlefield implements Battlefield {
     if (this.disposed || !this.bossOrbitEnabled || !Number.isFinite(delta)) return;
     this.azimuth = (this.azimuth + delta) % (Math.PI * 2);
     this.frameCamera(this.aspect);
+    this.refreshProjectionReceipt();
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -139,9 +171,10 @@ class ThreeBattlefield implements Battlefield {
     const safeHeight = Math.max(height, 1);
     this.aspect = safeWidth / safeHeight;
     this.camera.aspect = this.aspect;
+    this.renderer.setSize(safeWidth, safeHeight, false);
+    this.refreshOrdinaryFraming();
     this.frameCamera(this.aspect);
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(safeWidth, safeHeight, false);
   }
 
   dispose(): void {
@@ -178,14 +211,71 @@ class ThreeBattlefield implements Battlefield {
 
   private frameCamera(aspect: number): void {
     const scale = cameraScaleForAspect(aspect);
-    const distance = BATTLEFIELD_CONFIG.camera.distance * scale;
+    const framingScale = this.cameraFramingScale();
+    const distance = BATTLEFIELD_CONFIG.camera.distance * scale * framingScale;
     const azimuth = this.bossOrbitEnabled ? this.azimuth : 0;
     this.camera.position.set(
       Math.sin(azimuth) * distance,
-      BATTLEFIELD_CONFIG.camera.elevation * scale,
+      BATTLEFIELD_CONFIG.camera.elevation * scale * framingScale,
       Math.cos(azimuth) * distance,
     );
     this.camera.lookAt(0, 0, 0);
+  }
+
+  private cameraFramingScale(): number {
+    if (this.bossOrbitEnabled) return BATTLEFIELD_CONFIG.camera.bossFramingScale;
+    return this.ordinaryFramingScale;
+  }
+
+  private refreshOrdinaryFraming(): void {
+    if (this.enemy === undefined || this.bossOrbitEnabled) {
+      this.ordinaryFramingBounds = undefined;
+      this.ordinaryFramingScale = 1;
+      return;
+    }
+    const canvasHeight = this.renderer.domElement.clientHeight || this.renderer.domElement.height;
+    if (canvasHeight <= 0) return;
+    this.enemy.view.group.updateMatrixWorld(true);
+    this.ordinaryFramingBounds ??= new THREE.Box3().setFromObject(this.enemy.view.group);
+    const bounds = this.ordinaryFramingBounds;
+    const minimumTop = canvasHeight * BATTLEFIELD_CONFIG.camera.ordinaryHudSafeTopRatio;
+    const maximum = BATTLEFIELD_CONFIG.camera.ordinaryMaximumFramingScale;
+    if (this.projectedBoundsTop(bounds, this.aspect, 1) >= minimumTop) {
+      this.ordinaryFramingScale = 1;
+      return;
+    }
+    let lower = 1;
+    let upper: number = maximum;
+    for (let iteration = 0; iteration < 10; iteration += 1) {
+      const candidate = (lower + upper) / 2;
+      if (this.projectedBoundsTop(bounds, this.aspect, candidate) < minimumTop) lower = candidate;
+      else upper = candidate;
+    }
+    this.ordinaryFramingScale = upper;
+  }
+
+  private projectedBoundsTop(bounds: THREE.Box3, aspect: number, framingScale: number): number {
+    const scale = cameraScaleForAspect(aspect) * framingScale;
+    const distance = BATTLEFIELD_CONFIG.camera.distance * scale;
+    const camera = this.framingCamera;
+    camera.aspect = aspect;
+    camera.position.set(0, BATTLEFIELD_CONFIG.camera.elevation * scale, distance);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld();
+    const canvasHeight = this.renderer.domElement.clientHeight || this.renderer.domElement.height;
+    return Math.min(
+      ...[
+        [bounds.min.x, bounds.min.y, bounds.min.z],
+        [bounds.min.x, bounds.min.y, bounds.max.z],
+        [bounds.min.x, bounds.max.y, bounds.min.z],
+        [bounds.min.x, bounds.max.y, bounds.max.z],
+        [bounds.max.x, bounds.min.y, bounds.min.z],
+        [bounds.max.x, bounds.min.y, bounds.max.z],
+        [bounds.max.x, bounds.max.y, bounds.min.z],
+        [bounds.max.x, bounds.max.y, bounds.max.z],
+      ].map(([x, y, z]) => (1 - new THREE.Vector3(x, y, z).project(camera).y) * 0.5 * canvasHeight),
+    );
   }
 
   private tickEffects(): void {
@@ -197,20 +287,77 @@ class ThreeBattlefield implements Battlefield {
     this.effects = retained;
   }
 
-  private replaceEnemy(snapshot: BattleEnemySnapshot): void {
-    this.enemy?.dispatchEnemy({ type: "death" });
+  private replaceEnemy(snapshot: BattleEnemySnapshot, animateRetiring = true): void {
+    if (animateRetiring) this.enemy?.dispatchEnemy({ type: "death" });
     this.enemy?.dispatchEnemy({ type: "dispose" });
     this.unsubscribeEnemy?.();
     this.enemy = UNIT_FACTORIES.enemy.create(snapshot);
     this.unsubscribeEnemy = undefined;
     this.enemy.dispatchEnemy({ type: "spawn", parent: this.scene });
+    this.ordinaryFramingBounds = undefined;
+    this.bossOrbitEnabled = snapshot.grade === "boss";
+    this.refreshOrdinaryFraming();
+  }
+
+  private isLethalReplacement(frame: BattlefieldFrame): boolean {
+    return (
+      frame.enemyChanged &&
+      frame.effects.includes("death") &&
+      (frame.effects.includes("hit") || frame.effects.includes("critical"))
+    );
+  }
+
+  private beginLethalReplacement(
+    snapshot: BattleEnemySnapshot,
+    effects: readonly EffectKind[],
+  ): readonly EffectKind[] {
+    const impact = effects.includes("critical") ? "critical" : "hit";
+    this.enemy?.dispatchEnemy({ type: impact });
+    this.pendingLethalReplacement = {
+      displayed: this.previous?.enemy ?? snapshot,
+      effects: effects.filter((effect) => effect !== "hit" && effect !== "critical"),
+      frames: enemyVisualAnimation.commandFrames[impact],
+      snapshot,
+      stage: "impact",
+    };
+    return [impact];
+  }
+
+  private advanceLethalReplacement(): readonly EffectKind[] | undefined {
+    const pending = this.pendingLethalReplacement;
+    if (pending === undefined) return undefined;
+    if (pending.stage === "pause") {
+      if (pending.frames > 0) {
+        pending.frames -= 1;
+        return [];
+      }
+      pending.stage = "death";
+      pending.frames = enemyVisualAnimation.commandFrames.death;
+      this.enemy?.dispatchEnemy({ type: "death" });
+      return pending.effects;
+    }
+    pending.frames -= 1;
+    if (pending.frames > 0) return [];
+    if (pending.stage === "impact") {
+      pending.stage = "pause";
+      pending.frames = enemyVisualAnimation.lethalPauseFrames;
+      return [];
+    }
+    this.pendingLethalReplacement = undefined;
+    this.replaceEnemy(pending.snapshot, false);
+    return [];
   }
 
   private addEffects(kinds: readonly EffectKind[]): void {
     const evicted = this.effects.splice(0, effectEvictions(this.effects.length, kinds.length));
     for (const effect of evicted) this.retire(effect.mesh);
     for (const kind of kinds) {
-      const effect = createBattlefieldEffect(kind, this.reducedMotion);
+      const effect = createBattlefieldEffect(
+        kind,
+        this.reducedMotion,
+        this.enemy?.enemyView.combatSocketWorldPosition(),
+        this.cameraFramingScale(),
+      );
       this.effects.push(effect);
       this.scene.add(effect.mesh);
     }
@@ -218,15 +365,26 @@ class ThreeBattlefield implements Battlefield {
 
   private updateCanvasReceipt(snapshot: BattleSnapshot, effects: readonly EffectKind[]): void {
     const visual = this.enemy?.spec;
+    const displayed = this.displayedEnemy(snapshot);
     const dataset = this.renderer.domElement.dataset;
     dataset.enemyFamily = visual?.body ?? snapshot.enemy.family ?? "";
     dataset.enemyVariant = String(visual?.profile.variant ?? snapshot.enemy.variant ?? "");
     dataset.enemySeed = String(visual?.seed ?? snapshot.enemy.seed ?? "");
-    dataset.enemyGrade = snapshot.enemy.grade;
-    dataset.enemyModifier = snapshot.enemy.modifier ?? "none";
-    dataset.goldenBug = String(snapshot.enemy.goldenBug === true);
+    dataset.enemyGrade = displayed.grade;
+    dataset.enemyModifier = displayed.modifier ?? "none";
+    dataset.goldenBug = String(displayed.goldenBug === true);
     dataset.activeEffectCount = String(this.effects.length);
     dataset.lastEffectKinds = effects.slice(0, 8).join(",");
+    this.setEffectOriginReceipt(dataset);
+    dataset.enemyTopPx = this.projectedEnemyTop();
+  }
+
+  private displayedEnemy(snapshot: BattleSnapshot): BattleEnemySnapshot {
+    return this.pendingLethalReplacement?.displayed ?? snapshot.enemy;
+  }
+
+  private refreshProjectionReceipt(): void {
+    this.renderer.domElement.dataset.enemyTopPx = this.projectedEnemyTop();
   }
 
   private clearCanvasReceipt(): void {
@@ -239,6 +397,37 @@ class ThreeBattlefield implements Battlefield {
     delete dataset.goldenBug;
     delete dataset.activeEffectCount;
     delete dataset.lastEffectKinds;
+    delete dataset.lastEffectOrigin;
+    delete dataset.enemyTopPx;
+  }
+
+  private setEffectOriginReceipt(dataset: DOMStringMap): void {
+    const effect = this.effects[this.effects.length - 1];
+    dataset.lastEffectOrigin = effect === undefined ? "" : effect.mesh.position.toArray().join(",");
+  }
+
+  private projectedEnemyTop(): string {
+    if (this.enemy === undefined) return "";
+    const canvasHeight = this.renderer.domElement.clientHeight || this.renderer.domElement.height;
+    if (canvasHeight <= 0) return "";
+    this.camera.updateMatrixWorld();
+    this.enemy.view.group.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(this.enemy.view.group);
+    const top = Math.min(
+      ...[
+        [bounds.min.x, bounds.min.y, bounds.min.z],
+        [bounds.min.x, bounds.min.y, bounds.max.z],
+        [bounds.min.x, bounds.max.y, bounds.min.z],
+        [bounds.min.x, bounds.max.y, bounds.max.z],
+        [bounds.max.x, bounds.min.y, bounds.min.z],
+        [bounds.max.x, bounds.min.y, bounds.max.z],
+        [bounds.max.x, bounds.max.y, bounds.min.z],
+        [bounds.max.x, bounds.max.y, bounds.max.z],
+      ].map(
+        ([x, y, z]) => (1 - new THREE.Vector3(x, y, z).project(this.camera).y) * 0.5 * canvasHeight,
+      ),
+    );
+    return top.toFixed(2);
   }
 
   private retire(object: THREE.Object3D): void {

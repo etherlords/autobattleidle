@@ -1,7 +1,8 @@
 import * as THREE from "three";
 
 export type EnemyVisualLayer = "body" | "grade" | "modifier" | "decoration";
-export type EnemyVisualAnchor = "pose" | "head" | "side";
+export type EnemyVisualAnchor =
+  "pose" | "head" | "top" | "overhead" | "front" | "left" | "right" | "flank" | "orbit" | "combat";
 export type EnemyVisualCommand = "spawn" | "hit" | "critical" | "death";
 export type EnemyVisualComponent = {
   readonly key: string;
@@ -11,6 +12,7 @@ export type EnemyVisualComponent = {
   readonly anchors?: Partial<Readonly<Record<EnemyVisualAnchor, THREE.Object3D>>>;
   readonly animations?: Readonly<Record<string, () => void>>;
   readonly commands?: Partial<Readonly<Record<EnemyVisualCommand, () => void>>>;
+  readonly onAttach?: () => void;
   readonly dispose?: () => void;
 };
 

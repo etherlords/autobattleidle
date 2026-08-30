@@ -1,11 +1,14 @@
 export const BATTLEFIELD_CONFIG = {
   backgroundColor: "#07121f",
   camera: {
+    bossFramingScale: 2.6,
     elevation: 2,
     far: 100,
     fieldOfView: 50,
     minimumAspect: 1,
     near: 0.1,
+    ordinaryHudSafeTopRatio: 0.19,
+    ordinaryMaximumFramingScale: 3,
     distance: 7,
   },
   ground: {

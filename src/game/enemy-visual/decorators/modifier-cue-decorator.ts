@@ -23,27 +23,37 @@ const defaultProfile: EnemyVisualProfile = {
   variant: 0,
 };
 const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierComponentFactory>> = {
-  "shield-plates": (profile) => {
+  "shield-plates": (_profile) => {
     const shields = [-1, 0, 1].map((side) => {
       const shield = new THREE.Group();
       shield.name = `armor-shield-${side + 1}`;
       const face = mesh(new THREE.CircleGeometry(0.3, 8), enemyVisualPalette.modifier.armor);
       face.name = `armor-shield-face-${side + 1}`;
-      const rim = mesh(new THREE.TorusGeometry(0.3, 0.045, 5, 8), profile.palette.accent);
+      const rim = mesh(
+        new THREE.TorusGeometry(0.3, 0.045, 5, 8),
+        enemyVisualPalette.modifier.armor,
+      );
       rim.name = `armor-shield-rim-${side + 1}`;
       shield.add(face, rim);
       return shield;
     });
     let phase = 0;
     const arrange = (): void => {
+      const socket = shields[0]?.parent;
+      const bodyRadius = Number(socket?.userData.bodyRadius) || 1.2;
+      const maxOrbitRadius = Number(socket?.userData.maxOrbitRadius) || 1.93;
+      const radius = Math.min(maxOrbitRadius, bodyRadius + 0.28);
       shields.forEach((shield, index) => {
         const angle = phase + index * ((Math.PI * 2) / shields.length);
         shield.position.set(
-          Math.cos(angle) * (profile.attachment[0] + 0.16),
-          profile.attachment[1] + Math.sin(angle * 2) * enemyVisualAnimation.shieldLift,
-          profile.attachment[2] + 0.55 + Math.sin(angle) * 0.18,
+          Math.cos(angle) * radius,
+          Math.sin(angle * 2) * enemyVisualAnimation.shieldLift,
+          Math.sin(angle) * radius,
         );
-        shield.rotation.y = -angle;
+        const outwardX = Math.cos(angle);
+        const outwardZ = Math.sin(angle);
+        const readableZ = Math.sign(outwardZ || 1) * Math.max(Math.abs(outwardZ), 0.32);
+        shield.rotation.y = Math.atan2(outwardX, readableZ);
       });
     };
     arrange();
@@ -58,7 +68,7 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
         },
       },
       undefined,
-      "side",
+      "orbit",
     );
   },
   "vitality-core": () => {
@@ -68,8 +78,14 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       enemyVisualPalette.modifier.healthEmissive,
     );
     core.name = "vitality-core";
-    core.position.z = 0.58;
-    return component("modifier-vitality-core", "modifier", [core], undefined, undefined, "pose");
+    return component(
+      "modifier-vitality-core",
+      "modifier",
+      [core],
+      undefined,
+      undefined,
+      "overhead",
+    );
   },
   "time-ring": () => {
     const ring = mesh(
@@ -78,7 +94,8 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       enemyVisualPalette.modifier.slowEmissive,
     );
     ring.name = "time-ring";
-    ring.rotation.x = enemyVisualTransforms.flatRingXRadians;
+    ring.rotation.x =
+      enemyVisualTransforms.flatRingXRadians + enemyVisualTransforms.timeRingCameraTiltRadians;
     const hand = mesh(
       new THREE.BoxGeometry(...enemyVisualGeometry.modifier.hand),
       enemyVisualPalette.modifier.slowHand,
@@ -98,18 +115,19 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
         },
       },
       undefined,
-      "pose",
+      "overhead",
     );
   },
   "wealth-orbitals": () => {
-    const coins = enemyVisualLayout.modifier.wealthOffsets.map((offset) => {
+    const coins = enemyVisualLayout.modifier.wealthOffsets.map((offset, index) => {
       const coin = mesh(
         new THREE.CylinderGeometry(...enemyVisualGeometry.modifier.coin),
         enemyVisualPalette.modifier.wealth,
         enemyVisualPalette.modifier.wealthEmissive,
       );
+      coin.name = `wealth-orbital-${index}`;
       coin.rotation.x = enemyVisualTransforms.flatRingXRadians;
-      coin.position.set(offset, enemyVisualLayout.modifier.wealthY, 0);
+      coin.position.set(offset * 0.9, enemyVisualLayout.modifier.wealthY, 0);
       return coin;
     });
     let phase = 0;
@@ -120,46 +138,114 @@ const modifierComponentFactories: Readonly<Record<VisibleModifierCue, ModifierCo
       {
         "wealth-orbit": () => {
           phase += enemyVisualAnimation.decorationOrbitRadians;
+          const socket = coins[0]?.parent;
+          const radius = Math.min(
+            Number(socket?.userData.maxOrbitRadius) || 1.93,
+            (Number(socket?.userData.bodyRadius) || 0.72) + 0.34,
+          );
           coins.forEach((coin, index) => {
-            coin.position.x = Math.cos(phase + index * Math.PI) * 0.65;
+            coin.position.x = Math.cos(phase + index * Math.PI) * radius;
+            coin.position.z = Math.sin(phase + index * Math.PI) * radius;
             coin.position.y =
               enemyVisualLayout.modifier.wealthY + Math.sin(phase * 2 + index) * 0.08;
           });
         },
       },
       undefined,
-      "pose",
+      "orbit",
     );
   },
   "reinforced-band": (profile) => {
-    const band = mesh(new THREE.TorusGeometry(0.72, 0.11, 6, 12), profile.palette.accent);
+    const band = mesh(new THREE.TorusGeometry(0.72, 0.065, 6, 12), profile.palette.accent);
     band.name = "reinforced-band";
     band.rotation.x = enemyVisualTransforms.flatRingXRadians;
-    band.position.set(...profile.attachment);
-    return component("modifier-reinforced-band", "modifier", [band], undefined, undefined, "pose");
+    const fitBand = (): void => {
+      const bodyRadius = Number(band.parent?.userData.bodyRadius) || 0.72;
+      band.scale.setScalar(bodyRadius / 0.78);
+    };
+    return {
+      ...component("modifier-reinforced-band", "modifier", [band], undefined, undefined, "orbit"),
+      onAttach: fitBand,
+    };
   },
   "prism-guard": (profile) => {
-    const prism = mesh(
-      new THREE.OctahedronGeometry(0.42, 0),
+    const shield = new THREE.Group();
+    shield.name = "prism-guard";
+    [-1, 1].forEach((side) => {
+      const panel = mesh(
+        new THREE.CylinderGeometry(0.22, 0.3, 0.07, 6),
+        profile.palette.accent,
+        profile.palette.emissive,
+      );
+      panel.name = side < 0 ? "prism-guard" : "prism-guard-right";
+      panel.position.set(side * 0.36, 0, 0.06);
+      panel.rotation.x = Math.PI / 2;
+      shield.add(panel);
+    });
+    const fit = (): void => {
+      const bodyRadius = Number(shield.parent?.userData.bodyRadius) || 0.72;
+      shield.scale.setScalar(Math.min(1.2, Math.max(0.85, bodyRadius / 0.75)));
+    };
+    return {
+      ...component("modifier-prism-guard", "modifier", [shield], undefined, undefined, "front"),
+      onAttach: fit,
+    };
+  },
+  "directional-barrier": (profile) => {
+    const barrier = new THREE.Group();
+    barrier.name = "directional-barrier";
+    const panelShape = new THREE.Shape();
+    panelShape.moveTo(-0.32, 0.3);
+    panelShape.lineTo(0.32, 0.3);
+    panelShape.lineTo(0.38, 0.12);
+    panelShape.lineTo(0.22, -0.32);
+    panelShape.lineTo(0, -0.48);
+    panelShape.lineTo(-0.22, -0.32);
+    panelShape.lineTo(-0.38, 0.12);
+    panelShape.closePath();
+    const panel = mesh(
+      new THREE.ExtrudeGeometry(panelShape, { bevelEnabled: false, depth: 0.09 }),
       profile.palette.accent,
       profile.palette.emissive,
     );
-    prism.name = "prism-guard";
-    prism.position.set(...profile.attachment);
-    return component("modifier-prism-guard", "modifier", [prism], undefined, undefined, "side");
-  },
-  "directional-barrier": (profile) => {
-    const barrier = mesh(new THREE.BoxGeometry(0.15, 0.82, 0.14), profile.palette.accent);
-    barrier.name = "directional-barrier";
-    barrier.position.set(profile.attachment[0], profile.attachment[1], profile.attachment[2]);
-    return component(
-      "modifier-directional-barrier",
-      "modifier",
-      [barrier],
-      undefined,
-      undefined,
-      "side",
+    panel.name = "directional-barrier-panel";
+    const inset = mesh(
+      new THREE.ExtrudeGeometry(panelShape, { bevelEnabled: false, depth: 0.025 }),
+      profile.palette.core,
+      profile.palette.emissive,
     );
+    inset.name = "directional-barrier-inset";
+    inset.scale.setScalar(0.72);
+    inset.position.z = 0.095;
+    const boss = mesh(
+      new THREE.OctahedronGeometry(0.08, 0),
+      profile.palette.accent,
+      profile.palette.emissive,
+    );
+    boss.name = "directional-barrier-boss";
+    boss.position.set(0, -0.02, 0.14);
+    barrier.add(panel, inset, boss);
+    return {
+      ...component(
+        "modifier-directional-barrier",
+        "modifier",
+        [barrier],
+        undefined,
+        undefined,
+        "front",
+      ),
+      onAttach: () => {
+        if (barrier.parent?.name !== "enemy-socket-drake-front") {
+          barrier.position.set(0, 0.02, 0.35);
+          return;
+        }
+        // A solid, camera-readable shield remains forward of the +X-facing
+        // snout while being angled enough to avoid an edge-on silhouette.
+        barrier.position.set(0.28, 0.48, 0.02);
+        barrier.rotation.set(0, 0.46, 0);
+        barrier.scale.setScalar(0.42);
+      },
+    };
   },
 };
 

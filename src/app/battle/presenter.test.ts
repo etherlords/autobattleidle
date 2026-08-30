@@ -66,17 +66,21 @@ describe("battleEventMessages", () => {
     expect(battleVisualCues(attackEvent(hit({ armorPreventedDamage: 2 })))).toEqual(["armor"]);
     expect(battleVisualCues(attackEvent(hit({ critical: true })))).toEqual(["critical"]);
     expect(battleVisualCues(attackEvent(hit({ defeated: true, reward: 3 })))).toEqual([
+      "hit",
       "death",
       "coin",
     ]);
-    expect(battleVisualCues(attackEvent(hit({ defeated: true })))).toEqual(["death"]);
+    expect(battleVisualCues(attackEvent(hit({ defeated: true, critical: true })))).toEqual([
+      "critical",
+      "death",
+    ]);
     expect(
       battleVisualCues(
         attackEvent(hit({ defeated: true }), {
           state: { ...state, enemy: { ...state.enemy, grade: "boss" } },
         }),
       ),
-    ).toEqual(["death", "boss"]);
+    ).toEqual(["hit", "death", "boss"]);
     expect(
       battleVisualCues(
         attackEvent(hit({ defeated: true, reward: 3 }), {
@@ -84,7 +88,7 @@ describe("battleEventMessages", () => {
           previousEnemy: { ...state.enemy, grade: "boss" },
         }),
       ),
-    ).toEqual(["death", "coin", "boss", "golden-kill"]);
+    ).toEqual(["hit", "death", "coin", "boss", "golden-kill"]);
     expect(
       battleVisualCues({
         ...update,

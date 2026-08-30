@@ -47,6 +47,13 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
     return this.currentSpec;
   }
 
+  combatSocketWorldPosition(): THREE.Vector3 | undefined {
+    const socket = this.build?.anchor("combat");
+    if (socket === undefined) return undefined;
+    this.group.updateMatrixWorld(true);
+    return socket.getWorldPosition(new THREE.Vector3());
+  }
+
   override dispose(): void {
     this.clearBuild();
     super.dispose();
@@ -60,11 +67,10 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
     this.build = build;
     this.group.add(this.build.group);
     this.group.scale.setScalar(spec.scale);
-    this.group.position.set(
-      enemyVisualLayout.actorAnchor.x,
-      enemyVisualLayout.actorAnchor.y,
-      enemyVisualLayout.actorAnchor.z,
-    );
+    this.group.position.set(enemyVisualLayout.actorAnchor.x, 0, enemyVisualLayout.actorAnchor.z);
+    this.group.updateMatrixWorld(true);
+    const bodyBounds = new THREE.Box3().setFromObject(this.build.roots.body);
+    this.group.position.y += enemyVisualLayout.actorAnchor.groundClearance - bodyBounds.min.y;
     this.currentSeed = spec.seed;
     this.currentSpec = spec;
   }

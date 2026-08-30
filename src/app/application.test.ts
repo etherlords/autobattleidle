@@ -147,7 +147,7 @@ describe("startApplication", () => {
     expect(snapshots).toHaveLength(beforeManualHit + 1);
     expect(visualCuesOf(snapshots.at(-1))).toEqual(["hit"]);
     attack();
-    expect(visualCuesOf(snapshots.at(-1))).toEqual(["death", "coin"]);
+    expect(visualCuesOf(snapshots.at(-1))).toEqual(["hit", "death", "coin"]);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
       "Manual hit: 40 damage",
       "Manual kill: +1 coins",

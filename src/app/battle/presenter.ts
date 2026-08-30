@@ -36,7 +36,12 @@ export const battleEventMessages = {
 
 const attackVisualCue = (outcome: AttackEvent): BattleVisualCue[] => {
   if (outcome.type === "ignored") return [];
-  if (outcome.defeated) return outcome.reward > 0 ? ["death", "coin"] : ["death"];
+  if (outcome.defeated)
+    return [
+      outcome.critical ? "critical" : "hit",
+      "death",
+      ...(outcome.reward > 0 ? (["coin"] as const) : []),
+    ];
   if (outcome.critical) return ["critical"];
   return outcome.armorPreventedDamage > 0 ? ["armor"] : ["hit"];
 };

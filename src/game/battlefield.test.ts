@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   createBattlefieldWithRenderer,
@@ -7,9 +7,11 @@ import {
   effectEvictions,
   enemyVisualSpec,
   nextBattlefieldFrame,
+  type Battlefield,
 } from "./battlefield";
-import { cameraScaleForAspect } from "./battlefield/config";
-import type { EnemyGrade } from "../domain/combat/contracts";
+import { BATTLEFIELD_CONFIG, cameraScaleForAspect } from "./battlefield/config";
+import { enemyVisualAnimation } from "./enemy-visual/config";
+import type { EliteModifier, EnemyGrade } from "../domain/combat/contracts";
 import type { BattleSnapshot, BattleVisualCue } from "../domain/snapshot";
 
 const snapshot = (
@@ -17,11 +19,13 @@ const snapshot = (
   level: number,
   health = 10,
   visualCues: readonly BattleVisualCue[] = [],
+  modifier: EliteModifier | null = null,
+  goldenBug = false,
 ): BattleSnapshot => ({
   automatic: { intervalMs: 1_000, remainingMs: 0, unlocked: false },
   coins: 0,
   encounter: "Test",
-  enemy: { grade, health, level, maxHealth: 10, modifier: null, name: "Test enemy" },
+  enemy: { grade, health, level, maxHealth: 10, modifier, name: "Test enemy", goldenBug },
   events: [],
   visualCues,
   playerStats: {
@@ -34,7 +38,311 @@ const snapshot = (
   upgrades: [],
 });
 
+const assertDesktopBossHudClearance = (
+  battlefield: Battlefield,
+  dataset: Record<string, string>,
+  bossLevels: Iterable<number>,
+): void => {
+  // Production QA at 1280x800 measured `.hud-status.getBoundingClientRect().bottom` as 142.78125.
+  const desktopHudStatusBottomPx = 142.78125;
+  const desktopHudClearancePx = 6;
+  const desktopBossTopMinimumPx = desktopHudStatusBottomPx + desktopHudClearancePx;
+  battlefield.resize(1_280, 800);
+  for (const level of bossLevels) {
+    const sampledTops: number[] = [];
+    battlefield.render(snapshot("boss", level));
+    sampledTops.push(Number(dataset.enemyTopPx));
+    let currentAzimuth = 0;
+    for (const azimuth of [Math.PI / 2, Math.PI]) {
+      battlefield.rotateCamera(azimuth - currentAzimuth);
+      currentAzimuth = azimuth;
+      sampledTops.push(Number(dataset.enemyTopPx));
+    }
+    battlefield.rotateCamera(-currentAzimuth);
+    battlefield.render(snapshot("boss", level, 10, ["hit"]));
+    battlefield.render(snapshot("boss", level));
+    sampledTops.push(Number(dataset.enemyTopPx));
+    battlefield.render(snapshot("boss", level));
+    sampledTops.push(Number(dataset.enemyTopPx));
+    sampledTops.forEach((top) => expect(top).toBeGreaterThanOrEqual(desktopBossTopMinimumPx));
+  }
+};
+
 describe("nextBattlefieldFrame", () => {
+  it("freezes every ordinary family, profile, grade, modifier, and Golden Bug framing", () => {
+    let camera: THREE.Camera | undefined;
+    let scene: THREE.Scene | undefined;
+    const dataset: Record<string, string> = {};
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const canvas = {
+      className: "",
+      dataset,
+      height: 800,
+      remove: () => undefined,
+      width: 1_280,
+    } as unknown as HTMLCanvasElement;
+    const renderer = {
+      domElement: canvas,
+      dispose: () => undefined,
+      render: (nextScene: THREE.Scene, nextCamera: THREE.Camera) => {
+        scene = nextScene;
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: (width: number, height: number) => {
+        canvas.width = width;
+        canvas.height = height;
+      },
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.resize(1_280, 800);
+    const modifiers: readonly (EliteModifier | null)[] = [
+      null,
+      "armor",
+      "health",
+      "automatic-slow",
+      "hardened",
+      "critical-guard",
+      "manual-guard",
+    ];
+    const compositions = new Map<string, BattleSnapshot>();
+    for (const grade of ["normal", "veteran", "elite"] as const) {
+      for (let level = 1; level <= 180; level += 1) {
+        for (const modifier of modifiers) {
+          const candidate = snapshot(grade, level, 10, [], modifier);
+          const visual = enemyVisualSpec(candidate.enemy);
+          compositions.set(
+            `${visual.body}:${visual.profile.variant}:${grade}:${modifier ?? "none"}:ordinary`,
+            candidate,
+          );
+        }
+        const golden = snapshot(grade, level, 10, [], null, true);
+        const goldenVisual = enemyVisualSpec(golden.enemy);
+        compositions.set(
+          `${goldenVisual.body}:${goldenVisual.profile.variant}:${grade}:golden`,
+          golden,
+        );
+      }
+    }
+    const ordinary = [...compositions.values()].filter(
+      (candidate) => !enemyVisualSpec(candidate.enemy).body.startsWith("boss-"),
+    );
+    expect(new Set(ordinary.map((candidate) => enemyVisualSpec(candidate.enemy).body))).toEqual(
+      new Set(["beetle", "brute", "wisp", "mantis", "sentinel", "drake"]),
+    );
+    for (const candidate of ordinary) {
+      const { body } = enemyVisualSpec(candidate.enemy);
+      battlefield.render(candidate);
+      if (!(camera instanceof THREE.PerspectiveCamera) || scene === undefined)
+        throw new Error("Expected captured scene and camera");
+      const capturedCamera = camera;
+      const pose = scene.getObjectByName(`enemy-pose-${body}`);
+      const socket = scene.getObjectByName(`enemy-socket-${body}-overhead`);
+      if (pose === undefined || socket === undefined)
+        throw new Error("Expected animated pose and socket");
+      const cameraTransform = {
+        position: capturedCamera.position.toArray(),
+        projection: capturedCamera.projectionMatrix.toArray(),
+        quaternion: capturedCamera.quaternion.toArray(),
+      };
+      const animationSamples: string[] = [];
+      for (const visualCues of [[], ["hit"], [], ["critical"], []] as const) {
+        battlefield.render({ ...candidate, visualCues });
+        expect(capturedCamera.position.toArray()).toEqual(cameraTransform.position);
+        expect(capturedCamera.quaternion.toArray()).toEqual(cameraTransform.quaternion);
+        expect(capturedCamera.projectionMatrix.toArray()).toEqual(cameraTransform.projection);
+        pose.updateMatrixWorld(true);
+        socket.updateMatrixWorld(true);
+        animationSamples.push(
+          [...pose.matrixWorld.elements, ...socket.matrixWorld.elements]
+            .map((value) => value.toFixed(6))
+            .join(","),
+        );
+      }
+      expect(new Set(animationSamples).size).toBeGreaterThan(1);
+    }
+    battlefield.dispose();
+  });
+
+  it("keeps every ordinary composed profile below the HUD safe area", () => {
+    const dataset: Record<string, string> = {};
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const canvas = {
+      className: "",
+      dataset,
+      height: 800,
+      remove: () => undefined,
+      width: 1_280,
+    } as unknown as HTMLCanvasElement;
+    const renderer = {
+      domElement: canvas,
+      dispose: () => undefined,
+      render: () => undefined,
+      setPixelRatio: () => undefined,
+      setSize: (width: number, height: number) => {
+        canvas.width = width;
+        canvas.height = height;
+      },
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    const modifiers: readonly (EliteModifier | null)[] = [
+      null,
+      "armor",
+      "health",
+      "automatic-slow",
+      "hardened",
+      "critical-guard",
+      "manual-guard",
+    ];
+    const compositions = new Map<string, BattleSnapshot>();
+    for (const grade of ["normal", "veteran", "elite"] as const) {
+      for (let level = 1; level <= 180; level += 1) {
+        for (const modifier of modifiers) {
+          const candidate = snapshot(grade, level, 10, [], modifier);
+          const visual = enemyVisualSpec(candidate.enemy);
+          compositions.set(
+            `${visual.body}:${visual.profile.variant}:${grade}:${modifier ?? "none"}`,
+            candidate,
+          );
+        }
+        const golden = snapshot(grade, level, 10, [], null, true);
+        const goldenVisual = enemyVisualSpec(golden.enemy);
+        compositions.set(
+          `${goldenVisual.body}:${goldenVisual.profile.variant}:${grade}:golden`,
+          golden,
+        );
+      }
+    }
+    expect(
+      new Set([...compositions.values()].map((entry) => enemyVisualSpec(entry.enemy).body)).size,
+    ).toBe(6);
+    for (const [width, height] of [
+      [1_280, 800],
+      [390, 844],
+    ] as const) {
+      battlefield.resize(width, height);
+      const minimumTop = height * BATTLEFIELD_CONFIG.camera.ordinaryHudSafeTopRatio;
+      for (const candidate of compositions.values()) {
+        for (const cues of [[], ["hit"], ["critical"]] as const) {
+          battlefield.render({ ...candidate, visualCues: cues });
+          expect(Number(dataset.enemyTopPx)).toBeGreaterThanOrEqual(minimumTop);
+        }
+      }
+    }
+    battlefield.dispose();
+  });
+
+  it("publishes finite composed boss top pixels across production framing", () => {
+    const dataset: Record<string, string> = {};
+    let scene: THREE.Scene | undefined;
+    let camera: THREE.Camera | undefined;
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const canvas = {
+      className: "",
+      dataset,
+      height: 800,
+      remove: () => undefined,
+      width: 1_280,
+    } as unknown as HTMLCanvasElement;
+    const renderer = {
+      domElement: canvas,
+      dispose: () => undefined,
+      render: (nextScene: THREE.Scene, nextCamera: THREE.Camera) => {
+        scene = nextScene;
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: (width: number, height: number) => {
+        canvas.width = width;
+        canvas.height = height;
+      },
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    const profiles = new Map<string, number>();
+    for (let level = 1; level <= 120; level += 1) {
+      const spec = enemyVisualSpec(snapshot("boss", level).enemy);
+      profiles.set(`${spec.body}:${spec.profile.variant}`, level);
+    }
+    expect(profiles.size).toBe(6);
+    for (const size of [
+      [1280, 800],
+      [390, 844],
+    ] as const) {
+      const [width, height] = size;
+      battlefield.resize(width, height);
+      expect(canvas.width).toBe(width);
+      expect(canvas.height).toBe(height);
+      for (const level of profiles.values()) {
+        battlefield.render(snapshot("boss", level));
+        let currentAzimuth = 0;
+        for (const azimuth of [0, Math.PI / 2, Math.PI]) {
+          battlefield.rotateCamera(azimuth - currentAzimuth);
+          currentAzimuth = azimuth;
+          const receipt = dataset.enemyTopPx;
+          const enemy = scene?.children.find(
+            (node) => node instanceof THREE.Group && node.position.x === 1.7,
+          );
+          if (!(enemy instanceof THREE.Group) || camera === undefined)
+            throw new Error("Expected captured boss scene and camera");
+          const capturedCamera = camera;
+          capturedCamera.updateMatrixWorld();
+          enemy.updateMatrixWorld(true);
+          const bounds = new THREE.Box3().setFromObject(enemy);
+          const expected = Math.min(
+            ...[
+              [bounds.min.x, bounds.min.y, bounds.min.z],
+              [bounds.min.x, bounds.min.y, bounds.max.z],
+              [bounds.min.x, bounds.max.y, bounds.min.z],
+              [bounds.min.x, bounds.max.y, bounds.max.z],
+              [bounds.max.x, bounds.min.y, bounds.min.z],
+              [bounds.max.x, bounds.min.y, bounds.max.z],
+              [bounds.max.x, bounds.max.y, bounds.min.z],
+              [bounds.max.x, bounds.max.y, bounds.max.z],
+            ].map(
+              ([x, y, z]) =>
+                ((1 - new THREE.Vector3(x, y, z).project(capturedCamera).y) * height) / 2,
+            ),
+          );
+          expect(receipt).toBe(expected.toFixed(2));
+          const top = Number(receipt);
+          expect(Number.isFinite(top)).toBe(true);
+          expect(top).toBeCloseTo(expected, 2);
+          expect(top).toBeGreaterThanOrEqual(0);
+          expect(top).toBeLessThan(height);
+        }
+        battlefield.rotateCamera(-currentAzimuth);
+      }
+    }
+    assertDesktopBossHudClearance(battlefield, dataset, profiles.values());
+    const hydraLevels = [...profiles.entries()]
+      .filter(([key]) => key.startsWith("boss-hydra:"))
+      .map(([, level]) => level);
+    const colossusLevel = [...profiles.entries()].find(([key]) =>
+      key.startsWith("boss-colossus:"),
+    )?.[1];
+    const [hydraLevel, alternateHydraLevel] = hydraLevels;
+    if (
+      hydraLevel === undefined ||
+      alternateHydraLevel === undefined ||
+      colossusLevel === undefined
+    ) {
+      throw new Error("Expected multiple Hydra profiles and a Colossus profile");
+    }
+    battlefield.render(snapshot("boss", hydraLevel));
+    const hydraTop = dataset.enemyTopPx;
+    battlefield.rotateCamera(Math.PI / 2);
+    const rotatedHydraTop = dataset.enemyTopPx;
+    expect(Number(rotatedHydraTop)).not.toBeCloseTo(Number(hydraTop), 2);
+    battlefield.rotateCamera(-Math.PI / 2);
+    battlefield.render(snapshot("boss", alternateHydraLevel));
+    expect(dataset.enemyFamily).toBe("boss-hydra");
+    expect(dataset.enemyTopPx).not.toBe(hydraTop);
+    battlefield.render(snapshot("boss", colossusLevel));
+    expect(dataset.enemyFamily).toBe("boss-colossus");
+    expect(dataset.enemyTopPx).not.toBe(hydraTop);
+    battlefield.dispose();
+    expect(dataset.enemyTopPx).toBeUndefined();
+  });
   it("keeps every grade and modifier recognizable without relying on color", () => {
     expect(enemyVisualSpec(snapshot("normal", 1).enemy).body).toBeDefined();
     expect(enemyVisualSpec(snapshot("veteran", 2).enemy).gradeCue).toBe("crest");
@@ -138,7 +446,7 @@ describe("nextBattlefieldFrame", () => {
       (child) => child instanceof THREE.Group && child.position.x === -1.7,
     );
     const spawnEffect = scene.children.find(
-      (child) => child instanceof THREE.Mesh && child.position.y === 0.04,
+      (child) => child instanceof THREE.Mesh && child.position.y > 0.5,
     );
     if (
       !(enemy instanceof THREE.Group) ||
@@ -210,6 +518,163 @@ describe("nextBattlefieldFrame", () => {
     battlefield.dispose();
   });
 
+  it("orders lethal impact, pause, death, and replacement without duplicating the unit", () => {
+    for (const reducedMotion of [false, true]) {
+      if (reducedMotion) vi.stubGlobal("window", { matchMedia: () => ({ matches: true }) });
+      for (const impact of ["hit", "critical"] as const) {
+        let scene: THREE.Scene | undefined;
+        const host = { append: () => undefined } as unknown as HTMLElement;
+        const renderer = {
+          domElement: {
+            className: "",
+            dataset: {},
+            remove: () => undefined,
+          } as unknown as HTMLCanvasElement,
+          dispose: () => undefined,
+          render: (nextScene: THREE.Scene) => {
+            scene = nextScene;
+          },
+          setPixelRatio: () => undefined,
+          setSize: () => undefined,
+        };
+        const battlefield = createBattlefieldWithRenderer(host, renderer);
+        const initial = snapshot("normal", 1);
+        const nonlethal = snapshot("normal", 1, 9, ["hit"]);
+        const replacement = snapshot("normal", 2);
+        battlefield.render(initial);
+        const original = scene?.children.find(
+          (child) => child instanceof THREE.Group && child.position.x === 1.7,
+        );
+        if (!(original instanceof THREE.Group)) throw new Error("Expected initial enemy unit");
+        const body = original.getObjectByName("enemy-body-brute");
+        if (!(body instanceof THREE.Mesh)) throw new Error("Expected initial enemy body");
+
+        battlefield.render(nonlethal);
+        expect(original.parent).toBe(scene);
+        expect(body.userData.lastCommand).toBe("hit");
+
+        battlefield.render({ ...replacement, visualCues: [impact, "death", "coin"] });
+        expect(original.parent).toBe(scene);
+        expect(body.userData.lastCommand).toBe(impact);
+
+        for (let index = 0; index < enemyVisualAnimation.commandFrames[impact]; index += 1)
+          battlefield.render(replacement);
+        expect(original.parent).toBe(scene);
+        expect(body.userData.lastCommand).toBe(impact);
+
+        expect(enemyVisualAnimation.lethalPauseFrames).toBe(6);
+        for (let index = 0; index < enemyVisualAnimation.lethalPauseFrames; index += 1) {
+          battlefield.render(replacement);
+          expect(body.userData.lastCommand).toBe(impact);
+        }
+        battlefield.render(replacement);
+        expect(original.parent).toBe(scene);
+        expect(body.userData.lastCommand).toBe("death");
+
+        for (let index = 0; index < enemyVisualAnimation.commandFrames.death; index += 1)
+          battlefield.render(replacement);
+        expect(original.parent).toBeNull();
+        expect(
+          scene?.children.filter(
+            (child) => child instanceof THREE.Group && child.position.x === 1.7,
+          ),
+        ).toHaveLength(1);
+
+        battlefield.render(replacement);
+        expect(
+          scene?.children.filter(
+            (child) => child instanceof THREE.Group && child.position.x === 1.7,
+          ),
+        ).toHaveLength(1);
+        battlefield.dispose();
+      }
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("keeps the displayed boss and its camera receipt through a lethal sequence", () => {
+    let camera: THREE.Camera | undefined;
+    let scene: THREE.Scene | undefined;
+    const dataset: Record<string, string> = {};
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const canvas = {
+      className: "",
+      dataset,
+      height: 800,
+      remove: () => undefined,
+      width: 1_280,
+    } as unknown as HTMLCanvasElement;
+    const renderer = {
+      domElement: canvas,
+      dispose: () => undefined,
+      render: (nextScene: THREE.Scene, nextCamera: THREE.Camera) => {
+        scene = nextScene;
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: (width: number, height: number) => {
+        canvas.width = width;
+        canvas.height = height;
+      },
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    const boss = snapshot("boss", 15);
+    const replacement = snapshot("normal", 2);
+    battlefield.resize(1_280, 800);
+    battlefield.render(boss);
+    battlefield.rotateCamera(Math.PI / 2);
+    if (!(camera instanceof THREE.PerspectiveCamera) || scene === undefined)
+      throw new Error("Expected rendered boss camera and scene");
+    const original = scene.children.find(
+      (child) => child instanceof THREE.Group && child.position.x === 1.7,
+    );
+    if (!(original instanceof THREE.Group)) throw new Error("Expected displayed boss unit");
+    const family = dataset.enemyFamily;
+    const body = original.getObjectByName(`enemy-body-${family}`);
+    if (!(body instanceof THREE.Mesh)) throw new Error("Expected displayed boss body");
+    const cameraTransform = {
+      position: camera.position.toArray(),
+      quaternion: camera.quaternion.toArray(),
+    };
+    const assertBossPresentation = (): void => {
+      expect(original.parent).toBe(scene);
+      expect(dataset.enemyFamily).toBe(family);
+      expect(dataset.enemyGrade).toBe("boss");
+      expect(Number.isFinite(Number(dataset.enemyTopPx))).toBe(true);
+      expect(camera?.position.toArray()).toEqual(cameraTransform.position);
+      expect(camera?.quaternion.toArray()).toEqual(cameraTransform.quaternion);
+    };
+
+    battlefield.render({ ...replacement, visualCues: ["critical", "death", "coin", "boss"] });
+    expect(body.userData.lastCommand).toBe("critical");
+    assertBossPresentation();
+
+    for (let index = 0; index < enemyVisualAnimation.commandFrames.critical; index += 1) {
+      battlefield.render(replacement);
+      assertBossPresentation();
+    }
+    expect(enemyVisualAnimation.lethalPauseFrames).toBe(6);
+    for (let index = 0; index < enemyVisualAnimation.lethalPauseFrames; index += 1) {
+      battlefield.render(replacement);
+      expect(body.userData.lastCommand).toBe("critical");
+      assertBossPresentation();
+    }
+    battlefield.render(replacement);
+    expect(body.userData.lastCommand).toBe("death");
+    assertBossPresentation();
+
+    for (let index = 0; index < enemyVisualAnimation.commandFrames.death; index += 1) {
+      battlefield.render(replacement);
+      if (index + 1 < enemyVisualAnimation.commandFrames.death) assertBossPresentation();
+    }
+    expect(original.parent).toBeNull();
+    expect(dataset.enemyGrade).toBe("normal");
+    expect(
+      scene.children.filter((child) => child instanceof THREE.Group && child.position.x === 1.7),
+    ).toHaveLength(1);
+    battlefield.dispose();
+  });
+
   it("widens static camera framing only for narrow viewports", () => {
     let camera: THREE.Camera | undefined;
     const host = { append: () => undefined } as unknown as HTMLElement;
@@ -231,11 +696,13 @@ describe("nextBattlefieldFrame", () => {
     battlefield.render(snapshot("boss", 15));
     if (!(camera instanceof THREE.PerspectiveCamera))
       throw new Error("Expected perspective camera");
-    expect(camera.position.z).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.z).toBeCloseTo(
+      7 * cameraScaleForAspect(390 / 844) * BATTLEFIELD_CONFIG.camera.bossFramingScale,
+    );
     expect(camera.position.z).toBeGreaterThan(7);
     battlefield.resize(1_600, 900);
     battlefield.render(snapshot("boss", 15));
-    expect(camera.position.z).toBe(7);
+    expect(camera.position.z).toBe(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
   });
 
   it("orbits bosses only and preserves the session azimuth across resize", () => {
@@ -262,22 +729,26 @@ describe("nextBattlefieldFrame", () => {
     expect(camera.position.x).toBe(0);
     battlefield.render(snapshot("boss", 15));
     battlefield.rotateCamera(Math.PI / 2);
-    expect(camera.position.x).toBeCloseTo(7);
-    expect(camera.position.y).toBe(2);
+    expect(camera.position.x).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
+    expect(camera.position.y).toBe(2 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
     expect(camera.position.z).toBeCloseTo(0);
     expect(camera.fov).toBe(50);
     battlefield.rotateCamera(Number.NaN);
     battlefield.rotateCamera(Number.POSITIVE_INFINITY);
-    expect(camera.position.x).toBeCloseTo(7);
+    expect(camera.position.x).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
     expect(camera.position.z).toBeCloseTo(0);
     battlefield.resize(390, 844);
-    expect(camera.position.x).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
-    expect(camera.position.y).toBeCloseTo(2 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.x).toBeCloseTo(
+      7 * cameraScaleForAspect(390 / 844) * BATTLEFIELD_CONFIG.camera.bossFramingScale,
+    );
+    expect(camera.position.y).toBeCloseTo(
+      2 * cameraScaleForAspect(390 / 844) * BATTLEFIELD_CONFIG.camera.bossFramingScale,
+    );
     expect(camera.position.z).toBeCloseTo(0);
     battlefield.render(snapshot("normal", 1));
     battlefield.rotateCamera(Math.PI / 2);
     expect(camera.position.x).toBe(0);
-    expect(camera.position.z).toBeCloseTo(7 * cameraScaleForAspect(390 / 844));
+    expect(camera.position.z).toBeGreaterThanOrEqual(7 * cameraScaleForAspect(390 / 844));
     battlefield.dispose();
   });
 });

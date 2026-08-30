@@ -33,6 +33,8 @@ export type EnemyVisualProfile = {
   readonly variant: 0 | 1 | 2;
   readonly metallic?: boolean;
 };
+export const profileCueScale = (profile: EnemyVisualProfile): number =>
+  Math.min(1.2, Math.max(0.8, profile.attachment[0] / 0.7));
 export type EnemyVisualSpec = {
   readonly body: BodyFamily;
   readonly decorations: readonly Decoration[];

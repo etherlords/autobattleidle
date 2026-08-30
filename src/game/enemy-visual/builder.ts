@@ -11,6 +11,7 @@ export type EnemyViewBuild = {
   readonly group: THREE.Group;
   readonly roots: Readonly<Record<EnemyVisualLayer, THREE.Group>>;
   command(command: EnemyVisualCommand): boolean;
+  anchor(anchor: EnemyVisualAnchor): THREE.Object3D | undefined;
   dispose(): void;
   tick(): void;
 };
@@ -78,6 +79,7 @@ export class EnemyViewBuilder {
         handlers.forEach((handler) => handler());
         return handlers.length > 0;
       },
+      anchor: (anchor) => this.anchors.get(anchor),
       dispose: () => {
         if (disposed) return;
         disposed = true;
@@ -103,6 +105,7 @@ export class EnemyViewBuilder {
         `Enemy view component ${component.key} requires a ${component.anchor} anchor`,
       );
     component.nodes.forEach((node) => parent.add(node));
+    component.onAttach?.();
   }
 
   private registerAnchors(component: EnemyVisualComponent): void {

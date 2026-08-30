@@ -25,9 +25,9 @@ export const enemyVisualPalette = {
 } as const;
 
 export const enemyVisualLayout = {
-  actorAnchor: { x: 1.7, y: 0.8, z: 0 },
+  actorAnchor: { x: 1.7, z: 0, groundClearance: 0.02 },
   body: { hydraHeadOffsets: [-0.55, 0.55], hydraHeadY: 0.6 },
-  grade: { crestY: 0.75, spikeY: 0.65, spikeOffsets: [-0.45, 0.45], crownY: 1 },
+  grade: { crestY: 0.2, spikeY: 0.16, spikeOffsets: [-0.3, 0.3], crownY: 1 },
   modifier: {
     armorOffsets: [-0.7, 0.7],
     wealthOffsets: [-0.65, 0.65],
@@ -65,7 +65,7 @@ export const enemyVisualGeometry = {
     drakeWing: [0.24, 0.9, 4],
     drakeTail: [0.18, 0.65, 4],
   },
-  grade: { crest: [0.25, 0.7, 4], spike: [0.16, 0.55, 4], crown: [0.75, 0.5, 5] },
+  grade: { crest: [0.25, 0.7, 4], spike: [0.115, 0.4, 4], crown: [0.75, 0.5, 5] },
   modifier: {
     plate: [0.18, 0.8, 0.12],
     core: [0.34, 10, 8],
@@ -74,11 +74,11 @@ export const enemyVisualGeometry = {
     coin: [0.15, 0.15, 0.08, 10],
   },
   decoration: {
-    fin: [0.18, 0.65, 3],
-    horn: [0.13, 0.55, 4],
+    fin: [0.14, 0.44, 3],
+    horn: [0.1, 0.36, 4],
     orbital: [0.34, 0.04, 6, 12],
     satellite: [0.12, 8, 6],
-    scar: [0.08, 0.5, 0.05],
+    scar: [0.035, 0.16, 0.015],
   },
 } as const;
 
@@ -86,7 +86,8 @@ export const enemyVisualAnimation = {
   timeRingTickRadians: 0.035,
   idleRadians: 0.12,
   idleLift: 0.035,
-  commandFrames: { spawn: 12, hit: 6, critical: 8, death: 14 },
+  commandFrames: { spawn: 12, hit: 10, critical: 12, death: 14 },
+  lethalPauseFrames: 6,
   shieldOrbitRadians: 0.045,
   shieldLift: 0.08,
   decorationOrbitRadians: 0.03,
@@ -96,6 +97,7 @@ export const enemyVisualTransforms = {
   beetleShellY: 0.15,
   crownYRadians: Math.PI / 5,
   flatRingXRadians: Math.PI / 2,
+  timeRingCameraTiltRadians: (11.5 * Math.PI) / 180,
   finZRadians: 0.7,
   scarZRadians: 0.35,
 } as const;
