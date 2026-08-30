@@ -4,7 +4,7 @@ id: ABI-029
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 1
-- Last update: Bootstrapped
+- Revision: 2
+- Last update: Added the approved Visualize concept-to-production gate without starting blocked work.
 
 ## Execution plan
 
@@ -38,7 +38,22 @@ requiredGates:
 - [ ] affinity-regressions: Add exhaustive registry, distribution, stat-bound, naming, reload/history, visual, effect-cap, and disposal tests; run focused checks and pnpm check
 - [ ] affinity-independent-gates: Independent Reviewer audits composition and balance; independent browser QA inspects representative desktop, narrow, reduced-motion, and replacement cases
 - [ ] affinity-manager-close: Manager maps acceptance evidence, syncs Vault, closes Planner, publishes scoped files, and proves exact-SHA CI, Pages, and deployed variant behavior
+- [ ] affinity-visual-concept-lab: After audit, prototype families and bosses in Visualize; inspect all angles and idle/hit/death; approve port recipes while retaining legacy variants
 
 ## Events
 
-_No progress events recorded._
+### evt-561d705d-fd0e-4ed2-bd94-5d04de066312
+
+- Timestamp: 2026-08-30T19:16:58.701Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 1
+- Resulting revision: 2
+- Summary: Added the approved Visualize concept-to-production gate without starting blocked work.
+- Idempotency key: abi-029-add-visual-concept-lab-step-v2-20260831
+- Request fingerprint: a8632482309056b3b63c754ffd97955cb46dbbb36022fc66bde368b22a7bc1fe
+- Action: add
+- Step ID: affinity-visual-concept-lab
+- Evidence:
+  - User approved this workflow for future enemy-family expansion and visual tuning.
+  - ABI-029 remains Blocked on ABI-020 and has no lease.
