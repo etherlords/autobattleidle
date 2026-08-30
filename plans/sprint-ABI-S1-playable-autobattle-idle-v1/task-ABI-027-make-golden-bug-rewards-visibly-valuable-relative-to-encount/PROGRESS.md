@@ -4,8 +4,8 @@ id: ABI-027
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 45
-status: Ready for Manager
+revision: 50
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 45
-- Last update: EVENT checkpoint — root-manager — Used the documented narrow Markdown fallback only for detailed REVIEW.md, QA.md, and VERIFICATION.md bodies; lifecycle/status fields remained Planner-owned.
+- Status: Done
+- Revision: 50
+- Last update: ABI-027 is fully reviewed, QA-proven, verified, deployed at exact SHA, manager-closed, and lease-free.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [x] golden-reward-regressions: Implementation owner adds focused economy, timing, duplicate-award, double-reward, escape, rounding, and historical-save regressions; runs pnpm check
 - [x] golden-reward-independent-review: Independent Reviewer audits economy significance, progression impact, exploit boundaries, code ownership, and test coverage
 - [x] golden-reward-independent-qa: Independent browser QA proves representative kill/escape payouts, reload safety, desktop/narrow feedback, and clean console/network behavior
-- [~] golden-reward-manager-close: Manager binds audit results to acceptance, syncs Vault, closes Planner, publishes scoped files, and proves exact-SHA CI, Pages, and deployed payout behavior
+- [x] golden-reward-manager-close: Manager binds audit results to acceptance, syncs Vault, closes Planner, publishes scoped files, and proves exact-SHA CI, Pages, and deployed payout behavior
 - [x] golden-reward-review-repair: Original implementation owner repairs legacy active-V3 normalization and representative legal-band economy acceptance, then reruns focused/full checks
 - [x] golden-reward-independent-rereview: Fresh independent Reviewer verifies both bounded repairs and re-audits the final ABI-027 diff
 - [x] golden-reward-final-test-repair: Original owner corrects only representative upgrade levels, purchase legality, and explicit nearest-boss comparison in the economy audit
@@ -787,3 +787,90 @@ requiredGates:
   - REVIEW.md final verdict/evidence
   - QA.md isolated browser evidence
   - VERIFICATION.md pre-publication acceptance mapping
+
+### evt-f1160871-ac1b-4f8d-98fd-20005fe7c82e
+
+- Timestamp: 2026-08-30T18:20:12.239Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: EVENT checkpoint — root-manager — Appended exact-SHA CI, Pages, asset identity, and public Golden reward proof to VERIFICATION.md via the documented narrow body fallback.
+- Idempotency key: abi027-exact-sha-verification-fallback-20260830-v1
+- Evidence:
+  - commit a43aaaf9975b1e5ac67dd7272acaf690a73b08a0
+  - CI 33327609427 success
+  - Pages 33327609426 success
+  - asset index-BrZSuSWD.js sha256 84e4537973234510aea2c1b968185e98bf80e6c7b2b91ee104db7430709dbc2e
+  - public proof output/playwright/abi027-public-proof-20260830/receipt.json
+
+### evt-db1fc99d-d9b4-46b9-8a02-972097c7d241
+
+- Timestamp: 2026-08-30T18:20:21.576Z
+- Actor: root-manager-closer
+- Operation: gate.record
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: PASS: scoped implementation, review, QA, Vault sync, native-hook publication, exact-SHA CI/Pages, asset identity, and deployed Golden reward behavior are complete.
+- Idempotency key: abi027-manager-closure-pass-20260830-v1
+- Request fingerprint: 6fbba2f6e777aa33f747a16a7cc579f8b2a4b4a20b73258a60dd663e347a51c6
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - commit a43aaaf9975b1e5ac67dd7272acaf690a73b08a0 on origin/main
+  - CI 33327609427 success
+  - Pages 33327609426 success
+  - public asset index-BrZSuSWD.js sha256 84e4537973234510aea2c1b968185e98bf80e6c7b2b91ee104db7430709dbc2e
+  - public behavior: legacy 1220 + coins 77 -> Golden reward event +6100 -> persisted 6177, event null, encounter 51
+  - public console 0; failed requests 0
+
+### evt-94eb420a-bc81-470a-9b9c-56ec3cb92cf6
+
+- Timestamp: 2026-08-30T18:20:29.561Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Manager closure is complete with exact-SHA deployed proof.
+- Idempotency key: abi027-complete-manager-close-20260830-v1
+- Request fingerprint: c193cc437fcf0bcb1d6c5877484e02836fbb17875a19bde4e6c7037dfa0dcfb5
+- Action: set_state
+- Step ID: golden-reward-manager-close
+- State: complete
+- Evidence:
+  - evt-db1fc99d-d9b4-46b9-8a02-972097c7d241
+
+### evt-41db9f58-d8c6-42be-af2d-9e0602b94b80
+
+- Timestamp: 2026-08-30T18:20:35.970Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Released task claim: ABI-027 exact-SHA closure complete
+- Idempotency key: abi027-release-lease-before-done-20260830-v1
+- Request fingerprint: 725c2377ce6f299ec4c9fadbf42efffdaf7ea792413500d7c4e0ffec44de5256
+- Agent ID: root-manager
+- Session ID: abi027-golden-reward-20260830
+- Intent: ABI-027 exact-SHA closure complete
+- Evidence:
+  - None
+
+### evt-59bf8022-ce3e-456e-9219-9126945f4439
+
+- Timestamp: 2026-08-30T18:20:43.836Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: ABI-027 is fully reviewed, QA-proven, verified, deployed at exact SHA, manager-closed, and lease-free.
+- Idempotency key: abi027-advance-done-20260830-v1
+- Request fingerprint: 620be78285fc1ab8fdc28b6a233c49de65b3de168bb9fdb21f18c5f6fc4d7ded
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-db1fc99d-d9b4-46b9-8a02-972097c7d241
+  - evt-41db9f58-d8c6-42be-af2d-9e0602b94b80
+  - a43aaaf9975b1e5ac67dd7272acaf690a73b08a0
+  - CI 33327609427
+  - Pages 33327609426
