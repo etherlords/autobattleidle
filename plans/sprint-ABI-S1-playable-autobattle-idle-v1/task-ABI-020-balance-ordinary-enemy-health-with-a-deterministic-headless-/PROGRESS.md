@@ -4,7 +4,7 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 18
+revision: 30
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 18
-- Last update: Add explicit armor usefulness telemetry and tuning step; task remains Blocked and unclaimed.
+- Revision: 30
+- Last update: Released task claim: Release ABI-020 after canonical Blocked transition on independently verified product-spec contradiction.
 
 ## Execution plan
 
@@ -35,8 +35,8 @@ requiredGates:
 - [-] self-check: Implementation owner adds repeatability, envelope, wall, rollover, and runtime regressions and runs pnpm check
 - [-] independent-gates: Independent Reviewer and QA verify telemetry validity, no boss drift, long-run runtime, and saved progression
 - [-] manager-closure: Manager publishes accepted Vault formula/report, closes Planner, and proves exact-SHA CI
-- [ ] rebalance-preflight-v2: Manager freezes ABI-010 economy, ABI-016 camera boundary, ABI-018 APS, ABI-022 variants, fixed rolls, round-robin purchases, metrics, candidates, and no-schema impact
-- [ ] headless-simulator-v2: Implementation owner adds the pure configurable production-path simulator for 3000+ ordinary encounters with bosses and authored variants reported separately
+- [x] rebalance-preflight-v2: Manager freezes ABI-010 economy, ABI-016 camera boundary, ABI-018 APS, ABI-022 variants, fixed rolls, round-robin purchases, metrics, candidates, and no-schema impact
+- [-] headless-simulator-v2: Implementation owner adds the pure configurable production-path simulator for 3000+ ordinary encounters with bosses and authored variants reported separately
 - [ ] health-candidates-v2: Implementation owner compares only 0.5 and 0.8 percent ordinary health growth, leads with 0.5, and selects from measured hit and TTK envelopes
 - [ ] cadence-reward-strategies-v2: Implementation owner measures boss gaps within 50-150 and lower ordinary rewards against Golden Bug without changing boss health multipliers
 - [ ] chance-penetration-strategies-v2: Implementation owner measures asymptotic versus explicit overflow semantics separately for critical chance and armor penetration
@@ -317,3 +317,220 @@ requiredGates:
 - Evidence:
   - User balance request 2026-08-29
   - ABI-020 acceptance revision 4
+
+### evt-74060c28-8d4b-4b96-975a-c5801dcba127
+
+- Timestamp: 2026-08-29T15:18:01.625Z
+- Actor: root-audit-manager
+- Operation: task.advance
+- Prior revision: 18
+- Resulting revision: 19
+- Summary: Fresh root audit confirms ABI-010, ABI-016, ABI-018, and ABI-022 are Done and no non-dependency blocker remains; reconcile lifecycle drift to Ready.
+- Idempotency key: abi-s1-audit-unblock-abi020-20260829
+- Request fingerprint: 0637d1ce80af93826093ba33b126c888bca78ff6e373833e2bf4f8b2ba31733a
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - planner_tasks_list openDependencies=[]
+  - planner_get_execution_context BRIEF.md and PROGRESS.md
+  - planner_doctor healthy; recovery not required
+
+### evt-2610ee74-deef-4fbd-96ce-899f95c1a361
+
+- Timestamp: 2026-08-29T15:18:19.101Z
+- Actor: root-manager
+- Operation: claim.acquire
+- Prior revision: 19
+- Resulting revision: 20
+- Summary: Claimed task lease: Execute exactly ABI-020 through JIT preflight, implementation, independent review and QA, Vault sync, publication, and closure.
+- Idempotency key: abi020-claim-finite-20260829
+- Request fingerprint: 355a57cd0e87b0b1b3f1d987e1d1fa9383340a0825dba991b46d165f8f92fdef
+- Agent ID: root-manager
+- Session ID: abi-s1-finite-20260829
+- Intent: Execute exactly ABI-020 through JIT preflight, implementation, independent review and QA, Vault sync, publication, and closure.
+- Branch: continue-abis1-after-visual-families
+- Expires at: 2026-08-29T17:18:19.101Z
+- Evidence:
+  - None
+
+### evt-20b763c3-e773-4183-b898-bb933ecb4d06
+
+- Timestamp: 2026-08-29T15:20:06.998Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: Start ABI-020 JIT balance preflight after canonical dependency, Vault, and source audit.
+- Idempotency key: abi020-plan-preflight-start-20260829
+- Request fingerprint: 118bc2df7ab0506d571ff2cf526914e181e3a3ce8390fd6a08d8672652e3d4da
+- Action: set_state
+- Step ID: rebalance-preflight-v2
+- State: in_progress
+- Evidence:
+  - ANALYSIS.md JIT preflight
+  - IMPLEMENTATION-GUIDE.md frozen scope and verification matrix
+  - Vault articles AUTOBATTLEIDLE-DOC-20260827-A7FD1F, A798F2, 584401, AUTOBATTLEIDLE-DOC-20260828-ECBD82
+  - source inspection: progression-simulator.ts and src/domain/combat/*
+
+### evt-5c138a47-defc-4e61-b335-72bd0868126e
+
+- Timestamp: 2026-08-29T15:20:08.018Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: Complete JIT preflight with measured candidate policy, production-path ownership, acceptance layers, persistence impact, risks, and proof owners frozen.
+- Idempotency key: abi020-plan-preflight-complete-20260829
+- Request fingerprint: 95aea4fdf63ac28dbf971e34ba58372aa8e75f452f837b466cee68e03fbc901f
+- Action: set_state
+- Step ID: rebalance-preflight-v2
+- State: complete
+- Evidence:
+  - ANALYSIS.md completed via documented narrow fallback because Planner 1.1.2 exposes no section-write tool
+  - IMPLEMENTATION-GUIDE.md completed via documented narrow fallback
+  - Persistence classified no schema change with V1/V2/current load-save-reload regression
+  - Acceptance classified unit, integration, and deployed supporting proof
+
+### evt-710742c9-64d1-41f5-b1b8-72185c1eb338
+
+- Timestamp: 2026-08-29T15:20:08.919Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: EVENT preflight-ready — root-manager — JIT scope, production-path simulator route, measured envelopes, no-schema persistence proof, owners, and verification layers are frozen; narrow ANALYSIS/GUIDE fallback used because Planner has no section-write operation.
+- Idempotency key: abi020-preflight-ready-event-20260829
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/ANALYSIS.md
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/IMPLEMENTATION-GUIDE.md
+  - Planner doctor healthy; recovery not required
+  - Vault doctor: 14 articles, zero findings
+  - remote main ef92d24c18aaf9fcc1265305e69c58c21c2c8132
+
+### evt-d7f1eb5a-b9f1-43fe-8fcd-60f1b2ffdccf
+
+- Timestamp: 2026-08-29T15:20:15.947Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Begin exactly ABI-020 after completed JIT preflight and managed-plan readback.
+- Idempotency key: abi020-advance-in-progress-20260829
+- Request fingerprint: 3e83a5073400bc12de11dd43857a3edea13904b0302d427b10a8c9aeef2b8dac
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - evt-710742c9-64d1-41f5-b1b8-72185c1eb338 preflight-ready
+  - rebalance-preflight-v2 complete at progress revision 22
+  - ANALYSIS.md and IMPLEMENTATION-GUIDE.md frozen
+  - All dependencies Done and Planner lease active
+
+### evt-0b9d32d2-0a2e-4a5e-bbb9-3c083ca502c6
+
+- Timestamp: 2026-08-29T15:20:34.941Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Delegate the production-path 3,000+ ordinary encounter simulator and deterministic telemetry implementation.
+- Idempotency key: abi020-headless-start-20260829
+- Request fingerprint: ec96ccd7af856656cfd165dc56842fb6bd26693073e52a6467e98c5df2821603
+- Action: set_state
+- Step ID: headless-simulator-v2
+- State: in_progress
+- Evidence:
+  - ABI-020 In Progress readback revision 6/progress 24
+  - Existing src/domain/progression-simulator.ts selected for reuse
+  - Frozen ANALYSIS.md and IMPLEMENTATION-GUIDE.md
+
+### evt-26c274bb-eb63-48d5-b142-f75bc274bd0a
+
+- Timestamp: 2026-08-29T15:48:44.204Z
+- Actor: abi020-implementation-worker
+- Operation: gate.record
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: Baseline automatic-only encounter 2 is 210 HP at 1 damage and 0.1 APS = 2,100s, 35x over the frozen 60s cap; failed candidate reverted; pnpm check 14/89 green; independent reviewer APPROVE_BLOCKER is in REVIEW.md.
+- Idempotency key: abi020-implementation-self-check-blocked-encounter2-20260829
+- Request fingerprint: 918dce51d10bd1227113d14e9f151f47f4ff846db3c85382f8c1a908df2a2990
+- Gate: implementation-self-check
+- Verdict: blocked
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/REVIEW.md
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/IMPLEMENTATION-GUIDE.md
+  - src/domain/combat/progression.ts
+  - src/domain/combat/upgrades.ts
+  - src/domain/combat/balance.ts
+
+### evt-5c173b1c-50ec-4971-b20d-abf5a516eada
+
+- Timestamp: 2026-08-29T15:49:52.536Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Cancel the attempted simulator implementation step after telemetry proved frozen acceptance internally incompatible and all source/test edits were reverted.
+- Idempotency key: abi020-cancel-headless-genuine-blocker-20260829
+- Request fingerprint: 6f2464f037bd400de1bc24341fe3294028c5f115821a10253c65fe8aff21740f
+- Action: set_state
+- Step ID: headless-simulator-v2
+- State: cancelled
+- Reason: Cancel the attempted simulator implementation step after telemetry proved frozen acceptance internally incompatible and all source/test edits were reverted.
+- Evidence:
+  - evt-26c274bb-eb63-48d5-b142-f75bc274bd0a implementation-self-check blocked
+  - REVIEW.md APPROVE_BLOCKER
+  - VERIFICATION.md exact arithmetic and reverted candidate
+  - git diff --exit-code -- src
+  - baseline pnpm check 14 files / 89 tests
+
+### evt-6bd0d5f9-d12c-4931-be8a-4ba50ce00637
+
+- Timestamp: 2026-08-29T15:49:53.400Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: EVENT returned — root-manager — independent review confirms frozen automatic-only encounter-2 TTK is 2,100 seconds versus the required 60 seconds; failed candidate reverted; product decision required before resume.
+- Idempotency key: abi020-return-genuine-blocker-20260829
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/REVIEW.md
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/VERIFICATION.md
+  - evt-26c274bb-eb63-48d5-b142-f75bc274bd0a
+  - Encounter 2: 210 HP * 10000 ms per 1-damage hit = 2100000 ms
+  - pnpm check: 14 files / 89 tests
+
+### evt-646c6959-3bb9-4e29-88ea-4c8ee2d82fa4
+
+- Timestamp: 2026-08-29T15:49:54.707Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Block ABI-020 on an independently verified product-spec contradiction: mandatory automatic-only encounter 2 takes 2,100 seconds, exceeding the frozen 60-second ordinary wall by 35x.
+- Idempotency key: abi020-advance-blocked-product-decision-20260829
+- Request fingerprint: 5d08b4b66586fc94ff2c8f29f0995bcf488682792f36578d2e4a500fc3269dd4
+- From status: In Progress
+- To status: Blocked
+- Evidence:
+  - evt-26c274bb-eb63-48d5-b142-f75bc274bd0a implementation-self-check blocked
+  - REVIEW.md APPROVE_BLOCKER
+  - VERIFICATION.md exact blocker and product options
+  - Failed candidate fully reverted; no source/test diff
+  - No QA/publication because implementation acceptance is unsatisfiable
+
+### evt-98d6a9e9-283e-437d-9d38-1578e20d750c
+
+- Timestamp: 2026-08-29T15:50:07.082Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Released task claim: Release ABI-020 after canonical Blocked transition on independently verified product-spec contradiction.
+- Idempotency key: abi020-release-genuine-blocker-20260829
+- Request fingerprint: d80ede531bea62fa70a9777b3b9e2914419c6a4b32be1cd64666abd1e2a00e13
+- Agent ID: root-manager
+- Session ID: abi-s1-finite-20260829
+- Intent: Release ABI-020 after canonical Blocked transition on independently verified product-spec contradiction.
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None

@@ -4,7 +4,7 @@ id: ABI-030
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 2
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -37,10 +37,12 @@ Add a privacy-safe anonymous leaderboard with Top 100 and Around Me views
 - [ ] The public client never writes a claimed level directly to the database and contains no administrative secret. A server-owned endpoint validates shape and bounds, applies per-identity and per-network rate limits, uses platform attestation when practical, and performs monotonic best-level updates.
 - [ ] The design explicitly states that client-only idle progression cannot be cheat-proof. The leaderboard is treated as an untrusted community ranking, with documented replay/tamper limits and no false security claim.
 - [ ] Only a pseudonymous generated display name, anonymous stable identifier or salted hash, best level, and necessary timestamps are retained; deletion/reset, retention, duplicate-device, and privacy behavior are documented.
+- [ ] Every anonymous player receives a readable collision-safe generated display name before the first submission; the same identity keeps that name across reloads and leaderboard views without exposing device or personal data.
+- [ ] A player may rename through the leaderboard UI. The server owns normalization, length and character limits, reserved/profanity filtering, uniqueness or deterministic disambiguation, cooldown and rate limiting, and atomically updates the displayed name without changing rank history.
 - [ ] A Leaderboard launcher appears beside Upgrades and opens an accessible modal reusing the existing dialog, focus, Escape, backdrop, keyboard, responsive, and input-isolation behavior.
 - [ ] The modal provides Top 100 and Around Me views. Around Me shows the current rank and a bounded neighborhood of up to 100 entries above and below; deterministic tie-breaking, empty/loading/offline/rate-limited states, and compact large-number display are defined.
 - [ ] Showing every player is optional and is added only if bounded cursor pagination, privacy, abuse, and query-cost evidence justify it; Top 100 plus Around Me is the required usable baseline.
-- [ ] Contract tests cover validation, authorization, monotonic updates, ties, pagination bounds, rate limiting, and failures; UI tests cover modal/accessibility/isolation; independent review and browser QA verify desktop/narrow behavior and deployed frontend/backend evidence.
+- [ ] Contract tests cover validation, authorization, generated names, rename collisions and cooldowns, monotonic updates, ties, pagination bounds, rate limiting, and failures; UI tests cover modal, rename, accessibility, and isolation; independent review and browser QA verify desktop/narrow behavior and deployed frontend/backend evidence.
 
 ## Dependencies
 
