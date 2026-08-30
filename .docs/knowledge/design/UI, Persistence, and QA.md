@@ -83,6 +83,8 @@ Progress is stored in version-addressed `localStorage` slots after meaningful st
 
 V3 adds canonical `goldenBug` identity plus `resumeEncounter`. It never stores the absolute ten-second deadline, Three.js objects, DOM state, or presentation objects. Loading an active event reconstructs a fresh deadline at load time; independent browser QA read 9.9 s 100 ms after reload. Manual input never resets the event deadline or automatic cooldown.
 
+Golden Bug reward growth is a no-schema balance change. A V3 payload created while the prior 10-times reward was active is accepted only when its stored reward exactly matches that legacy derived value; load normalizes it to the current 50-times reward before the next save. Arbitrary altered rewards remain invalid. A literal historical active-event load -> save -> reload regression and isolated browser QA prove that unrelated coins and progression are preserved.
+
 Bootstrap prefers valid V3. If V3 is missing/invalid, it validates V2, preserves its raw bytes, migrates one version to V3, validates and publishes V3, then reloads stably. V1 composes through V2 to V3; the unversioned V2 source remains byte-for-byte intact. Failed publication preserves valid in-memory state and every source. Restore repairs only missing/invalid V3 from supported prior sources. Malformed/future values recover safely; explicit reset removes only V3.
 
 Every task still classifies persistence impact. No-schema work proves historical loads; schema work ships one-version adapters, fixtures, and load -> migrate -> save -> reload proof. ABI-010 direct tests and browser QA prove V1/V2 retention, active-event reload, malformed V3 plus valid V2 recovery, and unchanged semantic progress.

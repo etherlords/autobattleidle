@@ -1,9 +1,11 @@
-import { automaticInterval, spawnGoldenBug } from "../../domain/combat";
+import { automaticInterval, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
 import type { CombatState } from "../../domain/combat";
 import { SAVE_VERSION } from "./contracts";
 import { decodeV2 } from "./validation-v2";
 import { hasExactKeys, integer, isRecord, parseEnemyShape } from "./validation-primitives";
 import { parseV2Player } from "./validation-v2";
+
+const LEGACY_GOLDEN_BUG_REWARD_FACTOR = 10;
 
 const parseGoldenBug = (
   value: unknown,
@@ -44,11 +46,15 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
   const player = parseV2Player(value.player);
   if (goldenBug === undefined || enemy === undefined || player === undefined) return undefined;
   const expected = spawnGoldenBug(goldenBug.resumeEncounter, player);
+  const legacyReward = Math.min(
+    Number.MAX_SAFE_INTEGER,
+    spawnEnemy(goldenBug.resumeEncounter, 0).reward * LEGACY_GOLDEN_BUG_REWARD_FACTOR,
+  );
   if (
     enemy.id !== expected.id ||
     enemy.health > expected.maxHealth ||
     enemy.maxHealth !== expected.maxHealth ||
-    enemy.reward !== expected.reward ||
+    (enemy.reward !== expected.reward && enemy.reward !== legacyReward) ||
     enemy.encounter !== expected.encounter
   )
     return undefined;
@@ -57,7 +63,7 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
   return {
     automaticUnlocked: value.automaticUnlocked,
     coins: value.coins,
-    enemy,
+    enemy: { ...enemy, reward: expected.reward },
     goldenBug,
     nextAutomaticAttackAtMs: value.automaticUnlocked ? nowMs + automaticInterval(enemy, player) : 0,
     player,

@@ -60,6 +60,35 @@ describe("persistence boundary", () => {
       nextAutomaticAttackAtMs: 0,
     });
   });
+  it("normalizes a literal legacy active-V3 Golden Bug reward through load, save, and reload", () => {
+    const oldActiveV3 =
+      '{"automaticUnlocked":false,"coins":7,"enemy":{"armor":0,"encounter":51,"grade":"normal","health":5,"id":3002399751580381,"maxHealth":5,"modifier":null,"reward":1220},"goldenBug":{"id":50,"resumeEncounter":51},"player":{"automaticSpeedLevel":0,"armorPenetrationLevel":0,"criticalChance":0,"criticalLevel":0,"damage":1,"damageLevel":0,"doubleRewardChance":0,"doubleRewardLevel":0},"version":3}';
+    const values = new Map<string, string>([[SAVE_V3_KEY, oldActiveV3]]);
+    const pagehide = new Set<() => void>();
+    const boundary = createPersistenceBoundary({
+      page: {
+        addEventListener: (_type, listener) => pagehide.add(listener),
+        removeEventListener: (_type, listener) => pagehide.delete(listener),
+      },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+    const loaded = boundary.load(fallback(), 100);
+    expect(loaded).toMatchObject({
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      enemy: { reward: 6100 },
+    });
+    boundary.onStateChanged(loaded);
+    [...pagehide][0]?.();
+    expect(JSON.parse(values.get(SAVE_V3_KEY) ?? "")).toMatchObject({ enemy: { reward: 6100 } });
+    expect(boundary.load(fallback(), 200)).toEqual({ ...loaded, nextAutomaticAttackAtMs: 0 });
+    expect(
+      decodeSave(JSON.parse(oldActiveV3.replace('"reward":1220', '"reward":1221')), fallback(), 0),
+    ).toEqual(fallback());
+  });
   it("round-trips only canonical state and rejects malformed or unsupported values", () => {
     const state = {
       ...fallback(),

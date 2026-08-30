@@ -82,13 +82,11 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       state: { ...state, enemy: { ...state.enemy, health }, nextAutomaticAttackAtMs },
     };
   const requestedReward =
-    state.goldenBug === null
-      ? state.enemy.reward *
-        (command.rolls.doubleReward <
-        doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
-          ? COMBAT_FORMULAS.doubleRewardMultiplier
-          : 1)
-      : state.enemy.reward;
+    state.enemy.reward *
+    (command.rolls.doubleReward <
+    doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
+      ? COMBAT_FORMULAS.doubleRewardMultiplier
+      : 1);
   const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);
   const nextEncounter = state.enemy.encounter === MAX_ENCOUNTER ? 1 : state.enemy.encounter + 1;
   const resumeEncounter = state.goldenBug?.resumeEncounter;

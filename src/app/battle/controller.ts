@@ -92,7 +92,7 @@ export class BattleController {
         source,
         type: "attack",
       },
-      battleEventMessages.attack(source, result.event),
+      battleEventMessages.attack(source, result.event, goldenBugBefore),
     );
   }
 
@@ -124,7 +124,7 @@ export class BattleController {
         previousEnemy,
         type: "frame",
       },
-      battleEventMessages.frame(automaticOutcome),
+      battleEventMessages.frame(automaticOutcome, goldenBugBefore),
     );
   }
 

@@ -59,6 +59,21 @@ describe("battleEventMessages", () => {
         type: "hit",
       }),
     ).toBe("Automatic kill: +1M coins");
+    expect(
+      battleEventMessages.attack(
+        "manual",
+        {
+          armorPreventedDamage: 0,
+          critical: false,
+          damage: 0,
+          defeated: true,
+          penetration: 0,
+          reward: 123_456,
+          type: "hit",
+        },
+        true,
+      ),
+    ).toBe("Golden Bug reward: +123K coins (123,456)");
   });
 
   it("maps one immutable combat event to exact presentation-only visual cues", () => {

@@ -10,6 +10,7 @@ import {
   createCombatState,
   damageForLevel,
   doubleRewardChanceForLevel,
+  expireGoldenBug,
   purchaseUpgrade,
   spawnGoldenBug,
   type CombatState,
@@ -62,7 +63,71 @@ describe("endless combat progression", () => {
     );
   });
 
-  it("spawns one Golden Bug after encounter 50, resumes encounter 51, and awards its fixed reward once", () => {
+  it("audits cadence-derived Golden Bug rewards across legal early, mid, and late resumes", () => {
+    const bands = [
+      {
+        automaticSpeedLevel: 0,
+        criticalLevel: 0,
+        damageLevel: 5,
+        goldenBeatsNearestBoss: true,
+        resumeEncounter: 51,
+        upgrade: "damage",
+      },
+      {
+        automaticSpeedLevel: 0,
+        criticalLevel: 5,
+        damageLevel: 25,
+        goldenBeatsNearestBoss: false,
+        resumeEncounter: 101,
+        upgrade: "critical-chance",
+      },
+      {
+        automaticSpeedLevel: 25,
+        criticalLevel: 0,
+        damageLevel: 100,
+        goldenBeatsNearestBoss: false,
+        resumeEncounter: 1_001,
+        upgrade: "automatic-speed",
+      },
+    ] as const;
+    for (const band of bands) {
+      const player = createCombatState({
+        automaticSpeedLevel: band.automaticSpeedLevel ?? 0,
+        criticalChance: criticalChanceForLevel(band.criticalLevel ?? 0),
+        criticalLevel: band.criticalLevel ?? 0,
+        damage: damageForLevel(band.damageLevel),
+        damageLevel: band.damageLevel,
+      }).player;
+      const resumeEncounter = band.resumeEncounter;
+      const ordinary = spawnEnemy(resumeEncounter, 0);
+      const beforeBoss =
+        Math.floor(resumeEncounter / COMBAT_BALANCE.bossInterval) * COMBAT_BALANCE.bossInterval;
+      const afterBoss = beforeBoss + COMBAT_BALANCE.bossInterval;
+      const nearestBoss = spawnEnemy(
+        resumeEncounter - beforeBoss <= afterBoss - resumeEncounter ? beforeBoss : afterBoss,
+        0,
+      );
+      const golden = spawnGoldenBug(resumeEncounter, player);
+      const reward = golden.reward;
+      const upgradeState = {
+        ...createCombatState(player, 0, band.upgrade === "automatic-speed"),
+        coins: reward,
+      };
+      expect(reward).toBe(ordinary.reward * COMBAT_BALANCE.goldenBugRewardFactor);
+      expect(reward).toBeGreaterThan(ordinary.reward);
+      expect(nearestBoss.reward).toBeGreaterThan(ordinary.reward);
+      expect(golden.reward > nearestBoss.reward).toBe(band.goldenBeatsNearestBoss);
+      expect(upgradeDisabledReason(upgradeState, band.upgrade)).toBeNull();
+      expect(reward).toBeGreaterThan(upgradeCost(upgradeState, band.upgrade));
+      const automaticDamage =
+        Math.ceil(COMBAT_BALANCE.goldenBugWindowMs / automaticInterval(spawnEnemy(1, 0), player)) *
+        damageForLevel(band.damageLevel);
+      expect(golden.maxHealth).toBeGreaterThan(automaticDamage);
+      expect(golden.maxHealth).toBeLessThanOrEqual(damageForLevel(band.damageLevel) * 100);
+    }
+  });
+
+  it("spawns one Golden Bug after encounter 50, resumes encounter 51, and applies double reward once", () => {
     const ordinary = spawnEnemy(50, 0);
     const initial = { ...createCombatState(), enemy: { ...ordinary, health: 1 } };
     const spawned = attack(initial, {
@@ -82,8 +147,61 @@ describe("endless combat progression", () => {
         source: "manual",
       },
     );
-    expect(killed.event).toMatchObject({ defeated: true, reward: spawnEnemy(51, 0).reward * 10 });
+    expect(killed.event).toMatchObject({
+      defeated: true,
+      reward: spawnEnemy(51, 0).reward * COMBAT_BALANCE.goldenBugRewardFactor,
+    });
     expect(killed.state).toMatchObject({ goldenBug: null, enemy: spawnEnemy(51, 0) });
+    const doubled = attack(
+      {
+        ...spawned.state,
+        enemy: { ...spawned.state.enemy, health: 1 },
+        player: { ...spawned.state.player, doubleRewardLevel: 20 },
+      },
+      {
+        atMs: 1,
+        enemyId: spawned.state.enemy.id,
+        rolls: { critical: 1, doubleReward: 0, nextEliteModifier: 0 },
+        source: "manual",
+      },
+    );
+    expect(doubled.event).toMatchObject({
+      defeated: true,
+      reward: spawnEnemy(51, 0).reward * COMBAT_BALANCE.goldenBugRewardFactor * 2,
+    });
+    expect(
+      attack(doubled.state, {
+        atMs: 2,
+        enemyId: spawned.state.enemy.id,
+        rolls: { critical: 1, doubleReward: 0, nextEliteModifier: 0 },
+        source: "manual",
+      }),
+    ).toMatchObject({ event: { type: "ignored" }, state: doubled.state });
+  });
+
+  it("keeps Golden Bug escape empty and saturates a single accepted reward", () => {
+    const player = createCombatState().player;
+    const active = {
+      ...createCombatState(player),
+      enemy: { ...spawnGoldenBug(51, player), health: 1, reward: Number.MAX_SAFE_INTEGER },
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      coins: Number.MAX_SAFE_INTEGER - 1,
+    };
+    expect(expireGoldenBug(active)).toMatchObject({
+      coins: Number.MAX_SAFE_INTEGER - 1,
+      goldenBug: null,
+    });
+    expect(
+      attack(active, {
+        atMs: 0,
+        enemyId: active.enemy.id,
+        rolls: { critical: 1, doubleReward: 0, nextEliteModifier: 0 },
+        source: "manual",
+      }),
+    ).toMatchObject({
+      event: { defeated: true, reward: 1 },
+      state: { coins: Number.MAX_SAFE_INTEGER },
+    });
   });
 
   it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
@@ -335,24 +453,24 @@ describe("endless combat progression", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
     expect(first).toEqual({
-      armorPreventedDamage: 142681,
-      automaticAttacks: 2780,
+      armorPreventedDamage: 133777,
+      automaticAttacks: 2590,
       bosses: [
         { elapsedMs: 8079407.359888906, encounter: 35 },
-        { elapsedMs: 18222883.009831183, encounter: 70 },
-        { elapsedMs: 25581417.26164943, encounter: 105 },
+        { elapsedMs: 17694597.802813232, encounter: 70 },
+        { elapsedMs: 24596853.331069686, encounter: 105 },
       ],
-      coins: 36501,
-      elapsedMs: 25581417.26164943,
+      coins: 44681,
+      elapsedMs: 24596853.331069686,
       encounters: 106,
       manualAttacks: 0,
-      penetration: 0.35526315789473684,
+      penetration: 0.3088235294117647,
       purchases: {
-        "armor-penetration": 18,
-        "automatic-speed": 11,
+        "armor-penetration": 14,
+        "automatic-speed": 8,
         "automatic-unlock": 1,
         "critical-chance": 3,
-        damage: 72,
+        damage: 79,
         "double-reward": 0,
       },
     });

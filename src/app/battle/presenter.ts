@@ -16,18 +16,21 @@ import type { BattleControllerEvent, BattleUpdate } from "./contracts";
 const attackMessage = (
   source: "manual" | "automatic",
   outcome: AttackEvent,
+  goldenBugBefore = false,
 ): string | undefined => {
   if (outcome.type === "ignored") return undefined;
   const label = source === "manual" ? "Manual" : "Automatic";
-  return outcome.defeated
-    ? `${label} kill: +${formatNumber(outcome.reward).text} coins`
-    : `${label} hit: ${formatNumber(outcome.damage).text} damage`;
+  if (!outcome.defeated) return `${label} hit: ${formatNumber(outcome.damage).text} damage`;
+  const reward = formatNumber(outcome.reward);
+  if (goldenBugBefore)
+    return `Golden Bug reward: +${reward.text} coins${reward.text === reward.exact ? "" : ` (${reward.exact})`}`;
+  return `${label} kill: +${reward.text} coins`;
 };
 
 export const battleEventMessages = {
   attack: attackMessage,
-  frame: (outcome: AttackEvent | null): string | undefined =>
-    outcome === null ? undefined : attackMessage("automatic", outcome),
+  frame: (outcome: AttackEvent | null, goldenBugBefore = false): string | undefined =>
+    outcome === null ? undefined : attackMessage("automatic", outcome, goldenBugBefore),
   purchase: (id: string, reason: string | null): string =>
     reason ?? `Purchased ${UPGRADES.find((upgrade) => upgrade.id === id)?.label ?? id}`,
   reset: (): undefined => undefined,

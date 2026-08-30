@@ -4,8 +4,8 @@ id: ABI-027
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 7
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -28,7 +28,7 @@ Make Golden Bug rewards visibly valuable relative to encounter risk and progress
 
 - Type: bug
 - Priority: high
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 

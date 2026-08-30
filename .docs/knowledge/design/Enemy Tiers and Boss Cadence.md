@@ -46,6 +46,12 @@ reload-equivalent snapshots reproduce the same composition. Grade and modifier c
 non-color layers. Shields and ornaments attach through family surface anchors with bounded mesh counts;
 random primitive placement and detached global offsets are rejected.
 
+Golden Bug keeps the every-50-encounters, ten-second event cadence and five-times health, but its reward
+is now 50 times the resumed ordinary encounter reward so a successful timed kill is visibly significant.
+The existing double-reward roll applies once to that payout; escape pays zero and resumes the stored
+encounter. The combat log labels the Golden payout explicitly and includes the exact amount when compact
+formatting would hide it.
+
 ## Boss cadence
 
 A fresh run uses one explicit encounter-1 exception: the starter enemy has 10 maximum health, so baseline 1-damage, non-critical manual input defeats it in exactly 10 accepted attacks. Initial state construction applies the exception through `spawnStarterEnemy`; ordinary `spawnEnemy` retains the existing 140-base formula, including the safe endless rollover from the maximum encounter back to numeric encounter 1. Encounter 2 and later enemies, grades, modifiers, bosses, rewards, and endless-growth formulas retain their existing balance. The save schema does not change: new encounter-1 saves round-trip at 10 HP, while valid historical V1/V2 encounter-1 progress keeps its accepted 140-based semantics and is never reset or rewritten merely by this balance release.

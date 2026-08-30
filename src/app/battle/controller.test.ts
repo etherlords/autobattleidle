@@ -70,6 +70,28 @@ describe("BattleController", () => {
       enemy: { encounter: 51 },
     });
   });
+  it("publishes one explicit Golden Bug payout without changing the event shape", () => {
+    const player = createCombatState({ damage: 10, doubleRewardChance: 0 }).player;
+    const initial = {
+      ...createCombatState(player),
+      enemy: { ...spawnGoldenBug(51, player), health: 1 },
+      goldenBug: { id: 50, resumeEncounter: 51 },
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    const events: BattleControllerEvent[] = [];
+    controller.subscribe((event) => events.push(event));
+    expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
+    expect(events[0]?.events.at(-1)?.message).toMatch(/^Golden Bug reward: \+/);
+    expect(events[0]?.events.at(-1)).toEqual({
+      id: 1,
+      message: expect.any(String),
+    });
+  });
   it("publishes complete synchronous commands with exact history and persistence flags", () => {
     const initial = stateWith(
       createCombatState({ criticalChance: 0, damage: 10, doubleRewardChance: 0 }),
