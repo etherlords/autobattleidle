@@ -3,10 +3,12 @@ dist/
 .release/
 .codex/config.toml
 .planner/planner-install.json
+.planner/operations/
 .tools/vault-runtime/
 .tools/planner-runtime/
 .vault-cache/
 .planner-cache/
+.wrangler/
 .trash/
 *.log
 *.tsbuildinfo
@@ -14,5 +16,6 @@ dist/
 .env.*
 !.env.example
 
-.playwright-cli/*
+.playwright-cli/
+output/playwright/
 vite-qa.err
