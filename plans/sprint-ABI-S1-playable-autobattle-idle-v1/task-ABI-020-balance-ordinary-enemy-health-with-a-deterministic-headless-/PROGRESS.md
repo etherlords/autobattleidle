@@ -4,7 +4,7 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 183
+revision: 186
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 183
-- Last update: Fresh QA approved portable CI performance repair with repeated warmed runs, exact oracle/report equality, and full canonical check.
+- Revision: 186
+- Last update: Fresh QA approved wrapper-only CI repair; product performance assertion remains unchanged and all canonical checks pass.
 
 ## Execution plan
 
@@ -3168,5 +3168,52 @@ requiredGates:
 - Evidence:
   - Warmed 48h focused benchmark 3/3 PASS: 3.02s, 2.97s, 2.88s wrapper totals; internal <5s guard PASS
   - Exact 1/4/8/24/48/49h oracle equality, committed report equality, deterministic telemetry 3/3 PASS
+  - pnpm check 20 files / 178 tests PASS
+  - git diff --check PASS
+
+### evt-de984390-240e-4c3d-9ac0-f46cf87f6656
+
+- Timestamp: 2026-08-31T19:41:48.876Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 183
+- Resulting revision: 184
+- Summary: EVENT returned — root-manager — exact-SHA CI proved the 7s test wrapper cannot cover two sequential bounded 48h runs on hosted hardware; retain the measured <5s guard and widen only the focused wrapper.
+- Idempotency key: abi020-ci-wrapper-timeout-return-v15
+- Evidence:
+  - release SHA 32d973e8d055d36c5f5c76019d2581631a7aa380
+  - CI run 33431804796 failed Vitest 7000ms wrapper timeout at warmed test
+  - internal <5s assertion did not fail; test executes warm-up plus measured run
+
+### evt-9c6687c7-d5e4-4511-b86a-a4064378fc24
+
+- Timestamp: 2026-08-31T19:43:15.024Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 184
+- Resulting revision: 185
+- Summary: EVENT checkpoint — ABI-020 worker — widened only the warmed-48h wrapper to 12s for two sequential bounded runs; internal measured <5s assertion and all behavior proofs remain unchanged.
+- Idempotency key: abi020-ci-wrapper-repair-checkpoint-v16
+- Evidence:
+  - src/domain/combat.test.ts focused wrapper timeout 12000ms
+  - internal warmed 48h <5000ms assertion unchanged
+  - focused benchmark 2/2 PASS
+  - pnpm check 178/178 PASS
+
+### evt-3ac715b7-7feb-4421-a0a5-0740b2c8ebab
+
+- Timestamp: 2026-08-31T19:44:51.404Z
+- Actor: abi020-independent-qa-v14
+- Operation: gate.record
+- Prior revision: 185
+- Resulting revision: 186
+- Summary: Fresh QA approved wrapper-only CI repair; product performance assertion remains unchanged and all canonical checks pass.
+- Idempotency key: abi020-independent-qa-v14-pass
+- Request fingerprint: e9524e3e8b1dd37f4723ca873c5db4f597fad9b9c06348369c6a748cda08b9df
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Diff from 32d973e only warmed wrapper 7000ms to 12000ms; internal measured <5000ms guard unchanged
+  - Warmed benchmark 3/3 PASS: 2.95s, 3.13s, 2.86s test runtimes
   - pnpm check 20 files / 178 tests PASS
   - git diff --check PASS

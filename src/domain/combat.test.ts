@@ -266,7 +266,7 @@ describe("endless combat progression", () => {
     const report = fastForwardProgression(48 * 60 * 60 * 1_000);
     expect(report.elapsedMs).toBe(48 * 60 * 60 * 1_000);
     expect(performance.now() - startedAtMs).toBeLessThan(5_000);
-  }, 7_000);
+  }, 12_000);
 
   it("keeps the event-driven 48-hour fast-forward equal to the production simulator at time boundaries", () => {
     const roundedTiming = (report: ReturnType<typeof simulateProgression>) => ({
