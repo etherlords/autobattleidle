@@ -162,11 +162,57 @@ body {
   padding: 1rem;
   width: min(38rem, 100%);
 }
+.leaderboard-close {
+  float: right;
+  font-size: 1.5rem;
+  line-height: 1;
+  min-height: 2rem;
+  min-width: 2rem;
+  padding: 0.1rem;
+}
+.leaderboard-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+.leaderboard-tabs button[aria-pressed="true"] {
+  background: #75c7ff;
+  color: #07121f;
+}
+.leaderboard-rank-summary {
+  font-weight: 700;
+  margin: 0.75rem 0;
+}
 .leaderboard-entries {
+  border-collapse: collapse;
   margin: 0.75rem 0;
   max-height: 45vh;
   overflow: auto;
-  padding-left: 1.5rem;
+  table-layout: fixed;
+  width: 100%;
+}
+.leaderboard-entries th,
+.leaderboard-entries td {
+  padding: 0.4rem;
+  text-align: left;
+}
+.leaderboard-entries th:first-child,
+.leaderboard-entries td:first-child {
+  width: 3.5rem;
+}
+.leaderboard-entries th:last-child,
+.leaderboard-entries td:last-child {
+  text-align: right;
+  width: 7rem;
+}
+.leaderboard-entries td:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.leaderboard-current {
+  background: rgb(117 199 255 / 22%);
+  outline: 1px solid #75c7ff;
 }
 
 .upgrades-modal[hidden] {
@@ -256,6 +302,24 @@ body {
   .leaderboard-launcher {
     bottom: 0.75rem;
     left: 8.75rem;
+  }
+
+  .leaderboard-dialog {
+    padding: 0.75rem;
+  }
+
+  .leaderboard-tabs {
+    gap: 0.35rem;
+  }
+
+  .leaderboard-tabs button {
+    min-height: 2.25rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .leaderboard-entries th,
+  .leaderboard-entries td {
+    padding: 0.35rem 0.25rem;
   }
 
   .upgrades-modal {

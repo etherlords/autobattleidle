@@ -350,7 +350,10 @@ describe("leaderboard worker boundary", () => {
       request("/v1/around", { headers: { Authorization: `Bearer ${first}` } }),
       env(db),
     );
-    expect(((await around.json()) as { entries: unknown[] }).entries).toHaveLength(2);
+    expect((await around.json()) as unknown).toMatchObject({
+      entries: [{ rank: 1 }, { rank: 2 }],
+      me: { rank: 1 },
+    });
     const deleted = await handler.fetch(
       request("/v1/identity", { headers: { Authorization: `Bearer ${first}` }, method: "DELETE" }),
       env(db),
@@ -519,7 +522,7 @@ describe("leaderboard worker boundary", () => {
     ).toBe(503);
   });
 
-  it("caps Top 100 and Around Me at 100 entries on each side", async () => {
+  it("includes my Top rank and caps Around Me at ten entries on each side", async () => {
     const db = new MemoryD1();
     const token = await identity(db);
     const mine = db.players[0];
@@ -550,15 +553,39 @@ describe("leaderboard worker boundary", () => {
     const headers = { Authorization: `Bearer ${token}` };
     const top = (await (await handler.fetch(request("/v1/top", { headers }), env(db))).json()) as {
       entries: { level: number }[];
+      me: { rank: number };
     };
     expect(top.entries).toHaveLength(100);
     expect(top.entries[0]?.level).toBe(399);
     expect(top.entries[99]?.level).toBe(300);
+    expect(top.me.rank).toBe(151);
     const around = (await (
       await handler.fetch(request("/v1/around", { headers }), env(db))
     ).json()) as { entries: { level: number }[]; me: { rank: number } };
     expect(around.me.rank).toBe(151);
-    expect(around.entries).toHaveLength(201);
-    expect(around.entries[100]?.level).toBe(150);
+    expect(around.entries).toHaveLength(21);
+    expect(around.entries[10]?.level).toBe(150);
+
+    mine.level = 500;
+    const first = (await (
+      await handler.fetch(request("/v1/around", { headers }), env(db))
+    ).json()) as { entries: { rank: number }[]; me: { rank: number } };
+    expect(first.me.rank).toBe(1);
+    expect(first.entries.map(({ rank }) => rank)).toEqual(
+      Array.from({ length: 11 }, (_, index) => index + 1),
+    );
+    expect(first.entries.filter(({ rank }) => rank < first.me.rank)).toHaveLength(0);
+    expect(first.entries.filter(({ rank }) => rank > first.me.rank)).toHaveLength(10);
+
+    mine.level = -999;
+    const last = (await (
+      await handler.fetch(request("/v1/around", { headers }), env(db))
+    ).json()) as { entries: { rank: number }[]; me: { rank: number } };
+    expect(last.me.rank).toBe(301);
+    expect(last.entries.map(({ rank }) => rank)).toEqual(
+      Array.from({ length: 11 }, (_, index) => index + 291),
+    );
+    expect(last.entries.filter(({ rank }) => rank < last.me.rank)).toHaveLength(10);
+    expect(last.entries.filter(({ rank }) => rank > last.me.rank)).toHaveLength(0);
   });
 });

@@ -14,7 +14,7 @@ export const top = async (
 ): Promise<Response> => {
   if (!(await permitRequest(request, env, "read", context.hash)))
     return json({ error: "rate-limit" }, 429, origin);
-  return json({ entries: await topEntries(env, mode(request)) }, 200, origin);
+  return json(await topEntries(env, context.player, mode(request)), 200, origin);
 };
 
 export const around = async (

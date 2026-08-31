@@ -37,6 +37,19 @@ export const topEntries = async (
   return rows.map((player, index) => entry(player, index + 1));
 };
 
+export const rankedEntry = async (
+  env: Env,
+  player: Player,
+  mode: RankingMode,
+): Promise<RankedEntry> => {
+  const rank = await database(env)
+    .select({ count: sql<number>`count(*)` })
+    .from(players)
+    .where(aheadOf(player, mode))
+    .get();
+  return entry(player, (rank?.count ?? 0) + 1);
+};
+
 export const aroundEntries = async (
   env: Env,
   player: Player,

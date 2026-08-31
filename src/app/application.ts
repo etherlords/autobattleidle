@@ -120,15 +120,21 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   let syncLeaderboard: LeaderboardProgressSync | undefined;
   if (dependencies.hud.onLeaderboardLoad !== undefined) {
     const leaderboard = dependencies.createLeaderboard?.() ?? new LeaderboardClient();
+    let leaderboardLoadVersion = 0;
     syncLeaderboard = new LeaderboardProgressSync(leaderboard);
     const showLeaderboard = async (
       around: boolean,
       mode: "level" | "golden-bugs",
     ): Promise<void> => {
+      if (disposed) return;
+      const version = ++leaderboardLoadVersion;
       dependencies.hud.reportLeaderboard?.("Loading leaderboard…");
       try {
-        dependencies.hud.renderLeaderboard?.(await leaderboard.load(around, mode));
+        const view = await leaderboard.load(around, mode);
+        if (disposed || version !== leaderboardLoadVersion) return;
+        dependencies.hud.renderLeaderboard?.(view);
       } catch (error) {
+        if (disposed || version !== leaderboardLoadVersion) return;
         const rateLimited =
           typeof error === "object" &&
           error !== null &&
@@ -144,17 +150,21 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     dependencies.hud.onLeaderboardLoad((around, mode) => {
       void showLeaderboard(around, mode);
     });
-    dependencies.hud.onLeaderboardRename?.((name) => {
-      void leaderboard
-        .rename(name)
-        .then(() => showLeaderboard(false, "level"))
-        .catch(() => dependencies.hud.reportLeaderboard?.("Name could not be changed."));
+    dependencies.hud.onLeaderboardRename?.(async (name) => {
+      try {
+        await leaderboard.rename(name);
+        if (!disposed) await showLeaderboard(false, "level");
+      } catch {
+        if (!disposed) dependencies.hud.reportLeaderboard?.("Name could not be changed.");
+      }
     });
-    dependencies.hud.onLeaderboardReset?.(() => {
-      void leaderboard
-        .reset()
-        .then(() => dependencies.hud.reportLeaderboard?.("Leaderboard identity deleted."))
-        .catch(() => dependencies.hud.reportLeaderboard?.("Identity could not be deleted."));
+    dependencies.hud.onLeaderboardReset?.(async () => {
+      try {
+        await leaderboard.reset();
+        if (!disposed) dependencies.hud.reportLeaderboard?.("Leaderboard identity deleted.");
+      } catch {
+        if (!disposed) dependencies.hud.reportLeaderboard?.("Identity could not be deleted.");
+      }
     });
   }
   const render = (event?: BattleControllerEvent): void => {

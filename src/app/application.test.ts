@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createApplication, startApplication } from "./application";
 import { createCombatState, type UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
+import type { LeaderboardView } from "../leaderboard/contracts";
 import type { HudIntent } from "../ui/hud/intents";
 
 const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly string[] => {
@@ -12,11 +13,127 @@ const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly string[] =
 
 const originalDocument = globalThis.document;
 
+const deferred = <T>() => {
+  let reject: (reason?: unknown) => void = () => undefined;
+  let resolve: (value: T) => void = () => undefined;
+  const promise = new Promise<T>((nextResolve, nextReject) => {
+    resolve = nextResolve;
+    reject = nextReject;
+  });
+  return { promise, reject, resolve };
+};
+
 afterEach(() => {
   Object.defineProperty(globalThis, "document", { configurable: true, value: originalDocument });
 });
 
 describe("startApplication", () => {
+  it("renders and reports only the latest leaderboard request", async () => {
+    const requests: ReturnType<typeof deferred<LeaderboardView>>[] = [];
+    const renameRequest = deferred<undefined>();
+    const resetRequest = deferred<undefined>();
+    const rendered: LeaderboardView[] = [];
+    const reports: string[] = [];
+    let load: ((around: boolean, mode: "level" | "golden-bugs") => void) | undefined;
+    let rename: ((name: string) => void) | undefined;
+    let reset: (() => void) | undefined;
+    const app = startApplication({
+      createLeaderboard: () => ({
+        load: () => {
+          const request = deferred<LeaderboardView>();
+          requests.push(request);
+          return request.promise;
+        },
+        rename: () => renameRequest.promise,
+        reset: () => resetRequest.promise,
+        submit: async () => undefined,
+      }),
+      window: {
+        addEventListener: () => undefined,
+        cancelAnimationFrame: () => undefined,
+        removeEventListener: () => undefined,
+        requestAnimationFrame: () => 1,
+      },
+      game: {
+        dispose: () => undefined,
+        render: () => undefined,
+        rotateCamera: () => undefined,
+        resize: () => undefined,
+      },
+      hud: {
+        dispose: () => undefined,
+        subscribe: () => () => undefined,
+        onAttack: () => undefined,
+        onLeaderboardLoad: (listener) => {
+          load = listener;
+        },
+        onLeaderboardRename: (listener) => {
+          rename = listener;
+        },
+        onLeaderboardReset: (listener) => {
+          reset = listener;
+        },
+        onReset: () => undefined,
+        onRestore: () => undefined,
+        onUpgrade: () => undefined,
+        render: () => undefined,
+        renderLeaderboard: (view) => rendered.push(view),
+        reportLeaderboard: (message) => reports.push(message),
+        reportPersistence: () => undefined,
+        setRestoreAvailable: () => undefined,
+      },
+      persistence: {
+        dispose: () => undefined,
+        load: (fallback) => fallback,
+        hasPreviousVersionSave: () => false,
+        onStateChanged: () => undefined,
+        reset: () => undefined,
+        restorePreviousVersion: () => ({ message: "", state: undefined }),
+      },
+      initialState: createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }),
+      onDispose: () => undefined,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      viewport: () => ({ height: 240, width: 400 }),
+    });
+    if (load === undefined || rename === undefined || reset === undefined)
+      throw new Error("Expected leaderboard controls");
+    load(false, "golden-bugs");
+    load(false, "level");
+    const level = { entries: [{ goldenBugs: 0, level: 12, name: "Level", rank: 1 }], me: null };
+    requests[1]?.resolve(level);
+    await Promise.resolve();
+    requests[0]?.resolve({
+      entries: [{ goldenBugs: 12, level: 0, name: "Golden Bugs", rank: 1 }],
+      me: null,
+    });
+    await Promise.resolve();
+    expect(rendered).toEqual([level]);
+    load(false, "golden-bugs");
+    load(false, "level");
+    requests[3]?.resolve(level);
+    await Promise.resolve();
+    requests[2]?.reject(new Error("offline"));
+    await Promise.resolve();
+    expect(rendered).toEqual([level, level]);
+    expect(reports).toEqual([
+      "Loading leaderboard…",
+      "Loading leaderboard…",
+      "Loading leaderboard…",
+      "Loading leaderboard…",
+    ]);
+    load(false, "level");
+    const reportsBeforeDispose = reports.length;
+    rename("Name");
+    reset();
+    app.dispose();
+    requests[4]?.resolve(level);
+    renameRequest.resolve(undefined);
+    resetRequest.resolve(undefined);
+    await Promise.resolve();
+    expect(rendered).toEqual([level, level]);
+    expect(reports).toHaveLength(reportsBeforeDispose);
+  });
+
   it("does not submit leaderboard progress for ordinary level changes", async () => {
     let intent: ((value: HudIntent) => void) | undefined;
     let submissions = 0;

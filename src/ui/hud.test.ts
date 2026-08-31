@@ -76,7 +76,7 @@ const dispatchListeners = (element: FakeElement, type: string, event: Event): vo
 class FakeDocument extends FakeElement {
   activeElement: FakeElement | null = null;
 
-  createElement(): FakeElement {
+  createElement(_tagName?: string): FakeElement {
     const element = new FakeElement();
     element.focusHandler = () => {
       this.activeElement = element;
@@ -124,6 +124,14 @@ const snapshot: BattleSnapshot = {
 };
 
 const originalDocument = globalThis.document;
+
+const deferred = <T>() => {
+  let resolve: (value: T) => void = () => undefined;
+  const promise = new Promise<T>((nextResolve) => {
+    resolve = nextResolve;
+  });
+  return { promise, resolve };
+};
 
 afterEach(() => {
   Object.defineProperty(globalThis, "document", { configurable: true, value: originalDocument });
@@ -191,13 +199,9 @@ describe("createHud", () => {
     expect(modal.hidden).toBe(false);
     expect(close.focusCalls).toBe(1);
     hud.reportLeaderboard?.("Loading leaderboard…");
-    expect(element(host, "leaderboard-dialog").children[5]?.textContent).toBe(
-      "Loading leaderboard…",
-    );
+    expect(element(host, "leaderboard-rank-summary").textContent).toBe("Loading leaderboard…");
     hud.renderLeaderboard?.({ entries: [], me: null });
-    expect(element(host, "leaderboard-dialog").children[5]?.textContent).toBe(
-      "No ranked players yet.",
-    );
+    expect(element(host, "leaderboard-rank-summary").textContent).toBe("No ranked players yet.");
     const input = element(host, "leaderboard-name");
     input.value = "  Name  ";
     const rename = element(host, "leaderboard-rename");
@@ -215,6 +219,87 @@ describe("createHud", () => {
     hud.dispose();
     expect(document.listeners.get("keydown")?.size ?? 0).toBe(0);
   });
+  it("uses separated leaderboard tab rows and an aligned current-player table", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    const loads: [boolean, string][] = [];
+    hud.onLeaderboardLoad?.((around, mode) => loads.push([around, mode]));
+    element(host, "leaderboard-launcher").dispatch("click");
+    const dialog = element(host, "leaderboard-dialog");
+    expect(dialog.children.slice(0, 4).map((child) => child.className)).toEqual([
+      "leaderboard-close",
+      "leaderboard-tabs leaderboard-metric-tabs",
+      "leaderboard-tabs leaderboard-view-tabs",
+      "leaderboard-rank-summary",
+    ]);
+    element(host, "leaderboard-around").dispatch("click");
+    element(host, "leaderboard-golden-bugs").dispatch("click");
+    expect(loads).toEqual([
+      [false, "level"],
+      [true, "level"],
+      [true, "golden-bugs"],
+    ]);
+    expect(element(host, "leaderboard-around").attributes.get("aria-pressed")).toBe("true");
+    hud.renderLeaderboard?.({
+      entries: [
+        { goldenBugs: 9, level: 99, name: "Above", rank: 4 },
+        { goldenBugs: 8, level: 88, name: "Me", rank: 5 },
+      ],
+      me: { goldenBugs: 8, level: 88, name: "Me", rank: 5 },
+    });
+    expect(element(host, "leaderboard-rank-summary").textContent).toBe(
+      "Community ranking — Your rank is #5",
+    );
+    const table = element(host, "leaderboard-entries");
+    const head = table.children[0];
+    const body = table.children[1];
+    expect(head?.children[0]?.children.map((cell) => cell.textContent)).toEqual([
+      "Place",
+      "Name",
+      "Golden Bugs",
+    ]);
+    expect(body?.children[1]?.children.map((cell) => cell.textContent)).toEqual(["5", "Me", "8"]);
+    expect(body?.children[1]?.className).toBe("leaderboard-current");
+    expect(body?.children[1]?.attributes.get("aria-label")).toBe("Your rank 5");
+    expect(element(host, "leaderboard-close").textContent).toBe("×");
+    expect(element(host, "leaderboard-close").attributes.get("aria-label")).toBe(
+      "Close leaderboard",
+    );
+    hud.dispose();
+  });
+  it("disables leaderboard actions while rename or reset is pending", async () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    const rename = deferred<undefined>();
+    const reset = deferred<undefined>();
+    hud.onLeaderboardRename?.(() => rename.promise);
+    hud.onLeaderboardReset?.(() => reset.promise);
+    const name = element(host, "leaderboard-name");
+    const level = element(host, "leaderboard-level");
+    const goldenBugs = element(host, "leaderboard-golden-bugs");
+    const top = element(host, "leaderboard-top");
+    const around = element(host, "leaderboard-around");
+    const action = element(host, "leaderboard-rename");
+    const remove = element(host, "leaderboard-reset");
+    const controls = [name, level, goldenBugs, top, around, action, remove];
+    action.dispatch("click");
+    expect(controls.every((control) => control.disabled)).toBe(true);
+    rename.resolve(undefined);
+    await Promise.resolve();
+    expect(controls.every((control) => !control.disabled)).toBe(true);
+    remove.dispatch("click");
+    expect(controls.every((control) => control.disabled)).toBe(true);
+    reset.resolve(undefined);
+    await Promise.resolve();
+    expect(controls.every((control) => !control.disabled)).toBe(true);
+    hud.dispose();
+  });
   it("keeps a hidden upgrades modal out of the flex layout", () => {
     expect(stylesheet).toContain(".upgrades-modal[hidden] {\n  display: none;\n}");
     expect(stylesheet).toContain(".upgrades-dialog {");
@@ -227,6 +312,8 @@ describe("createHud", () => {
     );
     expect(stylesheet).toContain("grid-template-rows: 1fr 1fr;");
     expect(stylesheet).toContain(".upgrade-title,");
+    expect(stylesheet).toContain(".leaderboard-current {");
+    expect(stylesheet).toContain(".leaderboard-entries th,");
   });
 
   it("routes canvas input once and contains upgrades in an accessible modal", () => {

@@ -64,7 +64,7 @@ Create, read, and write requests use separate per-network and per-identity limit
 
 ## Views and cost bounds
 
-Level and Golden Bugs each provide Top and Around Me/current-rank views. Top returns at most 100 rows. Around Me returns the current player plus at most 100 rows above and 100 below using indexed keyset queries. Exact rank remains bounded by the 10,000-player ceiling and ranking reads are rate-limited. Showing every player is not part of this design.
+Level and Golden Bugs each provide Top and Around Me/current-rank views. Top returns at most 100 rows. Around Me returns the current player plus at most 10 rows above and 10 below using indexed keyset queries, keeping the player centered when both sides contain enough rows. Exact rank remains bounded by the 10,000-player ceiling and ranking reads are rate-limited. Showing every player is not part of this design.
 
 The browser submits one snapshot `{ level, goldenBugs }`. Progress becomes dirty only when either metric increases. One request is allowed in flight; changes coalesce. A defeated boss submits immediately, otherwise dirty progress submits five minutes after the last successful acknowledgement. Success resets that window; failure retains dirty progress with a bounded retry and never creates a per-level or per-frame storm.
 
