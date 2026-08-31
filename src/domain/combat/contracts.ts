@@ -1,4 +1,7 @@
 export type AttackSource = "manual" | "automatic";
+/** Simulator-only alternatives; omitting either preserves production asymptotic formulas. */
+export type CriticalChancePolicy = "asymptotic" | "linear-capped";
+export type ArmorPenetrationPolicy = "asymptotic" | "linear-capped";
 
 export type EnemyGrade = "normal" | "veteran" | "elite" | "boss";
 export type EliteModifier =
@@ -65,6 +68,18 @@ export type AttackRolls = {
 export type AttackCommand = {
   readonly atMs: number;
   readonly enemyId: number;
+  /** Simulator-only ordinary-enemy curve; omitted keeps the production formula. */
+  readonly ordinaryHealthGrowthRate?: number;
+  /** Automatic visual batching scales only this resolved packet's damage. */
+  readonly damageMultiplier?: number;
+  /** Lets one visual tick resolve several automatic packets at one timestamp. */
+  readonly automaticBatch?: boolean;
+  /** Simulator-only alternate cadence passed to production progression spawning. */
+  readonly bossInterval?: number;
+  /** Simulator-only chance formula evaluated by the production attack operation. */
+  readonly criticalChancePolicy?: CriticalChancePolicy;
+  /** Simulator-only penetration formula evaluated by the production attack operation. */
+  readonly armorPenetrationPolicy?: ArmorPenetrationPolicy;
   readonly rolls: AttackRolls;
   readonly source: AttackSource;
 };

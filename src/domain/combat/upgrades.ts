@@ -3,6 +3,8 @@ import type {
   CombatEnemy,
   CombatPlayer,
   CombatState,
+  ArmorPenetrationPolicy,
+  CriticalChancePolicy,
   UpgradeDefinition,
   UpgradeId,
   UpgradePurchase,
@@ -29,12 +31,30 @@ export const damageForLevel = (level: number): number => {
 };
 
 export const criticalChanceForLevel = (level: number): number => diminishingChance(level);
+export const criticalChanceForPolicy = (
+  level: number,
+  policy: CriticalChancePolicy = "asymptotic",
+): number =>
+  policy === "linear-capped"
+    ? Math.min(COMBAT_FORMULAS.chanceLimit, normalizeLevel(level) * 0.02)
+    : criticalChanceForLevel(level);
 export const doubleRewardChanceForLevel = (level: number): number => diminishingChance(level);
 export const armorPenetrationForLevel = (level: number): number =>
   (COMBAT_FORMULAS.armorPenetrationLimit * normalizeLevel(level)) /
   (normalizeLevel(level) + COMBAT_FORMULAS.chanceLevelScale);
-export const effectiveArmor = (armor: number, penetrationLevel: number): number =>
-  Math.max(0, Math.floor(armor * (1 - armorPenetrationForLevel(penetrationLevel))));
+export const armorPenetrationForPolicy = (
+  level: number,
+  policy: ArmorPenetrationPolicy = "asymptotic",
+): number =>
+  policy === "linear-capped"
+    ? Math.min(COMBAT_FORMULAS.armorPenetrationLimit, normalizeLevel(level) * 0.025)
+    : armorPenetrationForLevel(level);
+export const effectiveArmor = (
+  armor: number,
+  penetrationLevel: number,
+  policy: ArmorPenetrationPolicy = "asymptotic",
+): number =>
+  Math.max(0, Math.floor(armor * (1 - armorPenetrationForPolicy(penetrationLevel, policy))));
 
 export const automaticAttacksPerSecond = (level: number): number => {
   const safeLevel = normalizeLevel(level);
@@ -50,6 +70,22 @@ export const automaticAttacksPerSecond = (level: number): number => {
       COMBAT_FORMULAS.automaticAttacksPerSecondBonus * ratio,
   );
 };
+
+/** Packet weights resolved together at the bounded visual cadence. */
+export const automaticAttackPacketMultipliers = (attacksPerSecond: number): readonly number[] => {
+  if (!Number.isFinite(attacksPerSecond) || attacksPerSecond <= 0)
+    throw new RangeError("Automatic attacks per second must be finite and positive");
+  const attacksPerTick = attacksPerSecond / COMBAT_BALANCE.automaticVisualTickRate;
+  const fullPackets = Math.floor(attacksPerTick);
+  const fractionalPacket = Number((attacksPerTick - fullPackets).toFixed(12));
+  return [
+    ...Array.from({ length: fullPackets }, () => 1),
+    ...(fractionalPacket > 0 ? [fractionalPacket] : []),
+  ];
+};
+
+const displayedThousandths = (value: number): number => Math.floor(value * 1_000 + 1e-9);
+const displayedHundredths = (value: number): number => Math.round(value * 100);
 
 const DEFAULT_PLAYER: CombatPlayer = {
   automaticSpeedLevel: 0,
@@ -83,15 +119,18 @@ export const createCombatState = (
   player: Partial<CombatPlayer> = {},
   firstEliteModifierRoll = 0,
   automaticUnlocked = false,
-): CombatState => ({
-  automaticUnlocked,
-  coins: 0,
-  enemy: spawnStarterEnemy(firstEliteModifierRoll),
-  nextAutomaticAttackAtMs: 0,
-  player: normalizedPlayer(player),
-  goldenBug: null,
-  goldenBugDefeats: 0,
-});
+): CombatState => {
+  const normalized = normalizedPlayer(player);
+  return {
+    automaticUnlocked,
+    coins: 0,
+    enemy: spawnStarterEnemy(firstEliteModifierRoll, normalized),
+    nextAutomaticAttackAtMs: 0,
+    player: normalized,
+    goldenBug: null,
+    goldenBugDefeats: 0,
+  };
+};
 
 export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>
   1_000 / automaticAttacksPerSecond(player.automaticSpeedLevel) +
@@ -100,7 +139,7 @@ export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): num
 type UpgradeStrategy = {
   readonly definition: UpgradeDefinition;
   readonly level: (state: CombatState) => number;
-  readonly canAdvance: (state: CombatState, nextLevel: number) => boolean;
+  readonly displayedValue: (player: CombatPlayer, level: number) => number;
   readonly apply: (player: CombatPlayer, level: number) => CombatPlayer;
 };
 
@@ -108,30 +147,25 @@ const UPGRADE_STRATEGIES = {
   "automatic-unlock": {
     definition: { id: "automatic-unlock", label: "Unlock automatic attack", baseCost: 1 },
     level: (state) => Number(state.automaticUnlocked),
-    canAdvance: (state) => !state.automaticUnlocked,
+    displayedValue: () => 0,
     apply: (player) => player,
   },
   damage: {
     definition: { id: "damage", label: "Damage", baseCost: 2 },
     level: (state) => normalizeLevel(damageLevelFor(state.player)),
-    canAdvance: (state, nextLevel) =>
-      damageForLevel(nextLevel) > damageForLevel(normalizeLevel(damageLevelFor(state.player))),
+    displayedValue: (_player, level) => damageForLevel(level),
     apply: (player, level) => ({ ...player, damageLevel: level, damage: damageForLevel(level) }),
   },
   "armor-penetration": {
     definition: { id: "armor-penetration", label: "Armor penetration", baseCost: 3 },
     level: (state) => normalizeLevel(armorPenetrationLevelFor(state.player)),
-    canAdvance: (state, nextLevel) =>
-      armorPenetrationForLevel(nextLevel) >
-      armorPenetrationForLevel(normalizeLevel(armorPenetrationLevelFor(state.player))),
+    displayedValue: (_player, level) => displayedThousandths(armorPenetrationForLevel(level)),
     apply: (player, level) => ({ ...player, armorPenetrationLevel: level }),
   },
   "critical-chance": {
     definition: { id: "critical-chance", label: "Critical chance", baseCost: 3 },
     level: (state) => normalizeLevel(criticalLevelFor(state.player)),
-    canAdvance: (state, nextLevel) =>
-      criticalChanceForLevel(nextLevel) >
-      criticalChanceForLevel(normalizeLevel(criticalLevelFor(state.player))),
+    displayedValue: (_player, level) => displayedThousandths(criticalChanceForLevel(level)),
     apply: (player, level) => ({
       ...player,
       criticalLevel: level,
@@ -141,9 +175,7 @@ const UPGRADE_STRATEGIES = {
   "double-reward": {
     definition: { id: "double-reward", label: "Double reward chance", baseCost: 4 },
     level: (state) => normalizeLevel(doubleRewardLevelFor(state.player)),
-    canAdvance: (state, nextLevel) =>
-      doubleRewardChanceForLevel(nextLevel) >
-      doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player))),
+    displayedValue: (_player, level) => displayedThousandths(doubleRewardChanceForLevel(level)),
     apply: (player, level) => ({
       ...player,
       doubleRewardLevel: level,
@@ -153,9 +185,7 @@ const UPGRADE_STRATEGIES = {
   "automatic-speed": {
     definition: { id: "automatic-speed", label: "Automatic speed", baseCost: 5 },
     level: (state) => normalizeLevel(state.player.automaticSpeedLevel),
-    canAdvance: (state, nextLevel) =>
-      automaticInterval(state.enemy, { ...state.player, automaticSpeedLevel: nextLevel }) <
-      automaticInterval(state.enemy, state.player),
+    displayedValue: (_player, level) => displayedHundredths(automaticAttacksPerSecond(level)),
     apply: (player, level) => ({ ...player, automaticSpeedLevel: level }),
   },
 } satisfies Record<UpgradeId, UpgradeStrategy>;
@@ -186,26 +216,84 @@ export const UPGRADES: readonly UpgradeDefinition[] = UPGRADE_DISPLAY_ORDER.map(
 export const upgradeLevel = (state: CombatState, id: UpgradeId): number =>
   UPGRADE_STRATEGIES[id].level(state);
 
-export const upgradeCost = (state: CombatState, id: UpgradeId): number => {
-  const cost = Math.ceil(
-    UPGRADE_STRATEGIES[id].definition.baseCost *
-      (upgradeLevel(state, id) + 1) ** COMBAT_FORMULAS.upgradeCostExponent,
+export const upgradeCost = (state: CombatState, id: UpgradeId, costMultiplier = 1): number => {
+  if (!Number.isFinite(costMultiplier) || costMultiplier <= 0)
+    throw new RangeError("Upgrade cost multiplier must be finite and positive");
+  const next = nextUpgradeLevel(state, id);
+  if (next === null) return Number.MAX_SAFE_INTEGER;
+  return costForNextUpgrade(state, id, next, costMultiplier);
+};
+
+const costForNextUpgrade = (
+  state: CombatState,
+  id: UpgradeId,
+  next: number,
+  costMultiplier: number,
+): number =>
+  Math.min(
+    Number.MAX_SAFE_INTEGER,
+    Math.ceil(totalUpgradeCost(id, upgradeLevel(state, id), next) * costMultiplier),
   );
-  return Math.max(1, Math.min(Number.MAX_SAFE_INTEGER, cost));
+
+const levelCost = (id: UpgradeId, level: number): number =>
+  Math.max(
+    1,
+    Math.min(
+      Number.MAX_SAFE_INTEGER,
+      Math.ceil(
+        UPGRADE_STRATEGIES[id].definition.baseCost * level ** COMBAT_FORMULAS.upgradeCostExponent,
+      ),
+    ),
+  );
+
+const totalUpgradeCost = (id: UpgradeId, current: number, next: number): number => {
+  const count = next - current;
+  const minimumCost = levelCost(id, current + 1);
+  if (count > Math.floor(Number.MAX_SAFE_INTEGER / minimumCost)) return Number.MAX_SAFE_INTEGER;
+  let total = 0;
+  for (let level = current + 1; level <= next; level += 1) {
+    total = Math.min(Number.MAX_SAFE_INTEGER, total + levelCost(id, level));
+    if (total === Number.MAX_SAFE_INTEGER) return total;
+  }
+  return total;
 };
 
-const canAdvanceUpgrade = (state: CombatState, id: UpgradeId): boolean => {
+const nextUpgradeLevel = (state: CombatState, id: UpgradeId): number | null => {
   const level = upgradeLevel(state, id);
-  if (level === Number.MAX_SAFE_INTEGER) return false;
-  return UPGRADE_STRATEGIES[id].canAdvance(state, level + 1);
+  if (id === "automatic-unlock") return state.automaticUnlocked ? null : 1;
+  const strategy = UPGRADE_STRATEGIES[id];
+  const current = strategy.displayedValue(state.player, level);
+  if (
+    id === "automatic-speed" &&
+    current >=
+      Math.round(
+        (COMBAT_FORMULAS.automaticAttacksPerSecondBase +
+          COMBAT_FORMULAS.automaticAttacksPerSecondBonus) *
+          100,
+      )
+  )
+    return null;
+  if (strategy.displayedValue(state.player, Number.MAX_SAFE_INTEGER) <= current) return null;
+  let low = level + 1;
+  let high = Number.MAX_SAFE_INTEGER;
+  while (low < high) {
+    const middle = low + Math.floor((high - low) / 2);
+    if (strategy.displayedValue(state.player, middle) > current) high = middle;
+    else low = middle + 1;
+  }
+  return low;
 };
 
-export const upgradeDisabledReason = (state: CombatState, id: UpgradeId): string | null => {
+export const upgradeDisabledReason = (
+  state: CombatState,
+  id: UpgradeId,
+  costMultiplier = 1,
+): string | null => {
   if (id === "automatic-speed" && !state.automaticUnlocked)
     return "Requires automatic attack unlock";
   if (id === "automatic-unlock" && state.automaticUnlocked) return "Already unlocked";
-  if (!canAdvanceUpgrade(state, id)) return "Level cannot advance safely";
-  const cost = upgradeCost(state, id);
+  if (nextUpgradeLevel(state, id) === null) return "Level cannot advance safely";
+  const cost = upgradeCost(state, id, costMultiplier);
   return state.coins < cost ? `Need ${cost} coins` : null;
 };
 
@@ -216,11 +304,17 @@ export const purchaseUpgrade = (
   state: CombatState,
   id: UpgradeId,
   atMs: number,
+  costMultiplier = 1,
 ): UpgradePurchase => {
-  const reason = upgradeDisabledReason(state, id);
-  if (reason) return { reason, state };
-  const cost = upgradeCost(state, id);
-  const level = Math.min(Number.MAX_SAFE_INTEGER, upgradeLevel(state, id) + 1);
+  if (id === "automatic-speed" && !state.automaticUnlocked)
+    return { reason: "Requires automatic attack unlock", state };
+  if (id === "automatic-unlock" && state.automaticUnlocked)
+    return { reason: "Already unlocked", state };
+  const next = nextUpgradeLevel(state, id);
+  if (next === null) return { reason: "Level cannot advance safely", state };
+  const cost = costForNextUpgrade(state, id, next, costMultiplier);
+  if (state.coins < cost) return { reason: `Need ${cost} coins`, state };
+  const level = next;
   const player = upgradedPlayer(state.player, id, level);
   const automaticUnlocked = state.automaticUnlocked || id === "automatic-unlock";
   return {

@@ -3,8 +3,15 @@ import v1Fixture from "./fixtures/save-v1.json";
 import v2Fixture from "./fixtures/save-v2.json";
 import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 
-import { COMBAT_BALANCE, createCombatState, spawnEnemy, spawnGoldenBug } from "../domain/combat";
+import {
+  automaticInterval,
+  COMBAT_BALANCE,
+  createCombatState,
+  spawnEnemy,
+  spawnGoldenBug,
+} from "../domain/combat";
 import { BattleController } from "../app/battle/controller";
+import { battleCommands } from "../app/battle/commands";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -81,15 +88,79 @@ describe("persistence boundary", () => {
     const loaded = boundary.load(fallback(), 100);
     expect(loaded).toMatchObject({
       goldenBug: { id: 50, resumeEncounter: 51 },
-      enemy: { reward: 6100 },
+      enemy: { reward: 1550 },
     });
     boundary.onStateChanged(loaded);
     [...pagehide][0]?.();
-    expect(JSON.parse(values.get(SAVE_V4_KEY) ?? "")).toMatchObject({ enemy: { reward: 6100 } });
+    expect(JSON.parse(values.get(SAVE_V4_KEY) ?? "")).toMatchObject({ enemy: { reward: 1550 } });
     expect(boundary.load(fallback(), 200)).toEqual({ ...loaded, nextAutomaticAttackAtMs: 0 });
     expect(
       decodeSave(JSON.parse(oldActiveV3.replace('"reward":1220', '"reward":1221')), fallback(), 0),
     ).toEqual(fallback());
+  });
+  it("recognizes nonzero-speed V3 and V4 Golden Bugs with the pre-ABI APS curve", () => {
+    const legacy = {
+      automaticUnlocked: true,
+      coins: 7,
+      enemy: {
+        armor: 0,
+        encounter: 51,
+        grade: "normal",
+        health: 50,
+        id: 3002399751580381,
+        maxHealth: 50,
+        modifier: null,
+        reward: 1220,
+      },
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      player: {
+        automaticSpeedLevel: 100,
+        armorPenetrationLevel: 0,
+        criticalChance: 0,
+        criticalLevel: 0,
+        damage: 1,
+        damageLevel: 0,
+        doubleRewardChance: 0,
+        doubleRewardLevel: 0,
+      },
+    };
+    for (const [key, source] of [
+      [SAVE_V3_KEY, { ...legacy, version: 3 }],
+      [SAVE_V4_KEY, { ...legacy, goldenBugDefeats: 0, version: 4 }],
+    ] as const) {
+      const values = new Map<string, string>([[key, JSON.stringify(source)]]);
+      const boundary = createPersistenceBoundary({
+        page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+        storage: {
+          getItem: (storageKey) => values.get(storageKey) ?? null,
+          removeItem: (storageKey) => values.delete(storageKey),
+          setItem: (storageKey, value) => values.set(storageKey, value),
+        },
+      });
+      const loaded = boundary.load(fallback(), 100);
+      expect(loaded.goldenBug).toEqual(legacy.goldenBug);
+      const roundTrip = decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200);
+      expect(roundTrip).toMatchObject({ goldenBug: legacy.goldenBug });
+    }
+  });
+  it("round-trips an integer high-APS visual tick without a save-schema change", () => {
+    const initial = {
+      ...createCombatState({ automaticSpeedLevel: 1_000, damageLevel: 100, damage: 201 }, 0, true),
+      nextAutomaticAttackAtMs: 0,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+    });
+    expect(controller.dispatch(battleCommands.frame(0))).toBe(true);
+    const resolved = controller.currentUpdate().state;
+    expect(Number.isSafeInteger(resolved.enemy.health)).toBe(true);
+    expect(decodeSave(JSON.parse(encodeSave(resolved)), fallback(), 0)).toEqual({
+      ...resolved,
+      nextAutomaticAttackAtMs: automaticInterval(resolved.enemy, resolved.player),
+    });
   });
   it("round-trips only canonical state and rejects malformed or unsupported values", () => {
     const state = {
@@ -230,7 +301,7 @@ describe("persistence boundary", () => {
     expect(migrated).toMatchObject({
       automaticUnlocked: true,
       coins: 7,
-      enemy: { encounter: 1, health: 84, maxHealth: 140 },
+      enemy: { encounter: 1, health: 8, maxHealth: 12 },
       player: {
         armorPenetrationLevel: 0,
         criticalLevel: 1,
@@ -242,13 +313,12 @@ describe("persistence boundary", () => {
     expect(values.get(SAVE_V1_KEY)).toBe(v1);
     expect(values.get(SAVE_V4_KEY)).toBe(encodeSave(migrated));
     expect(JSON.parse(values.get(SAVE_V4_KEY) ?? "")).toMatchObject({
-      ...v2Fixture,
       goldenBug: null,
       version: SAVE_VERSION,
     });
     expect(boundary.hasPreviousVersionSave()).toBe(true);
     expect(boundary.restorePreviousVersion(200).state).toMatchObject({ coins: 7 });
-    expect(boundary.load(fallback(), 200)).toMatchObject({ coins: 7, enemy: { health: 84 } });
+    expect(boundary.load(fallback(), 200)).toMatchObject({ coins: 7, enemy: { health: 8 } });
     boundary.reset();
     expect(values.has(SAVE_V2_KEY)).toBe(false);
     expect(values.get(SAVE_V1_KEY)).toBe(v1);
@@ -287,7 +357,8 @@ describe("persistence boundary", () => {
   });
 
   it("accepts current and previous boss cadence saves but rejects corrupted historical values", () => {
-    const current = { ...fallback(), enemy: spawnEnemy(35, 0) };
+    const base = fallback();
+    const current = { ...base, enemy: spawnEnemy(35, 0, undefined, base.player) };
     expect(decodeSave(JSON.parse(encodeSave(current)) as unknown, fallback(), 0)).toEqual(current);
     expect(decodeSave(legacyV2Fixture, fallback(), 0)).toMatchObject({
       coins: legacyV2Fixture.coins,
@@ -306,7 +377,8 @@ describe("persistence boundary", () => {
   });
 
   it("uses current recognition first and rejects a non-matching cadence interpretation", () => {
-    const current = { ...fallback(), enemy: spawnEnemy(35, 0) };
+    const base = fallback();
+    const current = { ...base, enemy: spawnEnemy(35, 0, undefined, base.player) };
     const currentRaw = JSON.parse(encodeSave(current)) as Record<string, unknown>;
     expect(decodeSave(currentRaw, fallback(), 0)).toEqual(current);
     expect(
@@ -330,9 +402,20 @@ describe("persistence boundary", () => {
     });
   });
 
+  it("retains current linear progression and historical V1 through load, save, and reload", () => {
+    const base = fallback();
+    const current = { ...base, enemy: spawnEnemy(100, 0, undefined, base.player) };
+    const historical = decodeSave(v1Fixture, fallback(), 0);
+    expect(decodeSave(JSON.parse(encodeSave(current)) as unknown, fallback(), 0)).toEqual(current);
+    expect(decodeSave(JSON.parse(encodeSave(historical)) as unknown, fallback(), 0)).toEqual(
+      historical,
+    );
+  });
+
   it("round-trips each new modifier without changing the save shape", () => {
     for (const roll of [0.76, 0.85, 0.96]) {
-      const state = { ...fallback(), enemy: spawnEnemy(3, roll) };
+      const base = fallback();
+      const state = { ...base, enemy: spawnEnemy(3, roll, undefined, base.player) };
       expect(decodeSave(JSON.parse(encodeSave(state)) as unknown, fallback(), 0)).toEqual(state);
     }
   });

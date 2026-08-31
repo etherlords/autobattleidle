@@ -1,0 +1,31 @@
+{
+  "visualTickRateHz": 3,
+  "examples": [
+    {
+      "aps": 3.3,
+      "packetMultipliers": [1, 0.1],
+      "damageAtBase10000": [10000, 1000]
+    },
+    {
+      "aps": 6,
+      "packetMultipliers": [1, 1],
+      "damageAtBase10000": [10000, 10000]
+    },
+    {
+      "aps": 10.2,
+      "packetMultipliers": [1, 1, 1, 0.4],
+      "damageAtBase10000": [10000, 10000, 10000, 4000]
+    },
+    {
+      "aps": 12,
+      "packetMultipliers": [1, 1, 1, 1],
+      "damageAtBase10000": [10000, 10000, 10000, 10000]
+    }
+  ],
+  "semantics": {
+    "criticalRoll": "independent per packet",
+    "timestamp": "all packets in one visual tick share one timestamp",
+    "carryover": "remaining packets may continue against the next spawned enemy at that same timestamp",
+    "automaticSlow": "adds the existing 500 ms enemy modifier to the next visual tick"
+  }
+}

@@ -1,4 +1,10 @@
 export { attack } from "./combat/attacks";
+export { automaticPacketSchedule, resolveAutomaticPackets } from "./combat/automatic-packets";
+export type {
+  AutomaticPacket,
+  AutomaticPacketResolution,
+  AutomaticPacketSchedule,
+} from "./combat/automatic-packets";
 export { COMBAT_BALANCE } from "./combat/balance";
 export { selectEnemyFamilyIdentity, stableEnemySeed } from "./combat/family-identity";
 export type {
@@ -7,10 +13,12 @@ export type {
   AttackResult,
   AttackRolls,
   AttackSource,
+  ArmorPenetrationPolicy,
   CombatEnemy,
   GoldenBugEvent,
   CombatPlayer,
   CombatState,
+  CriticalChancePolicy,
   EliteModifier,
   EnemyGrade,
   UpgradeDefinition,
@@ -32,10 +40,13 @@ export {
 } from "./combat/progression";
 export {
   armorPenetrationForLevel,
+  armorPenetrationForPolicy,
   automaticAttacksPerSecond,
+  automaticAttackPacketMultipliers,
   automaticInterval,
   createCombatState,
   criticalChanceForLevel,
+  criticalChanceForPolicy,
   damageForLevel,
   doubleRewardChanceForLevel,
   effectiveArmor,

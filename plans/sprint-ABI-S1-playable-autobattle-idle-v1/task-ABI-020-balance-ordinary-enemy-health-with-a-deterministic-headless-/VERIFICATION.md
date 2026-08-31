@@ -4,12 +4,14 @@ id: ABI-020
 artifact: verification
 project: ABI
 profile: high-assurance
-revision: 1
-status: Blocked
+revision: 2
+status: Ready
 sprintId: ABI-S1
 dependencies:
+  - ABI-010
   - ABI-016
   - ABI-018
+  - ABI-022
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -22,16 +24,19 @@ requiredGates:
 
 ## Acceptance evidence
 
-- BLOCKED before an accepted implementation. The deterministic production-path attempt was measured, failed the frozen envelopes, and was fully reverted; `git diff --exit-code -- src` is clean.
-- Baseline proof: encounter 2 has 210 HP, initial automatic combat deals 1 damage at 0.1 APS (10,000 ms interval), so automatic-only TTK is `210 * 10,000 = 2,100,000 ms` = 2,100 seconds = 35 times the frozen 60-second cap. Either allowed 0.5%/0.8% health candidate raises encounter 2 to 212 HP and 2,120 seconds.
-- Economy proof: the initial coin buys automatic unlock; the encounter-1 reward restores only one coin; the cheapest repeatable damage upgrade costs two. No pre-encounter-2 purchase bridges the gap. Even the first damage upgrade would deal 12 and require 180 seconds for 212 HP.
-- Candidate telemetry showed that increasing damage enough to address late walls simultaneously destroyed the required hit-distribution envelopes: band 100-150 became 100% one-hit with 0% five-/ten-plus-hit; band 1000-1100 became 95% one-hit with 0% five-/ten-plus-hit. No candidate was accepted or published.
-- Implementation worker self-check: focused 43/43 and full `pnpm check` 14 files / 90 tests were green on the attempted candidate; after complete source/test revert, baseline `pnpm check` passed 14 files / 89 tests, lint, format, TypeScript, and build.
-- Independent Reviewer verdict: `APPROVE_BLOCKER`; detailed source evidence and product options are in `REVIEW.md`. Planner gate `implementation-self-check` is canonically `blocked` at event `evt-26c274bb-eb63-48d5-b142-f75bc274bd0a`.
-- Product decision required before resume: exempt/bootstrap initial encounters from the 60-second wall, explicitly authorize a new early-game health/grant/start-stat exception, or revise the automatic-only reference/TTK criterion.
+- Production health is player-relative: normal 1 hit, veteran 5 hits, elite 10 hits, and boss 30 hits before modifiers and armor. Golden Bug keeps its separate time-window formula.
+- Automatic throughput approaches 12 APS while presentation remains at 3 visual ticks per second. Packet regressions cover 3.3, 6, 10.2, and 12 APS, fractional carry-over, independent critical rolls, and continued packets against the next enemy.
+- Exact and event-jump simulations match final state at 1, 4, 8, 24, 48, and 49 hours. The 48-hour checkpoint reaches encounter 24,920 at approximately 11.995 APS; 49 hours reaches 30,234 without currency saturation.
+- The warmed 48-hour event-jump remains explicitly bounded below 2.5 seconds. Fresh QA measured the full warm-up plus measured-test wrapper at 3.294 seconds and the separate 3,000-encounter deterministic telemetry test at 1.962 seconds.
+- Ordinary telemetry excludes bosses and Golden Bug from grades, modifiers, armor, walls, bands, and adjacent grade transitions. Golden automatic-only input escapes with zero reward; deterministic manual plus automatic input defeats it and grants one reward.
+- Every paid repeatable upgrade advances by at least one displayed gameplay quantum and charges all skipped internal levels together. V1, V2, V3, V4, and current saves load/reload compatibly.
+- The reviewed measurement receipt and high-APS example are stored as portable Vault assets. Vault readback reports 17 articles, 45 resolved links, zero unresolved links, a fresh lexical/vector index, and no doctor findings.
+- Fresh independent review v11: APPROVE with no P0-P3 findings.
+- Fresh independent QA v12 after the narrow timing repair: PASS. `pnpm check` passed lint, format, 20 test files / 178 tests, Worker TypeScript, and production build; `git diff --check` passed.
+- Exact release SHA and GitHub Actions/Pages receipts are pending publication of this coherent checkpoint.
 
 ## Sign-off
 
-- Reviewer: APPROVE_BLOCKER; independent review gate could not be recorded because the workflow correctly requires a passing implementation-self-check first.
-- QA: not run; implementation acceptance is blocked before QA and no candidate remains.
-- Manager close: task will remain Blocked; no commit, push, CI/Pages, deployment, Vault formula sync, or Done closure is authorized for a failed candidate.
+- Reviewer: PASS — `abi020-independent-review-v11`.
+- QA: PASS — `abi020-independent-qa-v12`.
+- Manager close: pending exact-SHA CI, Worker/Pages deployment, deployed health, and final Planner verification/closure gates.

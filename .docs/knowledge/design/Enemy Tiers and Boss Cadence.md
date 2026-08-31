@@ -64,11 +64,17 @@ The run makes 104 repeatable purchases across 105 defeated encounters, plus the 
 
 Encounters use deterministic safe-number epochs. At the largest encounter whose armor remains safe, boss health and reward saturate to safe integers; the next defeated enemy rolls to encounter 1 while preserving player upgrades and safe saturated currency. This representation rollover prevents a crash or terminal combat cap; it is not a finite content list.
 
-## Planned ordinary-enemy health calibration
+## Accepted ordinary-enemy health calibration
 
-ABI-020 follows ABI-016 and ABI-018; this is a telemetry-driven candidate, not current deployed balance. Ordinary base health will compare safe-saturated exponential rates of 0.5% and 0.8% per encounter through the production combat path. The safer 0.5% candidate is evaluated first: approximate normal base health is 229, 292, 374, and 1,607 at encounters 100, 150, 200, and 500. The 0.8% candidate is approximately 308, 459, 684, and 7,463. A 1.0% candidate is excluded unless evidence disproves its late-wall risk.
+ABI-020 is accepted current behavior. Production ordinary and boss health is derived from the player's current integer damage rather than a fixed low encounter base: normal targets 1 hit, veteran 5 hits, elite 10 hits, and bosses 30 hits before deterministic elite modifiers and armor. Boss cadence remains every 35 encounters. Golden Bug keeps its separate time-window formula and never enters ordinary cohorts, walls, grades, or grade-transition telemetry.
 
-The accepted rate must come from a deterministic headless simulation of at least 3,000 ordinary encounters with one round-robin affordable repeatable upgrade attempt after each defeat. Telemetry separates normal, veteran, elite, and bosses and reports hit/time-to-kill distributions, one-hit/5-plus/10-plus fractions, grade transitions, spikes, walls, and upgrade levels. Boss multipliers and ABI-016 cadence are not rebalanced by ABI-020.
+The endgame boundary is time-based. Under the accepted unattended upgrade strategy, exact checkpoints are encounter 21 at 1 hour, 39 at 4 hours, 70 at 8 hours, 1,200 at 24 hours, 24,920 at 48 hours, and 30,234 at 49 hours. The 48-hour checkpoint is the configured start of endgame, not a promised encounter number. Its player damage is 17,303 and APS is approximately 11.995.
+
+The prior 0.5% and 0.8% exponential ordinary-health candidates were each measured over 3,000 ordinary encounters and rejected for walls and adjacent-band jumps. Cadence, damage, APS, critical, penetration, reward, and upgrade-cost alternatives were also measured over at least 3,000 ordinary encounters; the retained production policies preserve 35-encounter bosses, asymptotic critical and penetration curves, current damage/economy, and bounded 3 Hz presentation.
+
+ABI-028 may add deterministic fast/medium/durable composition inside each non-boss stage, but it must consume these accepted targets and the time-based envelope; it must not replace the ABI-020 health owner, rebalance Golden Bug, or leak bosses into ordinary telemetry. See [[Combat Loop#Accepted headless ordinary-balance telemetry|accepted simulator ownership]] and [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted economy evidence]].
+
+Reviewed measurements are preserved in [[ABI-020 Reviewed Measurement Receipt]]. Revision-bound metadata and stored-source evidence: [[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and asset link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).
 
 ## Presentation
 

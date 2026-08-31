@@ -18,7 +18,11 @@ const resolvesCritical = (state: CombatState, command: AttackCommand): boolean =
   const modifier = modifierFor(state);
   return (
     modifier?.allowsCritical(command.source) !== false &&
-    command.rolls.critical < criticalChanceForLevel(normalizeLevel(criticalLevelFor(state.player)))
+    command.rolls.critical <
+      criticalChanceForPolicy(
+        normalizeLevel(criticalLevelFor(state.player)),
+        command.criticalChancePolicy,
+      )
   );
 };
 
@@ -28,19 +32,24 @@ const resolvedDamage = (
   armor: number,
   critical: boolean,
 ): number => {
+  const damageMultiplier = command.damageMultiplier ?? 1;
+  if (!Number.isFinite(damageMultiplier) || damageMultiplier <= 0)
+    throw new RangeError("Damage multiplier must be finite and positive");
   const baseDamage = damageForLevel(normalizeLevel(damageLevelFor(state.player)));
   const unguardedDamage =
     Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor) *
     (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);
-  return Math.max(
-    COMBAT_FORMULAS.minimumDamage,
-    Math.floor(unguardedDamage * (modifierFor(state)?.damageMultiplier(command.source) ?? 1)),
+  return Math.round(
+    Math.max(
+      COMBAT_FORMULAS.minimumDamage,
+      Math.floor(unguardedDamage * (modifierFor(state)?.damageMultiplier(command.source) ?? 1)),
+    ) * damageMultiplier,
   );
 };
 import {
-  armorPenetrationForLevel,
+  armorPenetrationForPolicy,
   automaticInterval,
-  criticalChanceForLevel,
+  criticalChanceForPolicy,
   damageForLevel,
   doubleRewardChanceForLevel,
   effectiveArmor,
@@ -55,19 +64,22 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
   )
     return { event: { type: "ignored" }, state };
   const penetrationLevel = normalizeLevel(armorPenetrationLevelFor(state.player));
-  const penetration = armorPenetrationForLevel(penetrationLevel);
-  const armor = effectiveArmor(state.enemy.armor, penetrationLevel);
+  const penetration = armorPenetrationForPolicy(penetrationLevel, command.armorPenetrationPolicy);
+  const armor = effectiveArmor(state.enemy.armor, penetrationLevel, command.armorPenetrationPolicy);
   const critical = resolvesCritical(state, command);
   const baseDamage = damageForLevel(normalizeLevel(damageLevelFor(state.player)));
   const damage = resolvedDamage(state, command, armor, critical);
-  const armorPreventedDamage =
+  const armorPreventedDamage = Math.round(
     Math.max(0, baseDamage - Math.max(COMBAT_FORMULAS.minimumDamage, baseDamage - armor)) *
-    (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1);
+      (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1) *
+      (command.damageMultiplier ?? 1),
+  );
   const health = Math.max(0, state.enemy.health - damage);
-  const nextAutomaticAttackAtMs =
-    command.source === "automatic"
-      ? command.atMs + automaticInterval(state.enemy, state.player)
-      : state.nextAutomaticAttackAtMs;
+  const nextAutomaticAttackAtMs = (() => {
+    if (command.source !== "automatic") return state.nextAutomaticAttackAtMs;
+    if (command.automaticBatch) return command.atMs;
+    return command.atMs + automaticInterval(state.enemy, state.player);
+  })();
   if (health > 0)
     return {
       event: {
@@ -101,9 +113,21 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       : null;
   const nextEnemy = (): typeof state.enemy => {
     if (resumeEncounter !== undefined)
-      return spawnEnemy(resumeEncounter, command.rolls.nextEliteModifier);
+      return spawnEnemy(
+        resumeEncounter,
+        command.rolls.nextEliteModifier,
+        command.ordinaryHealthGrowthRate,
+        state.player,
+        command.bossInterval,
+      );
     if (goldenBug !== null) return spawnGoldenBug(goldenBug.resumeEncounter, state.player);
-    return spawnEnemy(nextEncounter, command.rolls.nextEliteModifier);
+    return spawnEnemy(
+      nextEncounter,
+      command.rolls.nextEliteModifier,
+      command.ordinaryHealthGrowthRate,
+      state.player,
+      command.bossInterval,
+    );
   };
   return {
     event: {

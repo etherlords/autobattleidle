@@ -93,6 +93,16 @@ const matchesCurrentEnemy = (expected: CombatEnemy, enemy: CombatEnemy): boolean
   expected.maxHealth === enemy.maxHealth &&
   expected.reward === enemy.reward;
 
+const currentLegacyReward = (enemy: CombatEnemy): number => {
+  let multiplier = 1;
+  if (enemy.grade === "boss") {
+    const index = Math.ceil(enemy.encounter / 35) - 1;
+    multiplier = 10 + 120 * index + 5 * index * index;
+  } else if (enemy.grade === "elite") multiplier = 2;
+  else if (enemy.grade === "veteran") multiplier = 1.5;
+  return Math.max(1, Math.round(PREVIOUS_BASE_REWARD * enemy.encounter * multiplier));
+};
+
 const PREVIOUS_BOSS_INTERVAL = 15;
 const PREVIOUS_BASE_ENEMY_HEALTH = 140;
 const PREVIOUS_ENEMY_HEALTH_GROWTH = 1.002;
@@ -177,11 +187,16 @@ const sameEnemySemantics = (left: CombatEnemy, right: CombatEnemy): boolean =>
   left.maxHealth === right.maxHealth &&
   left.reward === right.reward;
 
-const recognizeEnemy = (enemy: CombatEnemy): EnemyRecognition => {
-  const current = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
-  const starter = enemy.encounter === 1 ? spawnStarterEnemy(modifierRoll(enemy.modifier)) : current;
+const recognizeEnemy = (enemy: CombatEnemy, player: CombatPlayer): EnemyRecognition => {
+  const current = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
+  const starter =
+    enemy.encounter === 1 ? spawnStarterEnemy(modifierRoll(enemy.modifier), player) : current;
   const historical = previousCadenceEnemy(enemy.encounter, modifierRoll(enemy.modifier));
-  const currentMatches = matchesCurrentEnemy(current, enemy) || matchesCurrentEnemy(starter, enemy);
+  const currentMatches =
+    matchesCurrentEnemy(current, enemy) ||
+    matchesCurrentEnemy(starter, enemy) ||
+    matchesCurrentEnemy({ ...current, reward: currentLegacyReward(current) }, enemy) ||
+    matchesCurrentEnemy({ ...starter, reward: currentLegacyReward(starter) }, enemy);
   const historicalMatches = matchesCurrentEnemy(historical, enemy);
   if (currentMatches && historicalMatches)
     return sameEnemySemantics(current, historical) ? "current" : "invalid";
@@ -199,7 +214,7 @@ export const decodeV2 = (value: unknown, nowMs: number): CombatState | undefined
   const enemy = parseEnemyShape(value.enemy);
   if (!player || !enemy || (!value.automaticUnlocked && player.automaticSpeedLevel !== 0))
     return undefined;
-  const recognition = recognizeEnemy(enemy);
+  const recognition = recognizeEnemy(enemy, player);
   if (recognition === "invalid") return undefined;
   return {
     automaticUnlocked,

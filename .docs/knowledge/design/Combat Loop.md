@@ -49,14 +49,20 @@ Defeat rewards are granted exactly once, with a 2x request when the roll is belo
 
 Focused tests cover spawn/kill/escape, deadline anchoring/equality, reward/saturation, envelopes, stale attacks, and progression. Independent browser QA proved 9.9 s immediately after reload, auto-only escape after 10.2 s with zero reward, exactly 50 baseline manual hits for a +1,220 reward once, and boss resume at encounter 70.
 
-## Planned automatic timing and pause follow-ups
+## Accepted automatic timing and pause follow-ups
 
-ABI-018 is accepted current behavior. Automatic timing uses the bounded curve `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)`, converted by `intervalMs = 1000 / APS(level)`. The curve starts at 0.1 APS, is approximately 1 APS at level 100 and 2 APS at level 200, and approaches but never reaches 3 APS. The elite automatic-slow modifier adds exactly 500 ms to that interval. Deterministic rolls, manual attacks, upgrade costs, armor penetration, critical chance, double reward, saves, and safe-number rollover remain unchanged.
+ABI-020 is accepted current automatic timing. Automatic throughput uses `APS(L) = 0.1 + 11.9 * L^2 / (L^2 + 100^2)` and approaches 12 APS. Combat presentation stays bounded at 3 visual ticks per second: each tick resolves `APS / 3` whole and optional fractional attack packets. The controller, exact simulator, event-jump simulator, and Golden evidence share the same packet scheduler.
 
-ABI-019 remains a planned session-only pause for automatic attacks. Pause freezes the exact cooldown remainder; resume continues from it with no catch-up attack. Manual attacks and the rest of the application continue. Reload clears the pause state. It still requires fresh focused and deployed proof before becoming current authority.
+Packets in one visual tick share a timestamp but roll critical independently. When an earlier packet defeats an enemy, remaining packets may continue against the spawned enemy at the same timestamp; the next automatic tick is committed only after the batch. The elite automatic-slow modifier keeps its existing 500 ms addition. See [[High-APS Packet Batching Example]] and its revision-bound [[High-APS Packet Batching Example#L20-L26|metadata plus stored-source link]] (contentHash `4f74cde6b85769893cdf4f602ee379c796dfcf7e829a26b050ed474cbc7de9d1`).
 
-## Planned headless ordinary-balance telemetry
+ABI-019 remains a separate planned session-only pause for automatic attacks. Pause must freeze the exact cooldown remainder, resume without a catch-up attack, leave manual attacks active, and clear on reload. ABI-020 changes no pause ownership.
 
-ABI-020 will exercise existing spawn, attack, and purchase operations without Three.js or DOM for at least 3,000 ordinary encounters using fixed rolls. It attempts at most one round-robin affordable repeatable purchase after each defeated ordinary enemy and records normal/veteran/elite hit and time distributions, transition spikes, walls, upgrade state, safe-number behavior, and bosses separately.
+## Accepted headless ordinary-balance telemetry
 
-The simulation compares 0.5% and 0.8% safe-saturated exponential ordinary base-health growth after ABI-018 speed and ABI-016 cadence land. It must be deterministic, target roughly two seconds of test runtime, keep ordinary time-to-kill finite with no 60-second wall, and preserve intentional one-hit plus meaningful 5- and 10-hit cases. Boss cadence and multiplier are not changed.
+ABI-020 is accepted current behavior. The headless harness executes production `spawnEnemy`, `attack`, `purchaseUpgrade`, reward, packet, boss, and Golden transitions without Three.js or DOM. It has an exact oracle and an event-jump implementation whose final state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons. A warmed 48-hour run completes in 1.524 seconds under the 2.5-second budget.
+
+Ordinary observations are filtered to non-boss, non-Golden encounters before grade/modifier distributions, walls, armor, bands, and adjacent grade transitions are computed. Boss and Golden metrics are separate. Golden automatic-only scheduling escapes with zero reward; deterministic manual plus automatic input defeats it and grants one reward.
+
+The accepted player-relative health targets are normal 1 hit, veteran 5 hits, elite 10 hits, and boss 30 hits before modifiers and armor. Endgame begins by elapsed time around the exact 48-hour checkpoint, which reaches encounter 24,920 at approximately 11.995 APS; 49 hours reaches encounter 30,234 without currency saturation.
+
+The full generated report remains a rebuildable task asset. Durable conclusions and gates are in [[ABI-020 Reviewed Measurement Receipt]]; revision-bound metadata is [[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and stored-source link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`). Economy and upgrade ownership is linked at [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted simulator economy]].

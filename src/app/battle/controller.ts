@@ -1,5 +1,5 @@
 import { attack as resolveAttack, expireGoldenBug, purchaseUpgrade } from "../../domain/combat";
-import { COMBAT_BALANCE } from "../../domain/combat";
+import { COMBAT_BALANCE, resolveAutomaticPackets } from "../../domain/combat";
 import type { AttackEvent, AttackSource, CombatState, UpgradeId } from "../../domain/combat";
 import type { BattleEvent } from "../../domain/snapshot";
 import { battleEventMessages } from "./presenter";
@@ -136,15 +136,34 @@ export class BattleController {
   }
 
   private automaticAttack(): AttackEvent {
-    const result = resolveAttack(this.state, {
-      atMs: this.nowMs,
-      enemyId: this.state.enemy.id,
-      rolls: this.options.rolls(),
-      source: "automatic",
-    });
-    this.state = result.state;
+    const resolution = resolveAutomaticPackets(this.state, this.nowMs, (state, packet) =>
+      resolveAttack(state, {
+        atMs: this.nowMs,
+        ...packet,
+        enemyId: state.enemy.id,
+        rolls: this.options.rolls(),
+        source: "automatic",
+      }),
+    );
+    this.state = resolution.state;
     this.syncGoldenBugDeadline();
-    return result.event;
+    const outcomes = resolution.events;
+    const hits = outcomes.filter(
+      (outcome): outcome is Exclude<AttackEvent, { type: "ignored" }> => outcome.type === "hit",
+    );
+    if (hits.length === 0) return { type: "ignored" };
+    return {
+      armorPreventedDamage: hits.reduce(
+        (total, outcome) => total + outcome.armorPreventedDamage,
+        0,
+      ),
+      critical: hits.some((outcome) => outcome.critical),
+      damage: hits.reduce((total, outcome) => total + outcome.damage, 0),
+      defeated: hits.some((outcome) => outcome.defeated),
+      penetration: hits.at(-1)?.penetration ?? 0,
+      reward: hits.reduce((total, outcome) => total + outcome.reward, 0),
+      type: "hit",
+    };
   }
 
   private toggleAutomaticPause(): boolean {

@@ -38,8 +38,14 @@ describe("battle snapshots", () => {
     };
     const states = [
       { expectedName: "Ember Brute", state: initial },
-      { expectedName: "Thorn Mantis", state: { ...initial, enemy: spawnEnemy(3, 0.76) } },
-      { expectedName: "Cinder Hydra", state: { ...initial, enemy: spawnEnemy(35, 0) } },
+      {
+        expectedName: "Thorn Mantis",
+        state: { ...initial, enemy: spawnEnemy(3, 0.76, undefined, initial.player) },
+      },
+      {
+        expectedName: "Cinder Hydra",
+        state: { ...initial, enemy: spawnEnemy(35, 0, undefined, initial.player) },
+      },
       { expectedName: "Golden Bug", state: goldenBug },
     ];
 

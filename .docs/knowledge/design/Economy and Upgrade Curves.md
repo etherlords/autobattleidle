@@ -43,16 +43,22 @@ Golden Bug health is five times the base automatic damage envelope in its 10,000
 
 Tests assert the exact deterministic report, one purchase per defeated progression enemy, Golden Bug zero-reward timeouts, manual/automatic envelope, exact reward, safe saturation, APS formula levels/bounds, elite +500 ms slow, persistence, rollover, and stale-attack rejection. `pnpm check` passes 14 files and 89 tests.
 
-## Planned derived-stat presentation and automatic-speed curve
+## Accepted derived-stat presentation and automatic-speed curve
 
-ABI-018 is accepted current behavior. The primary automatic-attack HUD reports APS while locked and reports APS plus the live cooldown when unlocked. The upgrades dialog contains a compact aria-readable panel for current damage, armor penetration, critical chance, double-reward chance, and APS without changing the modal layout model.
+ABI-018's derived-stat presentation remains current, while ABI-020 raises the automatic-throughput ceiling. Automatic speed now uses `APS(L) = 0.1 + 11.9 * L^2 / (L^2 + 100^2)`, remains finite and strictly increasing, and approaches but never exceeds 12 APS. The combat simulation consumes full throughput; presentation is bounded to 3 visual ticks per second.
 
-Automatic speed uses `0.1 + 2.9 * level^2 / (level^2 + 150^2)` APS, remaining finite, strictly increasing, and asymptotically below 3 APS. Formula-table tests cover levels 0, 1, 10, 50, 100, 200, 500, and 1000. The elite automatic-slow modifier still adds exactly 500 ms to the derived interval.
+At more than 3 APS, one visual tick resolves `APS / 3` attack-equivalent packets: whole packets have multiplier 1 and the optional remainder is a fractional multiplier. Examples are 3.3 APS -> `[1, 0.1]`, 6 APS -> `[1, 1]`, 10.2 APS -> `[1, 1, 1, 0.4]`, and 12 APS -> four full packets. Every packet rolls critical independently; remaining packets may continue against the next enemy at the same timestamp. Automatic-slow retains its existing 500 ms addition to the next tick.
 
-Armor penetration `0.75 * level / (level + 20)` and critical chance `0.6 * level / (level + 20)` remain unchanged and never reach their caps. Double reward is displayed with its unchanged formula and economy. Derived stats are snapshot-only; save schema V3 and canonical stored levels are unchanged.
+A paid repeatable upgrade always advances to the next level that changes the displayed gameplay quantum. Skipped internal levels are charged as one combined cost, preventing repeated purchases that display `+0`. Damage uses integer steps; penetration, critical, and reward chance use thousandths; APS uses hundredths. A non-improving numeric endpoint remains disabled without debit.
 
-## Planned ordinary-balance simulator
+The concrete packet values are preserved in [[High-APS Packet Batching Example]]. Revision-bound metadata and stored-source evidence: [[High-APS Packet Batching Example#L20-L26|example summary and asset link]] (contentHash `4f74cde6b85769893cdf4f602ee379c796dfcf7e829a26b050ed474cbc7de9d1`). See [[Combat Loop#Accepted automatic timing and pause follow-ups|runtime packet ownership]].
 
-ABI-020 will add a pure headless production-path simulator for at least 3,000 configurable ordinary encounters. After each defeat it attempts at most one affordable repeatable upgrade in round-robin order across the full repeatable catalog, while reporting combat-affecting levels separately from double reward. Candidate ordinary health growth is 0.5% versus 0.8% exponential per encounter; selection is based on measured hit/time-to-kill envelopes, not a hard-coded preference.
+## Accepted ordinary-balance simulator
 
-The report includes per-grade and per-band p50/p90/max hits and time, one-hit/5-plus/10-plus fractions, transitions, spikes, walls, safe saturation, and deterministic repeatability. No adjacent-band median may jump more than 2x and no ordinary wall may exceed 60 seconds under the reference strategy. Boss balance stays separate.
+ABI-020 is accepted current behavior. The pure deterministic simulator reuses production spawn, attack, packet schedule, purchase, reward, critical, penetration, boss, and Golden Bug operations. It supports an exact oracle and a mathematically equivalent event-jump mode; final combat state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons.
+
+The accepted unattended strategy attempts at most one affordable repeatable purchase after each defeated progression enemy in deterministic round-robin order. Per-stage receipts separate ordinary, boss, and Golden outcomes; ordinary telemetry reports grade/modifier hit and time distributions, one/5/10-hit fractions, transitions, armor, walls, and bands. Golden observations are excluded from every ordinary cohort including grade transitions.
+
+The 48-hour checkpoint reaches encounter 24,920 at approximately 11.995 APS with unsaturated currency; 49 hours reaches encounter 30,234 and proves continued progression. This time-based boundary defines the start of endgame. Linear-capped critical and penetration, altered cadence, damage, APS, reward, upgrade-cost, and both exponential health candidates were measured over at least 3,000 ordinary encounters and rejected; production policies remain the baseline.
+
+The complete generated JSON stays with the task packet. Vault preserves only the reviewed portable [[ABI-020 Reviewed Measurement Receipt]] and the concrete [[High-APS Packet Batching Example]]. The receipt's revision-bound metadata is [[ABI-020 Reviewed Measurement Receipt#L19-L25|summary and stored-source link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).

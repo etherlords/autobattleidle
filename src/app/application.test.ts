@@ -721,7 +721,7 @@ describe("startApplication", () => {
       "Requires automatic attack unlock",
     ]);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(210);
+    expect(lastSnapshot().enemy.health).toBe(200);
     expect(lastSnapshot().coins).toBe(2);
     expect(lastSnapshot().events.at(-1)?.message).toBe("Manual kill: +1 coins");
     expect(lastSnapshot().upgrades).toHaveLength(6);
@@ -738,12 +738,12 @@ describe("startApplication", () => {
     expect(savedCoins).toEqual([2, 1]);
     expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     attack();
-    expect(lastSnapshot().enemy.health).toBe(170);
+    expect(lastSnapshot().enemy.health).toBe(160);
     expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     const firstFrame = callbacks.values().next().value as FrameRequestCallback;
     callbacks.delete(1);
     firstFrame(10000);
-    expect(snapshots.at(-1)?.enemy.health).toBe(130);
+    expect(snapshots.at(-1)?.enemy.health).toBe(120);
     expect(lastSnapshot().automatic.remainingMs).toBe(10000);
     reset();
     expect(calls.persistenceReset).toBe(0);

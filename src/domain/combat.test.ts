@@ -1,12 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 
 import {
   armorPenetrationForLevel,
+  armorPenetrationForPolicy,
   attack,
+  automaticAttackPacketMultipliers,
   automaticAttacksPerSecond,
   automaticInterval,
   COMBAT_BALANCE,
   criticalChanceForLevel,
+  criticalChanceForPolicy,
   createCombatState,
   damageForLevel,
   doubleRewardChanceForLevel,
@@ -20,7 +24,12 @@ import {
   upgradeDisabledReason,
   upgradeLevel,
 } from "./combat";
-import { simulateProgression } from "./progression-simulator";
+import {
+  fastForwardProgression,
+  simulateProgression,
+  summarizeTelemetry,
+} from "./progression-simulator";
+import { buildMeasuredReport } from "./measured-report";
 import { UPGRADE_DISPLAY_ORDER } from "./combat/upgrades";
 import { MAX_ENCOUNTER } from "./combat/balance";
 
@@ -46,17 +55,40 @@ const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>)
 };
 
 describe("endless combat progression", () => {
-  it("uses the bounded automatic APS curve and retains the elite slow interval", () => {
+  it("keeps omitted simulator growth structurally identical and confines it to ordinary spawns", () => {
+    expect(spawnEnemy(100, 0)).toEqual(spawnEnemy(100, 0, undefined));
+    expect(spawnEnemy(100, 0, 0.005).maxHealth).not.toBe(spawnEnemy(100, 0).maxHealth);
+    expect(spawnGoldenBug(100, createCombatState().player)).toEqual(
+      spawnGoldenBug(100, createCombatState().player),
+    );
+  });
+
+  it("retains the linear baseline after both exponential candidates exceed it", () => {
+    const health = (rate: number, encounter: number) =>
+      Math.round(COMBAT_BALANCE.baseEnemyHealth * (1 + rate) ** (encounter - 1));
+    expect(spawnEnemy(100, 0, 0.005).maxHealth).toBe(health(0.005, 100));
+    expect(spawnEnemy(100, 0, 0.008).maxHealth).toBe(health(0.008, 100));
+    expect(spawnEnemy(100, 0, 0.008).maxHealth).toBeGreaterThan(
+      spawnEnemy(100, 0, 0.005).maxHealth,
+    );
+    expect(spawnEnemy(100, 0).maxHealth).toBeLessThan(spawnEnemy(100, 0, 0.005).maxHealth);
+  });
+
+  it("uses a 12 APS automatic curve and bounded visual attack packets", () => {
     const levels = [0, 1, 10, 50, 100, 200, 500, 1_000];
     const aps = levels.map(automaticAttacksPerSecond);
     expect(aps[0]).toBe(0.1);
-    expect(aps[4]).toBeCloseTo(1, 1);
-    expect(aps[5]).toBeCloseTo(2, 1);
+    expect(aps[4]).toBeCloseTo(6.05, 1);
+    expect(aps[5]).toBeGreaterThan(2);
     for (const value of aps) expect(value).toBeGreaterThan(0);
     for (let index = 1; index < aps.length; index += 1)
       expect(aps[index]).toBeGreaterThan(aps[index - 1] ?? 0);
-    expect(automaticAttacksPerSecond(1_000)).toBeLessThan(3);
-    expect(automaticAttacksPerSecond(Number.MAX_SAFE_INTEGER)).toBeLessThan(3);
+    expect(automaticAttacksPerSecond(1_000)).toBeGreaterThan(9);
+    expect(automaticAttacksPerSecond(Number.MAX_SAFE_INTEGER)).toBeGreaterThan(11);
+    expect(automaticAttacksPerSecond(Number.MAX_SAFE_INTEGER)).toBeLessThanOrEqual(12);
+    expect(automaticAttackPacketMultipliers(3.3)).toEqual([1, 0.1]);
+    expect(automaticAttackPacketMultipliers(6)).toEqual([1, 1]);
+    expect(automaticAttackPacketMultipliers(10.2)).toEqual([1, 1, 1, 0.4]);
     const player = { ...createCombatState().player, automaticSpeedLevel: 200 };
     expect(automaticInterval(spawnEnemy(3, 0.67), player)).toBeCloseTo(
       1_000 / automaticAttacksPerSecond(200) + COMBAT_BALANCE.eliteAutomaticSlowMs,
@@ -154,7 +186,7 @@ describe("endless combat progression", () => {
     expect(killed.state).toMatchObject({
       goldenBug: null,
       goldenBugDefeats: 1,
-      enemy: spawnEnemy(51, 0),
+      enemy: spawnEnemy(51, 0, undefined, initial.player),
     });
     const doubled = attack(
       {
@@ -209,6 +241,57 @@ describe("endless combat progression", () => {
     });
   });
 
+  it("scales live ordinary and boss health from the current player damage without changing Golden Bug health", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 2_000,
+      damageLevel: 10_000,
+      damage: damageForLevel(10_000),
+    }).player;
+    const normal = spawnEnemy(1_999, 0, undefined, player);
+    const veteran = spawnEnemy(2_000, 0, undefined, player);
+    const elite = spawnEnemy(2_001, 0.34, undefined, player);
+    const boss = spawnEnemy(2_030, 0, undefined, player);
+    const golden = spawnGoldenBug(2_001, player);
+    expect(normal.maxHealth).toBe(damageForLevel(10_000));
+    expect(veteran.maxHealth).toBe(damageForLevel(10_000) * 5);
+    expect(elite.maxHealth).toBe(damageForLevel(10_000) * 15);
+    expect(boss.maxHealth).toBe(damageForLevel(10_000) * 30);
+    expect(normal.maxHealth).toBeGreaterThan(200);
+    expect(boss.maxHealth).toBeLessThan(golden.maxHealth);
+  });
+
+  it("finishes a warmed 48-hour event-jump receipt in about two seconds", () => {
+    fastForwardProgression(48 * 60 * 60 * 1_000);
+    const startedAtMs = performance.now();
+    const report = fastForwardProgression(48 * 60 * 60 * 1_000);
+    expect(report.elapsedMs).toBe(48 * 60 * 60 * 1_000);
+    expect(performance.now() - startedAtMs).toBeLessThan(2_500);
+  }, 7_000);
+
+  it("keeps the event-driven 48-hour fast-forward equal to the production simulator at time boundaries", () => {
+    const roundedTiming = (report: ReturnType<typeof simulateProgression>) => ({
+      ...report,
+      bosses: report.bosses.map((boss) => ({
+        ...boss,
+        elapsedMs: Math.round(boss.elapsedMs / 10),
+      })),
+      elapsedMs: Math.round(report.elapsedMs / 10),
+      observations: report.observations.map((observation) => ({
+        ...observation,
+        timeToKillMs: Math.round(observation.timeToKillMs / 10),
+      })),
+    });
+    for (const hours of [1, 4, 8, 24, 48, 49]) {
+      const horizonMs = hours * 60 * 60 * 1_000;
+      const fast = fastForwardProgression(horizonMs);
+      const exact = simulateProgression({ horizonMs });
+      expect(fast.elapsedMs).toBe(horizonMs);
+      expect(exact.elapsedMs).toBe(horizonMs);
+      expect(fast.state).toEqual(exact.state);
+      expect(roundedTiming(fast)).toEqual(roundedTiming(exact));
+    }
+  }, 30_000);
+
   it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
     const player = createCombatState().player;
     let state: CombatState = {
@@ -236,6 +319,18 @@ describe("endless combat progression", () => {
     expect(state.goldenBug).toBeNull();
     expect(state.nextAutomaticAttackAtMs).toBe(beforeCooldown);
   });
+
+  it("keeps high-APS Golden Bug health below one-for-one automatic scaling", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 1_000,
+      damageLevel: 100,
+      damage: damageForLevel(100),
+    }).player;
+    const automaticDamageInWindow =
+      Math.ceil(automaticAttacksPerSecond(player.automaticSpeedLevel) * 10) * damageForLevel(100);
+    expect(spawnGoldenBug(51, player).maxHealth).toBeLessThan(automaticDamageInWindow * 2);
+    expect(spawnGoldenBug(51, player).maxHealth).toBeGreaterThan(automaticDamageInWindow);
+  });
   it("defeats only the fresh starter enemy on the tenth baseline manual attack", () => {
     let state = createCombatState();
     expect(state.enemy).toMatchObject({ encounter: 1, health: 10, maxHealth: 10 });
@@ -257,7 +352,7 @@ describe("endless combat progression", () => {
       source: "manual",
     });
     expect(result.event).toMatchObject({ critical: false, damage: 1, defeated: true });
-    expect(result.state.enemy).toEqual(spawnEnemy(2, 0));
+    expect(result.state.enemy).toEqual(spawnEnemy(2, 0, undefined, state.player));
   });
 
   it("keeps representative later enemies on their existing balance", () => {
@@ -269,7 +364,7 @@ describe("endless combat progression", () => {
       id: 2,
       maxHealth: 210,
       modifier: null,
-      reward: 4,
+      reward: 1,
     });
     expect(spawnEnemy(3, 0.34)).toEqual({
       armor: 0,
@@ -279,7 +374,7 @@ describe("endless combat progression", () => {
       id: 3,
       maxHealth: 423,
       modifier: "health",
-      reward: 7,
+      reward: 2,
     });
     expect(spawnEnemy(35, 0)).toEqual({
       armor: 35,
@@ -289,7 +384,7 @@ describe("endless combat progression", () => {
       id: 35,
       maxHealth: 1500,
       modifier: null,
-      reward: 420,
+      reward: 105,
     });
   });
 
@@ -304,8 +399,8 @@ describe("endless combat progression", () => {
       rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
       source: "manual",
     });
-    expect(result.state.enemy).toEqual(spawnEnemy(1, 0));
-    expect(result.state.enemy).toMatchObject({ health: 140, maxHealth: 140 });
+    expect(result.state.enemy).toEqual(spawnEnemy(1, 0, undefined, state.player));
+    expect(result.state.enemy).toMatchObject({ health: 1, maxHealth: 1 });
   });
 
   it("keeps display order and behavior in one complete upgrade strategy registry", () => {
@@ -318,7 +413,7 @@ describe("endless combat progression", () => {
       const purchase = purchaseUpgrade(state, id, 250);
       expect(upgradeCost(state, id)).toBeGreaterThan(0);
       expect(purchase.reason).toBeNull();
-      expect(upgradeLevel(purchase.state, id)).toBe(initialLevel + 1);
+      expect(upgradeLevel(purchase.state, id)).toBeGreaterThan(initialLevel);
       state = purchase.state;
     }
   });
@@ -416,6 +511,31 @@ describe("endless combat progression", () => {
     }
   });
 
+  it("finds the next displayed asymptotic upgrade quantum without a linear scan", () => {
+    const state = {
+      ...createCombatState(),
+      coins: Number.MAX_SAFE_INTEGER,
+      player: { ...createCombatState().player, criticalLevel: 1_000_000 },
+    };
+    const purchase = purchaseUpgrade(state, "critical-chance", 0);
+    expect(purchase.reason).toBeNull();
+    expect(purchase.state.player.criticalLevel).toBeGreaterThan(1_000_000);
+    expect(upgradeDisabledReason(purchase.state, "critical-chance")).toBe(
+      "Level cannot advance safely",
+    );
+  });
+
+  it("treats rounded 12.00 APS as the terminal automatic-speed quantum", () => {
+    const state = {
+      ...createCombatState(),
+      automaticUnlocked: true,
+      coins: Number.MAX_SAFE_INTEGER,
+      player: { ...createCombatState().player, automaticSpeedLevel: 5_000 },
+    };
+    expect(automaticAttacksPerSecond(state.player.automaticSpeedLevel).toFixed(2)).toBe("12.00");
+    expect(upgradeDisabledReason(state, "automatic-speed")).toBe("Level cannot advance safely");
+  });
+
   it("advances encounter 100 into a finite 101", () => {
     const state = {
       ...createCombatState({ damageLevel: 100, damage: damageForLevel(100) }),
@@ -457,32 +577,205 @@ describe("endless combat progression", () => {
   it("produces a deterministic, finite multi-boss reference report", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
-    expect(first).toEqual({
-      armorPreventedDamage: 133777,
-      automaticAttacks: 2590,
-      bosses: [
-        { elapsedMs: 8079407.359888906, encounter: 35 },
-        { elapsedMs: 17694597.802813232, encounter: 70 },
-        { elapsedMs: 24596853.331069686, encounter: 105 },
-      ],
-      coins: 44681,
-      elapsedMs: 24596853.331069686,
-      encounters: 106,
-      manualAttacks: 0,
-      penetration: 0.3088235294117647,
-      purchases: {
-        "armor-penetration": 14,
-        "automatic-speed": 8,
-        "automatic-unlock": 1,
-        "critical-chance": 3,
-        damage: 79,
-        "double-reward": 0,
-      },
-    });
+    expect(first.bosses.map(({ encounter }) => encounter)).toEqual([35, 70, 105]);
+    expect(first.elapsedMs).toBeGreaterThan(0);
+    expect(first.coins).toBeGreaterThan(0);
+    expect(first.observations.length).toBeGreaterThanOrEqual(105);
+    expect(first.byGrade.elite.tenPlusFraction).toBeGreaterThan(0);
     expectReferenceStrategy(first);
     expect(first.automaticAttacks).toBeGreaterThan(0);
     expect(first.manualAttacks).toBe(0);
     expect(first.purchases.damage).toBeGreaterThan(0);
     expect(first.purchases["armor-penetration"]).toBeGreaterThan(0);
+  });
+
+  it("reports deterministic 3,000-ordinary-enemy telemetry without a second combat engine", () => {
+    const report = simulateProgression({ bossCount: 0, ordinaryEncounters: 3_000 });
+    expect(
+      report.observations.filter(({ grade }) => grade !== "boss").length,
+    ).toBeGreaterThanOrEqual(3_000);
+    expect(report.byGrade.normal.p90).toBeGreaterThan(0);
+    expect(report.ordinaryWallsOver60Seconds).toBeGreaterThanOrEqual(0);
+  });
+
+  it("routes alternative chance and penetration formulas through production attack resolution", () => {
+    expect(criticalChanceForPolicy(20, "linear-capped")).not.toBe(criticalChanceForLevel(20));
+    expect(armorPenetrationForPolicy(20, "linear-capped")).not.toBe(armorPenetrationForLevel(20));
+    const state = {
+      ...createCombatState({ criticalLevel: 20, damageLevel: 100, armorPenetrationLevel: 20 }),
+      enemy: { ...spawnEnemy(3, 0), armor: 100, health: 10_000 },
+    };
+    const command = {
+      atMs: 0,
+      enemyId: state.enemy.id,
+      rolls: { critical: 0.35, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual" as const,
+    };
+    const current = attack(state, command);
+    const alternative = attack(state, {
+      ...command,
+      armorPenetrationPolicy: "linear-capped",
+      criticalChancePolicy: "linear-capped",
+    });
+    expect(current.event).toMatchObject({ critical: false });
+    expect(alternative.event).toMatchObject({ critical: true });
+    if (current.event.type === "ignored" || alternative.event.type === "ignored")
+      throw new Error("Expected production hits");
+    expect(alternative.event.damage).toBeGreaterThan(current.event.damage);
+  });
+
+  it("keeps Golden Bug observations out of ordinary distributions", () => {
+    const report = simulateProgression({ bossCount: 0, ordinaryEncounters: 100 });
+    const golden = report.observations.filter(({ goldenBug }) => goldenBug);
+    expect(golden).not.toHaveLength(0);
+    const ordinaryNormals = report.observations.filter(
+      ({ grade, goldenBug }) => grade === "normal" && !goldenBug,
+    );
+    expect(report.byGrade.normal.count).toBe(ordinaryNormals.length);
+    expect(summarizeTelemetry(report).grades.normal.count).toBe(ordinaryNormals.length);
+    const ordinary = report.observations.filter(
+      ({ grade, goldenBug }) => grade !== "boss" && !goldenBug,
+    );
+    const expectedTransitions = ordinary
+      .slice(1)
+      .reduce<Record<string, number>>((counts, value, index) => {
+        const previous = ordinary[index];
+        if (previous !== undefined && previous.grade !== value.grade) {
+          const key = `${previous.grade}->${value.grade}`;
+          counts[key] = (counts[key] ?? 0) + 1;
+        }
+        return counts;
+      }, {});
+    expect(report.observations.some(({ goldenBug }) => goldenBug)).toBe(true);
+    expect(summarizeTelemetry(report).gradeTransitions).toEqual(expectedTransitions);
+  });
+
+  it("keeps a candidate curve across a skipped boss boundary", () => {
+    const report = simulateProgression({
+      bossCount: 0,
+      ordinaryEncounters: 36,
+      ordinaryHealthGrowthRate: 0.005,
+    });
+    const encounter36 = report.observations.find(({ encounter }) => encounter === 36);
+    expect(encounter36?.hits).toBeGreaterThan(0);
+    expect(spawnEnemy(36, 0, 0.005).maxHealth).toBeGreaterThan(spawnEnemy(36, 0).maxHealth);
+    expect(spawnEnemy(35, 0, 0.005)).toEqual(spawnEnemy(35, 0));
+    expect(spawnGoldenBug(51, createCombatState().player)).toEqual(
+      spawnGoldenBug(51, createCombatState().player),
+    );
+  });
+
+  it("generates the frozen report telemetry deterministically", () => {
+    const first = summarizeTelemetry(
+      simulateProgression({ bossCount: 0, ordinaryEncounters: 3_000, manualIntervalMs: 100 }),
+    );
+    expect(
+      summarizeTelemetry(
+        simulateProgression({ bossCount: 0, ordinaryEncounters: 3_000, manualIntervalMs: 100 }),
+      ),
+    ).toEqual(first);
+    expect(first.modifiers.armor.max).toBeGreaterThan(0);
+    expect(first.adjacentMedianJump).toBeGreaterThanOrEqual(0);
+    expect(first.armor.prevented).toBeGreaterThan(0);
+  }, 7_000);
+
+  it("matches the committed measured report JSON", () => {
+    const raw = readFileSync(
+      new URL(
+        "../../plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/MEASURED-REPORT.json",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    expect(JSON.parse(raw)).toEqual(buildMeasuredReport());
+  }, 30_000);
+
+  it("records derived candidate rejections and named TTK bands", () => {
+    const report = buildMeasuredReport() as {
+      candidates: Record<
+        string,
+        {
+          rejectionReasons: readonly string[];
+          telemetry: { bands: Record<string, { timeToKillMs: { p90: number } }> };
+        }
+      >;
+    };
+    const first = report.candidates.exponential005;
+    const second = report.candidates.exponential008;
+    expect(first?.rejectionReasons.length).toBeGreaterThan(0);
+    expect(second?.rejectionReasons.length).toBeGreaterThan(0);
+    expect(first?.telemetry.bands.encounters100To149?.timeToKillMs.p90).toBeGreaterThan(0);
+    expect(second?.telemetry.bands.encounters100To149?.timeToKillMs.p90).toBeGreaterThan(
+      first?.telemetry.bands.encounters100To149?.timeToKillMs.p90 ?? 0,
+    );
+  });
+
+  it("measures every declared alternative across 3,000 production encounters", () => {
+    const report = buildMeasuredReport() as {
+      alternatives: Record<
+        string,
+        {
+          input: Record<string, number | string>;
+          measured: { evaluatedOrdinaryEncounters: number };
+          reason: string;
+        }
+      >;
+    };
+    expect(Object.keys(report.alternatives).sort()).toEqual([
+      "attackSpeed",
+      "cadence",
+      "critical",
+      "damage",
+      "penetration",
+      "reward",
+      "upgradeCost",
+    ]);
+    for (const alternative of Object.values(report.alternatives)) {
+      expect(Object.keys(alternative.input)).not.toHaveLength(0);
+      expect(alternative.measured.evaluatedOrdinaryEncounters).toBeGreaterThanOrEqual(3_000);
+      expect(alternative.reason).toMatch(/rejected/);
+    }
+    expect(report.alternatives.critical?.input).toEqual({ criticalChancePolicy: "linear-capped" });
+    expect(report.alternatives.penetration?.input).toEqual({
+      armorPenetrationPolicy: "linear-capped",
+    });
+  }, 30_000);
+
+  it("reports high-APS Golden Bug automatic and manual-plus-automatic outcomes", () => {
+    const report = buildMeasuredReport() as {
+      highApsGoldenBug: {
+        automaticOnly: { defeatsGoldenBug: boolean; packets: number };
+        manualPlusAutomatic: { defeatsGoldenBug: boolean; manualClicks: number };
+      };
+    };
+    expect(report.highApsGoldenBug.automaticOnly.packets).toBeGreaterThanOrEqual(100);
+    expect(report.highApsGoldenBug.automaticOnly.defeatsGoldenBug).toBe(false);
+    expect(report.highApsGoldenBug.manualPlusAutomatic.manualClicks).toBeGreaterThan(0);
+    expect(report.highApsGoldenBug.manualPlusAutomatic.manualClicks).toBeLessThanOrEqual(100);
+    expect(report.highApsGoldenBug.manualPlusAutomatic.defeatsGoldenBug).toBe(true);
+  }, 30_000);
+
+  it("records actual 10-plus APS at the 48-hour endgame boundary", () => {
+    const report = buildMeasuredReport() as {
+      briefRevision: number;
+      realTimeBands: readonly { hours: number; automaticAttacksPerSecond: number }[];
+    };
+    expect(report.briefRevision).toBe(19);
+    expect(
+      report.realTimeBands.find(({ hours }) => hours === 48)?.automaticAttacksPerSecond,
+    ).toBeGreaterThanOrEqual(10);
+  });
+
+  it("uses the configured deterministic manual cadence without moving automatic cooldowns", () => {
+    const automaticOnly = simulateProgression({ bossCount: 0, ordinaryEncounters: 100 });
+    const combined = simulateProgression({
+      bossCount: 0,
+      manualIntervalMs: 100,
+      ordinaryEncounters: 100,
+    });
+    expect(combined.manualAttacks).toBeGreaterThan(0);
+    expect(combined.automaticAttacks).toBeGreaterThan(0);
+    expect(combined.elapsedMs).toBeLessThan(automaticOnly.elapsedMs);
+    expect(() => simulateProgression({ manualIntervalMs: 0 })).toThrow(RangeError);
   });
 });

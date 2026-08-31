@@ -1,10 +1,21 @@
-import { automaticInterval, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
+import { automaticInterval, damageForLevel, spawnGoldenBug } from "../../domain/combat";
 import type { CombatState } from "../../domain/combat";
 import { decodeV2 } from "./validation-v2";
 import { hasExactKeys, integer, isRecord, parseEnemyShape } from "./validation-primitives";
 import { parseV2Player } from "./validation-v2";
 
 const LEGACY_GOLDEN_BUG_REWARD_FACTOR = 10;
+const LEGACY_GOLDEN_BUG_HEALTH_FACTOR = 5;
+const legacyOrdinaryReward = (encounter: number): number => {
+  let gradeMultiplier = 1;
+  if (encounter % 3 === 0) gradeMultiplier = 2;
+  else if (encounter % 3 === 2) gradeMultiplier = 1.5;
+  return Math.max(1, Math.round(1.2 * encounter * gradeMultiplier));
+};
+const legacyAutomaticAttacksPerSecond = (level: number): number => {
+  const ratio = level === 0 ? 0 : 1 / (1 + (150 / level) ** 2);
+  return 0.1 + 2.9 * ratio;
+};
 
 const parseGoldenBug = (
   value: unknown,
@@ -45,14 +56,18 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
   const player = parseV2Player(value.player);
   if (goldenBug === undefined || enemy === undefined || player === undefined) return undefined;
   const expected = spawnGoldenBug(goldenBug.resumeEncounter, player);
+  const legacyMaxHealth =
+    Math.ceil(10 * legacyAutomaticAttacksPerSecond(player.automaticSpeedLevel)) *
+    damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1)) *
+    LEGACY_GOLDEN_BUG_HEALTH_FACTOR;
   const legacyReward = Math.min(
     Number.MAX_SAFE_INTEGER,
-    spawnEnemy(goldenBug.resumeEncounter, 0).reward * LEGACY_GOLDEN_BUG_REWARD_FACTOR,
+    legacyOrdinaryReward(goldenBug.resumeEncounter) * LEGACY_GOLDEN_BUG_REWARD_FACTOR,
   );
   if (
     enemy.id !== expected.id ||
-    enemy.health > expected.maxHealth ||
-    enemy.maxHealth !== expected.maxHealth ||
+    enemy.health > enemy.maxHealth ||
+    (enemy.maxHealth !== expected.maxHealth && enemy.maxHealth !== legacyMaxHealth) ||
     (enemy.reward !== expected.reward && enemy.reward !== legacyReward) ||
     enemy.encounter !== expected.encounter
   )
@@ -62,7 +77,13 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
   return {
     automaticUnlocked: value.automaticUnlocked,
     coins: value.coins,
-    enemy: { ...enemy, reward: expected.reward },
+    enemy: {
+      ...expected,
+      health:
+        enemy.maxHealth === expected.maxHealth
+          ? enemy.health
+          : Math.max(1, Math.ceil((enemy.health / enemy.maxHealth) * expected.maxHealth)),
+    },
     goldenBug,
     goldenBugDefeats: 0,
     nextAutomaticAttackAtMs: value.automaticUnlocked ? nowMs + automaticInterval(enemy, player) : 0,

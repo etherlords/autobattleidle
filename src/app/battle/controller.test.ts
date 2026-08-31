@@ -4,6 +4,8 @@ import { BattleController } from "./controller";
 import { battleCommands } from "./commands";
 import { presentBattleUpdate } from "./presenter";
 import {
+  automaticAttackPacketMultipliers,
+  automaticAttacksPerSecond,
   createCombatState,
   purchaseUpgrade,
   spawnGoldenBug,
@@ -20,6 +22,42 @@ const stateWith = (state: CombatState, health: number, coins = state.coins): Com
 });
 
 describe("BattleController", () => {
+  it("batches high APS into independently rolled full and fractional packets at three visual ticks", () => {
+    const criticalRolls = [0, 1, 1, 1];
+    let rollIndex = 0;
+    const initial = {
+      ...createCombatState(
+        { automaticSpeedLevel: 1_000, criticalLevel: 20, damageLevel: 9, damage: 40 },
+        0,
+        true,
+      ),
+      enemy: { ...createCombatState().enemy, health: 10_000 },
+      nextAutomaticAttackAtMs: 0,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls: () => ({
+        critical: criticalRolls[rollIndex++] ?? 1,
+        doubleReward: 1,
+        nextEliteModifier: 0,
+      }),
+    });
+    const events: BattleControllerEvent[] = [];
+    controller.subscribe((event) => events.push(event));
+    expect(controller.dispatch(battleCommands.frame(0))).toBe(true);
+    const outcome = events.at(-1);
+    if (outcome?.type !== "frame" || outcome.automaticOutcome?.type !== "hit")
+      throw new Error("Expected a batched automatic hit");
+    const packets = automaticAttackPacketMultipliers(
+      automaticAttacksPerSecond(initial.player.automaticSpeedLevel),
+    );
+    expect(rollIndex).toBe(packets.length);
+    expect(outcome.automaticOutcome.critical).toBe(true);
+    expect(controller.currentUpdate().state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
+    expect(controller.dispatch(battleCommands.frame(100))).toBe(false);
+  });
   it("freezes automatic remainder without stopping manual attacks or Golden Bug expiry", () => {
     const player = createCombatState({
       criticalChance: 0,

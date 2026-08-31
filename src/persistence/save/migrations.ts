@@ -24,7 +24,12 @@ export const migrateV1 = (source: SaveV1, nowMs: number): CombatState => {
     damage: damageForLevel(player.damageLevel),
     doubleRewardChance: doubleRewardChanceForLevel(player.doubleRewardLevel),
   };
-  const spawned = spawnEnemy(source.enemy.encounter, modifierRoll(source.enemy.modifier));
+  const spawned = spawnEnemy(
+    source.enemy.encounter,
+    modifierRoll(source.enemy.modifier),
+    undefined,
+    source.player,
+  );
   const enemy = {
     ...spawned,
     health: Math.max(
