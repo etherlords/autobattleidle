@@ -17,5 +17,7 @@ dist/
 !.env.example
 
 .playwright-cli/
+playwright-report/
+test-results/
 output/playwright/
 vite-qa*.err

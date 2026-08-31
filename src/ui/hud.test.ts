@@ -345,6 +345,9 @@ describe("createHud", () => {
     hud.reportPersistence("Restored");
     hud.render(snapshot);
 
+    expect(element(host, "hud-status").children.at(0)).toMatchObject({
+      textContent: "Ash Wisp · Level 1 · normal",
+    });
     battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 1 });
     battlefield.dispatch("pointerup", { clientX: 10, isPrimary: true, pointerId: 1 });
     battlefield.dispatch("keydown", { key: "Enter", repeat: false });

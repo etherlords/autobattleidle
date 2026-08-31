@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { selectEnemyFamilyIdentity } from "./family-identity";
 
 describe("enemy family identity", () => {
-  it("selects every shipped family and preserves Golden Bug identity", () => {
+  it("maps every rendered family to its readable label and preserves Golden Bug identity", () => {
     const families = [
       selectEnemyFamilyIdentity({ grade: "normal", level: 1, modifier: null }),
       selectEnemyFamilyIdentity({ grade: "normal", level: 2, modifier: null }),
@@ -23,6 +23,16 @@ describe("enemy family identity", () => {
       "mantis",
       "sentinel",
       "wisp",
+    ]);
+    expect(families.map(({ label }) => label).sort()).toEqual([
+      "Ash Drake",
+      "Ash Wisp",
+      "Cinder Beetle",
+      "Cinder Hydra",
+      "Ember Brute",
+      "Ember Colossus",
+      "Prism Sentinel",
+      "Thorn Mantis",
     ]);
     expect(
       selectEnemyFamilyIdentity({ goldenBug: true, grade: "elite", level: 51, modifier: null }),

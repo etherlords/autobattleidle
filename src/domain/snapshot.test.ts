@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { createCombatState, spawnGoldenBug } from "./combat";
+import { createCombatState, spawnEnemy, spawnGoldenBug } from "./combat";
 import { createBattleSnapshot } from "./snapshot";
+import { enemyVisualSpec } from "../game/enemy-visual/spec";
+import { decodeSave, encodeSave } from "../persistence/persistence-boundary";
 
 describe("battle snapshots", () => {
   it("shares the family identity used by rendered enemies, including Golden Bug", () => {
@@ -25,5 +27,36 @@ describe("battle snapshots", () => {
       name: "Golden Bug",
       variant: 0,
     });
+  });
+
+  it("keeps saved presentation names paired with rendered bodies without saving a name", () => {
+    const initial = createCombatState();
+    const goldenBug = {
+      ...initial,
+      enemy: spawnGoldenBug(51, initial.player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+    };
+    const states = [
+      { expectedName: "Ember Brute", state: initial },
+      { expectedName: "Thorn Mantis", state: { ...initial, enemy: spawnEnemy(3, 0.76) } },
+      { expectedName: "Cinder Hydra", state: { ...initial, enemy: spawnEnemy(35, 0) } },
+      { expectedName: "Golden Bug", state: goldenBug },
+    ];
+
+    for (const { expectedName, state } of states) {
+      const encoded = encodeSave(state);
+      const restored = decodeSave(JSON.parse(encoded), createCombatState(), 0);
+      const snapshot = createBattleSnapshot(restored, 0, [], []);
+      const visual = enemyVisualSpec({
+        goldenBug: restored.goldenBug !== null,
+        grade: restored.enemy.grade,
+        level: restored.enemy.encounter,
+        modifier: restored.enemy.modifier,
+      });
+
+      expect(encoded).not.toContain('"name"');
+      expect(snapshot.enemy).toMatchObject({ family: visual.body, seed: visual.seed });
+      expect(snapshot.enemy.name).toBe(expectedName);
+    }
   });
 });

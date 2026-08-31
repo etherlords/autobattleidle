@@ -4,8 +4,8 @@ id: ABI-024
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 4
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-009
@@ -28,7 +28,7 @@ Give enemies deterministic names that match their rendered archetype
 
 - Type: task
 - Priority: normal
-- Status: Ready
+- Status: In QA
 
 ## Acceptance criteria
 
