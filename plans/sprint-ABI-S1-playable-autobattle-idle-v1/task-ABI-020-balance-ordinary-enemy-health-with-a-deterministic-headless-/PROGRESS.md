@@ -4,8 +4,8 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 186
-status: In Progress
+revision: 195
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 186
-- Last update: Fresh QA approved wrapper-only CI repair; product performance assertion remains unchanged and all canonical checks pass.
+- Status: Done
+- Revision: 195
+- Last update: Released task claim: ABI-020 completed and published
 
 ## Execution plan
 
@@ -72,7 +72,7 @@ requiredGates:
 - [x] review-repair-v11: Same implementation owner derives ordinary grade transitions from filtered adjacency and adds a Golden-boundary regression
 - [x] independent-review-v11: Fresh independent Reviewer verifies Golden-boundary transition isolation and complete ABI-020 acceptance
 - [x] independent-qa-v11: Independent QA verifies deterministic balance receipts, exact horizons, packets, Golden outcomes, saves, runtime, and full check
-- [~] manager-closure-v11: Manager publishes Vault formulas with portable locators and artifact/example links, then commits, pushes, deploys, verifies exact SHA, and closes ABI-020
+- [x] manager-closure-v11: Manager publishes Vault formulas with portable locators and artifact/example links, then commits, pushes, deploys, verifies exact SHA, and closes ABI-020
 
 ## Events
 
@@ -3217,3 +3217,158 @@ requiredGates:
   - Warmed benchmark 3/3 PASS: 2.95s, 3.13s, 2.86s test runtimes
   - pnpm check 20 files / 178 tests PASS
   - git diff --check PASS
+
+### evt-6d34716f-58c6-4ce2-9015-8d1c2f4e8264
+
+- Timestamp: 2026-08-31T19:48:22.345Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 186
+- Resulting revision: 187
+- Summary: Complete Manager closure: accepted Vault evidence published, exact-SHA CI and Pages passed, and deployed health verified.
+- Idempotency key: abi020-manager-closure-step-complete-v17
+- Request fingerprint: 0f46e880b53552ff99ce33d6ad3b6303a1f04bfc999f4dc1eb969329ecbe4e08
+- Action: set_state
+- Step ID: manager-closure-v11
+- State: complete
+- Evidence:
+  - release e4df33709cdadd673cc2a388fdcbc0d446a3149b
+  - CI 33432331520 success
+  - Pages 33432331590 success
+  - deployed HTTP 200
+  - Vault 0 unresolved links
+
+### evt-87147491-65f0-4038-94b2-1719c32472d8
+
+- Timestamp: 2026-08-31T19:48:33.710Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 187
+- Resulting revision: 188
+- Summary: Exact-SHA CI and Pages passed; deployed application and built asset returned HTTP 200; acceptance and Vault evidence are coherent.
+- Idempotency key: abi020-verification-pass-v17
+- Request fingerprint: 04091a0037c40f277d2c7516e960874fada0d47e9bf2d66b7da77f41fd8a86df
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - release e4df33709cdadd673cc2a388fdcbc0d446a3149b
+  - CI 33432331520 success
+  - Pages 33432331590 success
+  - deployed index and JS asset HTTP 200
+  - pnpm check 178/178 PASS
+  - Vault 45 resolved / 0 unresolved
+
+### evt-ff2712c7-fbb3-4ae1-b18a-30a84fe50daa
+
+- Timestamp: 2026-08-31T19:48:57.104Z
+- Actor: abi020-release-verifier-v17
+- Operation: gate.record
+- Prior revision: 188
+- Resulting revision: 189
+- Summary: Independent release verification confirms exact-SHA CI/Pages and deployed health receipts.
+- Idempotency key: abi020-verification-independent-pass-v17
+- Request fingerprint: 9d166d234040835ea5159e81eeef903880de6d3fa16143fc0db5fa7e399afe4c
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - release e4df33709cdadd673cc2a388fdcbc0d446a3149b
+  - CI 33432331520 success
+  - Pages 33432331590 success
+  - deployed index and JS asset HTTP 200
+  - Vault 45 resolved / 0 unresolved
+
+### evt-61b39169-e7bf-41ec-9511-0b61204291f1
+
+- Timestamp: 2026-08-31T19:49:08.860Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 189
+- Resulting revision: 190
+- Summary: Manager accepts ABI-020 after reviewed implementation, fresh QA, portable Vault evidence, exact-SHA CI/Pages, and deployed health proof.
+- Idempotency key: abi020-manager-closure-pass-v18
+- Request fingerprint: 4169162a127cb517ed13514c76a6674327d2a28b193e3bffea72a789107ae23e
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - all required gates pass with independent review/QA/verification actors
+  - manager-closure-v11 complete
+  - release e4df33709cdadd673cc2a388fdcbc0d446a3149b published to main
+  - ABI-028 constrained downstream by accepted ABI-020 envelope
+
+### evt-edf1a112-9b32-41b8-af14-fd124dfe5d1e
+
+- Timestamp: 2026-08-31T19:49:30.356Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 190
+- Resulting revision: 191
+- Summary: Advance closed implementation through required review state with recorded independent review pass.
+- Idempotency key: abi020-advance-review-v18
+- Request fingerprint: 546b3a8f4ac32338c2d2d51013f9a99c9ae8a3e4ff00abc6d4da8881f2d1735d
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - independent review v12 pass
+
+### evt-c5cfbbed-ae30-457a-8eab-ec02add7c8a7
+
+- Timestamp: 2026-08-31T19:49:39.272Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 191
+- Resulting revision: 192
+- Summary: Advance through required QA state with recorded independent QA pass.
+- Idempotency key: abi020-advance-qa-v18
+- Request fingerprint: 242eb97be59dbb22a7074bb73ec52a375108674ca24b2c11bf4fd1455bedcd18
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - independent QA v14 pass
+
+### evt-8de1d056-9a0c-4d25-9fcc-dd7b2d604a3e
+
+- Timestamp: 2026-08-31T19:49:49.267Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 192
+- Resulting revision: 193
+- Summary: Advance to Manager acceptance with independent verification and deployment receipts recorded.
+- Idempotency key: abi020-advance-manager-v18
+- Request fingerprint: bf918cb52bd5f824cb9b1226f1186c2eba0ad52ef5d8a0022415df6a28520e8e
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification pass exact-SHA CI and Pages
+
+### evt-57ac413f-3304-435f-9f4d-4da7166789dc
+
+- Timestamp: 2026-08-31T19:49:59.700Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 193
+- Resulting revision: 194
+- Summary: Mark ABI-020 Done after all required gates and release evidence passed.
+- Idempotency key: abi020-advance-done-v19
+- Request fingerprint: ed35425e96066772a6edad6a8ecebf9796b3b026040b8e717d48f7ff187d0f0d
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager closure evt-61b39169-e7bf-41ec-9511-0b61204291f1
+  - release e4df33709cdadd673cc2a388fdcbc0d446a3149b
+
+### evt-cc0f6167-7697-4b2d-a9f7-2356df130409
+
+- Timestamp: 2026-08-31T19:50:09.793Z
+- Actor: root-manager
+- Operation: claim.release
+- Prior revision: 194
+- Resulting revision: 195
+- Summary: Released task claim: ABI-020 completed and published
+- Idempotency key: abi020-release-claim-v19
+- Request fingerprint: d136b08a200d0af93012d21eddc08b007a7a9eae68709f62238551120248fdae
+- Agent ID: root-manager
+- Session ID: 019ffcee-63d1-7c22-b35d-69f46be426dc
+- Intent: ABI-020 completed and published
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None

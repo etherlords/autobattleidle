@@ -4,8 +4,8 @@ id: ABI-020
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 19
-status: In Progress
+revision: 23
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-010
@@ -30,7 +30,7 @@ Balance ordinary enemy health with a deterministic headless progression simulato
 
 - Type: task
 - Priority: critical
-- Status: In Progress
+- Status: Done
 
 ## Acceptance criteria
 
