@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planner Upgrade"
+  short_description: "Upgrade Planner without losing local skills"
+  default_prompt: "Use $planner-upgrade to install the latest verified Planner release and preserve project skill customizations."

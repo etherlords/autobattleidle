@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planner UI"
+  short_description: "Start or verify the Planner board preview"
+  default_prompt: "Use $planner-ui to start or verify this project's read-only Planner dashboard."

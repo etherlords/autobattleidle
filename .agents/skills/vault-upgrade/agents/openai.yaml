@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vault Upgrade"
+  short_description: "Upgrade Vault without losing local skills"
+  default_prompt: "Use $vault-upgrade to install the latest verified Vault release and preserve project skill customizations."

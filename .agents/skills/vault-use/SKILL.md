@@ -50,6 +50,15 @@ through to hybrid retrieval; a generic BM25/lexical score is not authoritative.
 - Read the current article and retain its `contentHash` before update/link/delete.
 - Prefer MCP create/update/link tools so format, graph, index, and embeddings
   update together.
+- Do not leave an absolute local path, temporary checkout, or external file as
+  the only authority for durable knowledge. When redistribution is permitted,
+  use `vault_store_asset` to preserve source material as an `artifact` or code
+  `example`, then create a normal analysis article with conclusions and a link
+  to that asset. Raw asset content is intentionally excluded from ranked search;
+  its title, summary, project, kind, and tags remain discoverable.
+- Store only reviewed UTF-8 source material. Never ingest secrets, credentials,
+  private user data, generated bulk output, or binaries. `sourceLabel` records
+  provenance but is not a portable authority.
 - Treat delete as a guarded move to recoverable trash.
 - Run `vault_migration_plan` or `vault_doctor` before repairs.
 - Do not use broad `vault_doctor_fix` without an inspected plan and authorized

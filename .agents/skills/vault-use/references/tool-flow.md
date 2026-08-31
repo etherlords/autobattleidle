@@ -26,6 +26,8 @@
 - `vault_migration_plan`: dry-run adoption classification.
 - `vault_create_article`, `vault_update_article`, `vault_add_link`: canonical
   writes with index refresh.
+- `vault_store_asset`: portable UTF-8 artifact/example plus a metadata article;
+  keep findings in a separate analysis article that links the asset.
 - `vault_delete_article`: guarded recoverable trash operation.
 - `vault_index`: derived-index reconciliation; use embeddings after external
   content changes.
@@ -36,6 +38,8 @@
 - `work-record`: task, incident, implementation, review, QA, handoff, or debt;
   use as historical/current execution evidence according to status.
 - `source`: migrated mirror; verify whether a curated synthesis supersedes it.
+- `artifact` / `example`: preserved raw evidence excluded from content ranking;
+  metadata is discoverable, while a linked analysis article carries conclusions.
 - generated summary/index: navigation only; read canonical evidence for
   consequential claims.
 

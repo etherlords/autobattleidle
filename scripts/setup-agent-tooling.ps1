@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
-$plannerVersion = "1.2.2"
-$plannerSha256 = "1b454c2dbf1a7287bb33b2c146d5603f28f8896e62d07329820fe14d333a7115"
-$vaultVersion = "1.2.0"
-$vaultSha256 = "c366df50bb04fc3659cc6361fdc91fba0b521956e2521c1a7f1ce1b1b2c4115d"
+$plannerVersion = "1.2.4"
+$plannerSha256 = "34ce115eee3f1313bbfcd8bad94aa58c268261fc6c26c4214de627c33f49202c"
+$vaultVersion = "1.3.0"
+$vaultSha256 = "a88852ce4c51ef121f4fedbe5114f55572f26d758396952dfedc767d9958a4f1"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $releaseRoot = Join-Path $projectRoot ".release"
 $plannerRelease = Join-Path $releaseRoot "planner"
@@ -47,6 +47,48 @@ function Install-ReleaseRuntime {
   if ($LASTEXITCODE -ne 0) { throw "Failed to install $archive" }
 }
 
+function Initialize-SkillBaseline {
+  param([string]$PackageRoot, [string]$RuntimeDirectory, [string[]]$Skills)
+  if (-not (Test-Path -LiteralPath $PackageRoot)) { return }
+  foreach ($skill in $Skills) {
+    $source = Join-Path $PackageRoot ".agents\skills\$skill"
+    $baseline = Join-Path $RuntimeDirectory ".skill-baseline\$skill"
+    if ((Test-Path -LiteralPath $source) -and -not (Test-Path -LiteralPath $baseline)) {
+      New-Item -ItemType Directory -Force (Split-Path -Parent $baseline) | Out-Null
+      Copy-Item -LiteralPath $source -Destination $baseline -Recurse
+    }
+  }
+}
+
+function Sync-ManagedSkill {
+  param([string]$Source, [string]$Target, [string]$Baseline, [string]$ConflictRoot)
+  if (-not (Test-Path -LiteralPath $Source)) { return }
+  foreach ($sourceFile in Get-ChildItem -LiteralPath $Source -Recurse -File) {
+    $relative = [IO.Path]::GetRelativePath($Source, $sourceFile.FullName)
+    $targetFile = Join-Path $Target $relative
+    $baselineFile = Join-Path $Baseline $relative
+    if (-not (Test-Path -LiteralPath $targetFile)) {
+      New-Item -ItemType Directory -Force (Split-Path -Parent $targetFile) | Out-Null
+      Copy-Item -LiteralPath $sourceFile.FullName -Destination $targetFile
+    }
+    elseif ((Test-Path -LiteralPath $baselineFile) -and ((Get-FileHash $targetFile -Algorithm SHA256).Hash -eq (Get-FileHash $baselineFile -Algorithm SHA256).Hash)) {
+      Copy-Item -LiteralPath $sourceFile.FullName -Destination $targetFile -Force
+    }
+    elseif ((Get-FileHash $targetFile -Algorithm SHA256).Hash -ne (Get-FileHash $sourceFile.FullName -Algorithm SHA256).Hash) {
+      $incoming = Join-Path $ConflictRoot $relative
+      New-Item -ItemType Directory -Force (Split-Path -Parent $incoming) | Out-Null
+      Copy-Item -LiteralPath $sourceFile.FullName -Destination $incoming -Force
+      Write-Warning "Skill conflict preserved local file: $targetFile; review incoming file: $incoming"
+      continue
+    }
+    New-Item -ItemType Directory -Force (Split-Path -Parent $baselineFile) | Out-Null
+    Copy-Item -LiteralPath $sourceFile.FullName -Destination $baselineFile -Force
+  }
+}
+
+Initialize-SkillBaseline -PackageRoot (Join-Path $plannerRuntime "node_modules\@etherlords\planner-mcp") -RuntimeDirectory $plannerRuntime -Skills @("planner-workflow", "planner-migrate", "planner-upgrade", "planner-ui")
+Initialize-SkillBaseline -PackageRoot (Join-Path $vaultRuntime "node_modules\vault-mcp") -RuntimeDirectory $vaultRuntime -Skills @("vault-use", "vault-migrate", "vault-upgrade")
+
 $packageToken = gh auth token
 $temporaryUserConfig = New-TemporaryFile
 $previousUserConfig = $env:NPM_CONFIG_USERCONFIG
@@ -65,6 +107,12 @@ finally {
 $tomlRoot = $projectRoot.Replace("\", "\\")
 $plannerPackage = (Get-Item -LiteralPath (Join-Path $plannerRuntime "node_modules\@etherlords\planner-mcp")).Target
 $vaultPackage = (Get-Item -LiteralPath (Join-Path $vaultRuntime "node_modules\vault-mcp")).Target
+foreach ($skill in @("planner-workflow", "planner-migrate", "planner-upgrade", "planner-ui")) {
+  Sync-ManagedSkill -Source (Join-Path $plannerPackage ".agents\skills\$skill") -Target (Join-Path $projectRoot ".agents\skills\$skill") -Baseline (Join-Path $plannerRuntime ".skill-baseline\$skill") -ConflictRoot (Join-Path $plannerRuntime ".skill-conflicts\$plannerVersion\$skill")
+}
+foreach ($skill in @("vault-use", "vault-migrate", "vault-upgrade")) {
+  Sync-ManagedSkill -Source (Join-Path $vaultPackage ".agents\skills\$skill") -Target (Join-Path $projectRoot ".agents\skills\$skill") -Baseline (Join-Path $vaultRuntime ".skill-baseline\$skill") -ConflictRoot (Join-Path $vaultRuntime ".skill-conflicts\$vaultVersion\$skill")
+}
 $plannerEntrypoint = (Join-Path $plannerPackage "dist\server.js").Replace("\", "/")
 $vaultEntrypoint = (Join-Path $vaultPackage "dist\mcp\launcher.js").Replace("\", "/")
 $vaultConfig = (Join-Path $projectRoot "vault.config.json").Replace("\", "\\")
