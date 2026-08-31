@@ -618,8 +618,8 @@ describe("nextBattlefieldFrame", () => {
       },
     };
     const battlefield = createBattlefieldWithRenderer(host, renderer);
-    const boss = snapshot("boss", 15);
-    const replacement = snapshot("normal", 2);
+    const boss = snapshot("boss", 35);
+    const replacement = snapshot("normal", 36);
     battlefield.resize(1_280, 800);
     battlefield.render(boss);
     battlefield.rotateCamera(Math.PI / 2);
@@ -672,6 +672,12 @@ describe("nextBattlefieldFrame", () => {
     expect(
       scene.children.filter((child) => child instanceof THREE.Group && child.position.x === 1.7),
     ).toHaveLength(1);
+    battlefield.render(snapshot("normal", 51, 10, [], null, true));
+    expect(camera.position.x).toBe(0);
+    expect(camera.position.z).toBeCloseTo(7);
+    battlefield.render(snapshot("boss", 70));
+    expect(camera.position.x).toBe(0);
+    expect(camera.position.z).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
     battlefield.dispose();
   });
 
@@ -705,7 +711,7 @@ describe("nextBattlefieldFrame", () => {
     expect(camera.position.z).toBe(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
   });
 
-  it("orbits bosses only and preserves the session azimuth across resize", () => {
+  it("owns boss orbit by the displayed encounter and preserves it through hit and resize", () => {
     let camera: THREE.Camera | undefined;
     const host = { append: () => undefined } as unknown as HTMLElement;
     const renderer = {
@@ -727,12 +733,15 @@ describe("nextBattlefieldFrame", () => {
     if (!(camera instanceof THREE.PerspectiveCamera))
       throw new Error("Expected perspective camera");
     expect(camera.position.x).toBe(0);
-    battlefield.render(snapshot("boss", 15));
+    battlefield.render(snapshot("boss", 35));
     battlefield.rotateCamera(Math.PI / 2);
     expect(camera.position.x).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
     expect(camera.position.y).toBe(2 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
     expect(camera.position.z).toBeCloseTo(0);
     expect(camera.fov).toBe(50);
+    battlefield.render(snapshot("boss", 35, 9, ["hit"]));
+    expect(camera.position.x).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
+    expect(camera.position.z).toBeCloseTo(0);
     battlefield.rotateCamera(Number.NaN);
     battlefield.rotateCamera(Number.POSITIVE_INFINITY);
     expect(camera.position.x).toBeCloseTo(7 * BATTLEFIELD_CONFIG.camera.bossFramingScale);
@@ -745,10 +754,18 @@ describe("nextBattlefieldFrame", () => {
       2 * cameraScaleForAspect(390 / 844) * BATTLEFIELD_CONFIG.camera.bossFramingScale,
     );
     expect(camera.position.z).toBeCloseTo(0);
-    battlefield.render(snapshot("normal", 1));
+    battlefield.render(snapshot("normal", 36));
     battlefield.rotateCamera(Math.PI / 2);
     expect(camera.position.x).toBe(0);
     expect(camera.position.z).toBeGreaterThanOrEqual(7 * cameraScaleForAspect(390 / 844));
+    battlefield.render(snapshot("normal", 51, 10, [], null, true));
+    battlefield.rotateCamera(Math.PI / 2);
+    expect(camera.position.x).toBe(0);
+    battlefield.render(snapshot("boss", 70));
+    expect(camera.position.x).toBe(0);
+    expect(camera.position.z).toBeCloseTo(
+      7 * cameraScaleForAspect(390 / 844) * BATTLEFIELD_CONFIG.camera.bossFramingScale,
+    );
     battlefield.dispose();
   });
 });

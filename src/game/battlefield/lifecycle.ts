@@ -101,6 +101,7 @@ class ThreeBattlefield implements Battlefield {
   private effects: BattlefieldEffect[] = [];
   private aspect = 1;
   private azimuth = 0;
+  private bossEncounterKey: string | undefined;
   private bossOrbitEnabled = false;
   private pendingLethalReplacement: PendingLethalReplacement | undefined;
   private ordinaryFramingBounds: THREE.Box3 | undefined;
@@ -288,6 +289,9 @@ class ThreeBattlefield implements Battlefield {
   }
 
   private replaceEnemy(snapshot: BattleEnemySnapshot, animateRetiring = true): void {
+    const nextBossEncounterKey = snapshot.grade === "boss" ? enemyKey(snapshot) : undefined;
+    if (nextBossEncounterKey !== this.bossEncounterKey) this.azimuth = 0;
+    this.bossEncounterKey = nextBossEncounterKey;
     if (animateRetiring) this.enemy?.dispatchEnemy({ type: "death" });
     this.enemy?.dispatchEnemy({ type: "dispose" });
     this.unsubscribeEnemy?.();
