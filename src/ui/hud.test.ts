@@ -191,11 +191,11 @@ describe("createHud", () => {
     expect(modal.hidden).toBe(false);
     expect(close.focusCalls).toBe(1);
     hud.reportLeaderboard?.("Loading leaderboard…");
-    expect(element(host, "leaderboard-dialog").children[3]?.textContent).toBe(
+    expect(element(host, "leaderboard-dialog").children[5]?.textContent).toBe(
       "Loading leaderboard…",
     );
     hud.renderLeaderboard?.({ entries: [], me: null });
-    expect(element(host, "leaderboard-dialog").children[3]?.textContent).toBe(
+    expect(element(host, "leaderboard-dialog").children[5]?.textContent).toBe(
       "No ranked players yet.",
     );
     const input = element(host, "leaderboard-name");

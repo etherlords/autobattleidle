@@ -30,7 +30,7 @@ describe("LeaderboardClient", () => {
     await expect(client.submit(12)).resolves.toBeUndefined();
     expect(calls).toHaveLength(2);
     expect(calls[0]?.method).toBe("POST");
-    expect(calls[1]?.body).toBe(JSON.stringify({ level: 12 }));
+    expect(calls[1]?.body).toBe(JSON.stringify({ goldenBugs: 0, level: 12 }));
     expect((calls[1]?.headers as Record<string, string>).authorization).toBe("Bearer token");
   });
 

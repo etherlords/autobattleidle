@@ -151,7 +151,11 @@ describe("endless combat progression", () => {
       defeated: true,
       reward: spawnEnemy(51, 0).reward * COMBAT_BALANCE.goldenBugRewardFactor,
     });
-    expect(killed.state).toMatchObject({ goldenBug: null, enemy: spawnEnemy(51, 0) });
+    expect(killed.state).toMatchObject({
+      goldenBug: null,
+      goldenBugDefeats: 1,
+      enemy: spawnEnemy(51, 0),
+    });
     const doubled = attack(
       {
         ...spawned.state,
@@ -189,6 +193,7 @@ describe("endless combat progression", () => {
     };
     expect(expireGoldenBug(active)).toMatchObject({
       coins: Number.MAX_SAFE_INTEGER - 1,
+      goldenBugDefeats: 0,
       goldenBug: null,
     });
     expect(

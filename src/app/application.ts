@@ -1,3 +1,4 @@
+/* eslint-disable complexity -- lifecycle wires the bounded scheduler to controller events. */
 import { createCombatState, type AttackRolls, type CombatState } from "../domain/combat";
 import { createBattlefield, type Battlefield } from "../game/battlefield";
 import {
@@ -12,6 +13,7 @@ import { BattleController } from "./battle/controller";
 import { battleCommands } from "./battle/commands";
 import type { BattleControllerEvent } from "./battle/contracts";
 import { presentBattleUpdate } from "./battle/presenter";
+import { LeaderboardProgressSync } from "./leaderboard-progress-sync";
 
 type AnimationFrameHost = {
   addEventListener(type: "resize", listener: EventListenerOrEventListenerObject): void;
@@ -34,10 +36,10 @@ export type ApplicationDependencies = {
   readonly now?: () => number;
 };
 type LeaderboardPort = {
-  load(around?: boolean): Promise<LeaderboardView>;
+  load(around?: boolean, mode?: "level" | "golden-bugs"): Promise<LeaderboardView>;
   rename(name: string): Promise<void>;
   reset(): Promise<void>;
-  submit(level: number): Promise<void>;
+  submit(level: number, goldenBugs?: number): Promise<void>;
 };
 
 type LifecycleDependencies = Omit<
@@ -115,23 +117,17 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     initialState: dependencies.initialState,
     rolls: dependencies.rolls,
   });
-  let submitLeaderboard: ((level: number) => void) | undefined;
+  let syncLeaderboard: LeaderboardProgressSync | undefined;
   if (dependencies.hud.onLeaderboardLoad !== undefined) {
     const leaderboard = dependencies.createLeaderboard?.() ?? new LeaderboardClient();
-    let submittedLevel = -1;
-    submitLeaderboard = (level) => {
-      if (level <= submittedLevel) return;
-      submittedLevel = level;
-      void leaderboard
-        .submit(level)
-        .catch(() =>
-          dependencies.hud.reportLeaderboard?.("Leaderboard is offline or not configured."),
-        );
-    };
-    const showLeaderboard = async (around: boolean): Promise<void> => {
+    syncLeaderboard = new LeaderboardProgressSync(leaderboard);
+    const showLeaderboard = async (
+      around: boolean,
+      mode: "level" | "golden-bugs",
+    ): Promise<void> => {
       dependencies.hud.reportLeaderboard?.("Loading leaderboard…");
       try {
-        dependencies.hud.renderLeaderboard?.(await leaderboard.load(around));
+        dependencies.hud.renderLeaderboard?.(await leaderboard.load(around, mode));
       } catch (error) {
         const rateLimited =
           typeof error === "object" &&
@@ -145,13 +141,13 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
         );
       }
     };
-    dependencies.hud.onLeaderboardLoad((around) => {
-      void showLeaderboard(around);
+    dependencies.hud.onLeaderboardLoad((around, mode) => {
+      void showLeaderboard(around, mode);
     });
     dependencies.hud.onLeaderboardRename?.((name) => {
       void leaderboard
         .rename(name)
-        .then(() => showLeaderboard(false))
+        .then(() => showLeaderboard(false, "level"))
         .catch(() => dependencies.hud.reportLeaderboard?.("Name could not be changed."));
     });
     dependencies.hud.onLeaderboardReset?.(() => {
@@ -168,7 +164,21 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   };
   const unsubscribe = controller.subscribe((event) => {
     if (event.persistenceChanged) dependencies.persistence.onStateChanged(event.state);
-    submitLeaderboard?.(event.state.enemy.encounter);
+    syncLeaderboard?.observe({
+      goldenBugs: event.state.goldenBugDefeats,
+      level: event.state.enemy.encounter,
+    });
+    if (
+      (event.type === "attack" &&
+        event.outcome.type === "hit" &&
+        event.outcome.defeated &&
+        event.previousEnemy.grade === "boss") ||
+      (event.type === "frame" &&
+        event.automaticOutcome?.type === "hit" &&
+        event.automaticOutcome.defeated &&
+        event.previousEnemy?.grade === "boss")
+    )
+      syncLeaderboard?.defeatedBoss();
     render(event);
   });
   const resize = (): void => {
@@ -221,6 +231,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       unsubscribeHud();
       unsubscribe();
       controller.dispose();
+      syncLeaderboard?.dispose();
       dependencies.persistence.dispose();
       dependencies.hud.dispose();
       dependencies.game.dispose();

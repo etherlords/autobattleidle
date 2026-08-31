@@ -18,6 +18,7 @@
     "hooks:smoke": "node scripts/smoke-git-hooks.mjs"
   },
   "dependencies": {
+    "drizzle-orm": "0.45.2",
     "three": "0.185.1"
   },
   "devDependencies": {

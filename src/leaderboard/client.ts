@@ -1,4 +1,9 @@
-import type { LeaderboardEntry, LeaderboardIdentity, LeaderboardView } from "./contracts";
+import type {
+  LeaderboardEntry,
+  LeaderboardIdentity,
+  LeaderboardView,
+  RankingMode,
+} from "./contracts";
 
 const identityKey = "etherlords.autobattleidle.leaderboard.identity.v1";
 
@@ -54,13 +59,13 @@ export class LeaderboardClient {
     this.identity = readIdentity(storage);
   }
 
-  async load(around = false): Promise<LeaderboardView> {
-    const body = await this.call(around ? "/v1/around" : "/v1/top");
+  async load(around = false, mode: RankingMode = "level"): Promise<LeaderboardView> {
+    const body = await this.call(`${around ? "/v1/around" : "/v1/top"}?mode=${mode}`);
     return { entries: body.entries ?? [], me: body.me ?? null };
   }
 
-  async submit(level: number): Promise<void> {
-    await this.call("/v1/score", { level });
+  async submit(level: number, goldenBugs = 0): Promise<void> {
+    await this.call("/v1/score", { goldenBugs, level });
   }
 
   async rename(name: string): Promise<void> {

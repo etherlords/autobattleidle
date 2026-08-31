@@ -1,9 +1,10 @@
 import { permitRequest } from "../identity/handler";
 import { json } from "../shared/http";
-import type { Authorized, Env } from "../shared/types";
-import { aroundEntries, topEntries } from "./store";
+import type { Authorized, Env, RankingMode } from "../shared/types";
+import { around as aroundEntries, top as topEntries } from "./service";
 
-const LIMIT = 100;
+const mode = (request: Request): RankingMode =>
+  new URL(request.url).searchParams.get("mode") === "golden-bugs" ? "golden-bugs" : "level";
 
 export const top = async (
   request: Request,
@@ -11,10 +12,9 @@ export const top = async (
   origin: string,
   context: Authorized,
 ): Promise<Response> => {
-  if (!(await permitRequest(request, env, "read", context.hash))) {
+  if (!(await permitRequest(request, env, "read", context.hash)))
     return json({ error: "rate-limit" }, 429, origin);
-  }
-  return json({ entries: await topEntries(env, LIMIT) }, 200, origin);
+  return json({ entries: await topEntries(env, mode(request)) }, 200, origin);
 };
 
 export const around = async (
@@ -23,8 +23,7 @@ export const around = async (
   origin: string,
   context: Authorized,
 ): Promise<Response> => {
-  if (!(await permitRequest(request, env, "read", context.hash))) {
+  if (!(await permitRequest(request, env, "read", context.hash)))
     return json({ error: "rate-limit" }, 429, origin);
-  }
-  return json(await aroundEntries(env, context.player, LIMIT), 200, origin);
+  return json(await aroundEntries(env, context.player, mode(request)), 200, origin);
 };

@@ -17,19 +17,17 @@ afterEach(() => {
 });
 
 describe("startApplication", () => {
-  it("contains a rejected leaderboard submit without pausing combat", async () => {
+  it("does not submit leaderboard progress for ordinary level changes", async () => {
     let intent: ((value: HudIntent) => void) | undefined;
-    let reject: ((reason?: unknown) => void) | undefined;
-    let status = "";
-    const pending = new Promise<void>((_resolve, fail) => {
-      reject = fail;
-    });
+    let submissions = 0;
     const app = startApplication({
       createLeaderboard: () => ({
         load: async () => ({ entries: [], me: null }),
         rename: async () => undefined,
         reset: async () => undefined,
-        submit: async () => pending,
+        submit: async () => {
+          submissions += 1;
+        },
       }),
       window: {
         addEventListener: () => undefined,
@@ -57,9 +55,7 @@ describe("startApplication", () => {
         onRestore: () => undefined,
         onUpgrade: () => undefined,
         render: () => undefined,
-        reportLeaderboard: (message) => {
-          status = message;
-        },
+        reportLeaderboard: () => undefined,
         reportPersistence: () => undefined,
         setRestoreAvailable: () => undefined,
       },
@@ -76,14 +72,9 @@ describe("startApplication", () => {
       rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
       viewport: () => ({ height: 240, width: 400 }),
     });
-    if (intent === undefined || reject === undefined) throw new Error("Expected application seams");
+    if (intent === undefined) throw new Error("Expected application seams");
     intent({ type: "attack" });
-    reject(new Error("network"));
-    await Promise.resolve();
-    await Promise.resolve();
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(status).toBe("Leaderboard is offline or not configured.");
+    expect(submissions).toBe(0);
     intent({ type: "attack" });
     app.dispose();
   });

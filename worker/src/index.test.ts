@@ -8,6 +8,8 @@ class MemoryD1 {
     token: string;
     name: string;
     level: number;
+    goldenBugs: number;
+    goldenBugsAchieved: number;
     achieved: number;
     renamed: number | null;
   }[] = [];
@@ -28,85 +30,89 @@ class MemoryD1 {
       bind: (...values) => this.bound(query, values),
       all: async <T>() => ({ results: [] as readonly T[] }),
       first: async <T>() => Promise.resolve<T | null>(null),
+      raw: async <T>() => [] as readonly T[],
       run: async () => ({ meta: { changes: 0 } }),
     };
   }
   private bound(query: string, values: readonly unknown[]): D1PreparedStatement {
     this.values.push(...values);
+    const normalized = query.toLowerCase().replace(/"/g, "");
+    // eslint-disable-next-line complexity -- semantic adapter for the bounded Drizzle D1 queries.
     const rows = (): readonly unknown[] => {
+      const goldenMode =
+        normalized.includes("order by players.best_golden_bugs") ||
+        normalized.includes("where (players.best_golden_bugs");
       const ranked = [...this.players].sort(
-        (a, b) => b.level - a.level || a.achieved - b.achieved || a.id - b.id,
+        goldenMode
+          ? (a, b) =>
+              b.goldenBugs - a.goldenBugs ||
+              a.goldenBugsAchieved - b.goldenBugsAchieved ||
+              a.id - b.id
+          : (a, b) => b.level - a.level || a.achieved - b.achieved || a.id - b.id,
       );
-      if (query.startsWith("INSERT INTO rate_limits")) {
+      const rankedPlayer = (): number => {
+        const id = normalized.includes("limit ?") ? values.at(-2) : values.at(-1);
+        return ranked.findIndex((player) => player.id === id);
+      };
+      if (normalized.includes("insert into rate_limits")) {
         const key = String(values[0]);
         const existing = this.rates.get(key);
         if (existing !== undefined && existing.count >= 20) return [];
         const next =
           existing === undefined
-            ? { count: 1, reset: Number(values[1]) }
+            ? { count: 1, reset: Number(values[2]) }
             : { ...existing, count: existing.count + 1 };
         this.rates.set(key, next);
         return [{ count: next.count }];
       }
-      if (query.includes("FROM rate_limits"))
+      if (normalized.includes("from rate_limits"))
         return [...this.rates.entries()]
           .filter(([key]) => values.includes(key))
           .map(([key, value]) => ({ key_hash: key, count: value.count, reset_at: value.reset }));
-      if (query.includes("ORDER BY best_level DESC") && !query.includes("WHERE"))
+      if (normalized.includes("from players") && normalized.includes("token_hash")) {
+        const player = this.players.find((candidate) => candidate.token === values[0]);
+        return player === undefined ? [] : [this.playerRow(player)];
+      }
+      if (normalized.includes("count(*)")) {
+        const position = rankedPlayer();
+        return [{ count: position < 0 ? 0 : position }];
+      }
+      if (
+        normalized.includes(
+          `order by players.${goldenMode ? "best_golden_bugs" : "best_level"} desc`,
+        ) &&
+        !normalized.includes("where")
+      )
+        return ranked.slice(0, Number(values[0])).map((p) => this.playerRow(p));
+      if (
+        normalized.includes(
+          `order by players.${goldenMode ? "best_golden_bugs" : "best_level"} asc`,
+        )
+      )
         return ranked
-          .slice(0, Number(values[0]))
-          .map((p) => ({ display_name: p.name, best_level: p.level }));
-      if (query.includes("ORDER BY best_level ASC"))
-        return ranked
-          .filter(
-            (p) =>
-              p.level > Number(values[0]) ||
-              (p.level === Number(values[0]) &&
-                (p.achieved < Number(values[2]) ||
-                  (p.achieved === Number(values[2]) && p.id < Number(values[4])))),
-          )
-          .slice(-Number(values[5]));
-      if (query.includes("ORDER BY best_level DESC") && query.includes("WHERE"))
-        return ranked
-          .filter(
-            (p) =>
-              p.level < Number(values[0]) ||
-              (p.level === Number(values[0]) &&
-                (p.achieved > Number(values[2]) ||
-                  (p.achieved === Number(values[2]) && p.id > Number(values[4])))),
-          )
-          .slice(0, Number(values[5]));
+          .slice(Math.max(0, rankedPlayer() - Number(values.at(-1))), rankedPlayer())
+          .reverse();
+      if (
+        normalized.includes(
+          `order by players.${goldenMode ? "best_golden_bugs" : "best_level"} desc`,
+        ) &&
+        normalized.includes("where")
+      )
+        return ranked.slice(rankedPlayer() + 1, rankedPlayer() + 1 + Number(values.at(-1)));
       return [];
     };
     const first = (): unknown => {
-      if (query.includes("COUNT(*)")) {
-        const player = values;
-        return {
-          count: this.players.filter(
-            (p) =>
-              p.level > Number(player[0]) ||
-              (p.level === Number(player[1]) &&
-                (p.achieved < Number(player[2]) ||
-                  (p.achieved === Number(player[3]) && p.id < Number(player[4])))),
-          ).length,
-        };
-      }
       const player = this.players.find((p) => p.token === values[0]);
-      if (query.includes("renamed_at"))
+      if (normalized.includes("renamed_at"))
         return player === undefined ? null : { renamed_at: player.renamed };
-      return player === undefined
-        ? null
-        : {
-            achieved_at: player.achieved,
-            best_level: player.level,
-            display_name: player.name,
-            id: player.id,
-          };
+      return player === undefined ? null : this.playerRow(player);
     };
     return {
       bind: (...next) => this.bound(query, next),
       all: async <T>() => ({ results: rows() as readonly T[] }),
       first: async <T>() => first() as T | null,
+      raw: async <T>() =>
+        rows().map((row) => Object.values(row as Record<string, unknown>) as T) as readonly T[],
       run: async () => {
         return { meta: { changes: this.run(query, values) } };
       },
@@ -114,16 +120,17 @@ class MemoryD1 {
   }
   // eslint-disable-next-line complexity -- exact in-memory model of the bounded Worker SQL.
   private run(query: string, values: readonly unknown[]): number {
-    if (query.startsWith("DELETE FROM rate_limits WHERE reset_at")) {
+    const normalized = query.toLowerCase().replace(/"/g, "");
+    if (normalized.includes("delete from rate_limits") && normalized.includes("reset_at")) {
       for (const [key, value] of this.rates)
         if (value.reset <= Number(values[0])) this.rates.delete(key);
       return 0;
     }
-    if (query.startsWith("DELETE FROM rate_limits WHERE key_hash")) {
+    if (normalized.includes("delete from rate_limits") && normalized.includes("key_hash")) {
       this.rates.delete(String(values[0]));
       return 0;
     }
-    if (query.startsWith("INSERT INTO players")) {
+    if (normalized.includes("insert into players")) {
       if (this.atCapacity) return 0;
       if (this.createNameCollisions > 0) {
         this.createNameCollisions -= 1;
@@ -131,6 +138,8 @@ class MemoryD1 {
       }
       this.players.push({
         achieved: Number(values[2]),
+        goldenBugs: 0,
+        goldenBugsAchieved: 0,
         id: this.nextId++,
         level: 0,
         name: String(values[1]),
@@ -139,20 +148,24 @@ class MemoryD1 {
       });
       return 1;
     }
-    if (query.startsWith("DELETE FROM players")) {
+    if (normalized.includes("delete from players")) {
       const index = this.players.findIndex((p) => p.token === values[0]);
       if (index >= 0) this.players.splice(index, 1);
       return 1;
     }
-    if (query.startsWith("UPDATE players SET best_level")) {
-      const player = this.players.find((p) => p.token === values[4]);
+    if (normalized.includes("update players set best_level")) {
+      const player = this.players.find((p) => p.token === values[7]);
       if (player !== undefined && Number(values[0]) > player.level) {
         player.level = Number(values[0]);
         player.achieved = Number(values[2]);
       }
+      if (player !== undefined && Number(values[3]) > player.goldenBugs) {
+        player.goldenBugs = Number(values[3]);
+        player.goldenBugsAchieved = Number(values[5]);
+      }
       return 1;
     }
-    if (query.startsWith("UPDATE players SET display_name")) {
+    if (normalized.includes("update players set display_name")) {
       if (this.renameNameCollisions > 0) {
         this.renameNameCollisions -= 1;
         throw new Error("UNIQUE constraint failed: players.display_name");
@@ -167,6 +180,16 @@ class MemoryD1 {
       return 1;
     }
     return 0;
+  }
+  private playerRow(player: (typeof this.players)[number]): Record<string, unknown> {
+    return {
+      achieved_at: player.achieved,
+      best_golden_bugs: player.goldenBugs,
+      best_level: player.level,
+      display_name: player.name,
+      golden_bugs_achieved_at: player.goldenBugsAchieved,
+      id: player.id,
+    };
   }
 }
 
@@ -331,6 +354,47 @@ describe("leaderboard worker boundary", () => {
     expect(db.players).toHaveLength(1);
   });
 
+  it("keeps metric maxima independent and ranks Golden Bugs deterministically", async () => {
+    const db = new MemoryD1();
+    const first = await identity(db);
+    const second = await identity(db);
+    const submit = (token: string, level: number, goldenBugs: number) =>
+      handler.fetch(
+        request("/v1/score", {
+          body: JSON.stringify({ goldenBugs, level }),
+          headers: auth(token),
+          method: "POST",
+        }),
+        env(db),
+      );
+    expect((await submit(first, 10, 4)).status).toBe(204);
+    expect((await submit(second, 20, 4)).status).toBe(204);
+    expect((await submit(first, 3, 1)).status).toBe(204);
+    expect(db.players[0]).toMatchObject({ goldenBugs: 4, level: 10 });
+
+    const levelTop = (await (
+      await handler.fetch(request("/v1/top", { headers: auth(first) }), env(db))
+    ).json()) as { entries: { level: number }[] };
+    expect(levelTop.entries.map(({ level }) => level)).toEqual([20, 10]);
+
+    const goldenTop = (await (
+      await handler.fetch(request("/v1/top?mode=golden-bugs", { headers: auth(first) }), env(db))
+    ).json()) as { entries: { goldenBugs: number; name: string }[] };
+    expect(goldenTop.entries).toEqual([
+      expect.objectContaining({ goldenBugs: 4, name: db.players[0]?.name }),
+      expect.objectContaining({ goldenBugs: 4, name: db.players[1]?.name }),
+    ]);
+
+    const around = (await (
+      await handler.fetch(
+        request("/v1/around?mode=golden-bugs", { headers: auth(second) }),
+        env(db),
+      )
+    ).json()) as { entries: { rank: number }[]; me: { rank: number } };
+    expect(around.me.rank).toBe(2);
+    expect(around.entries.map(({ rank }) => rank)).toEqual([1, 2]);
+  });
+
   it("limits anonymous creation and authenticated writes by their hashed keys", async () => {
     const creations = new MemoryD1();
     for (let index = 0; index < 20; index += 1)
@@ -459,6 +523,8 @@ describe("leaderboard worker boundary", () => {
     for (let index = 1; index <= 150; index += 1)
       db.players.push({
         achieved: index,
+        goldenBugs: 0,
+        goldenBugsAchieved: 0,
         id: index + 1,
         level: 400 - index,
         name: `Above ${index}`,
@@ -468,6 +534,8 @@ describe("leaderboard worker boundary", () => {
     for (let index = 1; index <= 150; index += 1)
       db.players.push({
         achieved: index + 200,
+        goldenBugs: 0,
+        goldenBugsAchieved: 0,
         id: index + 200,
         level: 149 - index,
         name: `Below ${index}`,

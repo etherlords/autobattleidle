@@ -52,6 +52,8 @@ export type CombatState = {
   readonly nextAutomaticAttackAtMs: number;
   readonly player: CombatPlayer;
   readonly goldenBug: GoldenBugEvent | null;
+  /** Cumulative defeated (not escaped) Golden Bugs. */
+  readonly goldenBugDefeats: number;
 };
 
 export type AttackRolls = {

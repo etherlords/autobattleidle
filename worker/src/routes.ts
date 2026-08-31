@@ -1,29 +1,11 @@
 import { createIdentity, deleteIdentity } from "./identity/handler";
+import { authenticate } from "./auth/handler";
 import { renameProfile, submitLevel } from "./profile/handler";
 import { around, top } from "./ranking/handler";
-import { bearer, json, originFor, preflight } from "./shared/http";
-import type { Authorized, Env } from "./shared/types";
-import { playerFor } from "./stores/player";
+import { json, originFor, preflight } from "./shared/http";
+import type { Env } from "./shared/types";
 
 export type { Env } from "./shared/types";
-
-const authenticate = async (
-  request: Request,
-  env: Env,
-  origin: string,
-): Promise<Authorized | Response> => {
-  const hash = await bearer(request);
-  if (hash === undefined) {
-    return json({ error: "auth" }, 401, origin);
-  }
-
-  const player = await playerFor(env, hash);
-  if (player === null) {
-    return json({ error: "auth" }, 401, origin);
-  }
-
-  return { hash, player };
-};
 
 const authenticated = async (
   request: Request,

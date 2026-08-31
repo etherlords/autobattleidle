@@ -41,6 +41,7 @@
     "ABI-028": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-028-distribute-ordinary-enemy-time-to-kill-bands-across-every-no",
     "ABI-029": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-029-compose-deterministic-elemental-enemy-variants-from-reusable",
     "ABI-030": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-030-add-a-privacy-safe-anonymous-leaderboard-with-top-100-and-ar",
-    "ABI-031": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-031-eliminate-hit-reaction-snapping-and-fit-decorations-to-each-"
+    "ABI-031": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-031-eliminate-hit-reaction-snapping-and-fit-decorations-to-each-",
+    "ABI-032": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-032-complete-leaderboard-with-golden-bug-ranking-and-bounded-pro"
   }
 }

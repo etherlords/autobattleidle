@@ -90,6 +90,10 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
   const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);
   const nextEncounter = state.enemy.encounter === MAX_ENCOUNTER ? 1 : state.enemy.encounter + 1;
   const resumeEncounter = state.goldenBug?.resumeEncounter;
+  const goldenBugDefeats =
+    resumeEncounter === undefined
+      ? state.goldenBugDefeats
+      : Math.min(Number.MAX_SAFE_INTEGER, state.goldenBugDefeats + 1);
   const goldenBug =
     state.goldenBug === null &&
     state.enemy.encounter % COMBAT_BALANCE.goldenBugEncounterInterval === 0
@@ -116,6 +120,7 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       coins: state.coins + reward,
       enemy: nextEnemy(),
       goldenBug,
+      goldenBugDefeats,
       nextAutomaticAttackAtMs,
     },
   };

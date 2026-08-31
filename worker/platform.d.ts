@@ -8,6 +8,7 @@ type D1PreparedStatement = {
   bind(...values: readonly unknown[]): D1PreparedStatement;
   all<T>(): Promise<D1Result<T>>;
   first<T>(): Promise<T | null>;
+  raw<T>(): Promise<readonly T[]>;
   run(): Promise<D1RunResult>;
 };
 type D1Database = {

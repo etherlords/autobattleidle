@@ -90,6 +90,7 @@ export const createCombatState = (
   nextAutomaticAttackAtMs: 0,
   player: normalizedPlayer(player),
   goldenBug: null,
+  goldenBugDefeats: 0,
 });
 
 export const automaticInterval = (enemy: CombatEnemy, player: CombatPlayer): number =>

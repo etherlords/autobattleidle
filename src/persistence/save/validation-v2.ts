@@ -208,5 +208,6 @@ export const decodeV2 = (value: unknown, nowMs: number): CombatState | undefined
     nextAutomaticAttackAtMs: value.automaticUnlocked ? nowMs + automaticInterval(enemy, player) : 0,
     player,
     goldenBug: null,
+    goldenBugDefeats: 0,
   };
 };

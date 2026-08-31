@@ -1,6 +1,5 @@
 import { automaticInterval, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
 import type { CombatState } from "../../domain/combat";
-import { SAVE_VERSION } from "./contracts";
 import { decodeV2 } from "./validation-v2";
 import { hasExactKeys, integer, isRecord, parseEnemyShape } from "./validation-primitives";
 import { parseV2Player } from "./validation-v2";
@@ -27,7 +26,7 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
       "player",
       "version",
     ]) ||
-    value.version !== SAVE_VERSION
+    value.version !== 3
   )
     return undefined;
   const { goldenBug: ignoredGoldenBug, ...v2 } = value;
@@ -65,6 +64,7 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
     coins: value.coins,
     enemy: { ...enemy, reward: expected.reward },
     goldenBug,
+    goldenBugDefeats: 0,
     nextAutomaticAttackAtMs: value.automaticUnlocked ? nowMs + automaticInterval(enemy, player) : 0,
     player,
   };

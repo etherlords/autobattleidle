@@ -8,7 +8,7 @@ import {
 } from "../../domain/combat";
 import type { SaveV1 } from "./contracts";
 import { encodeSave } from "./codecs";
-import { decodeV2, decodeV3, modifierRoll, parseV1 } from "./validation";
+import { decodeV2, decodeV3, decodeV4, modifierRoll, parseV1 } from "./validation";
 
 export const migrateV1 = (source: SaveV1, nowMs: number): CombatState => {
   const player = {
@@ -37,6 +37,7 @@ export const migrateV1 = (source: SaveV1, nowMs: number): CombatState => {
     coins: source.coins,
     enemy,
     goldenBug: null,
+    goldenBugDefeats: 0,
     nextAutomaticAttackAtMs: source.automaticUnlocked
       ? nowMs + automaticInterval(enemy, normalizedPlayer)
       : 0,
@@ -45,10 +46,10 @@ export const migrateV1 = (source: SaveV1, nowMs: number): CombatState => {
 };
 export const decodeLegacySave = (value: unknown, nowMs: number): CombatState | undefined => {
   const v1 = parseV1(value);
-  const current = decodeV3(value, nowMs) ?? decodeV2(value, nowMs);
+  const current = decodeV4(value, nowMs) ?? decodeV3(value, nowMs) ?? decodeV2(value, nowMs);
   if (current !== undefined) return current;
   if (v1 !== undefined) return migrateV1(v1, nowMs);
   return undefined;
 };
 export const isPublicationValid = (state: CombatState, nowMs: number): boolean =>
-  decodeV3(JSON.parse(encodeSave(state)) as unknown, nowMs) !== undefined;
+  decodeV4(JSON.parse(encodeSave(state)) as unknown, nowMs) !== undefined;

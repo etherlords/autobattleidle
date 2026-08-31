@@ -4,7 +4,7 @@ import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
 import { UpgradeDialog } from "./hud/upgrade-dialog";
 import { LeaderboardDialog } from "./hud/leaderboard-dialog";
-import type { LeaderboardView } from "../leaderboard/contracts";
+import type { LeaderboardView, RankingMode } from "../leaderboard/contracts";
 import type { HudIntent, HudIntentListener, HudUnsubscribe } from "./hud/intents";
 
 export type Hud = {
@@ -16,7 +16,7 @@ export type Hud = {
   onRestore(listener: () => void): void;
   setRestoreAvailable(available: boolean): void;
   reportPersistence(message: string): void;
-  onLeaderboardLoad?(listener: (around: boolean) => void): void;
+  onLeaderboardLoad?(listener: (around: boolean, mode: RankingMode) => void): void;
   onLeaderboardRename?(listener: (name: string) => void): void;
   onLeaderboardReset?(listener: () => void): void;
   renderLeaderboard?(view: LeaderboardView, status?: string): void;
