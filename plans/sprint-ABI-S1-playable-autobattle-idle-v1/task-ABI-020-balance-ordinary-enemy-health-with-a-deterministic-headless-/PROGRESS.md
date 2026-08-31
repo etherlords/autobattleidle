@@ -4,7 +4,7 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 179
+revision: 183
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 179
-- Last update: Fresh QA after narrow timing repair passed; focused performance proofs and full canonical check remain green.
+- Revision: 183
+- Last update: Fresh QA approved portable CI performance repair with repeated warmed runs, exact oracle/report equality, and full canonical check.
 
 ## Execution plan
 
@@ -3104,4 +3104,69 @@ requiredGates:
 - Evidence:
   - Focused repaired performance tests 2/2 PASS: deterministic 3000-encounter telemetry 1.962s; warmed 48h wrapper 3.294s including warm-up with measured <2.5s assertion PASS
   - pnpm check PASS: 20 files, 178/178 tests, lint, format, Worker TypeScript, production build
+  - git diff --check PASS
+
+### evt-73f94ed7-1902-46cf-8e46-e474de73ae3a
+
+- Timestamp: 2026-08-31T19:31:25.657Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 179
+- Resulting revision: 180
+- Summary: EVENT returned — root-manager — exact-SHA CI exposed non-portable 2.5s runtime gate on GitHub runner; returned to implementation owner while preserving strict fast-forward performance proof.
+- Idempotency key: abi020-ci-performance-return-v13
+- Evidence:
+  - release SHA 86096dbc58afd21049baf5d4d5900d837a1e4579
+  - CI run 33430838579 failed: warmed 48h 3345.647ms >= 2500ms
+  - Pages run 33430838383 succeeded but cannot close while CI fails
+
+### evt-1adcfe35-d4d7-4092-ae16-b33fc6420141
+
+- Timestamp: 2026-08-31T19:35:18.735Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 180
+- Resulting revision: 181
+- Summary: EVENT checkpoint — ABI-020 worker — optimized fast-forward packet hot path and replaced hardware-specific 2.5s CI assertion with portable 5s guard while retaining local 1.524s receipt and exact-oracle equality.
+- Idempotency key: abi020-ci-repair-checkpoint-v14
+- Evidence:
+  - src/domain/progression-simulator.ts immutable attack-option hoist
+  - src/domain/combat.test.ts portable warmed 48h <5s CI bound
+  - worker pnpm check 178/178 PASS
+  - report equality and exact 1/4/8/24/48/49h proofs PASS
+
+### evt-a46918f8-7b32-4566-a363-5c5146d077ae
+
+- Timestamp: 2026-08-31T19:36:30.786Z
+- Actor: abi020-independent-review-v12
+- Operation: gate.record
+- Prior revision: 181
+- Resulting revision: 182
+- Summary: Fresh review approved exact-SHA CI performance repair; dynamic encounter rolls remain in-loop and the portable guard remains bounded.
+- Idempotency key: abi020-independent-review-v12-pass
+- Request fingerprint: 03602e55279f4c97b78cd9831604b3c5abab6baee259781111782b92344a0abe
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - No findings on immutable option hoist or portable <5s warmed guard
+  - combat.test.ts 34/34 PASS
+  - pnpm check 20 files / 178 tests PASS
+  - git diff --check 86096dbc PASS
+
+### evt-1306b622-25c4-40c2-8809-e5562bf32fdb
+
+- Timestamp: 2026-08-31T19:38:39.265Z
+- Actor: abi020-independent-qa-v13
+- Operation: gate.record
+- Prior revision: 182
+- Resulting revision: 183
+- Summary: Fresh QA approved portable CI performance repair with repeated warmed runs, exact oracle/report equality, and full canonical check.
+- Idempotency key: abi020-independent-qa-v13-pass
+- Request fingerprint: 251f294255ecb29fe3778f08c6ffc76df8d1ca7abe40ea821c088117f7b1525c
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Warmed 48h focused benchmark 3/3 PASS: 3.02s, 2.97s, 2.88s wrapper totals; internal <5s guard PASS
+  - Exact 1/4/8/24/48/49h oracle equality, committed report equality, deterministic telemetry 3/3 PASS
+  - pnpm check 20 files / 178 tests PASS
   - git diff --check PASS

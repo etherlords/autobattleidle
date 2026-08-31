@@ -278,6 +278,21 @@ const runProgression = (
   const ordinaryEncounters = options.ordinaryEncounters ?? 0;
   const horizonMs = options.horizonMs;
   const manualIntervalMs = options.manualIntervalMs ?? null;
+  const attackAlternatives = {
+    ...(options.bossInterval === undefined ? {} : { bossInterval: options.bossInterval }),
+    ...(options.criticalChancePolicy === undefined
+      ? {}
+      : { criticalChancePolicy: options.criticalChancePolicy }),
+    ...(options.armorPenetrationPolicy === undefined
+      ? {}
+      : { armorPenetrationPolicy: options.armorPenetrationPolicy }),
+    ...(options.ordinaryHealthGrowthRate === undefined
+      ? {}
+      : { ordinaryHealthGrowthRate: options.ordinaryHealthGrowthRate }),
+  };
+  const criticalRoll = options.criticalRoll ?? 0.25;
+  const damageMultiplier = options.damageMultiplier ?? 1;
+  const doubleRewardRoll = options.doubleRewardRoll ?? 0.25;
   if (horizonMs !== undefined && (!Number.isFinite(horizonMs) || horizonMs <= 0))
     throw new RangeError("Horizon must be a finite positive number");
   if (manualIntervalMs !== null && (!Number.isFinite(manualIntervalMs) || manualIntervalMs <= 0))
@@ -400,21 +415,12 @@ const runProgression = (
         const result = attack(state, {
           atMs: elapsedMs,
           automaticBatch: packet.automaticBatch,
-          damageMultiplier: packet.damageMultiplier * (options.damageMultiplier ?? 1),
-          ...(options.bossInterval === undefined ? {} : { bossInterval: options.bossInterval }),
-          ...(options.criticalChancePolicy === undefined
-            ? {}
-            : { criticalChancePolicy: options.criticalChancePolicy }),
-          ...(options.armorPenetrationPolicy === undefined
-            ? {}
-            : { armorPenetrationPolicy: options.armorPenetrationPolicy }),
+          damageMultiplier: packet.damageMultiplier * damageMultiplier,
+          ...attackAlternatives,
           enemyId: state.enemy.id,
-          ...(options.ordinaryHealthGrowthRate === undefined
-            ? {}
-            : { ordinaryHealthGrowthRate: options.ordinaryHealthGrowthRate }),
           rolls: {
-            critical: options.criticalRoll ?? 0.25,
-            doubleReward: options.doubleRewardRoll ?? 0.25,
+            critical: criticalRoll,
+            doubleReward: doubleRewardRoll,
             nextEliteModifier: modifierRollForEncounter(state.enemy.encounter),
           },
           source,
