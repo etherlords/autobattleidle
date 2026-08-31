@@ -4,7 +4,7 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 195
+revision: 200
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 195
-- Last update: Released task claim: ABI-020 completed and published
+- Revision: 200
+- Last update: Cancel superseded legacy execution step after successful v11 closure.
 
 ## Execution plan
 
@@ -42,8 +42,8 @@ requiredGates:
 - [x] chance-penetration-strategies-v2: Implementation owner measures asymptotic versus explicit overflow semantics separately for critical chance and armor penetration
 - [x] rebalance-application-v2: Implementation owner applies only measured accepted health, cadence, reward, critical, and penetration decisions with safe saturation and no schema change
 - [x] rebalance-self-check-v2: Implementation owner tests repeatability, variants, envelopes, walls, boss gaps, reward, strategies, rollover, saves, and runtime then runs pnpm check
-- [ ] rebalance-independent-gates-v2: Independent Reviewer and headless QA verify telemetry, repeatability, boss multiplier stability, runtime, and save compatibility
-- [ ] rebalance-manager-closure-v2: Manager publishes accepted Vault formulas and measured report, records verification and closure, and proves exact-SHA CI and Pages
+- [-] rebalance-independent-gates-v2: Independent Reviewer and headless QA verify telemetry, repeatability, boss multiplier stability, runtime, and save compatibility
+- [-] rebalance-manager-closure-v2: Manager publishes accepted Vault formulas and measured report, records verification and closure, and proves exact-SHA CI and Pages
 - [x] armor-envelope-v2: Implementation owner measures and tunes early/mid/late armored cohorts so reachable early hits are not dominated by the 1-damage floor and late armor retains meaningful mitigation
 - [x] headless-simulator-resume-v3: Implementation owner extends the existing production-path simulator with 3000+ encounter telemetry under the encounter-100+ wall decision
 - [x] stage-math-preflight: Freeze Golden Bug as calibration anchor; prove the 48-hour feasibility boundary and stage hit envelopes
@@ -52,13 +52,13 @@ requiredGates:
 - [x] nonzero-upgrade-economics: Make each paid upgrade produce at least one displayed gameplay quantum with combined skipped-level cost
 - [x] report-persistence-self-check: Generate measured report and prove current plus historical save compatibility with pnpm check
 - [-] independent-gates-v3: Run fresh independent review and QA after corrected balance implementation
-- [ ] manager-closure-v3: Publish accepted formulas, commit, push, deploy, verify exact SHA, and close ABI-020
+- [-] manager-closure-v3: Publish accepted formulas, commit, push, deploy, verify exact SHA, and close ABI-020
 - [x] review-repair-v4: Same implementation owner fixes independent simulator proof, report runtime/completeness, speed policy, Golden/boss envelope, and metadata
 - [-] independent-review-v4: One fresh independent Reviewer reruns the corrected ABI-020 gate
-- [ ] independent-qa-v4: Independent QA verifies accepted time-based simulation, saves, and full check after review passes
+- [-] independent-qa-v4: Independent QA verifies accepted time-based simulation, saves, and full check after review passes
 - [x] high-aps-batching-v5: Implement shared high-APS packet batching, bounded visual cadence, independent critical rolls, report updates, and focused regressions
 - [x] independent-review-v5: Fresh independent Reviewer verifies the complete corrected balance and high-APS batching scope
-- [ ] independent-qa-v5: Independent QA verifies simulation, saves, high-APS throughput, bounded visuals, Golden Bug outcomes, and full check
+- [-] independent-qa-v5: Independent QA verifies simulation, saves, high-APS throughput, bounded visuals, Golden Bug outcomes, and full check
 - [x] review-repair-v6: Same implementation owner fixes persistence-safe fractional packets, legacy APS recognition, measured 10-plus APS, production Golden evidence, complete alternatives, and metadata
 - [x] independent-review-v6: One fresh independent Reviewer reruns all ABI-020 acceptance after bounded repair v6
 - [x] review-repair-v7: Same implementation owner unifies production high-APS simulation, completes time/economy/boss telemetry, prevents saturation, and proves bounded 48-hour runtime
@@ -3372,3 +3372,88 @@ requiredGates:
 - Branch: continue-abis1-after-visual-families
 - Evidence:
   - None
+
+### evt-d8bf1539-dca5-4a73-b3cb-c0aef18063d0
+
+- Timestamp: 2026-08-31T19:56:24.667Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 195
+- Resulting revision: 196
+- Summary: Cancel superseded legacy execution step after successful v11 closure.
+- Idempotency key: abi020-cancel-superseded-rebalance-independent-gates-v2-v20
+- Request fingerprint: 738ad564b3ec2f2c793816d69f79f58234a611bd033833b64d9aba3c93645dc4
+- Action: set_state
+- Step ID: rebalance-independent-gates-v2
+- State: cancelled
+- Reason: Cancel superseded legacy execution step after successful v11 closure.
+- Evidence:
+  - Superseded by completed v11 review, QA, and manager-closure path
+
+### evt-d1fcc0dd-489a-459c-b1cc-08dc74034fbe
+
+- Timestamp: 2026-08-31T19:56:27.079Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 196
+- Resulting revision: 197
+- Summary: Cancel superseded legacy execution step after successful v11 closure.
+- Idempotency key: abi020-cancel-superseded-rebalance-manager-closure-v2-v20
+- Request fingerprint: 79fd285419582b5d72b9b75b2042a8f6b5a76effa99c35030b0a384c54d5ace4
+- Action: set_state
+- Step ID: rebalance-manager-closure-v2
+- State: cancelled
+- Reason: Cancel superseded legacy execution step after successful v11 closure.
+- Evidence:
+  - Superseded by completed v11 review, QA, and manager-closure path
+
+### evt-1420142e-fc3c-4fe7-b41c-693ab759ed8a
+
+- Timestamp: 2026-08-31T19:56:34.251Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 197
+- Resulting revision: 198
+- Summary: Cancel superseded legacy execution step after successful v11 closure.
+- Idempotency key: abi020-cancel-superseded-manager-closure-v3-v20
+- Request fingerprint: f3d678c48b6717dc68efdf581775e2e56287adc3b0bec88d99c62f50c340b93d
+- Action: set_state
+- Step ID: manager-closure-v3
+- State: cancelled
+- Reason: Cancel superseded legacy execution step after successful v11 closure.
+- Evidence:
+  - Superseded by completed v11 review, QA, and manager-closure path
+
+### evt-3267eb46-1661-420d-b84b-a4d4166384d7
+
+- Timestamp: 2026-08-31T19:56:36.653Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 198
+- Resulting revision: 199
+- Summary: Cancel superseded legacy execution step after successful v11 closure.
+- Idempotency key: abi020-cancel-superseded-independent-qa-v4-v20
+- Request fingerprint: 7cac8e5fcc087481276a8ece1dc5b5809ae5b68fd4edef607bd13f8ee5231b47
+- Action: set_state
+- Step ID: independent-qa-v4
+- State: cancelled
+- Reason: Cancel superseded legacy execution step after successful v11 closure.
+- Evidence:
+  - Superseded by completed v11 review, QA, and manager-closure path
+
+### evt-128800d9-7d35-405c-8f63-202f2c8f6c42
+
+- Timestamp: 2026-08-31T19:56:39.139Z
+- Actor: root-manager
+- Operation: execution_plan.update
+- Prior revision: 199
+- Resulting revision: 200
+- Summary: Cancel superseded legacy execution step after successful v11 closure.
+- Idempotency key: abi020-cancel-superseded-independent-qa-v5-v20
+- Request fingerprint: 17ee89a474754cda2e026da1a837a63e47e32ca1046ad14d13ebc26e582b52c9
+- Action: set_state
+- Step ID: independent-qa-v5
+- State: cancelled
+- Reason: Cancel superseded legacy execution step after successful v11 closure.
+- Evidence:
+  - Superseded by completed v11 review, QA, and manager-closure path
