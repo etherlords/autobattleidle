@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
-$plannerVersion = "1.1.2"
-$plannerSha256 = "685d971c4f97db613c18135e4249bf64f39fd31f60b084c94ecc2043626c1ac3"
+$plannerVersion = "1.1.3"
+$plannerSha256 = "29046e085787de20a983acd2c14de1446141159f2905fa754cefefd5d1d1cd43"
 $vaultVersion = "1.1.0"
 $vaultSha256 = "1f25d8a2930b661bf577d9ae7eed0e137664f348b068ad3b3ac41e523e601034"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
@@ -9,6 +9,11 @@ $plannerRelease = Join-Path $releaseRoot "planner"
 $vaultRelease = Join-Path $releaseRoot "vault"
 $plannerRuntime = Join-Path $projectRoot ".tools\planner-runtime"
 $vaultRuntime = Join-Path $projectRoot ".tools\vault-runtime"
+
+function Write-Utf8NoBom {
+  param([string]$Path, [string]$Value)
+  [System.IO.File]::WriteAllText($Path, $Value, [System.Text.UTF8Encoding]::new($false))
+}
 
 function Install-ReleaseRuntime {
   param(
@@ -36,8 +41,8 @@ function Install-ReleaseRuntime {
   if ($actual -ne $ExpectedSha256) { throw "Pinned checksum mismatch for $archive" }
   if ($actual -ne $declared) { throw "Release sidecar checksum mismatch for $archive" }
 
-  Set-Content -LiteralPath (Join-Path $RuntimeDirectory "package.json") -Encoding utf8 -Value '{"private":true,"packageManager":"pnpm@11.21.0"}'
-  Set-Content -LiteralPath (Join-Path $RuntimeDirectory ".npmrc") -Encoding utf8 -Value '@etherlords:registry=https://npm.pkg.github.com'
+  Write-Utf8NoBom -Path (Join-Path $RuntimeDirectory "package.json") -Value '{"private":true,"packageManager":"pnpm@11.21.0"}'
+  Write-Utf8NoBom -Path (Join-Path $RuntimeDirectory ".npmrc") -Value '@etherlords:registry=https://npm.pkg.github.com'
   pnpm --dir $RuntimeDirectory add --save-dev $archive --ignore-scripts
   if ($LASTEXITCODE -ne 0) { throw "Failed to install $archive" }
 }
@@ -46,7 +51,7 @@ $packageToken = gh auth token
 $temporaryUserConfig = New-TemporaryFile
 $previousUserConfig = $env:NPM_CONFIG_USERCONFIG
 try {
-  Set-Content -LiteralPath $temporaryUserConfig -Encoding utf8 -Value "@etherlords:registry=https://npm.pkg.github.com`n//npm.pkg.github.com/:_authToken=$packageToken"
+  Write-Utf8NoBom -Path $temporaryUserConfig -Value "@etherlords:registry=https://npm.pkg.github.com`n//npm.pkg.github.com/:_authToken=$packageToken"
   $env:NPM_CONFIG_USERCONFIG = $temporaryUserConfig
   Install-ReleaseRuntime -Repository "etherlords/planner" -Version $plannerVersion -ArchiveName "etherlords-planner-mcp-$plannerVersion.tgz" -ExpectedSha256 $plannerSha256 -ReleaseDirectory $plannerRelease -RuntimeDirectory $plannerRuntime
   Install-ReleaseRuntime -Repository "etherlords/vault" -Version $vaultVersion -ArchiveName "vault-mcp-$vaultVersion.tgz" -ExpectedSha256 $vaultSha256 -ReleaseDirectory $vaultRelease -RuntimeDirectory $vaultRuntime
@@ -65,7 +70,7 @@ $vaultEntrypoint = (Join-Path $vaultPackage "dist\mcp\launcher.js").Replace("\",
 $vaultConfig = (Join-Path $projectRoot "vault.config.json").Replace("\", "\\")
 $template = Get-Content -LiteralPath (Join-Path $projectRoot ".codex\config.template.toml") -Raw
 $config = $template.Replace("__PROJECT_ROOT__", $tomlRoot).Replace("__PLANNER_ENTRYPOINT__", $plannerEntrypoint).Replace("__VAULT_ENTRYPOINT__", $vaultEntrypoint).Replace("__VAULT_CONFIG__", $vaultConfig)
-Set-Content -LiteralPath (Join-Path $projectRoot ".codex\config.toml") -Encoding utf8 -Value $config
+Write-Utf8NoBom -Path (Join-Path $projectRoot ".codex\config.toml") -Value $config
 
 $install = [ordered]@{
   schemaVersion = 1
@@ -77,6 +82,6 @@ $install = [ordered]@{
   youtrackProfile = $null
   gitGuidance = "Commit Planner Markdown with the product repository. This mode is for one writable checkout only."
 }
-$install | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $projectRoot ".planner\planner-install.json") -Encoding utf8
+Write-Utf8NoBom -Path (Join-Path $projectRoot ".planner\planner-install.json") -Value ($install | ConvertTo-Json)
 
 Write-Host "Planner and Vault runtimes installed. Restart Codex from $projectRoot."

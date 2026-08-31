@@ -28,9 +28,9 @@ const packageRoot = await realpath(
 );
 const serverEntrypoint = path.join(packageRoot, "dist", "server.js");
 const setupEntrypoint = path.join(packageRoot, "scripts", "setup-project.mjs");
-const archive = path.join(projectRoot, ".release", "planner", "etherlords-planner-mcp-1.1.2.tgz");
+const archive = path.join(projectRoot, ".release", "planner", "etherlords-planner-mcp-1.1.3.tgz");
 const sidecar = `${archive}.sha256`;
-const expectedSha256 = "685d971c4f97db613c18135e4249bf64f39fd31f60b084c94ecc2043626c1ac3";
+const expectedSha256 = "29046e085787de20a983acd2c14de1446141159f2905fa754cefefd5d1d1cd43";
 const fixture = await mkdtemp(path.join(os.tmpdir(), "autobattleidle-planner-acceptance-"));
 
 try {
@@ -42,8 +42,8 @@ try {
     .digest("hex");
   const declaredSha256 = (await readFile(sidecar, "utf8")).trim().split(/\s+/)[0].toLowerCase();
   assert(
-    packageManifest.version === "1.1.2",
-    `Expected Planner 1.1.2, got ${packageManifest.version}`,
+    packageManifest.version === "1.1.3",
+    `Expected Planner 1.1.3, got ${packageManifest.version}`,
   );
   assert(archiveSha256 === expectedSha256, `Archive SHA-256 mismatch: ${archiveSha256}`);
   assert(declaredSha256 === expectedSha256, `Sidecar SHA-256 mismatch: ${declaredSha256}`);
@@ -61,7 +61,7 @@ try {
       {
         schemaVersion: 1,
         artifact: {
-          url: "https://github.com/etherlords/planner/releases/download/v1.1.2/etherlords-planner-mcp-1.1.2.tgz",
+          url: "https://github.com/etherlords/planner/releases/download/v1.1.3/etherlords-planner-mcp-1.1.3.tgz",
           sha256: archiveSha256,
           sidecarSha256: declaredSha256,
           bytes: (await readFile(archive)).byteLength,
