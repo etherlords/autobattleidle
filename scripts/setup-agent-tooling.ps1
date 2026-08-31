@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
-$plannerVersion = "1.2.0"
-$plannerSha256 = "b8b69586b675be9d879fd60180ca5353886953eeffe163868844351e60d0da29"
+$plannerVersion = "1.2.1"
+$plannerSha256 = "0cbd8f69dda5de6564fbf826785221215b17b6b8ad1af600175bce91cb4547c4"
 $vaultVersion = "1.2.0"
 $vaultSha256 = "c366df50bb04fc3659cc6361fdc91fba0b521956e2521c1a7f1ce1b1b2c4115d"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path

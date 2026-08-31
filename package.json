@@ -15,7 +15,8 @@
     "format:check": "prettier --check .",
     "check": "pnpm lint && pnpm format:check && pnpm test && pnpm check:worker && pnpm build",
     "hooks:install": "node scripts/install-git-hooks.mjs",
-    "hooks:smoke": "node scripts/smoke-git-hooks.mjs"
+    "hooks:smoke": "node scripts/smoke-git-hooks.mjs",
+    "planner:ui": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-planner-ui.ps1"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
