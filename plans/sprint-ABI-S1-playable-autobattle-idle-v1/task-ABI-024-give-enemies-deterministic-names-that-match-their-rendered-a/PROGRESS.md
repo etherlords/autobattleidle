@@ -4,8 +4,8 @@ id: ABI-024
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 24
-status: In QA
+revision: 30
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-009
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 24
-- Last update: Started exact-SHA publication, verification, and manager closure
+- Status: Done
+- Revision: 30
+- Last update: EVENT closed — root-manager-abi024 — deterministic archetype names accepted, published, and exact-SHA verified
 
 ## Execution plan
 
@@ -33,7 +33,7 @@ requiredGates:
 - [x] name-ui: Implementation owner publishes readable grade/archetype names through the existing HUD snapshot without save or combat changes
 - [x] name-tests: Implementation owner adds focused family, modifier, boss, Golden Bug, reload, and narrow-label tests; runs pnpm check
 - [x] name-gates: Independent Reviewer and browser QA verify name/body parity, responsive readability, persistence compatibility, and deployed behavior
-- [~] name-close: Manager syncs accepted Vault behavior, closes Planner, commits, pushes, and proves exact-SHA CI/Pages
+- [x] name-close: Manager syncs accepted Vault behavior, closes Planner, commits, pushes, and proves exact-SHA CI/Pages
 
 ## Events
 
@@ -446,3 +446,121 @@ requiredGates:
   - review PASS
   - QA PASS
   - test-only task diff ready for checkpoint
+
+### evt-39239584-bfe3-435a-acb9-5303de898a4a
+
+- Timestamp: 2026-08-31T03:41:37.783Z
+- Actor: root-manager-abi024
+- Operation: progress.append
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: EVENT checkpoint — root-manager-abi024 — feature checkpoint 3e7ac711 published to main; exact-SHA CI and Pages succeeded
+- Idempotency key: abi024-feature-published-v1
+- Evidence:
+  - commit 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - CI run 33354547367 success
+  - Pages run 33354547368 success
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-2218189e-345f-4b15-ab84-bb422e180e12
+
+- Timestamp: 2026-08-31T03:45:01.223Z
+- Actor: abi024-independent-verification
+- Operation: gate.record
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: PASS — independent publication and acceptance verification confirms exact SHA 3e7ac711 on origin/main/GitHub main, CI 33354547367, Pages 33354547368, public asset health, test-only scope, and no ABI-031 inclusion.
+- Idempotency key: abi024-independent-verification-3e7ac7-v1
+- Request fingerprint: fef703bd61734c6d7bdc2f24b963b19b5297eb1e7a6a87c2666f059a1d1a55b0
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - commit 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - git ls-remote origin refs/heads/main = 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - GitHub CI 33354547367 completed/success exact SHA
+  - GitHub Pages 33354547368 completed/success exact SHA
+  - https://etherlords.github.io/autobattleidle/ document/JS/CSS/favicon HTTP 200
+  - pnpm focused 11/11 PASS; pnpm check 155 tests PASS
+  - git diff --check PASS; exact diff has no ABI-031 or production-source path
+
+### evt-b612b5e7-4614-4d3e-9cd4-86e07928a18e
+
+- Timestamp: 2026-08-31T03:45:33.262Z
+- Actor: root-manager-abi024
+- Operation: task.advance
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Independent QA and exact-SHA verification passed; ready for manager closure
+- Idempotency key: abi024-qa-to-ready-manager-v2
+- Request fingerprint: 2bfee9d5c225a6037f6527e37de106e6590fc138e991d523c290892cb6bf4ad8
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - independent-qa PASS
+  - verification PASS
+  - feature SHA 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - CI 33354547367 success
+  - Pages 33354547368 success
+  - VERIFICATION.md APPROVE
+
+### evt-8c254b58-3fe1-479e-a054-0c6695b0f125
+
+- Timestamp: 2026-08-31T03:45:44.263Z
+- Actor: root-manager-abi024
+- Operation: gate.record
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: PASS — all ABI-024 acceptance criteria mapped to focused tests, independent review, deployed responsive QA, and exact-SHA CI/Pages verification
+- Idempotency key: abi024-manager-closure-pass-v1
+- Request fingerprint: fe0fc80c21b6f618583af468afb5dbef99f829be65e418bb8800a03eb43e9418
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - feature SHA 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - CI 33354547367
+  - Pages 33354547368
+  - no production or save schema change
+  - Vault behavior already current at AUTOBATTLEIDLE-DOC-20260827-A7FD1F
+
+### evt-225f7e82-fb44-488c-88b8-8d4a8653b0f6
+
+- Timestamp: 2026-08-31T03:45:54.242Z
+- Actor: root-manager-abi024
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Publication, exact-SHA verification, and manager acceptance completed
+- Idempotency key: abi024-name-close-complete-v1
+- Request fingerprint: b38f800724e2fd6d597d754fbffbb1dbdd26bfe55b7d53f3f02a907e21068f49
+- Action: set_state
+- Step ID: name-close
+- State: complete
+- Evidence:
+  - feature SHA 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - CI/Pages success
+  - verification PASS
+  - manager-closure PASS
+
+### evt-92e66f1a-172f-424d-92a0-b753acb9e1d1
+
+- Timestamp: 2026-08-31T03:46:02.141Z
+- Actor: root-manager-abi024
+- Operation: task.advance
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: EVENT closed — root-manager-abi024 — deterministic archetype names accepted, published, and exact-SHA verified
+- Idempotency key: abi024-ready-manager-to-done-v1
+- Request fingerprint: e29ce0f72f70d3d621137d1eb1a424783b2819eca44d2e0cda7e41b95cc038fc
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - all required gates PASS
+  - feature SHA 3e7ac71156d1a6e3f0b53e36cf15ae23e02b1666
+  - CI 33354547367 success
+  - Pages 33354547368 success
+  - public Pages acceptance PASS
