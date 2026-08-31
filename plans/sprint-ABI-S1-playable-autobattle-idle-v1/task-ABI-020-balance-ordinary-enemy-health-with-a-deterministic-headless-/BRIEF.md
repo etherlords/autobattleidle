@@ -4,8 +4,8 @@ id: ABI-020
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 7
-status: Blocked
+revision: 9
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-010
@@ -30,7 +30,7 @@ Balance ordinary enemy health with a deterministic headless progression simulato
 
 - Type: task
 - Priority: high
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 
@@ -41,9 +41,9 @@ Balance ordinary enemy health with a deterministic headless progression simulato
 - [ ] The implementation compares ordinary-only exponential base health round(140 * (1 + r)^(encounter - 1)) with safe saturation for r=0.5% and r=0.8%, leads with 0.5% as the safer candidate, and selects a rate only from measured envelopes; 1.0% is excluded unless new evidence disproves its late-wall risk.
 - [ ] Candidate reference values are approximately 229/292/374/1607 HP at encounters 100/150/200/500 for 0.5%, and 308/459/684/7463 for 0.8%; tests calculate rather than hard-code rounded prose values.
 - [ ] In encounter bands 100-150 and 1000-1100 ordinary enemies retain intentional one-hit cases of at least 5%, 5-plus-hit cases of at least 20%, and 10-plus-hit cases of at least 5%; veteran and elite have nonzero 10-plus-hit cases without depending only on the armor modifier.
-- [ ] No adjacent encounter-band median hits-to-kill jump exceeds 2x, every ordinary time-to-kill remains finite, no ordinary wall exceeds 60 seconds under the reference strategy, and safe-integer/epoch rollover remains valid.
+- [ ] Product decision: encounters 1-99 are bootstrap progression and must remain finite but are exempt from the 60-second automatic-only wall. From encounter 100 onward, no adjacent audited encounter-band median hits-to-kill jump exceeds 2x, no ordinary wall exceeds 60 seconds under the reference strategy, and safe-integer/epoch rollover remains valid.
 - [ ] Reward telemetry compares a lower ordinary reward curve against the production Golden Bug economy delivered by ABI-010; the accepted curve avoids current excess currency without changing reward event ordering, safe-integer saturation, or save schema.
-- [ ] Critical chance and armor penetration each compare two explicit strategies: an asymptotic curve that approaches but never reaches 100 percent, and documented overflow semantics above 100 percent. The simulator reports their combat/economy effects separately and the task adopts neither without measured evidence and a named product decision.
+- [ ] Critical chance and armor penetration each compare two explicit strategies: an asymptotic curve that approaches but never reaches 100 percent, and documented overflow semantics above 100 percent. The simulator reports their combat/economy effects separately; current asymptotic production behavior remains unless measured evidence proves another strategy satisfies every envelope.
 - [ ] Focused tests prove metric calculations, fixed-seed repeatability, round-robin one-purchase-per-defeat behavior, grade/boss separation, 0.5-versus-0.8 candidate comparison, boss-gap candidates, Golden Bug reward accounting, critical/penetration strategy alternatives, safe saturation, runtime bound, and accepted telemetry envelopes.
 - [ ] Independent review, headless QA, save-compatibility proof, pnpm check, and exact-SHA CI/Pages pass with no unresolved P0-P2.
 - [ ] Vault Enemy Tiers and Boss Cadence, Economy and Upgrade Curves, and Combat Loop are updated from planned candidates to the accepted formulas and measured report before Manager closure.

@@ -4,8 +4,8 @@ id: ABI-020
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: Blocked
+revision: 32
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 30
-- Last update: Released task claim: Release ABI-020 after canonical Blocked transition on independently verified product-spec contradiction.
+- Status: Ready
+- Revision: 32
+- Last update: Resolve verified encounter-2 specification conflict with explicit bootstrap exemption and return ABI-020 to Ready
 
 ## Execution plan
 
@@ -534,3 +534,36 @@ requiredGates:
 - Branch: continue-abis1-after-visual-families
 - Evidence:
   - None
+
+### evt-76626547-6255-4d5a-a763-21871256d496
+
+- Timestamp: 2026-08-31T04:21:13.017Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: EVENT decision — root-manager — user-authorized smallest product correction: encounters 1-99 are finite bootstrap progression exempt from the 60-second automatic-only wall; measured wall envelope begins at encounter 100; retain asymptotic chance/penetration unless telemetry proves a safe alternative
+- Idempotency key: abi020-product-decision-record-v1
+- Evidence:
+  - User authorized all remaining sprint decisions and work on 2026-08-31
+  - BRIEF.md revision 8
+  - REVIEW.md encounter-2 arithmetic
+  - VERIFICATION.md product options
+  - AUTOBATTLEIDLE-DOC-20260827-A798F2
+
+### evt-c1569238-d8a6-4684-88e2-e7f691206291
+
+- Timestamp: 2026-08-31T04:21:20.854Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Resolve verified encounter-2 specification conflict with explicit bootstrap exemption and return ABI-020 to Ready
+- Idempotency key: abi020-unblock-after-product-decision-v1
+- Request fingerprint: c659f056f7fb9486b235f6233da5ffe8daa4a84d14bfb18a89b2bbd27295d48d
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - BRIEF.md revision 8 product decision
+  - evt-76626547-6255-4d5a-a763-21871256d496
+  - dependencies ABI-010, ABI-016, ABI-018, ABI-022 Done
