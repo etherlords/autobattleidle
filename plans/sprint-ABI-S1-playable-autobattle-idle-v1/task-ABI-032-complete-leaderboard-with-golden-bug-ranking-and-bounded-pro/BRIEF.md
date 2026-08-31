@@ -4,8 +4,8 @@ id: ABI-032
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 9
-status: In QA
+revision: 11
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-010
@@ -29,7 +29,7 @@ Complete leaderboard with Golden Bug ranking and bounded progress synchronizatio
 
 - Type: bug
 - Priority: critical
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

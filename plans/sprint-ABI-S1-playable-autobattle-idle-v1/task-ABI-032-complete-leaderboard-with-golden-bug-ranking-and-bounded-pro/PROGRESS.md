@@ -4,8 +4,8 @@ id: ABI-032
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 50
-status: In QA
+revision: 59
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-010
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 50
-- Last update: EVENT review-pass — abi032-independent-review — D1 identity INSERT repair is minimal, bound, SQLite-compatible, regression-covered, and ready for redeployment.
+- Status: Done
+- Revision: 59
+- Last update: Close ABI-032 after exact-SHA release, independent review, deployed QA, verification, documentation, and manager closure.
 
 ## Execution plan
 
@@ -35,8 +35,8 @@ requiredGates:
 - [x] golden-client-ui: Implementation owner adds dual ranking controls and coalesced boss-or-five-minute progress synchronization
 - [x] golden-self-check: Implementation owner adds focused regressions, local migration/API proof, and runs pnpm check
 - [-] golden-independent-review: Independent Reviewer audits migration safety, timer/coalescing correctness, API cost bounds, privacy, UI, and tests
-- [~] golden-independent-qa: Independent QA proves migrated local and deployed Worker/Pages behavior, existing-player preservation, responsive UI, and clean health
-- [ ] golden-manager-close: Manager updates Vault, publishes scoped files, records exact-SHA CI/Pages/Worker and deployed acceptance, and closes Planner
+- [x] golden-independent-qa: Independent QA proves migrated local and deployed Worker/Pages behavior, existing-player preservation, responsive UI, and clean health
+- [x] golden-manager-close: Manager updates Vault, publishes scoped files, records exact-SHA CI/Pages/Worker and deployed acceptance, and closes Planner
 - [x] golden-data-layer-refactor: Implementation owner introduces Drizzle schema and explicit handler -> service -> repository ownership without changing Worker behavior or D1 migrations
 - [-] golden-independent-review-v2: Fresh independent Reviewer audits the completed product and Drizzle data-layer refactor with local D1 migration/API proof
 - [x] golden-review-repair: Implementation owner fixes success-reset scheduling and adds direct scheduler plus Golden Bugs Worker regressions
@@ -866,3 +866,158 @@ requiredGates:
   - worker/src/repositories/player-repository.ts uses unqualified static INSERT columns with Drizzle-bound values
   - worker/src/index.test.ts asserts generated identity INSERT contains no qualified players column names
   - Independent Reviewer PASS; focused 10/10 and pnpm check 20 files/147 tests
+
+### evt-0bc466fc-37fd-4305-bccc-a3829f6c1bad
+
+- Timestamp: 2026-08-31T01:40:08.446Z
+- Actor: root-manager-abi032
+- Operation: progress.append
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Recorded deployed QA and verification evidence through the documented narrow Markdown fallback; lifecycle and gates remain Planner-owned.
+- Idempotency key: abi032-qa-verification-artifact-fallback-20260831-v1
+- Evidence:
+  - QA.md updated with exact-SHA deployed browser/API evidence
+  - VERIFICATION.md updated with acceptance mapping and release receipts
+  - Planner doctor healthy; recovery.required=false; Planner exposes no artifact section writer
+
+### evt-74ec9fdd-94b7-4874-bf1d-43a684de7ee9
+
+- Timestamp: 2026-08-31T01:40:18.897Z
+- Actor: root-manager-abi032
+- Operation: execution_plan.update
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: Complete deployed QA after exact-SHA Worker repair and full browser/API acceptance.
+- Idempotency key: abi032-plan-qa-complete-20260831-v1
+- Request fingerprint: a25246618ce909cf72c452c7dbaa0d57e2dd48c01ce64138c7a691d07d4b6a0a
+- Action: set_state
+- Step ID: golden-independent-qa
+- State: complete
+- Evidence:
+  - Independent deployed QA PASS at a7b34c3b501fd891a9c1d120c05b65a1b5320d0f
+  - 40 visible players; Level and Golden Bugs Top/Around/current rank; desktop/390px; clean console/network
+
+### evt-4c2fcfd8-b645-495f-b694-9722af0e907a
+
+- Timestamp: 2026-08-31T01:40:20.182Z
+- Actor: root-manager-abi032
+- Operation: execution_plan.update
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Begin manager closure with exact-SHA evidence and scoped checkpoint.
+- Idempotency key: abi032-plan-manager-close-start-20260831-v1
+- Request fingerprint: 885c88230876f8b27d973b9f35f7659a771169ee92988a5bde9499db1e0283be
+- Action: set_state
+- Step ID: golden-manager-close
+- State: in_progress
+- Evidence:
+  - QA.md and VERIFICATION.md contain exact release receipts
+  - Independent review and deployed QA passed
+
+### evt-1ccfa173-0387-4489-8286-33b3e51ee20d
+
+- Timestamp: 2026-08-31T01:40:31.842Z
+- Actor: abi032-independent-qa
+- Operation: gate.record
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: PASS — deployed Worker/Pages acceptance succeeds with meaningful dual-ranking data and clean responsive browser evidence.
+- Idempotency key: abi032-independent-qa-pass-a7b34c3-20260831-v1
+- Request fingerprint: 31820056cd12db221c79bc841305fda4105a294840c0c5bda6321f5c5e222fc2
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Exact SHA a7b34c3b501fd891a9c1d120c05b65a1b5320d0f
+  - 40 visible production QA players; both ranking modes Top/Around/current rank
+  - Desktop and 390x844; identity/ranking 2xx; zero console errors/warnings
+  - Ordinary level 1 to 2 emitted no leaderboard score request
+
+### evt-311a6a95-3e96-44bc-b31b-3eb9f7235e3d
+
+- Timestamp: 2026-08-31T01:40:32.807Z
+- Actor: root-manager-abi032
+- Operation: gate.record
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: PASS — exact-SHA receipts, migration, review, tests, and deployed acceptance satisfy the verification matrix.
+- Idempotency key: abi032-verification-pass-a7b34c3-20260831-v1
+- Request fingerprint: 007770271c1d4bafdd7f6768dcda8b8deb2ab478b15e7abf4c2842d09220500f
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - QA.md and VERIFICATION.md map acceptance to deterministic and deployed evidence
+  - CI 33347871511; Pages 33347871496; Worker 33347871505
+  - Worker version 1834553a-7e67-42a9-8b4f-d0b1dba864e8
+  - D1 0002 applied and preserved existing rows
+
+### evt-3f3151fc-726b-472f-be93-6e90e85cf1dd
+
+- Timestamp: 2026-08-31T01:40:40.346Z
+- Actor: root-manager-abi032
+- Operation: task.advance
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Deployed acceptance and verification passed; advance ABI-032 to manager closure.
+- Idempotency key: abi032-inqa-to-ready-manager-a7b34c3-20260831-v1
+- Request fingerprint: b87c5bdde11619010db939d4fe20edf4aaee7d6e5ef534514a2abded38804c59
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - Independent QA gate PASS at progress revision 54
+  - Verification gate PASS at progress revision 55
+  - Exact SHA a7b34c3b501fd891a9c1d120c05b65a1b5320d0f deployed
+
+### evt-b15b2828-aed3-4301-a8ad-dbfceb9f2937
+
+- Timestamp: 2026-08-31T01:41:09.007Z
+- Actor: abi032-closure-manager
+- Operation: gate.record
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: PASS — implementation, migration, release, independent gates, documentation, and scoped Git ownership are coherent.
+- Idempotency key: abi032-manager-closure-pass-a7b34c3-20260831-v2
+- Request fingerprint: f8b81012ef8f29e600dbdb9ab5c57e2c904c6e19c386832968ee255e41a94a2b
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Feature and repair commits published to main
+  - Exact release a7b34c3b501fd891a9c1d120c05b65a1b5320d0f: CI, Pages, Worker success
+  - Independent review, independent deployed QA, and verification gates pass
+  - Vault architecture updated and doctor reports 0 errors/warnings
+  - Scoped closure checkpoint excludes unrelated ABI-031 files
+
+### evt-f0c0b4c5-3f84-4739-b2eb-41d644e56d36
+
+- Timestamp: 2026-08-31T01:41:10.293Z
+- Actor: abi032-closure-manager
+- Operation: execution_plan.update
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Complete ABI-032 manager closure plan after all acceptance and release gates passed.
+- Idempotency key: abi032-plan-manager-close-complete-20260831-v2
+- Request fingerprint: 43f5356d10fbd2c55872652d03c45dea8aff83de3c7c579dcf109052546d1f33
+- Action: set_state
+- Step ID: golden-manager-close
+- State: complete
+- Evidence:
+  - All required gates pass
+  - Closure evidence and exact release receipts recorded
+  - Unrelated ABI-031 changes remain excluded
+
+### evt-e386a681-1c66-49d4-ad1c-55b94ea2020c
+
+- Timestamp: 2026-08-31T01:41:16.537Z
+- Actor: abi032-closure-manager
+- Operation: task.advance
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Close ABI-032 after exact-SHA release, independent review, deployed QA, verification, documentation, and manager closure.
+- Idempotency key: abi032-ready-manager-to-done-20260831-v1
+- Request fingerprint: 8137c5007956ac33046192f374e13d82d65d858412285a41d6794a4c29e4db6e
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required Planner gates pass
+  - Execution plan complete
+  - Exact release a7b34c3b501fd891a9c1d120c05b65a1b5320d0f deployed and independently accepted

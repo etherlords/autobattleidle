@@ -21,28 +21,47 @@ requiredGates:
 
 # ABI-032 qa
 
-## Pre-deployment verdict
+## Verdict
 
-BLOCKED_DEPLOYMENT — local acceptance passes; public Worker and Pages still serve the previous release.
+PASS — public Worker and Pages satisfy the deployed acceptance layers at exact SHA
+`a7b34c3b501fd891a9c1d120c05b65a1b5320d0f`.
 
-## Evidence
+## Release receipts
 
-- `pnpm check`: passed, 20 test files / 147 tests.
-- Focused domain, save, sync, and Worker suites: passed, 5 files / 52 tests.
-- Pinned Wrangler 4.127.1 local `0001 -> seed -> 0002`: passed. The seeded row retained
-  `best_level=42` and received `best_golden_bugs=0`.
-- Public Pages health and desktop/390px layout are clean, but the stale UI still exposes only Level.
-- Public Worker responds and correctly rejects a request without an allowed origin.
-- Local browser integration was blocked at Wrangler CORS preflight; deployed acceptance must prove the
-  final configured Worker/Pages origin contract.
+- CI run `33347871511`: success.
+- Pages run `33347871496`: success.
+- Worker run `33347871505`: success.
+- Worker version: `1834553a-7e67-42a9-8b4f-d0b1dba864e8`.
+- D1 migration `0002_golden_bugs.sql` was applied by the preceding exact-SHA release; the repair
+  deployment reported no pending migrations.
+
+## Deployed browser and API evidence
+
+- A bounded production QA dataset exposes 40 visible players.
+- Level Top shows varied QA levels `400`, `370`, `340`, and `310` at ranks 3-6.
+- Golden Bugs Top orders QA players by `20`, `17`, `14`, `11`, and `3`, followed by zero-count
+  players.
+- Pages loaded -> Leaderboard clicked -> dialog opened.
+- Golden Bugs clicked -> `20`, `17`, `14`, `11`, and `3 Golden Bugs` were visible.
+- Around me clicked -> `Your rank: 40` was visible.
+- Identity creation returned 201; Level Top, Golden Bugs Top, and Golden Bugs Around returned 200.
+- Desktop and 390x844 interactions retained Level/Golden Bugs and Top/Around controls without
+  clipping.
+- Console after interaction contained zero errors and zero warnings.
+- Initial level 1 -> eight real battlefield clicks -> level 2 produced no leaderboard score request,
+  proving ordinary level progression does not spam submissions.
+
+## Deterministic acceptance evidence
+
+- `pnpm check`: 20 test files / 147 tests, lint, formatting, Worker TypeScript, and build passed.
+- Fake-time tests cover boss submission, five-minute boundary, success reset, in-flight coalescing,
+  bounded retry, and disposal.
+- Domain and persistence tests cover lethal-versus-escape Golden Bug counting and V1/V2/V3 -> V4
+  migration/save/reload.
+- A real browser boss defeat and Golden Bug encounter were not forced during the bounded deployed
+  run; their deterministic behavioral coverage is green.
 
 ## Artifacts
 
-- `output/playwright/abi032-public-desktop.png`
-- `output/playwright/abi032-local-cors-blocked.png`
-
-## Remaining deployed proof
-
-After D1, Worker, and Pages rollout: both ranking modes with Top/Around/current rank, enough visible
-users, boss/no-level-spam cadence, V3 -> V4 reload and real Golden Bug count, responsive interaction,
-clean console/network, and exact-SHA receipts.
+- `output/playwright/abi032-a7b34-desktop.png`
+- `output/playwright/abi032-a7b34-narrow.png`
