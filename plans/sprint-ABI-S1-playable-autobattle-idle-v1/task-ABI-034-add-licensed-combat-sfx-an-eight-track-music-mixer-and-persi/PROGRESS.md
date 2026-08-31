@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 29
+revision: 30
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 29
-- Last update: Add detailed ABI-034 execution step: audio-manager-closure.
+- Revision: 30
+- Last update: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
 
 ## Execution plan
 
@@ -494,3 +494,16 @@ requiredGates:
 - Step ID: audio-manager-closure
 - Evidence:
   - Complexity and overlap audit across active ABI tasks.
+
+### evt-2cc3d3bf-6008-409a-a5a9-6b1b09182f71
+
+- Timestamp: 2026-08-31T19:59:50.342Z
+- Actor: root-recovery-planner
+- Operation: progress.append
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
+- Idempotency key: abi-034-complexity-overlap-checkpoint-20260901
+- Evidence:
+  - Planner doctor healthy with no recovery required before fallback.
+  - ABI-035 -> ABI-034 attack-source reuse; ABI-028 and ABI-037 -> ABI-029 balance/lab reuse; ABI-029 -> ABI-036/ABI-039 content reuse.

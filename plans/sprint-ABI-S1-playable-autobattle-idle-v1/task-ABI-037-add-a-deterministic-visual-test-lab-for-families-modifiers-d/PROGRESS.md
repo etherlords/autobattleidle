@@ -4,7 +4,7 @@ id: ABI-037
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 23
+revision: 24
 status: Ready
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ requiredGates:
 ## Current state
 
 - Status: Ready
-- Revision: 23
-- Last update: Add detailed ABI-037 execution step: lab-manager-closure.
+- Revision: 24
+- Last update: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
 
 ## Execution plan
 
@@ -392,3 +392,16 @@ requiredGates:
 - Step ID: lab-manager-closure
 - Evidence:
   - Complexity and overlap audit across active ABI tasks.
+
+### evt-6872ccb2-c36b-4acb-949f-7e4f5a705dfd
+
+- Timestamp: 2026-08-31T19:59:56.751Z
+- Actor: root-recovery-planner
+- Operation: progress.append
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
+- Idempotency key: abi-037-complexity-overlap-checkpoint-20260901
+- Evidence:
+  - Planner doctor healthy with no recovery required before fallback.
+  - ABI-035 -> ABI-034 attack-source reuse; ABI-028 and ABI-037 -> ABI-029 balance/lab reuse; ABI-029 -> ABI-036/ABI-039 content reuse.

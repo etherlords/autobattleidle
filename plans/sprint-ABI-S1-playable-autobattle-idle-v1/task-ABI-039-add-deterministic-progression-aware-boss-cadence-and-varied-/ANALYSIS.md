@@ -22,6 +22,12 @@ requiredGates:
 
 # ABI-039 analysis
 
+## Complexity and ownership
+
+- **Complexity: XL balance/scheduling/integration.** Candidate design must be measured across exact/event-jump modes, stage gaps, identity distribution, anti-repeat, rewards, Golden timing, persistence, long-run bounds, camera replacement, and deployed multi-boss proof.
+- ABI-029 owns boss family/affinity/geometry content; ABI-039 consumes those identities and owns only cadence, deterministic selection windows, distribution, and anti-repeat. ABI-028 owns ordinary TTK composition.
+- Keep it separate from ABI-029: cadence candidates may all be rejected by balance evidence, and scheduling must not force content-registry rework.
+
 ## Verified current state
 
 - `spawnEnemy` selects every 35th encounter as a boss through `encounter % bossInterval === 0`. ABI-020 accepted current health targets and its measured report explicitly rejects a variable cadence candidate, so this follow-up must begin from the final closed report rather than overwrite active balance work.

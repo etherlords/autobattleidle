@@ -4,8 +4,8 @@ id: ABI-035
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 21
-status: Blocked
+revision: 23
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 21
-- Last update: Add detailed ABI-035 execution step: attack-manager-closure.
+- Status: Ready
+- Revision: 23
+- Last update: Dependencies are closed; make the shared attack-source and timing contract selectable before audio.
 
 ## Execution plan
 
@@ -361,3 +361,32 @@ requiredGates:
 - Step ID: attack-manager-closure
 - Evidence:
   - Complexity and overlap audit across active ABI tasks.
+
+### evt-5a081339-9886-4190-9cbd-53418c4d4920
+
+- Timestamp: 2026-08-31T19:59:52.448Z
+- Actor: root-recovery-planner
+- Operation: progress.append
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
+- Idempotency key: abi-035-complexity-overlap-checkpoint-20260901
+- Evidence:
+  - Planner doctor healthy with no recovery required before fallback.
+  - ABI-035 -> ABI-034 attack-source reuse; ABI-028 and ABI-037 -> ABI-029 balance/lab reuse; ABI-029 -> ABI-036/ABI-039 content reuse.
+
+### evt-a007154b-6729-455c-877b-fda62d07fb63
+
+- Timestamp: 2026-08-31T20:00:53.548Z
+- Actor: root-recovery-planner
+- Operation: task.advance
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: Dependencies are closed; make the shared attack-source and timing contract selectable before audio.
+- Idempotency key: abi-035-ready-after-abi020-20260901
+- Request fingerprint: 10f8b24f35bfd1195f2b49ef934b8320ffe3dc05c10c2f5be59fae1d3556744d
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - Planner reports no open dependencies after ABI-020 closure.
+  - ABI-034 now depends on ABI-035 to consume one shared source contract.

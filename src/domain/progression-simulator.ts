@@ -8,6 +8,7 @@ import {
   effectiveArmor,
   type CombatPlayer,
   type CombatState,
+  type CombatEnemy,
   type ArmorPenetrationPolicy,
   type CriticalChancePolicy,
   type EliteModifier,
@@ -24,6 +25,11 @@ export type ProgressionReport = {
   readonly encounters: number;
   readonly manualAttacks: number;
   readonly player: CombatPlayer;
+  /** Requested production player snapshots captured when the named encounter actually spawns. */
+  readonly playerSnapshots: readonly {
+    readonly encounter: number;
+    readonly player: CombatPlayer;
+  }[];
   readonly automaticAttacks: number;
   readonly penetration: number;
   readonly purchases: Readonly<Record<UpgradeId, number>>;
@@ -51,6 +57,25 @@ export type ProgressionObservation = {
   readonly goldenBug: boolean;
 };
 
+/** Exact per-enemy receipt for player-facing TTK: raw events and logical attack units stay distinct. */
+export type TtkObservation = {
+  readonly encounter: number;
+  readonly grade: EnemyGrade;
+  readonly modifier: EliteModifier | null;
+  readonly packetEvents: number;
+  readonly effectiveAttackUnits: number;
+  readonly goldenBug: boolean;
+};
+/**
+ * Keep logical units as integer micro-units while a fight is in progress.
+ * A batch fast-forward can then add exactly the same value as the individual
+ * production packets it replaces.
+ */
+type TtkAccumulator = Omit<TtkObservation, "effectiveAttackUnits"> & {
+  readonly effectiveAttackMicroUnits: number;
+  readonly startedAtMs: number;
+};
+
 export type Distribution = {
   readonly count: number;
   readonly p50: number;
@@ -62,6 +87,10 @@ export type Distribution = {
 };
 
 export type SimulationOptions = {
+  /** Disables the production automatic source for a manual-only measurement. */
+  readonly automaticEnabled?: boolean;
+  /** Reuses a production-derived player snapshot for a bounded stage probe. */
+  readonly initialPlayer?: CombatPlayer;
   /** Explicit measured alternative inputs; omitted keeps the production reference. */
   readonly automaticSpeedLevel?: number;
   /** Multiplies derived APS only for a measured scheduler alternative. */
@@ -84,6 +113,12 @@ export type SimulationOptions = {
   readonly manualIntervalMs?: number | null;
   readonly ordinaryHealthGrowthRate?: number;
   readonly ordinaryEncounters?: number;
+  /** Starts a bounded receipt at one production encounter without changing its spawn formula. */
+  readonly startEncounter?: number;
+  /** Captures player state at exact production encounter spawns during this same run. */
+  readonly playerSnapshotEncounters?: readonly number[];
+  /** Keeps legacy ordinary-only receipts narrow; stage probes keep intervening bosses. */
+  readonly skipBosses?: boolean;
   /** Multiplies real upgrade prices for a measured economy alternative. */
   readonly upgradeCostMultiplier?: number;
   /** Stops at this real elapsed-time horizon without simulating idle milliseconds. */
@@ -92,6 +127,7 @@ export type SimulationOptions = {
 
 export type MeasuredProgressionReport = ProgressionReport & {
   readonly observations: readonly ProgressionObservation[];
+  readonly ttkObservations: readonly TtkObservation[];
   readonly byGrade: Readonly<Record<EnemyGrade, Distribution>>;
   readonly ordinaryWallsOver60Seconds: number;
 };
@@ -102,6 +138,9 @@ type TelemetryBands = Readonly<
     { readonly hits: Distribution; readonly timeToKillMs: Distribution }
   >
 >;
+export type OrdinaryTtkStage =
+  "early" | "startPlus" | "lateStart" | "midgame" | "endgameStart" | "endgame";
+type OrdinaryTtkBands = Readonly<Record<OrdinaryTtkStage, Distribution>>;
 export type TelemetrySummary = {
   readonly bands: TelemetryBands;
   readonly grades: Readonly<Record<EnemyGrade, Distribution>>;
@@ -172,7 +211,84 @@ const distribution = (
   };
 };
 
+const effectiveDistribution = (observations: readonly TtkObservation[]): Distribution => {
+  if (observations.length === 0) return emptyDistribution();
+  const units = observations
+    .map(({ effectiveAttackUnits }) => effectiveAttackUnits)
+    .sort((left, right) => left - right);
+  const at = (fraction: number): number => units[Math.floor((units.length - 1) * fraction)] ?? 0;
+  return {
+    count: units.length,
+    p50: at(0.5),
+    p90: at(0.9),
+    max: units.at(-1) ?? 0,
+    oneHitFraction: units.filter((value) => value === 1).length / units.length,
+    fivePlusFraction: units.filter((value) => value >= 5).length / units.length,
+    tenPlusFraction: units.filter((value) => value >= 10).length / units.length,
+  };
+};
+
 const roundedElapsedMs = (value: number): number => Math.round(value * 1_000) / 1_000;
+const ATTACK_UNIT_SCALE = 1_000_000;
+const attackUnitsToMicroUnits = (units: number): number => Math.round(units * ATTACK_UNIT_SCALE);
+const microUnitsToAttackUnits = (microUnits: number): number => microUnits / ATTACK_UNIT_SCALE;
+
+/** ABI-028's fixed product stages; endgame begins at ABI-020's 48-hour encounter receipt. */
+export const ORDINARY_TTK_STAGE_CONTRACT = [
+  ["early", 1, 99],
+  ["startPlus", 100, 499],
+  ["lateStart", 500, 999],
+  ["midgame", 1_000, 9_999],
+  ["endgameStart", 10_000, 24_919],
+  ["endgame", 24_920, Number.MAX_SAFE_INTEGER],
+] as const satisfies readonly (readonly [OrdinaryTtkStage, number, number])[];
+
+const firstOrdinaryEncounterAtOrAfter = (encounter: number): number =>
+  spawnEnemy(encounter, 0).grade === "boss" ? encounter + 1 : encounter;
+
+/** Actual production probe starts: never seed an ordinary TTK receipt from a boss encounter. */
+export const ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS: Readonly<Record<OrdinaryTtkStage, number>> =
+  Object.fromEntries(
+    ORDINARY_TTK_STAGE_CONTRACT.map(([stage, startEncounter]) => [
+      stage,
+      firstOrdinaryEncounterAtOrAfter(startEncounter),
+    ]),
+  ) as Record<OrdinaryTtkStage, number>;
+
+export const summarizeOrdinaryTtkBands = (report: MeasuredProgressionReport): OrdinaryTtkBands => {
+  const ordinary = report.ttkObservations.filter(
+    ({ grade, goldenBug }) => grade !== "boss" && !goldenBug,
+  );
+  return Object.fromEntries(
+    ORDINARY_TTK_STAGE_CONTRACT.map(([stage, from, to]) => [
+      stage,
+      effectiveDistribution(
+        ordinary.filter(({ encounter }) => encounter >= from && encounter <= to),
+      ),
+    ]),
+  ) as OrdinaryTtkBands;
+};
+
+export const measureOrdinaryTtkStages = (
+  options: Omit<
+    SimulationOptions,
+    "bossCount" | "initialPlayer" | "ordinaryEncounters" | "startEncounter"
+  > & { readonly stagePlayers: Readonly<Record<OrdinaryTtkStage, CombatPlayer>> },
+): OrdinaryTtkBands =>
+  Object.fromEntries(
+    ORDINARY_TTK_STAGE_CONTRACT.map(([stage]) => {
+      const receipt = simulateProgression({
+        ...options,
+        bossCount: 0,
+        eventJump: true,
+        initialPlayer: options.stagePlayers[stage],
+        ordinaryEncounters: 3,
+        skipBosses: false,
+        startEncounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS[stage],
+      });
+      return [stage, summarizeOrdinaryTtkBands(receipt)[stage]];
+    }),
+  ) as OrdinaryTtkBands;
 
 export const summarizeTelemetry = (report: MeasuredProgressionReport): TelemetrySummary => {
   const ordinary = report.observations.filter(
@@ -278,6 +394,12 @@ const runProgression = (
   const ordinaryEncounters = options.ordinaryEncounters ?? 0;
   const horizonMs = options.horizonMs;
   const manualIntervalMs = options.manualIntervalMs ?? null;
+  const automaticEnabled = options.automaticEnabled ?? true;
+  const skipBosses = options.skipBosses ?? true;
+  const requestedSnapshots = new Set(options.playerSnapshotEncounters ?? []);
+  for (const encounter of requestedSnapshots)
+    if (!Number.isSafeInteger(encounter) || encounter < 1)
+      throw new RangeError("Player snapshot encounter must be a positive safe integer");
   const attackAlternatives = {
     ...(options.bossInterval === undefined ? {} : { bossInterval: options.bossInterval }),
     ...(options.criticalChancePolicy === undefined
@@ -313,6 +435,7 @@ const runProgression = (
   )
     throw new RangeError("Boss interval must be a safe integer of at least two");
   const initialPlayer = {
+    ...options.initialPlayer,
     ...(options.automaticSpeedLevel === undefined
       ? {}
       : { automaticSpeedLevel: options.automaticSpeedLevel }),
@@ -320,7 +443,42 @@ const runProgression = (
       ? {}
       : { armorPenetrationLevel: options.armorPenetrationLevel }),
   };
-  let state: CombatState = { ...createCombatState(initialPlayer, 0, false), coins: 1 };
+  let state: CombatState = {
+    ...createCombatState(initialPlayer, 0, false),
+    coins: 1,
+  };
+  const playerSnapshots: { encounter: number; player: CombatPlayer }[] = [];
+  const capturedSnapshotEncounters = new Set<number>();
+  const pendingSnapshotEncounters = new Set<number>();
+  const noteOrdinarySnapshot = (): void => {
+    if (
+      state.goldenBug === null &&
+      requestedSnapshots.has(state.enemy.encounter) &&
+      !capturedSnapshotEncounters.has(state.enemy.encounter)
+    )
+      pendingSnapshotEncounters.add(state.enemy.encounter);
+  };
+  const capturePendingSnapshots = (): void => {
+    for (const encounter of pendingSnapshotEncounters) {
+      playerSnapshots.push({ encounter, player: state.player });
+      capturedSnapshotEncounters.add(encounter);
+    }
+    pendingSnapshotEncounters.clear();
+  };
+  if (options.startEncounter !== undefined) {
+    if (!Number.isSafeInteger(options.startEncounter) || options.startEncounter < 1)
+      throw new RangeError("Stage start encounter must be a positive safe integer");
+    state = {
+      ...state,
+      enemy: spawnEnemy(
+        options.startEncounter,
+        modifierRollForEncounter(options.startEncounter),
+        options.ordinaryHealthGrowthRate,
+        state.player,
+        options.bossInterval,
+      ),
+    };
+  }
   let elapsedMs = 0;
   let automaticAttacks = 0;
   let manualAttacks = 0;
@@ -335,11 +493,55 @@ const runProgression = (
   let goldenBugDelayMs = 0;
   let nextUpgradeIndex = 0;
   const observations: ProgressionObservation[] = [];
+  const ttkObservations: TtkObservation[] = [];
+  const activeTtkByEnemyId = new Map<number, TtkAccumulator>();
+  const recordTtkPacket = (
+    enemy: CombatEnemy,
+    goldenBug: boolean,
+    source: "manual" | "automatic",
+    damageMultiplier: number,
+    atMs: number,
+    defeated: boolean,
+  ): void => {
+    const current = activeTtkByEnemyId.get(enemy.id) ?? {
+      effectiveAttackMicroUnits: 0,
+      encounter: enemy.encounter,
+      goldenBug,
+      grade: enemy.grade,
+      modifier: enemy.modifier,
+      packetEvents: 0,
+      startedAtMs: atMs,
+    };
+    const next: TtkAccumulator = {
+      ...current,
+      effectiveAttackMicroUnits:
+        current.effectiveAttackMicroUnits +
+        attackUnitsToMicroUnits(source === "automatic" ? damageMultiplier : 1),
+      packetEvents: current.packetEvents + 1,
+    };
+    if (!defeated) {
+      activeTtkByEnemyId.set(enemy.id, next);
+      return;
+    }
+    ttkObservations.push({
+      effectiveAttackUnits: microUnitsToAttackUnits(next.effectiveAttackMicroUnits),
+      encounter: next.encounter,
+      goldenBug: next.goldenBug,
+      grade: next.grade,
+      modifier: next.modifier,
+      packetEvents: next.packetEvents,
+    });
+    activeTtkByEnemyId.delete(enemy.id);
+  };
   let ordinaryDefeats = 0;
-  const unlocked = purchaseUpgrade(state, "automatic-unlock", elapsedMs);
-  if (unlocked.reason !== null) throw new Error(unlocked.reason);
-  state = unlocked.state;
-  purchases["automatic-unlock"] = 1;
+  if (automaticEnabled) {
+    const unlocked = purchaseUpgrade(state, "automatic-unlock", elapsedMs);
+    if (unlocked.reason !== null) throw new Error(unlocked.reason);
+    state = unlocked.state;
+    purchases["automatic-unlock"] = 1;
+  }
+  noteOrdinarySnapshot();
+  capturePendingSnapshots();
   const bosses: BossEncounter[] = [];
   let horizonReached = false;
   while (
@@ -347,7 +549,8 @@ const runProgression = (
       ? bosses.length < bossCount || ordinaryDefeats < ordinaryEncounters
       : elapsedMs < horizonMs
   ) {
-    const nextAttackAtMs = Math.min(state.nextAutomaticAttackAtMs, nextManualAttackAtMs);
+    const nextAutomaticAttackAtMs = automaticEnabled ? state.nextAutomaticAttackAtMs : Infinity;
+    const nextAttackAtMs = Math.min(nextAutomaticAttackAtMs, nextManualAttackAtMs);
     if (horizonMs !== undefined && nextAttackAtMs > horizonMs) {
       elapsedMs = horizonMs;
       break;
@@ -358,13 +561,17 @@ const runProgression = (
         break;
       }
       elapsedMs = goldenBugDeadlineMs;
+      activeTtkByEnemyId.delete(state.enemy.id);
       state = expireGoldenBug(state, options.ordinaryHealthGrowthRate);
+      noteOrdinarySnapshot();
+      capturePendingSnapshots();
       goldenBugDelayMs += 10_000;
       goldenBugDeadlineMs = undefined;
       continue;
     }
     if (
       ordinaryEncounters > 0 &&
+      skipBosses &&
       bossCount === 0 &&
       state.goldenBug === null &&
       state.enemy.grade === "boss"
@@ -379,6 +586,8 @@ const runProgression = (
           options.bossInterval,
         ),
       };
+      noteOrdinarySnapshot();
+      capturePendingSnapshots();
       continue;
     }
     const enemy = state.enemy;
@@ -391,8 +600,9 @@ const runProgression = (
     let minimumDamageHits = 0;
     let reward = 0;
     while (state.enemy.id === enemy.id) {
-      const source = nextManualAttackAtMs <= state.nextAutomaticAttackAtMs ? "manual" : "automatic";
-      elapsedMs = source === "manual" ? nextManualAttackAtMs : state.nextAutomaticAttackAtMs;
+      const scheduledAutomaticAtMs = automaticEnabled ? state.nextAutomaticAttackAtMs : Infinity;
+      const source = nextManualAttackAtMs <= scheduledAutomaticAtMs ? "manual" : "automatic";
+      elapsedMs = source === "manual" ? nextManualAttackAtMs : scheduledAutomaticAtMs;
       if (horizonMs !== undefined && elapsedMs > horizonMs) {
         elapsedMs = horizonMs;
         horizonReached = true;
@@ -412,6 +622,8 @@ const runProgression = (
       let minimumDamagePackets = 0;
       let defeated = false;
       for (const packet of packets) {
+        const attackedEnemy = state.enemy;
+        const attackedGoldenBug = state.goldenBug !== null;
         const result = attack(state, {
           atMs: elapsedMs,
           automaticBatch: packet.automaticBatch,
@@ -426,6 +638,14 @@ const runProgression = (
           source,
         });
         if (result.event.type === "ignored") throw new Error("Automatic progression stalled");
+        recordTtkPacket(
+          attackedEnemy,
+          attackedGoldenBug,
+          source,
+          packet.damageMultiplier,
+          elapsedMs,
+          result.event.defeated,
+        );
         if (source === "automatic") {
           automaticAttacks += 1;
           automaticHits += 1;
@@ -449,6 +669,7 @@ const runProgression = (
           defeated = true;
         }
         state = result.state;
+        noteOrdinarySnapshot();
         if (state.goldenBug !== null) goldenBugDeadlineMs = elapsedMs + 10_000;
       }
       if (schedule !== undefined) {
@@ -481,6 +702,19 @@ const runProgression = (
             prevented += batchPrevented * skippedBatches;
             armorPreventedDamage += batchPrevented * skippedBatches;
             minimumDamageHits += minimumDamagePackets * skippedBatches;
+            const current = activeTtkByEnemyId.get(state.enemy.id);
+            if (current !== undefined)
+              activeTtkByEnemyId.set(state.enemy.id, {
+                ...current,
+                effectiveAttackMicroUnits:
+                  current.effectiveAttackMicroUnits +
+                  skippedBatches *
+                    packets.reduce(
+                      (total, packet) => total + attackUnitsToMicroUnits(packet.damageMultiplier),
+                      0,
+                    ),
+                packetEvents: current.packetEvents + skippedPackets,
+              });
           }
         }
       }
@@ -523,6 +757,7 @@ const runProgression = (
         if (offset === upgradeOrder.length - 1) unaffordableGaps += 1;
       }
     }
+    capturePendingSnapshots();
   }
   if (
     horizonMs === undefined &&
@@ -544,7 +779,9 @@ const runProgression = (
     encounters: state.enemy.encounter,
     manualAttacks,
     player: state.player,
+    playerSnapshots,
     observations,
+    ttkObservations,
     byGrade,
     ordinaryWallsOver60Seconds: observations.filter(
       (value) =>

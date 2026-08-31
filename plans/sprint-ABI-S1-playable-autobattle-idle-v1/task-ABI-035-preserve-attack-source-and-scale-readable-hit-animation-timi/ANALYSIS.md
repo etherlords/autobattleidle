@@ -22,6 +22,12 @@ requiredGates:
 
 # ABI-035 analysis
 
+## Complexity and ownership
+
+- **Complexity: L.** The code delta should stay narrow, but correctness crosses every cue producer/consumer, ABI-020 packet semantics, low-to-10+ APS timing, lethal sequencing, reduced motion, browser frames, and future audio consumption.
+- ABI-035 owns the typed attack-source/timing receipt once. ABI-034 consumes that receipt for SFX mapping; it must not rediscover manual versus automatic attacks.
+- Keep it separate from ABI-034 because the visual contract can close and be regression-tested without binary assets, rights approval, autoplay, or audio persistence.
+
 ## Verified current state
 
 - `BattleController.performAttack` and the automatic frame path still know `AttackSource`, and `presenter.ts` uses it for log text. The transport then collapses presentation into `BattleSnapshot.visualCues`, where an attack is represented only by effect kind. Battlefield effects therefore cannot distinguish a fast manual click from an APS-driven automatic visual.

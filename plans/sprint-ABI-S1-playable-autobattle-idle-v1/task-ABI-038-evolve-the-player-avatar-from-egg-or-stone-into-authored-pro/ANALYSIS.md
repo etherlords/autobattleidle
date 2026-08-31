@@ -22,6 +22,12 @@ requiredGates:
 
 # ABI-038 analysis
 
+## Complexity and ownership
+
+- **Complexity: XL product/content/engineering.** It requires measured milestones, multiple approved 3D recipes, deterministic selection, PlayerUnit integration, sockets/camera fit, transition choreography, save equivalence, resource lifecycle, and deployed visual proof.
+- ABI-037 owns prototyping and inspection; ABI-020 owns progression stages. ABI-038 owns only the derived player form sequence and PlayerUnit production port, with no stats or customization system.
+- Do not merge into ABI-037: the lab is reusable tooling, while form recipes and PlayerUnit lifecycle are shipped gameplay presentation.
+
 ## Verified current state
 
 - `PlayerUnit` already uses the shared Unit MVC but currently constructs one `PlayerUnitView`; enemy visuals have the mature body/component/profile/decorator architecture. Evolution should extend the player owner, not reuse enemy state or add a parallel scene entity.

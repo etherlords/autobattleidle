@@ -26,7 +26,12 @@ import {
 } from "./combat";
 import {
   fastForwardProgression,
+  measureOrdinaryTtkStages,
+  ORDINARY_TTK_STAGE_CONTRACT,
+  ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS,
+  type OrdinaryTtkStage,
   simulateProgression,
+  summarizeOrdinaryTtkBands,
   summarizeTelemetry,
 } from "./progression-simulator";
 import { buildMeasuredReport } from "./measured-report";
@@ -678,6 +683,154 @@ describe("endless combat progression", () => {
     expect(first.adjacentMedianJump).toBeGreaterThanOrEqual(0);
     expect(first.armor.prevented).toBeGreaterThan(0);
   }, 7_000);
+
+  it("reports production ordinary TTK composition across the ABI-020 endgame boundary", () => {
+    const automaticReport = fastForwardProgression(49 * 60 * 60 * 1_000);
+    const automaticOnly = summarizeOrdinaryTtkBands(automaticReport);
+    const stageStarts = Object.values(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS);
+    const stageReference = simulateProgression({
+      eventJump: true,
+      horizonMs: 49 * 60 * 60 * 1_000,
+      playerSnapshotEncounters: stageStarts,
+    });
+    const stagePlayers = Object.fromEntries(
+      stageReference.playerSnapshots.map(({ encounter, player }) => [
+        Object.entries(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS).find(
+          ([, probeEncounter]) => probeEncounter === encounter,
+        )?.[0],
+        player,
+      ]),
+    ) as Record<OrdinaryTtkStage, typeof stageReference.player>;
+    expect(Object.keys(stagePlayers)).toHaveLength(ORDINARY_TTK_STAGE_CONTRACT.length);
+    const manualOnly = measureOrdinaryTtkStages({
+      automaticEnabled: false,
+      criticalRoll: 0.99,
+      manualIntervalMs: 100,
+      stagePlayers,
+    });
+    const combined = measureOrdinaryTtkStages({
+      criticalRoll: 0.99,
+      manualIntervalMs: 100,
+      stagePlayers,
+    });
+
+    expect(ORDINARY_TTK_STAGE_CONTRACT).toEqual([
+      ["early", 1, 99],
+      ["startPlus", 100, 499],
+      ["lateStart", 500, 999],
+      ["midgame", 1_000, 9_999],
+      ["endgameStart", 10_000, 24_919],
+      ["endgame", 24_920, Number.MAX_SAFE_INTEGER],
+    ]);
+    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(24_921);
+    const endgameSnapshot = stageReference.playerSnapshots.find(
+      ({ encounter }) => encounter === ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
+    );
+    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 24_920 }));
+    expect(endgameSnapshot).toEqual(
+      expect.objectContaining({
+        player: expect.objectContaining({ damageLevel: expect.any(Number) }),
+      }),
+    );
+    expect(stagePlayers.endgame).toEqual(endgameSnapshot?.player);
+    const endgameProbe = simulateProgression({
+      bossCount: 0,
+      eventJump: true,
+      initialPlayer: stagePlayers.endgame,
+      ordinaryEncounters: 3,
+      skipBosses: false,
+      startEncounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
+    });
+    expect(endgameProbe.observations[0]).toMatchObject({
+      encounter: 24_921,
+      goldenBug: false,
+    });
+    expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
+    expect(automaticReport.encounters).toBe(30_234);
+    expect(automaticOnly.endgame.count).toBeGreaterThan(0);
+    for (const stage of Object.values(automaticOnly)) {
+      expect(stage.count).toBeGreaterThan(0);
+      expect(stage.fivePlusFraction).toBeGreaterThan(0);
+      expect(stage.tenPlusFraction).toBeGreaterThan(0);
+    }
+    for (const stage of Object.values(manualOnly)) {
+      expect(stage.count).toBeGreaterThan(0);
+      expect(stage.oneHitFraction).toBeGreaterThan(0);
+      expect(stage.fivePlusFraction).toBeGreaterThan(0);
+      expect(stage.tenPlusFraction).toBeGreaterThan(0);
+    }
+    for (const stage of Object.values(combined)) {
+      expect(stage.count).toBeGreaterThan(0);
+      expect(stage.oneHitFraction).toBeGreaterThan(0);
+      expect(stage.fivePlusFraction).toBeGreaterThan(0);
+    }
+    expect(combined).not.toEqual(manualOnly);
+  }, 15_000);
+
+  it("uses effective attack units instead of raw fractional automatic packet events", () => {
+    const report = simulateProgression({
+      automaticSpeedLevel: 200,
+      bossCount: 0,
+      ordinaryEncounters: 100,
+      eventJump: true,
+    });
+    const fractionalPacketObservation = report.ttkObservations.find(
+      ({ effectiveAttackUnits, packetEvents }) => packetEvents > effectiveAttackUnits,
+    );
+    expect(fractionalPacketObservation).toMatchObject({ packetEvents: expect.any(Number) });
+    expect(fractionalPacketObservation?.effectiveAttackUnits).toBeLessThan(
+      fractionalPacketObservation?.packetEvents ?? 0,
+    );
+    const firstOrdinarySequence = report.ttkObservations
+      .filter(
+        ({ encounter, goldenBug, grade }) => encounter <= 34 && !goldenBug && grade !== "boss",
+      )
+      .map(({ encounter }) => encounter);
+    expect(firstOrdinarySequence).toEqual(Array.from({ length: 34 }, (_, index) => index + 1));
+    const staged = summarizeOrdinaryTtkBands(report);
+    expect(staged.early.oneHitFraction).toBeGreaterThan(0);
+    expect(staged.early.fivePlusFraction).toBeGreaterThan(0);
+  });
+
+  it("keeps manual-only scheduling out of returned combat state", () => {
+    const report = simulateProgression({
+      automaticEnabled: false,
+      bossCount: 0,
+      manualIntervalMs: 100,
+      ordinaryEncounters: 100,
+    });
+    const values = [
+      report.state.coins,
+      report.state.enemy.armor,
+      report.state.enemy.encounter,
+      report.state.enemy.health,
+      report.state.enemy.id,
+      report.state.enemy.maxHealth,
+      report.state.enemy.reward,
+      report.state.goldenBugDefeats,
+      report.state.nextAutomaticAttackAtMs,
+      report.state.player.armorPenetrationLevel,
+      report.state.player.automaticSpeedLevel,
+      report.state.player.criticalChance,
+      report.state.player.criticalLevel,
+      report.state.player.damage,
+      report.state.player.damageLevel,
+      report.state.player.doubleRewardChance,
+      report.state.player.doubleRewardLevel,
+    ].filter((value): value is number => value !== undefined);
+    expect(report.automaticAttacks).toBe(0);
+    expect(report.state.automaticUnlocked).toBe(false);
+    expect(report.purchases["automatic-unlock"]).toBe(0);
+    expect(report.purchases["automatic-speed"]).toBe(0);
+    for (const value of values) {
+      expect(Number.isFinite(value)).toBe(true);
+      expect(
+        Number.isSafeInteger(value) ||
+          value === report.state.player.criticalChance ||
+          value === report.state.player.doubleRewardChance,
+      ).toBe(true);
+    }
+  });
 
   it("matches the committed measured report JSON", () => {
     const raw = readFileSync(

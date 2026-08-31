@@ -23,6 +23,12 @@ requiredGates:
 
 # ABI-034 analysis
 
+## Complexity and ownership
+
+- **Complexity: XL.** This spans rights/provenance, binary assets, Web Audio lifecycle, streaming/buffering measurement, typed event integration, high-APS scheduling, accessible UI, separate persistence, browser audio QA, and deployed asset delivery.
+- ABI-035 now owns the shared manual/automatic attack-source cue. ABI-034 consumes it and must not add a second attack classification seam. Audio alone owns playback; combat remains authoritative.
+- Keep music and SFX in one task because they share the context, buses, lifecycle, settings, asset manifest, and audible QA. Splitting them would duplicate the riskiest ownership code.
+
 ## Verified current state
 
 - The repository has no audio runtime, audio dependency, audio preference storage, or sound-settings UI. `src/app/application.ts` is the only cross-layer composition root; `BattleController` publishes typed events, `presentBattleUpdate` derives the current snapshot, `src/ui/hud.ts` owns accessible dialogs/intents, and `src/persistence` owns only canonical game saves. Audio therefore has one clean application-layer integration seam and must not be added to domain or Three.js units.

@@ -21,6 +21,12 @@ requiredGates:
 
 # ABI-037 analysis
 
+## Complexity and ownership
+
+- **Complexity: XL tooling.** It needs a debug-only build boundary, production-factory parity, deterministic case URLs, injected time, animation controls, diagnostic overlays, serial exhaustive smoke, resource accounting, responsive UI, and hard save/network isolation.
+- This is the one reusable visual/concept lab for ABI-029, ABI-036, and ABI-038. Those tasks add recipes and cases; none may create a second renderer or duplicate inspection controls.
+- Keep the lab independent from content tasks so production parity, isolation, and disposal are verified once and reused.
+
 ## Verified current state
 
 - Production factories and tests now cover eight family keys, grades, modifiers, deterministic profiles, sockets, animations, effects, replacement, and disposal. The evidence is code/test-oriented; there is no reusable interactive surface for selecting a case, orbiting it, replaying phases, or inspecting sockets/bounds/resources.

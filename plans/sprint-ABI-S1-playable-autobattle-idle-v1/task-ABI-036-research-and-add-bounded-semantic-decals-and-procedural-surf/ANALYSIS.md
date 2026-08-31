@@ -21,6 +21,12 @@ requiredGates:
 
 # ABI-036 analysis
 
+## Complexity and ownership
+
+- **Complexity: XL research plus production port.** Four rendering techniques must be compared across deformation, camera angles, GPU/build budgets, licensing, caching, replacement, and disposal before three treatments ship.
+- ABI-037 provides fixtures, case IDs, camera/animation controls, and resource counters; ABI-029 provides stable family/affinity geometry and identity. ABI-036 owns only surface technique decisions and semantic treatment specs.
+- Do not merge into ABI-029: affinity composition is already XXL, while surface research can reject every candidate without changing the family registry.
+
 ## Verified current state
 
 - The production visual system uses authored Three.js primitive geometry, materials, keyed components, semantic sockets, family profiles, deterministic variants, and explicit disposal. No `DecalGeometry`, `CanvasTexture`, imported surface map, or texture cache exists.
