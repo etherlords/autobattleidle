@@ -37,22 +37,34 @@ sourceRevisions:
   ABI-026: 11
   ABI-027: 8
   ABI-028: 1
-  ABI-029: 2
+  ABI-029: 3
   ABI-030: 14
   ABI-031: 82
   ABI-032: 11
   ABI-033: 8
+  ABI-034: 3
+  ABI-035: 1
+  ABI-036: 1
+  ABI-037: 1
+  ABI-038: 1
+  ABI-039: 1
 ---
 
 # ABI-S1 board
 
 | Task | Status | Dependencies | Priority |
 | --- | --- | --- | --- |
+| ABI-039 | Blocked | ABI-006, ABI-020, ABI-026, ABI-029 | high |
+| ABI-038 | Blocked | ABI-020, ABI-023, ABI-026, ABI-037 | normal |
+| ABI-037 | Ready | ABI-023, ABI-026, ABI-031 | normal |
+| ABI-036 | Blocked | ABI-023, ABI-026, ABI-029 | normal |
+| ABI-035 | Blocked | ABI-018, ABI-020, ABI-023, ABI-031 | high |
+| ABI-034 | Blocked | ABI-005, ABI-008, ABI-011, ABI-013, ABI-023, ABI-035 | high |
 | ABI-033 | Done | ABI-032 | critical |
 | ABI-032 | Done | ABI-010, ABI-013, ABI-030 | critical |
 | ABI-031 | Done | ABI-023, ABI-026 | critical |
 | ABI-030 | Done | ABI-006, ABI-008, ABI-012 | high |
-| ABI-029 | Blocked | ABI-020, ABI-022, ABI-023, ABI-026 | high |
+| ABI-029 | Blocked | ABI-020, ABI-022, ABI-023, ABI-026, ABI-028, ABI-037 | high |
 | ABI-028 | Blocked | ABI-006, ABI-020, ABI-022 | high |
 | ABI-027 | Done | ABI-006, ABI-010 | high |
 | ABI-026 | Done | ABI-007, ABI-022, ABI-023 | high |

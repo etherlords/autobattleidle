@@ -4,7 +4,7 @@ id: ABI-029
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
+revision: 3
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -12,6 +12,8 @@ dependencies:
   - ABI-022
   - ABI-023
   - ABI-026
+  - ABI-028
+  - ABI-037
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -52,6 +54,8 @@ Compose deterministic elemental enemy variants from reusable family and affinity
 - ABI-022
 - ABI-023
 - ABI-026
+- ABI-028
+- ABI-037
 
 ## Related knowledge
 
