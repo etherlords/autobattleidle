@@ -27,11 +27,16 @@ During boss encounters only, primary-pointer or touch drag rotates the battlefie
 arena-center azimuth. ArrowLeft/ArrowRight while the battlefield is focused provide the keyboard
 equivalent. The orbit keeps the PerspectiveCamera field of view, arena-center target, responsive
 elevation, and responsive radius fixed for the current viewport; zoom and pan are unavailable. Drag or
-pointer cancel never attacks, while stationary activation still attacks exactly once. Ordinary
-encounters retain azimuth-zero framing and ignore rotation requests. Resize preserves the boss azimuth;
-reload resets it because camera and gesture state are session-only presentation state and never enter
-CombatState, snapshots, save codecs, or localStorage. The battlefield interaction surface uses
-`touch-action: none` so native pan/pinch cannot cancel the bounded touch orbit.
+pointer cancel never attacks, while stationary activation still attacks exactly once. Ordinary and
+Golden Bug encounters retain azimuth-zero framing and ignore rotation requests.
+
+Orbit azimuth belongs to the currently displayed boss encounter. It persists through hits, the delayed
+lethal presentation, and resize while that boss remains displayed. The battlefield replacement seam
+resets azimuth before any ordinary enemy, Golden Bug, escaped/replaced boss, or different boss is
+presented, so a later boss always starts from canonical front framing. Reload also resets orbit because
+camera and gesture state are session-only presentation state and never enter CombatState, snapshots,
+save codecs, or localStorage. The battlefield interaction surface uses `touch-action: none` so native
+pan/pinch cannot cancel the bounded touch orbit.
 
 The HUD is a fixed overlay that does not participate in page layout. Enemy name is centered at the top;
 a nearly viewport-width current/max health bar sits directly below it; the automatic-attack bar follows

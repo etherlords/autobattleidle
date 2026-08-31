@@ -4,8 +4,8 @@ id: ABI-025
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 10
-status: In QA
+revision: 12
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -28,7 +28,7 @@ Bind camera orbit to the current boss fight only
 
 - Type: bug
 - Priority: normal
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

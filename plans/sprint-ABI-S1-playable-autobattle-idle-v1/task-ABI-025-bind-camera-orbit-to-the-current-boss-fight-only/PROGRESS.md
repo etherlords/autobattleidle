@@ -4,8 +4,8 @@ id: ABI-025
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 40
-status: In QA
+revision: 51
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 40
-- Last update: Fresh independent review passed; begin fresh deployed QA
+- Status: Done
+- Revision: 51
+- Last update: Released task claim: Release completed ABI-025 after all gates
 
 ## Execution plan
 
@@ -33,9 +33,9 @@ requiredGates:
 - [x] orbit-reset: Implementation owner resets orbit on every boss-fight exit/replacement while preserving hits and resize within the same fight
 - [x] orbit-tests: Implementation owner adds focused current-boss, ordinary lock, next-boss reset, reload, gesture, keyboard, resize, and disposal tests; runs pnpm check
 - [x] orbit-gates: Independent Reviewer and browser QA prove boss-only input and no azimuth leakage across fight boundaries on desktop and touch
-- [ ] orbit-close: Manager syncs accepted Vault behavior, closes Planner, commits, pushes, and proves exact-SHA CI/Pages
+- [x] orbit-close: Manager syncs accepted Vault behavior, closes Planner, commits, pushes, and proves exact-SHA CI/Pages
 - [x] orbit-fixture-repair: Implementation owner replaces synthetic orbit test encounters with production boss and Golden Bug cadence, then reruns checks
-- [~] orbit-fresh-gates: Fresh independent Reviewer and browser QA rerun after the bounded production-fixture repair
+- [x] orbit-fresh-gates: Fresh independent Reviewer and browser QA rerun after the bounded production-fixture repair
 
 ## Events
 
@@ -730,3 +730,205 @@ requiredGates:
 - Evidence:
   - independent-review gate PASS
   - REVIEW.md
+
+### evt-0b33718d-0980-4389-8e99-f6c6d431b3e6
+
+- Timestamp: 2026-08-31T04:22:59.629Z
+- Actor: abi025_exceptional_deployed_qa
+- Operation: gate.record
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: PASS — exact-SHA deployed browser QA proves boss-only pointer/keyboard orbit, ordinary and Golden Bug lock, same-boss attack/resize continuity, responsive layouts, clean console/network; QA.md updated.
+- Idempotency key: abi025-exceptional-deployed-qa-pass-20260831-v1
+- Request fingerprint: 0de1b5c1c611e80658d81276e166483882fd058a83e5ed9f71cc71c7e605cf8d
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only/QA.md
+  - https://etherlords.github.io/autobattleidle/
+  - CI 33356209492 success
+  - Pages 33356209468 success
+  - .playwright-cli/page-2026-08-31T04-15-25-041Z.png
+  - .playwright-cli/page-2026-08-31T04-17-55-625Z.png
+
+### evt-1e9d9f5c-2384-400e-8d9b-6d9347bfddcc
+
+- Timestamp: 2026-08-31T04:26:09.358Z
+- Actor: abi025_independent_verification
+- Operation: progress.append
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: EVENT checkpoint — abi025_independent_verification — PASS: exact SHA is origin/main; independent focused 13/13 and pnpm check 155/155 pass; CI/Pages success and public URL health verified; lifecycle and no-schema scope accepted.
+- Idempotency key: abi025-independent-verification-pass-v1
+- Evidence:
+  - VERIFICATION.md
+  - 00dcc841100ed2d82959497ff489e56a5f4e32b8
+  - CI 33356209492 success
+  - Pages 33356209468 success
+  - https://etherlords.github.io/autobattleidle/
+  - pnpm vitest run src/game/battlefield.test.ts: 13/13 PASS
+  - pnpm check: 155/155 PASS
+
+### evt-d144a79b-e2c9-48d8-a262-4fa23f27186c
+
+- Timestamp: 2026-08-31T04:26:17.205Z
+- Actor: abi025_independent_verification
+- Operation: gate.record
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: PASS — independent verification accepts exact origin/main SHA, product scope, lifecycle reset semantics, no-save behavior, fresh local checks, exact-SHA CI/Pages, public health, and deployed QA.
+- Idempotency key: abi025-independent-verification-gate-pass-v1
+- Request fingerprint: 66aaff1fdea71ac0a3e16dbd7e27aa6673fb70995db270805821ac85de7ecace
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - evt-1e9d9f5c-2384-400e-8d9b-6d9347bfddcc
+  - 00dcc841100ed2d82959497ff489e56a5f4e32b8
+  - CI 33356209492 success
+  - Pages 33356209468 success
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-99d454a8-39a3-4cf6-95bb-1b90b9f19913
+
+- Timestamp: 2026-08-31T04:26:50.187Z
+- Actor: root-manager-abi025
+- Operation: task.advance
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Exact-SHA deployed QA and independent verification passed; ready for manager closure
+- Idempotency key: abi025-ready-for-manager-v1
+- Request fingerprint: 0f9f15a892ea0ff0f94ab9ffd4f6d926bef73fd53c4c475bb8de4057ca539f8b
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - independent-qa PASS evt-0b33718d-0980-4389-8e99-f6c6d431b3e6
+  - verification PASS evt-d144a79b-e2c9-48d8-a262-4fa23f27186c
+  - exact SHA 00dcc841100ed2d82959497ff489e56a5f4e32b8
+  - CI 33356209492
+  - Pages 33356209468
+
+### evt-45c4885e-8f3a-4472-8fbb-7bc5fbad4322
+
+- Timestamp: 2026-08-31T04:26:56.993Z
+- Actor: root-manager-abi025
+- Operation: execution_plan.update
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Fresh user-authorized repair gates passed
+- Idempotency key: abi025-fresh-gates-complete-v1
+- Request fingerprint: 2f4e9ec1a0b415355c4b9a3240787ed8f027c4df8d65b98d46be36a5194f27de
+- Action: set_state
+- Step ID: orbit-fresh-gates
+- State: complete
+- Evidence:
+  - independent review PASS
+  - independent QA PASS
+  - verification PASS
+
+### evt-07e8db89-e3c0-402b-874e-550167352b5b
+
+- Timestamp: 2026-08-31T04:27:02.994Z
+- Actor: root-manager-abi025
+- Operation: execution_plan.update
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Start manager closure checkpoint
+- Idempotency key: abi025-close-start-v1
+- Request fingerprint: b05f96ba2cd25409a8dbad3671a1c72421e5a01903109a6b52b749981c054da7
+- Action: set_state
+- Step ID: orbit-close
+- State: in_progress
+- Evidence:
+  - task Ready for Manager
+  - exact-SHA receipts
+
+### evt-de608958-caee-436f-bc1c-067640e37a02
+
+- Timestamp: 2026-08-31T04:27:43.893Z
+- Actor: root-manager-abi025
+- Operation: progress.append
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: EVENT closed — root-manager-abi025 — accepted current-boss orbit lifecycle is deployed and synchronized to Vault with fresh independent review, QA, and verification
+- Idempotency key: abi025-manager-closure-evidence-v1
+- Evidence:
+  - AUTOBATTLEIDLE-DOC-20260827-85CBFC@8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+  - exact SHA 00dcc841100ed2d82959497ff489e56a5f4e32b8
+  - CI 33356209492
+  - Pages 33356209468
+  - QA.md
+  - VERIFICATION.md
+
+### evt-a3923ea4-d7f8-4e45-8725-d5a77ac2c02d
+
+- Timestamp: 2026-08-31T04:27:51.111Z
+- Actor: root-manager-abi025
+- Operation: execution_plan.update
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Manager closure evidence complete
+- Idempotency key: abi025-close-complete-v1
+- Request fingerprint: 14de516feb59ab720971f198cfecae1e8b09cb7f53775639f7cc75e9aabc5180
+- Action: set_state
+- Step ID: orbit-close
+- State: complete
+- Evidence:
+  - Vault synchronized
+  - exact-SHA CI/Pages/deployed QA/verification
+
+### evt-ee91fd0c-920e-4309-ae90-6f99b0deced3
+
+- Timestamp: 2026-08-31T04:27:59.589Z
+- Actor: root-manager-abi025
+- Operation: gate.record
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Manager confirms all ABI-025 acceptance, publication, and documentation gates passed
+- Idempotency key: abi025-manager-closure-pass-v1
+- Request fingerprint: 27312d99abd2e31eb21b536b785c237f402f42f1ce8964677507ba2e7ed7d9ac
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - all execution steps complete
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - Vault content hash 8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+  - exact SHA 00dcc841100ed2d82959497ff489e56a5f4e32b8
+  - CI 33356209492
+  - Pages 33356209468
+
+### evt-18cc9256-e342-4c3f-81a4-88a966e87d7c
+
+- Timestamp: 2026-08-31T04:28:06.378Z
+- Actor: root-manager-abi025
+- Operation: task.advance
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Close ABI-025 after user-authorized repair, fresh independent gates, exact-SHA deployment, and Vault synchronization
+- Idempotency key: abi025-done-v1
+- Request fingerprint: c0b9caaa04cfb1fe7e34cd373afb988f0a82576d5db0fc6deedf9460ebeab7cf
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS evt-ee91fd0c-920e-4309-ae90-6f99b0deced3
+  - verification PASS
+  - exact SHA and deployed receipts
+
+### evt-a3e61f62-c4a3-415c-a3d7-076d03d8d47d
+
+- Timestamp: 2026-08-31T04:28:12.779Z
+- Actor: root-manager-abi025
+- Operation: claim.release
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Released task claim: Release completed ABI-025 after all gates
+- Idempotency key: abi025-release-after-done-v1
+- Request fingerprint: 14a296e55ee0a7cc94f5cb6671f63a900bc3ed673ba593e8336c39fca98c30b8
+- Agent ID: root-manager-abi025
+- Session ID: abi025-manager-exceptional
+- Intent: Release completed ABI-025 after all gates
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None
