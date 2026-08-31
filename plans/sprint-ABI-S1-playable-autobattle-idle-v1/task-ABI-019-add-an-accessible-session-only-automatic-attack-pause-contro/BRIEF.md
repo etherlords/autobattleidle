@@ -4,8 +4,8 @@ id: ABI-019
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 5
-status: In QA
+revision: 7
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -27,7 +27,7 @@ Add an accessible session-only automatic-attack pause control
 
 - Type: task
 - Priority: normal
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

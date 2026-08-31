@@ -4,8 +4,8 @@ id: ABI-019
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 28
-status: In QA
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 28
-- Last update: Start exact-SHA deployed pause QA.
+- Status: Done
+- Revision: 36
+- Last update: Close deployed automatic-attack pause control.
 
 ## Execution plan
 
@@ -32,10 +32,10 @@ requiredGates:
 - [x] pause-runtime: Implementation owner freezes and resumes the existing automatic cooldown without catch-up while preserving manual play
 - [x] self-check: Implementation owner adds focused timer/input/reload/accessibility tests and runs pnpm check
 - [-] independent-gates: Independent Reviewer and browser QA verify desktop/narrow controls, timing, focus, and long-run stability
-- [ ] manager-closure: Manager updates accepted Vault behavior, closes Planner, publishes, and proves exact-SHA CI/Pages
+- [x] manager-closure: Manager updates accepted Vault behavior, closes Planner, publishes, and proves exact-SHA CI/Pages
 - [x] pause-review-repair: Implementation owner fixes inline placement, requires pause update fields, and adds all missing edge regressions
 - [x] pause-review-v2: Fresh independent Reviewer reruns full ABI-019 acceptance after bounded repair
-- [~] pause-deployed-qa: Independent QA verifies deployed desktop/390px pause timing, accessibility, reload default, and coexistence
+- [x] pause-deployed-qa: Independent QA verifies deployed desktop/390px pause timing, accessibility, reload default, and coexistence
 
 ## Events
 
@@ -504,3 +504,141 @@ requiredGates:
 - Evidence:
   - Task In QA
   - Deployment commit prerequisite
+
+### evt-cbe892cc-0851-49ab-8a5b-7166402c88af
+
+- Timestamp: 2026-08-31T03:14:23.877Z
+- Actor: abi019-deployed-qa
+- Operation: gate.record
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: PASS: deployed automatic pause satisfies timing, accessibility, reload, coexistence, and responsive acceptance.
+- Idempotency key: abi019-qa-pass-20260831-v1
+- Request fingerprint: 28e5d00498e6e840060156bdd479adcd22824c9e8d59d68940d3ddc9f9b77767
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md deployed PASS
+  - Exact SHA 703c7248dbaac5641f9efc4b304f8df327f9febb
+  - CI 33352608384 and Pages 33352608377 PASS
+  - Frozen remainder, resume, manual attacks, reload, desktop/390, modal, console evidence
+
+### evt-c6f79e34-90e9-4b67-8677-68593a259b2f
+
+- Timestamp: 2026-08-31T03:14:25.245Z
+- Actor: root-manager-abi019
+- Operation: execution_plan.update
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Complete exact-SHA deployed QA with PASS.
+- Idempotency key: abi019-deployed-qa-complete-20260831-v1
+- Request fingerprint: 9036510202b29f86c9d7a5e9e95bc22ccb82710ec8311d12e6c7cba1ba0a69d7
+- Action: set_state
+- Step ID: pause-deployed-qa
+- State: complete
+- Evidence:
+  - Independent deployed QA PASS
+
+### evt-8f2da0e1-bf7c-4e07-807e-89f079cd1b27
+
+- Timestamp: 2026-08-31T03:14:26.299Z
+- Actor: abi019-independent-verification
+- Operation: gate.record
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: PASS: exact-SHA checks and acceptance evidence are coherent.
+- Idempotency key: abi019-verification-pass-20260831-v1
+- Request fingerprint: f233f9f70d573cc1eb6168c45ca57f0c0ccb04fd9287078618e1f28f9df15ad6
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md exact-SHA mapping
+  - CI and Pages PASS
+  - Independent review and deployed QA PASS
+  - Feature commit excludes ABI-031
+
+### evt-b4280ddc-373b-48cd-9919-df99df13bb44
+
+- Timestamp: 2026-08-31T03:14:35.932Z
+- Actor: root-manager-abi019
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Advance deployed automatic pause to manager closure.
+- Idempotency key: abi019-inqa-to-ready-manager-20260831-v1
+- Request fingerprint: c49f1470b8b89c445dbdfad7ca5e6fff66c1b40201ff5b3120a98cc44e6733c0
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+
+### evt-7d3d8dd0-c4ae-4c80-a249-2f2d2a8ddb78
+
+- Timestamp: 2026-08-31T03:14:45.486Z
+- Actor: root-manager-abi019
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Start Vault acceptance update and manager closure.
+- Idempotency key: abi019-manager-close-start-20260831-v1
+- Request fingerprint: 92d24237dc2e96944fc86e559d0ab50a4b3d7ea83d5926d584c9dca218a8f519
+- Action: set_state
+- Step ID: manager-closure
+- State: in_progress
+- Evidence:
+  - Task Ready for Manager
+  - Exact-SHA QA and verification PASS
+
+### evt-44e8b57f-3067-4b67-a84d-52807609a74e
+
+- Timestamp: 2026-08-31T03:15:29.310Z
+- Actor: root-manager-abi019
+- Operation: gate.record
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: PASS: automatic pause is implemented, documented, deployed, independently accepted, and ready to close.
+- Idempotency key: abi019-manager-close-pass-20260831-v1
+- Request fingerprint: b6c1c1292f0cd008eeffe770c994d23be5009f6c6e1db425e5d1bada4621b13e
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md manager sign-off
+  - Vault AUTOBATTLEIDLE-DOC-20260827-85CBFC hash 21e97127f1e1b5217d267027f5c324219489042f386ab1af1329b75799fc46ee
+  - Exact SHA 703c724 deployed and accepted
+  - All prior required gates PASS
+
+### evt-adde5827-2c9b-47f3-bfad-8594eada0753
+
+- Timestamp: 2026-08-31T03:15:30.736Z
+- Actor: root-manager-abi019
+- Operation: execution_plan.update
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Complete ABI-019 manager closure.
+- Idempotency key: abi019-manager-close-complete-20260831-v1
+- Request fingerprint: 8c9e4c6f97c91bf2df366847232eebab2d71eb77eb9cf55ee17bc7b024b0a561
+- Action: set_state
+- Step ID: manager-closure
+- State: complete
+- Evidence:
+  - manager-closure PASS
+  - Vault accepted behavior updated
+
+### evt-aef5492e-9b03-4db4-81a2-21ec65f7bf3f
+
+- Timestamp: 2026-08-31T03:15:40.556Z
+- Actor: root-manager-abi019
+- Operation: task.advance
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Close deployed automatic-attack pause control.
+- Idempotency key: abi019-ready-manager-to-done-20260831-v1
+- Request fingerprint: b8b36c508d641cae56da8a05959984e4e391017f3123db624a4a76046572c722
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required gates PASS
+  - Exact SHA 703c724 deployed
+  - Vault accepted behavior updated

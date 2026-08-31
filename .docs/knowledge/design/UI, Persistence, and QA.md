@@ -73,9 +73,11 @@ The change has no save-schema impact: levels remain canonical and displayed stat
 
 ## Planned automatic-attack pause control
 
-ABI-019 follows ABI-018; this is planned behavior. A compact real button beside the automatic-attack status pauses only automatic attacks. Running state exposes a pause action; paused state exposes a play/resume action with non-color and aria-readable state. Pausing freezes the remaining cooldown and resuming continues from it without catch-up or duplicate attacks.
+ABI-019 is accepted current behavior. A compact native button sits beside the automatic cooldown bar. Running exposes `⏸` with `Pause auto attack` and `aria-pressed=false`; paused exposes `▶` with `Resume auto attack` and `aria-pressed=true`. The button is disabled until automatic attack is unlocked.
 
-Manual attacks, upgrades, modal interaction, rendering, persistence, and enemy animation remain active. Pause is session-only and is not added to the save schema; reload resumes normal automatic operation.
+Pausing freezes the exact current automatic cooldown remainder. Frames, Golden Bug expiry, enemy animation, upgrades, dialogs, rendering, persistence, and manual pointer/keyboard attacks continue normally. Resuming rebases the next automatic deadline from the frozen remainder, so there is no catch-up or duplicate attack. Reset, restore, and reload start automatic attacks running.
+
+Pause state and its frozen remainder are controller-session state only. They never enter CombatState, save codecs, localStorage, migrations, or leaderboard payloads. Independent review, 154 tests, and deployed desktop/390px QA on SHA `703c7248dbaac5641f9efc4b304f8df327f9febb` verified timing, accessibility, modal coexistence, responsive placement, reload default, and a clean console.
 
 ## Persistence
 
