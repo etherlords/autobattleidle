@@ -92,11 +92,27 @@ body {
   user-select: none;
   width: clamp(11rem, 40vw, 32rem);
 }
+.automatic-control-row {
+  align-items: center;
+  display: flex;
+  width: clamp(11rem, 40vw, 32rem);
+}
+.automatic-control-row .automatic-progress {
+  flex: 1;
+  width: auto;
+}
 
 .automatic-progress-fill {
   background: #75c7ff;
   height: 100%;
   transition: width 40ms linear;
+}
+.automatic-pause {
+  font: inherit;
+  margin-left: 0.4rem;
+  min-height: 2rem;
+  min-width: 2rem;
+  pointer-events: auto;
 }
 
 .upgrades-launcher,

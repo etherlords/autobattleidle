@@ -100,6 +100,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   battlefield.addEventListener("pointercancel", pointerCancel);
   battlefield.addEventListener("keydown", keyboardAttack);
   dialog.onUpgrade((id, quantity) => emit({ id, quantity, type: "upgrade" }));
+  status.onToggleAutomaticPause(() => emit({ type: "toggle-automatic-pause" }));
   dialog.onReset(() => emit({ type: "reset" }));
   dialog.onRestore(() => emit({ type: "restore" }));
   const closeLeaderboard = (): void => leaderboard.dismissForHandoff();
@@ -163,6 +164,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       leaderboard.launcher.removeEventListener("click", closeUpgrades);
       document.removeEventListener("keydown", toggleUpgradeShortcut);
       dialog.dispose();
+      status.dispose();
       leaderboard.dispose();
       panel.remove();
     },

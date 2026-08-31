@@ -20,6 +20,105 @@ const stateWith = (state: CombatState, health: number, coins = state.coins): Com
 });
 
 describe("BattleController", () => {
+  it("freezes automatic remainder without stopping manual attacks or Golden Bug expiry", () => {
+    const player = createCombatState({
+      criticalChance: 0,
+      damage: 1,
+      doubleRewardChance: 0,
+    }).player;
+    const initial = {
+      ...createCombatState(player, 0, true),
+      enemy: { ...createCombatState(player, 0, true).enemy, health: 10 },
+      nextAutomaticAttackAtMs: 1_000,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    controller.dispatch(battleCommands.frame(400));
+    expect(controller.dispatch(battleCommands.toggleAutomaticPause())).toBe(true);
+    expect(controller.currentUpdate()).toMatchObject({
+      automaticPaused: true,
+      automaticRemainingMs: 600,
+    });
+    controller.dispatch(battleCommands.frame(2_000));
+    expect(controller.currentUpdate().state.enemy.health).toBe(10);
+    expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
+    expect(controller.currentUpdate().state.enemy.health).toBe(9);
+    controller.dispatch(battleCommands.toggleAutomaticPause());
+    controller.dispatch(battleCommands.frame(2_599));
+    expect(controller.currentUpdate().state.enemy.health).toBe(9);
+    controller.dispatch(battleCommands.frame(2_600));
+    expect(controller.currentUpdate().state.enemy.health).toBe(8);
+  });
+  it("keeps Golden Bug expiry live while automatic attacks are paused", () => {
+    const player = createCombatState().player;
+    const initial = {
+      ...createCombatState(player, 0, true),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 1,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    controller.dispatch(battleCommands.toggleAutomaticPause());
+    expect(controller.dispatch(battleCommands.frame(10_000))).toBe(true);
+    expect(controller.currentUpdate().state.goldenBug).toBeNull();
+  });
+  it("ignores locked pause and clears pause on restore and reset", () => {
+    const base = {
+      ...createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }),
+      coins: 10,
+    };
+    const unlocked = { ...base, automaticUnlocked: true, nextAutomaticAttackAtMs: 2_000 };
+    const controller = new BattleController({
+      createInitialState: () => base,
+      initialNowMs: 0,
+      initialState: base,
+      rolls,
+    });
+    expect(controller.dispatch(battleCommands.toggleAutomaticPause())).toBe(false);
+    controller.dispatch(battleCommands.purchase("automatic-unlock"));
+    expect(controller.dispatch(battleCommands.toggleAutomaticPause())).toBe(true);
+    controller.dispatch(battleCommands.restore(unlocked));
+    expect(controller.currentUpdate().automaticPaused).toBe(false);
+    controller.dispatch(battleCommands.toggleAutomaticPause());
+    controller.dispatch(battleCommands.reset());
+    expect(controller.currentUpdate().automaticPaused).toBe(false);
+  });
+  it("keeps a slow elite remainder through a manual kill while paused", () => {
+    const initial = {
+      ...createCombatState({ criticalChance: 0, damage: 10, doubleRewardChance: 0 }, 0, true),
+      enemy: { ...createCombatState().enemy, health: 1, modifier: "automatic-slow" as const },
+      nextAutomaticAttackAtMs: 2_000,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    controller.dispatch(battleCommands.frame(500));
+    controller.dispatch(battleCommands.toggleAutomaticPause());
+    expect(controller.currentUpdate().automaticRemainingMs).toBe(1500);
+    controller.dispatch(battleCommands.attack("manual"));
+    expect(controller.currentUpdate()).toMatchObject({
+      automaticPaused: true,
+      automaticRemainingMs: 1500,
+      state: { enemy: { encounter: 2 } },
+    });
+    controller.dispatch(battleCommands.toggleAutomaticPause());
+    controller.dispatch(battleCommands.frame(1_999));
+    expect(controller.currentUpdate().state.enemy.health).toBe(
+      controller.currentUpdate().state.enemy.maxHealth,
+    );
+  });
   it("expires Golden Bug at the exact deadline before automatic damage and publishes one zero-reward transition", () => {
     const player = createCombatState().player;
     const initial = {

@@ -4,6 +4,7 @@ import v2Fixture from "./fixtures/save-v2.json";
 import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 
 import { COMBAT_BALANCE, createCombatState, spawnEnemy, spawnGoldenBug } from "../domain/combat";
+import { BattleController } from "../app/battle/controller";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -101,10 +102,20 @@ describe("persistence boundary", () => {
     const raw = encodeSave(state);
     expect(raw).not.toContain("nextAutomaticAttackAtMs");
     expect(raw).not.toContain("events");
-    expect(decodeSave(JSON.parse(raw) as unknown, fallback(), 200)).toEqual({
+    expect(raw).not.toContain("automaticPaused");
+    const loaded = decodeSave(JSON.parse(raw) as unknown, fallback(), 200);
+    expect(loaded).toEqual({
       ...state,
       nextAutomaticAttackAtMs: 10_200,
     });
+    expect(
+      new BattleController({
+        createInitialState: fallback,
+        initialNowMs: 200,
+        initialState: loaded,
+        rolls: () => ({ critical: 1, doubleReward: 1, nextEliteModifier: 0 }),
+      }).currentUpdate().automaticPaused,
+    ).toBe(false);
     expect(decodeSave({ version: SAVE_VERSION + 1 }, fallback(), 0)).toEqual(fallback());
     expect(decodeSave({ ...JSON.parse(raw), timer: 1 }, fallback(), 0)).toEqual(fallback());
     expect(

@@ -90,4 +90,6 @@ export const presentBattleUpdate = (
     })),
     update.goldenBugRemainingMs,
     event === undefined ? [] : battleVisualCues(event),
+    update.automaticPaused ?? false,
+    update.automaticRemainingMs,
   );

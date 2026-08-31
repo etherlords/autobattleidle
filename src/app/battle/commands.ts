@@ -4,6 +4,7 @@ import type {
   PurchaseCommand,
   ResetCommand,
   RestoreCommand,
+  ToggleAutomaticPauseCommand,
 } from "./contracts";
 import type { AttackSource, CombatState, UpgradeId } from "../../domain/combat";
 
@@ -17,6 +18,10 @@ export const battleCommands = {
     execute: (context) => context.frame(nowMs),
     nowMs,
     type: "frame",
+  }),
+  toggleAutomaticPause: (): ToggleAutomaticPauseCommand => ({
+    execute: (context) => context.toggleAutomaticPause(),
+    type: "toggle-automatic-pause",
   }),
   purchase: (id: UpgradeId, quantity = 1): PurchaseCommand => ({
     execute: (context) => context.purchase(id, quantity),

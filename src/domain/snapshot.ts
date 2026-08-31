@@ -38,6 +38,7 @@ export type BattleSnapshot = {
     readonly intervalMs: number;
     readonly remainingMs: number;
     readonly unlocked: boolean;
+    readonly paused?: boolean;
   };
   readonly coins: number;
   readonly encounter: string;
@@ -55,6 +56,13 @@ export type BattleSnapshot = {
   readonly upgrades: readonly UpgradeSnapshot[];
 };
 
+const remainingAutomaticMs = (
+  state: CombatState,
+  nowMs: number,
+  override: number | undefined,
+): number =>
+  override ?? (state.automaticUnlocked ? Math.max(0, state.nextAutomaticAttackAtMs - nowMs) : 0);
+
 export const createBattleSnapshot = (
   state: CombatState,
   nowMs: number,
@@ -62,6 +70,8 @@ export const createBattleSnapshot = (
   upgrades: readonly UpgradeSnapshot[],
   goldenBugRemainingMs: number | null = null,
   visualCues: readonly BattleVisualCue[] = [],
+  automaticPaused = false,
+  automaticRemainingMs?: number,
 ): BattleSnapshot => {
   const identity = selectEnemyFamilyIdentity({
     goldenBug: state.goldenBug !== null,
@@ -72,7 +82,8 @@ export const createBattleSnapshot = (
   return {
     automatic: {
       intervalMs: automaticInterval(state.enemy, state.player),
-      remainingMs: state.automaticUnlocked ? Math.max(0, state.nextAutomaticAttackAtMs - nowMs) : 0,
+      remainingMs: remainingAutomaticMs(state, nowMs, automaticRemainingMs),
+      paused: automaticPaused,
       unlocked: state.automaticUnlocked,
     },
     coins: state.coins,

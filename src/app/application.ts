@@ -209,6 +209,10 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       if (!controller.dispatch(battleCommands.attack("manual"))) render();
       return;
     }
+    if (intent.type === "toggle-automatic-pause") {
+      if (!controller.dispatch(battleCommands.toggleAutomaticPause())) render();
+      return;
+    }
     if (intent.type === "upgrade") {
       controller.dispatch(battleCommands.purchase(intent.id, intent.quantity));
       return;

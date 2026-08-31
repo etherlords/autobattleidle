@@ -359,6 +359,15 @@ describe("createHud", () => {
     expect(element(host, "hud-status").children[3]?.textContent).toBe(
       "Automatic attack: 1.00 APS · 0.500s",
     );
+    const automaticPause = element(host, "automatic-pause");
+    automaticPause.dispatch("click");
+    expect(automaticPause.attributes.get("aria-label")).toBe("Pause auto attack");
+    hud.render({ ...snapshot, automatic: { ...snapshot.automatic, paused: true } });
+    expect(automaticPause.textContent).toBe("▶");
+    expect(automaticPause.attributes.get("aria-label")).toBe("Resume auto attack");
+    expect(automaticPause.attributes.get("aria-pressed")).toBe("true");
+    hud.render({ ...snapshot, automatic: { ...snapshot.automatic, unlocked: false } });
+    expect(automaticPause.disabled).toBe(true);
     expect(element(host, "upgrades-dialog").attributes.get("role")).toBe("dialog");
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 2");
     expect(element(host, "current-upgrade-stats").textContent).toBe(
@@ -469,6 +478,7 @@ describe("createHud", () => {
       { type: "attack" },
       { delta: 0.12, type: "rotate-camera" },
       { delta: -0.12, type: "rotate-camera" },
+      { type: "toggle-automatic-pause" },
       { id: "automatic-unlock", quantity: 1, type: "upgrade" },
       { id: "automatic-unlock", quantity: 10, type: "upgrade" },
       { id: "automatic-unlock", quantity: 100, type: "upgrade" },
@@ -491,8 +501,9 @@ describe("createHud", () => {
     launcher.dispatch("click");
     reset.dispatch("click");
     restore.dispatch("click");
+    automaticPause.dispatch("click");
     expect(attacks).toBe(3);
-    expect(intents).toHaveLength(12);
+    expect(intents).toHaveLength(13);
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(launcher.focusCalls).toBe(launcherFocusAtDispose);

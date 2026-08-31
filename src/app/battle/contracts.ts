@@ -10,6 +10,7 @@ import type { BattleEvent } from "../../domain/snapshot";
 
 export type BattleCommandContext = {
   attack(source: AttackSource): boolean;
+  toggleAutomaticPause(): boolean;
   frame(nowMs: number): boolean;
   purchase(id: UpgradeId, quantity: number): boolean;
   reset(): boolean;
@@ -18,6 +19,7 @@ export type BattleCommandContext = {
 
 type Command = { readonly execute: (context: BattleCommandContext) => boolean };
 export type AttackCommand = Command & { readonly type: "attack"; readonly source: AttackSource };
+export type ToggleAutomaticPauseCommand = Command & { readonly type: "toggle-automatic-pause" };
 export type FrameCommand = Command & { readonly type: "frame"; readonly nowMs: number };
 export type PurchaseCommand = Command & {
   readonly type: "purchase";
@@ -27,7 +29,12 @@ export type PurchaseCommand = Command & {
 export type ResetCommand = Command & { readonly type: "reset" };
 export type RestoreCommand = Command & { readonly type: "restore"; readonly state: CombatState };
 export type BattleCommand =
-  AttackCommand | FrameCommand | PurchaseCommand | ResetCommand | RestoreCommand;
+  | AttackCommand
+  | ToggleAutomaticPauseCommand
+  | FrameCommand
+  | PurchaseCommand
+  | ResetCommand
+  | RestoreCommand;
 
 export type BattleUpdate = {
   readonly events: readonly BattleEvent[];
@@ -35,6 +42,8 @@ export type BattleUpdate = {
   readonly persistenceChanged: boolean;
   readonly state: CombatState;
   readonly goldenBugRemainingMs: number | null;
+  readonly automaticPaused?: boolean;
+  readonly automaticRemainingMs?: number;
 };
 
 export type BattleControllerEvent =
@@ -52,6 +61,7 @@ export type BattleControllerEvent =
       readonly goldenBugBefore?: boolean;
       readonly goldenBugEscaped?: boolean;
     })
+  | (BattleUpdate & { readonly type: "toggle-automatic-pause" })
   | (BattleUpdate & {
       readonly type: "purchase";
       readonly id: UpgradeId;

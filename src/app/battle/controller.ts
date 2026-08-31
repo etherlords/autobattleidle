@@ -18,6 +18,7 @@ const EVENT_HISTORY_LIMIT = 6;
 export class BattleController {
   private readonly commandContext: BattleCommandContext = {
     attack: (source) => this.performAttack(source),
+    toggleAutomaticPause: () => this.toggleAutomaticPause(),
     frame: (nowMs) => this.performFrame(nowMs),
     purchase: (id, quantity) => this.performPurchase(id, quantity),
     reset: () => this.performReset(),
@@ -31,6 +32,8 @@ export class BattleController {
   private state: CombatState;
   private goldenBugDeadlineMs: number | undefined;
   private goldenBugDeadlineEventId: number | undefined;
+  private automaticPaused = false;
+  private pausedAutomaticRemainingMs = 0;
 
   constructor(private readonly options: BattleControllerOptions) {
     this.nowMs = options.initialNowMs;
@@ -110,7 +113,11 @@ export class BattleController {
         },
         "Golden Bug escaped.",
       );
-    if (!this.state.automaticUnlocked || this.nowMs < this.state.nextAutomaticAttackAtMs)
+    if (
+      this.automaticPaused ||
+      !this.state.automaticUnlocked ||
+      this.nowMs < this.state.nextAutomaticAttackAtMs
+    )
       return false;
     const previousEnemy = this.state.enemy;
     const goldenBugBefore = this.state.goldenBug !== null;
@@ -140,6 +147,25 @@ export class BattleController {
     return result.event;
   }
 
+  private toggleAutomaticPause(): boolean {
+    if (!this.state.automaticUnlocked) return false;
+    if (this.automaticPaused) {
+      this.state = {
+        ...this.state,
+        nextAutomaticAttackAtMs: this.nowMs + this.pausedAutomaticRemainingMs,
+      };
+      this.automaticPaused = false;
+      this.pausedAutomaticRemainingMs = 0;
+    } else {
+      this.pausedAutomaticRemainingMs = Math.max(
+        0,
+        this.state.nextAutomaticAttackAtMs - this.nowMs,
+      );
+      this.automaticPaused = true;
+    }
+    return this.publish({ ...this.update(), type: "toggle-automatic-pause" });
+  }
+
   private performPurchase(id: UpgradeId, quantity: number): boolean {
     const requestedQuantity = Math.min(100, Math.max(1, Math.floor(quantity)));
     let successfulPurchases = 0;
@@ -167,6 +193,8 @@ export class BattleController {
   private performReset(): boolean {
     this.state = this.options.createInitialState();
     this.resetEvents();
+    this.automaticPaused = false;
+    this.pausedAutomaticRemainingMs = 0;
     this.syncGoldenBugDeadline();
     return this.publishMessage({ ...this.update(), type: "reset" }, battleEventMessages.reset());
   }
@@ -174,6 +202,8 @@ export class BattleController {
   private performRestore(state: CombatState): boolean {
     this.state = state;
     this.resetEvents();
+    this.automaticPaused = false;
+    this.pausedAutomaticRemainingMs = 0;
     this.syncGoldenBugDeadline();
     return this.publishMessage(
       { ...this.update(), type: "restore" },
@@ -182,12 +212,18 @@ export class BattleController {
   }
 
   private update(persistenceChanged = false): BattleUpdate {
+    let automaticRemainingMs = 0;
+    if (this.automaticPaused) automaticRemainingMs = this.pausedAutomaticRemainingMs;
+    else if (this.state.automaticUnlocked)
+      automaticRemainingMs = Math.max(0, this.state.nextAutomaticAttackAtMs - this.nowMs);
     return {
       events: this.events,
       goldenBugRemainingMs:
         this.goldenBugDeadlineMs === undefined
           ? null
           : Math.max(0, this.goldenBugDeadlineMs - this.nowMs),
+      automaticPaused: this.automaticPaused,
+      automaticRemainingMs,
       nowMs: this.nowMs,
       persistenceChanged,
       state: this.state,
