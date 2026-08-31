@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { handler, type Env } from "./index";
 
 class MemoryD1 {
+  readonly queries: string[] = [];
   readonly values: unknown[] = [];
   readonly players: {
     id: number;
@@ -23,6 +24,7 @@ class MemoryD1 {
     else this.renameNameCollisions = count;
   }
   prepare(query: string): D1PreparedStatement {
+    this.queries.push(query);
     return this.statement(query);
   }
   private statement(query: string): D1PreparedStatement {
@@ -227,6 +229,9 @@ describe("leaderboard worker boundary", () => {
     );
     const identity = (await response.json()) as { identity: { token: string } };
     expect(response.status).toBe(201);
+    expect(db.queries.find((query) => query.includes('INSERT INTO "players"'))).not.toContain(
+      '"players".',
+    );
     expect(db.values).not.toContain(identity.identity.token);
     expect(db.values).not.toContain("198.51.100.9");
   });

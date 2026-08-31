@@ -29,7 +29,7 @@ export const createPlayer = async (
 ): Promise<IdentityCreation> => {
   try {
     const result = await database(env).run(sql`
-      INSERT INTO ${players} (${players.tokenHash}, ${players.displayName}, ${players.achievedAt}, ${players.createdAt}, ${players.updatedAt})
+      INSERT INTO ${players} (token_hash, display_name, achieved_at, created_at, updated_at)
       SELECT ${tokenHash}, ${name}, ${now}, ${now}, ${now}
       WHERE (SELECT count(*) FROM ${players}) < ${BOARD_CAPACITY}
     `);

@@ -4,7 +4,7 @@ id: ABI-032
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 48
+revision: 50
 status: In QA
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ requiredGates:
 ## Current state
 
 - Status: In QA
-- Revision: 48
-- Last update: Updated canonical leaderboard and persistence architecture for dual metrics, V4, Drizzle ownership, and boss-or-five-minute synchronization.
+- Revision: 50
+- Last update: EVENT review-pass — abi032-independent-review — D1 identity INSERT repair is minimal, bound, SQLite-compatible, regression-covered, and ready for redeployment.
 
 ## Execution plan
 
@@ -838,3 +838,31 @@ requiredGates:
   - Vault AUTOBATTLEIDLE-DOC-20260827-E27CD3 hash d49cef2c1b7185463b5812979b83d7bb22a96ebdcf2f05acffecfe645812160f
   - Vault doctor 15 files, 0 errors, 0 warnings
   - Vault index fresh, 0 pending embeddings, 0 unresolved links
+
+### evt-4dee4986-4d9a-47c4-933d-3ee9e1520ae8
+
+- Timestamp: 2026-08-31T01:31:27.978Z
+- Actor: root-manager-abi032
+- Operation: progress.append
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: EVENT qa-fail — abi032-independent-qa — Exact-SHA deployment exposed invalid qualified SQLite INSERT columns; identity creation failed and deployed acceptance returned to repair.
+- Idempotency key: abi032-deployed-qa-blocked-d1-insert-20260831-v1
+- Evidence:
+  - Exact SHA f638600b120b07aff4e97f02128dfc8e83e34904; CI 33347502832, Pages 33347502753, Worker 33347502755 succeeded
+  - Cloudflare tail: D1 rejected qualified INSERT column names in createPlayer
+  - Independent deployed QA could not create identities or exercise leaderboard
+
+### evt-fe9450df-4c81-478c-81f4-902b60e3032d
+
+- Timestamp: 2026-08-31T01:31:41.601Z
+- Actor: root-manager-abi032
+- Operation: progress.append
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: EVENT review-pass — abi032-independent-review — D1 identity INSERT repair is minimal, bound, SQLite-compatible, regression-covered, and ready for redeployment.
+- Idempotency key: abi032-d1-insert-repair-review-pass-20260831-v1
+- Evidence:
+  - worker/src/repositories/player-repository.ts uses unqualified static INSERT columns with Drizzle-bound values
+  - worker/src/index.test.ts asserts generated identity INSERT contains no qualified players column names
+  - Independent Reviewer PASS; focused 10/10 and pnpm check 20 files/147 tests
