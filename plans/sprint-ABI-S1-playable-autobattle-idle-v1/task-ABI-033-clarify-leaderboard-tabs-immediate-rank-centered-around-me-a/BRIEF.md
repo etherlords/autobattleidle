@@ -4,8 +4,8 @@ id: ABI-033
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 6
-status: In QA
+revision: 8
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-032
@@ -27,7 +27,7 @@ Clarify leaderboard tabs, immediate rank, centered Around Me, and aligned rows
 
 - Type: bug
 - Priority: critical
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

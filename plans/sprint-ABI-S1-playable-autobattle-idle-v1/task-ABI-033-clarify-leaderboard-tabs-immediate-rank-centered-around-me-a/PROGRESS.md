@@ -4,8 +4,8 @@ id: ABI-033
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 36
-status: In QA
+revision: 45
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-032
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 36
-- Last update: Start deployment-backed desktop and 390px leaderboard QA.
+- Status: Done
+- Revision: 45
+- Last update: Close the clarified leaderboard UI after exact-SHA deployed acceptance.
 
 ## Execution plan
 
@@ -31,8 +31,8 @@ requiredGates:
 - [x] leaderboard-ui-implementation: Implementation owner updates Worker view payload and leaderboard dialog/table styling without changing ranking truth
 - [x] leaderboard-ui-self-check: Implementation owner adds focused regressions and runs pnpm check
 - [-] leaderboard-ui-review: Independent Reviewer audits rank correctness, accessibility, responsive table layout, and regression scope
-- [~] leaderboard-ui-qa: Independent QA verifies public desktop/390px tabs, Top/Around rank, highlighted current row, close paths, and clean console/network
-- [ ] leaderboard-ui-close: Manager records evidence, publishes exact SHA, closes Planner, and resumes the next dependency-ready task
+- [x] leaderboard-ui-qa: Independent QA verifies public desktop/390px tabs, Top/Around rank, highlighted current row, close paths, and clean console/network
+- [x] leaderboard-ui-close: Manager records evidence, publishes exact SHA, closes Planner, and resumes the next dependency-ready task
 - [x] leaderboard-ui-review-repair: Implementation owner guards stale responses, adds Around edge regressions, and aligns canonical Around bounds
 - [-] leaderboard-ui-review-v2: Fresh independent Reviewer reruns the full ABI-033 gate after bounded repair
 - [x] leaderboard-ui-review-v2-repair: Implementation owner disables leaderboard interactions during rename/reset, guards disposal, and adds deferred-action regressions
@@ -637,3 +637,172 @@ requiredGates:
   - Task is In QA
   - Review v3 PASS
   - Deployment commit is the next prerequisite for public browser QA
+
+### evt-b6e3b327-00b8-4c4a-8d6e-d2a1944bf1e4
+
+- Timestamp: 2026-08-31T02:36:40.600Z
+- Actor: abi033-deployed-qa
+- Operation: gate.record
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: PASS: exact-SHA deployed leaderboard UI satisfies desktop, narrow, rank, Around Me, table, close, and pending-action acceptance.
+- Idempotency key: abi033-deployed-qa-pass-20260831-v1
+- Request fingerprint: 2af51a67807baec71d9002e1de8ff488a8ffcee680ed681098400e28cb4c11b9
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md deployed PASS
+  - Exact SHA 3dc4557f76a7fb6b00db2e53ef3c63c9e8519c14
+  - CI 33350747300, Worker 33350747271, Pages 33350747458 PASS
+  - Desktop and 390x844 browser acceptance PASS
+  - Delayed rename disabled required controls and restored them; close remained enabled
+  - Console clean; relevant Worker requests 200/201
+
+### evt-a4fcb554-49a1-4d51-8d1d-50635e4227ea
+
+- Timestamp: 2026-08-31T02:36:47.259Z
+- Actor: root-manager-abi033
+- Operation: execution_plan.update
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Complete exact-SHA deployed desktop and narrow QA with PASS.
+- Idempotency key: abi033-qa-complete-20260831-v1
+- Request fingerprint: a2cffd0f92b58fda9115c431cf0bd0f55c9c0ec471db04da4952a0cc31a25189
+- Action: set_state
+- Step ID: leaderboard-ui-qa
+- State: complete
+- Evidence:
+  - Independent deployed QA PASS
+  - Exact-SHA CI/Worker/Pages PASS
+  - QA.md and VERIFICATION.md updated through documented fallback
+
+### evt-4d280d2d-61aa-4f91-af12-59843aa10305
+
+- Timestamp: 2026-08-31T02:37:03.645Z
+- Actor: root-manager-abi033
+- Operation: gate.record
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: PASS: acceptance is mapped to tests, exact-SHA deployments, and independent deployed browser evidence.
+- Idempotency key: abi033-verification-pass-20260831-v1
+- Request fingerprint: 922eee23a824ee37b5da44f77046878c6980db089f133ab2bac9ef70d8cb0118
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md exact-SHA acceptance mapping
+  - CI 33350747300 PASS
+  - Worker 33350747271 PASS
+  - Pages 33350747458 PASS
+  - Independent review and deployed QA PASS
+  - pnpm check PASS: 150 tests
+
+### evt-00838396-453b-412e-be31-68e93cb18d59
+
+- Timestamp: 2026-08-31T02:37:09.619Z
+- Actor: root-manager-abi033
+- Operation: task.advance
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Advance deployed and independently accepted leaderboard UI to manager closure.
+- Idempotency key: abi033-inqa-to-ready-manager-20260831-v2
+- Request fingerprint: 764d4e2c14dbd8e6b091fb488bc3763dd090ac98a8d03245d46c9fd4fc57ac86
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - Exact-SHA deployments successful
+
+### evt-76457894-3878-45cf-8f9b-56f97d669727
+
+- Timestamp: 2026-08-31T02:37:18.715Z
+- Actor: root-manager-abi033
+- Operation: execution_plan.update
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Start manager closure and coherent evidence checkpoint.
+- Idempotency key: abi033-close-start-20260831-v1
+- Request fingerprint: 64a1d0006a3bb68ac3ad4eb46c0a4159b990b4b9509f605cd7c04dbae8fd54eb
+- Action: set_state
+- Step ID: leaderboard-ui-close
+- State: in_progress
+- Evidence:
+  - Task Ready for Manager
+  - verification PASS
+  - Exact-SHA deployed acceptance PASS
+
+### evt-d81751d0-e5c0-4576-bc44-d7cc1cfb4a55
+
+- Timestamp: 2026-08-31T02:40:59.008Z
+- Actor: abi033-independent-verification
+- Operation: gate.record
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: PASS: independent read-only exact-SHA, deployment, acceptance mapping, and commit-scope verification.
+- Idempotency key: abi033-independent-verification-pass-20260831-v1
+- Request fingerprint: 5c92e3d11ec95f57c5a5afc17088a46416abeada4b3085742c643e8f89f50f56
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - origin/main and live heads/main equal 3dc4557f76a7fb6b00db2e53ef3c63c9e8519c14
+  - CI 33350747300, Worker 33350747271, Pages 33350747458 PASS
+  - Pages 200; Worker origin/auth trust boundary responds correctly
+  - REVIEW.md, QA.md, VERIFICATION.md map all ABI-033 acceptance
+  - Feature commit contains zero ABI-031 paths
+
+### evt-fa8125a5-4605-4c76-b356-17a072edc07b
+
+- Timestamp: 2026-08-31T02:41:07.636Z
+- Actor: root-manager-abi033
+- Operation: gate.record
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: PASS: ABI-033 is reviewed, tested, deployed, independently verified, and ready for Done.
+- Idempotency key: abi033-manager-closure-pass-20260831-v2
+- Request fingerprint: 6521896fd4fc0c61b50e80384b9c7ebdd1196f68a70a24e9288d983f04e05d52
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - All required gates PASS with independent actors
+  - Exact SHA 3dc4557f76a7fb6b00db2e53ef3c63c9e8519c14 is deployed on main
+  - Independent review, deployed QA, and independent verification PASS
+  - VERIFICATION.md final manager sign-off
+
+### evt-1294b18b-8acf-44e9-b453-a9b018273eb0
+
+- Timestamp: 2026-08-31T02:41:16.508Z
+- Actor: root-manager-abi033
+- Operation: execution_plan.update
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Complete manager closure for the deployed leaderboard UI.
+- Idempotency key: abi033-close-complete-20260831-v1
+- Request fingerprint: c8b58e917bf6967de1f278a1ef155111987a51d36d91053e07c192c1ccce4467
+- Action: set_state
+- Step ID: leaderboard-ui-close
+- State: complete
+- Evidence:
+  - manager-closure PASS
+  - independent verification PASS
+  - Exact-SHA deployment and QA PASS
+
+### evt-ac76e237-a9d9-44ff-9087-d764e489e948
+
+- Timestamp: 2026-08-31T02:41:25.582Z
+- Actor: root-manager-abi033
+- Operation: task.advance
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Close the clarified leaderboard UI after exact-SHA deployed acceptance.
+- Idempotency key: abi033-ready-manager-to-done-20260831-v1
+- Request fingerprint: 7a4b1adc8e5462faff989b9b9b2cc120c5ebcb58da57dd8c3c6cb8ffc1cc2c9c
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - manager-closure PASS
+  - Exact SHA 3dc4557f76a7fb6b00db2e53ef3c63c9e8519c14 deployed
