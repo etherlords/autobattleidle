@@ -41,10 +41,12 @@ requiredGates:
 - CI `33466759392` and Pages `33466759433` succeeded. Independent deployed QA passed desktop,
   390x844, manual/automatic source distinction, low/mid/10+ APS timing, critical/armor identity,
   reload compatibility, and clean console/network.
+- Evidence checkpoint `a1ace028c84a7d19822868e422d5b65500afe01b` is published to `main`; exact-SHA
+  CI `33467340915` and Pages `33467341016` both succeeded.
 
 ## Sign-off
 
 - Reviewer: PASS — fresh independent review v2
 - QA: PASS — exact-SHA deployed browser QA
 - Verification: PASS — acceptance maps to code, tests, Vault, CI/Pages, and deployed behavior
-- Manager close: pending terminal Planner checkpoint
+- Manager close: PASS — Planner transition to Done at task revision 9

@@ -4,8 +4,8 @@ id: ABI-035
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 77
-status: Ready for Manager
+revision: 82
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 77
-- Last update: Publish QA and verification evidence, then complete terminal Manager closure.
+- Status: Done
+- Revision: 82
+- Last update: EVENT closed — root-manager — Recorded the terminal Manager sign-off in VERIFICATION.md after the atomic Planner transition to Done.
 
 ## Execution plan
 
@@ -48,7 +48,7 @@ requiredGates:
 - [x] attack-self-check: Implementation owner runs focused tests, unchanged combat/save byte checks, resource checks, and pnpm check
 - [x] attack-independent-review: Independent Reviewer audits all producers/consumers, ABI-020 packet reuse, timing math, sequencing, disposal, and regression completeness
 - [x] attack-independent-qa: Independent QA verifies source distinction, readable timing, bounded high-APS visuals, lethal order, reduced motion, desktop/narrow, and clean resources
-- [~] attack-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and deployed Pages behavior
+- [x] attack-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and deployed Pages behavior
 - [x] attack-review-repair-v1: Implementation owner normalizes slash phase to each bounded cue lifetime and proves endpoint completion
 - [x] attack-independent-review-v2: Fresh independent reviewer verifies the trajectory repair and complete ABI-035 contract
 
@@ -1363,3 +1363,93 @@ requiredGates:
   - candidate 4ac3421770ad1369858bccb3b4c3f266400a8956
   - CI 33466759392 success
   - Pages 33466759433 success
+
+### evt-c97f7446-f319-4cf2-9524-483c66f9fc94
+
+- Timestamp: 2026-09-01T03:47:21.940Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 77
+- Resulting revision: 78
+- Summary: EVENT checkpoint — codex-root — Recorded the exact-SHA evidence publication checkpoint and successful CI/Pages readback in VERIFICATION.md through the narrow Markdown fallback.
+- Idempotency key: abi035-published-evidence-checkpoint-fallback-20260901
+- Evidence:
+  - VERIFICATION.md
+  - a1ace028c84a7d19822868e422d5b65500afe01b
+  - CI 33467340915 success
+  - Pages 33467341016 success
+
+### evt-04405c2d-99ec-4cb6-957c-0d719486e5f7
+
+- Timestamp: 2026-09-01T03:47:23.722Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 78
+- Resulting revision: 79
+- Summary: Manager verified and published the coherent ABI-035 code, Vault, QA, and exact-SHA evidence checkpoint.
+- Idempotency key: abi035-complete-manager-closure-step-20260901
+- Request fingerprint: 255ed7ecac13a0ae4170fe03427ebf7d95e894ddf4c6fce2c6f25fa095836be8
+- Action: set_state
+- Step ID: attack-manager-closure
+- State: complete
+- Evidence:
+  - a1ace028c84a7d19822868e422d5b65500afe01b
+  - CI 33467340915 success
+  - Pages 33467341016 success
+  - all required gates pass
+
+### evt-e06372fe-aae9-49de-a007-6611effb1aad
+
+- Timestamp: 2026-09-01T03:47:24.629Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: Manager closure passes after coherent publication, exact-SHA CI/Pages, and independent deployed acceptance.
+- Idempotency key: abi035-manager-closure-pass-20260901
+- Request fingerprint: ed6cf0004227eb634b6077297e837d3876d48a072fd3f96ba1445923bc52cc73
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - a1ace028c84a7d19822868e422d5b65500afe01b
+  - CI 33467340915 success
+  - Pages 33467341016 success
+  - planner-gate:independent-review=pass
+  - planner-gate:independent-qa=pass
+  - planner-gate:verification=pass
+
+### evt-31e5f473-2197-4580-bc0d-815a06c353f8
+
+- Timestamp: 2026-09-01T03:47:31.257Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Close ABI-035 after reviewed implementation, independent exact-SHA deployed QA, Vault sync, verification, and published evidence.
+- Idempotency key: abi035-manager-close-done-20260901
+- Request fingerprint: 8ee022950d2ad44cd36ed5fc3afe6aa2a71f01856e3c7e16b49223eb495057c7
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - all required gates pass
+  - a1ace028c84a7d19822868e422d5b65500afe01b
+  - CI 33467340915 success
+  - Pages 33467341016 success
+  - QA.md
+  - VERIFICATION.md
+
+### evt-ece9d40c-5f96-491c-a457-2e7e9fa5f251
+
+- Timestamp: 2026-09-01T03:47:59.354Z
+- Actor: root-manager
+- Operation: progress.append
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: EVENT closed — root-manager — Recorded the terminal Manager sign-off in VERIFICATION.md after the atomic Planner transition to Done.
+- Idempotency key: abi035-terminal-verification-signoff-fallback-20260901
+- Evidence:
+  - VERIFICATION.md
+  - task-status:Done
+  - task-revision:9
+  - evt-31e5f473-2197-4580-bc0d-815a06c353f8
