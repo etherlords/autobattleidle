@@ -16,8 +16,8 @@ tags:
 
 - Unit tests cover domain transitions, formulas, purchases, rewards, encounter progression, and save validation/migration.
 - Focused integration tests cover app orchestration, persistence triggers, and UI-to-command routing.
-- The developer-only visual lab reuses production enemy factories for deterministic URL-addressable all-angle, animation, socket, bounds, resource, reduced-motion, and disposal checks. Build it explicitly with `pnpm build:visual-lab`; the normal production build must exclude its entry point.
-- Browser QA covers click and keyboard input, accessible controls, responsive layout, reload recovery, malformed-save recovery, endless progression, and the deployed Pages build.
+- The developer-only visual lab reuses production enemy factories for deterministic URL-addressable all-angle, animation, socket, bounds, resource, reduced-motion, and disposal checks. The normal `pnpm build` excludes its entry point; `pnpm build:visual-lab` explicitly creates the multi-entry Pages artifact with the game at `/` and the lab at `/visual-lab.html`.
+- Browser QA covers click and keyboard input, accessible controls, responsive layout, reload recovery, malformed-save recovery, endless progression, and both deployed Pages routes when the lab ships.
 
 ## Gates
 

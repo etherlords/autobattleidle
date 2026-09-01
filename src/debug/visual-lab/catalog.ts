@@ -22,6 +22,7 @@ export const LAB_CUES = [
   "idle",
   "spawn",
   "hit",
+  "attack",
   "critical",
   "death",
   ...LAB_EFFECTS.map((effect) => `effect-${effect}`),
@@ -102,6 +103,24 @@ export const canonicalLabCase = (candidate: LabCase): LabCase =>
       known.variant === candidate.variant &&
       known.goldenBug === candidate.goldenBug,
   ) ?? DEFAULT_CASE;
+
+export const reachableLabCases = (candidate: Partial<LabCase>): readonly LabCase[] =>
+  LAB_CASES.filter(
+    (known) =>
+      (candidate.family === undefined || known.family === candidate.family) &&
+      (candidate.grade === undefined || known.grade === candidate.grade) &&
+      (candidate.modifier === undefined || known.modifier === candidate.modifier) &&
+      (candidate.variant === undefined || known.variant === candidate.variant) &&
+      (candidate.goldenBug === undefined || known.goldenBug === candidate.goldenBug),
+  );
+
+export const firstReachableLabCase = (candidate: Partial<LabCase>): LabCase =>
+  reachableLabCases(candidate)[0] ?? DEFAULT_CASE;
+
+export const toggleGoldenLabCase = (current: LabCase, enabled: boolean): LabCase =>
+  enabled
+    ? firstReachableLabCase({ goldenBug: true })
+    : firstReachableLabCase({ ...current, goldenBug: false });
 
 export const allLabCases = (): readonly LabCase[] => {
   return LAB_CASES;

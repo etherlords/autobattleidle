@@ -25,6 +25,15 @@ describe("visual lab build and isolation boundaries", () => {
     });
   });
 
+  it("publishes both app and lab entries in the Pages artifact without changing the normal build", () => {
+    const workflow = readFileSync(
+      new URL("../../../.github/workflows/pages.yml", import.meta.url),
+      "utf8",
+    );
+    expect(workflow).toContain("pnpm build:visual-lab");
+    expect(workflow).toContain("path: dist");
+  });
+
   it("keeps the lab entrypoint outside saves, progression, and network clients", () => {
     const source = readFileSync(new URL("./main.ts", import.meta.url), "utf8");
     expect(source).not.toMatch(/localStorage|fetch\(|XMLHttpRequest|leaderboard|createCombatState/);
@@ -38,5 +47,11 @@ describe("visual lab build and isolation boundaries", () => {
     expect(styles).toMatch(/min-height: 36px/);
     expect(styles).toMatch(/max-width: 100%/);
     expect(styles).toMatch(/@media \(max-width: 480px\)/);
+  });
+
+  it("refreshes the visible receipt at the same replacement seam as the canonical render", () => {
+    const entry = readFileSync(new URL("./main.ts", import.meta.url), "utf8");
+    expect(entry).toMatch(/this\.refreshOverlays\(\);\s*this\.refreshReceipt\(\);/);
+    expect(entry).toContain("case ${serializeLabCase(this.current)}");
   });
 });

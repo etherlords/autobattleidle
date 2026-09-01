@@ -34,7 +34,7 @@ jobs:
         env:
           VITE_LEADERBOARD_API: ${{ vars.LEADERBOARD_API_URL }}
         run: test -n "$VITE_LEADERBOARD_API"
-      - run: pnpm build
+      - run: pnpm build:visual-lab
         env:
           VITE_LEADERBOARD_API: ${{ vars.LEADERBOARD_API_URL }}
       - uses: actions/configure-pages@v5

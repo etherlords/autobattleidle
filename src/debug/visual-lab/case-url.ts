@@ -1,14 +1,19 @@
 import { canonicalLabCase, LAB_FAMILIES, LAB_GRADES, LAB_MODIFIERS, type LabCase } from "./catalog";
 import { LAB_RECIPES, type LabRecipe } from "./recipes";
 import type { EnemyPresentationModifier } from "../../domain/combat";
+import { PLAYER_FORM_STARTS, type PlayerFormStart } from "./player-evolution";
 
 export type LabView = "orbit" | "front" | "side" | "back" | "top";
 export type LabViewport = "desktop" | "narrow";
+export type LabSubject = "enemy" | "player";
 export type LabUrlCase = LabCase & {
   readonly reducedMotion: boolean;
   readonly view: LabView;
   readonly viewport: LabViewport;
   readonly recipe: LabRecipe;
+  readonly subject: LabSubject;
+  readonly playerStage: PlayerFormStart;
+  readonly correction?: { readonly requested: string; readonly canonical: string };
 };
 
 export const DEFAULT_LAB_CASE: LabUrlCase = {
@@ -21,6 +26,8 @@ export const DEFAULT_LAB_CASE: LabUrlCase = {
   view: "orbit",
   viewport: "desktop",
   recipe: "production",
+  subject: "enemy",
+  playerStage: 1,
 };
 
 const values = <T extends string>(input: string | null, allowed: readonly T[], fallback: T): T =>
@@ -34,6 +41,10 @@ const variant = (input: string | null): 0 | 1 | 2 => {
   if (input === "1") return 1;
   if (input === "2") return 2;
   return 0;
+};
+const playerStage = (input: string | null): PlayerFormStart => {
+  const value = Number(input);
+  return PLAYER_FORM_STARTS.includes(value as PlayerFormStart) ? (value as PlayerFormStart) : 1;
 };
 const modifier = (input: string | null): EnemyPresentationModifier => {
   if (input === null || input === "none") return null;
@@ -54,13 +65,31 @@ export const parseLabCase = (search: string): LabUrlCase => {
     variant: variant(query.get("variant")),
     goldenBug: bool(query.get("golden"), DEFAULT_LAB_CASE.goldenBug),
   });
-  return {
+  const result: LabUrlCase = {
     ...visual,
     reducedMotion: bool(query.get("motion"), DEFAULT_LAB_CASE.reducedMotion),
     view: values(query.get("view"), ["orbit", "front", "side", "back", "top"] as const, "orbit"),
     viewport: values(query.get("viewport"), ["desktop", "narrow"] as const, "desktop"),
     recipe: values(query.get("recipe"), LAB_RECIPES, DEFAULT_LAB_CASE.recipe),
+    subject: values(query.get("subject"), ["enemy", "player"] as const, "enemy"),
+    playerStage: playerStage(query.get("stage")),
   };
+  const fields = [
+    "family",
+    "grade",
+    "modifier",
+    "variant",
+    "golden",
+    "motion",
+    "view",
+    "viewport",
+    "recipe",
+    "subject",
+    "stage",
+  ];
+  const canonical = serializeLabCase(result);
+  const requested = fields.some((field) => query.has(field)) ? `?${query.toString()}` : canonical;
+  return requested === canonical ? result : { ...result, correction: { requested, canonical } };
 };
 
 export const serializeLabCase = (labCase: LabUrlCase): string => {
@@ -74,6 +103,8 @@ export const serializeLabCase = (labCase: LabUrlCase): string => {
     view: labCase.view,
     viewport: labCase.viewport,
     recipe: labCase.recipe,
+    subject: labCase.subject,
+    stage: String(labCase.playerStage),
   });
   return `?${query.toString()}`;
 };

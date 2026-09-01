@@ -4,8 +4,8 @@ id: ABI-038
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Blocked
+revision: 4
+status: In Progress
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -30,7 +30,7 @@ Evolve the player avatar from egg or stone into authored progression forms
 
 - Type: task
 - Priority: normal
-- Status: Blocked
+- Status: In Progress
 
 ## Acceptance criteria
 
@@ -43,6 +43,9 @@ Evolve the player avatar from egg or stone into authored progression forms
 - [ ] Reduced-motion, high APS, resize, boss orbit, pause, reset, current and historical saves, long progression, finite transforms, object budgets, and WebGL resource disposal remain supported.
 - [ ] Focused tests prove milestone boundaries, deterministic reload identity, component ownership, transition lifecycle, reduced motion, and disposal. Browser QA proves every form at representative milestones and exact state -> action/time -> visible result.
 - [ ] Independent review, independent QA, pnpm check, exact-SHA CI/Pages, deployed historical-save proof, and Manager closure pass.
+- [ ] The visual lab is published at the separate exact-SHA GitHub Pages route `/visual-lab.html` while `/` remains the normal game; the lab remains debug-only code with no persistence, leaderboard mutation, or gameplay state ownership.
+- [ ] Lab controls expose only reachable enemy and player cases. A manually entered impossible URL is never silently rendered as a default Beetle: the UI identifies the rejected values and the canonical fallback or correction.
+- [ ] Candidate recipe attachments use family surface sockets and outward directions so crowns, orbitals, and elemental spines remain seated and oriented on ordinary and boss silhouettes from all required views.
 
 ## Dependencies
 

@@ -24,8 +24,11 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS — independent review v5 approved the final post-QA repair.
 
 ## Findings
 
-_Pending._
+- `replace()` refreshes the visible receipt immediately after canonical replacement, camera fit, and overlays; it no longer waits for the next animation frame.
+- The receipt is observational only and does not allocate or dispose Three.js resources.
+- Hydra variant 0 production geometry owns the blue fin; the wealth modifier owns the animated gold orbitals. Candidate elemental spines are only the three orange `lab-elemental-spine-*` cones.
+- Focused review checks: 12/12 PASS; `git diff --check` PASS.

@@ -10,14 +10,22 @@ import {
   allLabCases,
   canonicalLabCase,
   effectForLabCue,
+  firstReachableLabCase,
   inputForCase,
   LAB_CUES,
   LAB_FAMILIES,
   LAB_GRADES,
   LAB_MODIFIERS,
+  reachableLabCases,
+  toggleGoldenLabCase,
 } from "./catalog";
 import { parseLabCase, serializeLabCase, type LabView, type LabViewport } from "./case-url";
 import { attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
+import {
+  LabPlayerEvolution,
+  PLAYER_EVOLUTION_FORMS,
+  type PlayerFormStart,
+} from "./player-evolution";
 import {
   createEffectHarness,
   observeResourceDisposal,
@@ -60,13 +68,16 @@ class VisualLab {
   private readonly effects = createEffectHarness();
   private readonly overlays = new THREE.Group();
   private readonly receipt = document.createElement("output");
-  private unit: EnemyUnit | undefined;
+  private readonly correction = document.createElement("output");
+  private unit: EnemyUnit | LabPlayerEvolution | undefined;
   private disposeRecipe: (() => void) | undefined;
   private lastReceipt: ResourceReceipt | undefined;
   private paused = false;
   private speed = 1;
   private fractionalFrames = 0;
   private zoom = 1;
+  private cameraDistance = 7;
+  private readonly cameraFocus = new THREE.Vector3(0, 0.7, 0);
   private azimuth = 0.55;
   private elevation = 0.32;
   private current = parseLabCase(window.location.search);
@@ -90,7 +101,8 @@ class VisualLab {
     this.renderer.domElement.addEventListener("pointerup", () => {
       this.pointerX = undefined;
     });
-    this.host.append(this.controls(), this.renderer.domElement, this.receipt);
+    this.correction.className = "visual-lab-correction";
+    this.host.append(this.controls(), this.correction, this.renderer.domElement, this.receipt);
     this.scene.add(this.overlays, new THREE.HemisphereLight("#75c7ff", "#25120b", 1.5));
     const light = new THREE.DirectionalLight("#f8d28b", 2);
     light.position.set(2, 4, 3);
@@ -133,6 +145,17 @@ class VisualLab {
       "Recipe",
       LAB_RECIPES.map((value) => ({ label: value, value })),
     );
+    const subject = select(
+      "Subject",
+      ["enemy", "player"].map((value) => ({ label: value, value })),
+    );
+    const playerStage = select(
+      "Player stage",
+      PLAYER_EVOLUTION_FORMS.map((form) => ({
+        label: `${form.start} — ${form.name}`,
+        value: String(form.start),
+      })),
+    );
     const golden = checkbox("Golden Bug");
     const motion = checkbox("Reduced motion");
     const overlays = ["axes", "sockets", "bounds"] as const;
@@ -159,10 +182,73 @@ class VisualLab {
         view: view.value as LabView,
         viewport: viewport.value as LabViewport,
         recipe: recipe.value as LabRecipe,
+        subject: subject.value as "enemy" | "player",
+        playerStage: Number(playerStage.value) as PlayerFormStart,
       };
       history.replaceState(null, "", serializeLabCase(this.current));
       this.replace();
       this.resize();
+    };
+    const setOptions = (
+      control: HTMLSelectElement,
+      values: readonly string[],
+      selected: string,
+    ): void => {
+      control.replaceChildren(...values.map((value) => option(value)));
+      control.value = values.includes(selected) ? selected : (values[0] ?? "");
+    };
+    const selectCase = (match: ReturnType<typeof firstReachableLabCase>): void => {
+      family.value = match.family;
+      grade.value = match.grade;
+      modifier.value = match.modifier ?? "none";
+      variant.value = String(match.variant);
+      golden.checked = match.goldenBug;
+      setOptions(
+        family,
+        [...new Set(reachableLabCases({}).map((entry) => entry.family))],
+        match.family,
+      );
+      setOptions(
+        grade,
+        [...new Set(reachableLabCases({ family: match.family }).map((entry) => entry.grade))],
+        match.grade,
+      );
+      setOptions(
+        modifier,
+        [
+          ...new Set(
+            reachableLabCases({ family: match.family, grade: match.grade }).map(
+              (entry) => entry.modifier ?? "none",
+            ),
+          ),
+        ],
+        match.modifier ?? "none",
+      );
+      setOptions(
+        variant,
+        [
+          ...new Set(
+            reachableLabCases({
+              family: match.family,
+              grade: match.grade,
+              modifier: match.modifier,
+            }).map((entry) => String(entry.variant)),
+          ),
+        ],
+        String(match.variant),
+      );
+    };
+    const selectReachable = (
+      candidate: Partial<{
+        readonly family: EnemyFamily;
+        readonly grade: EnemyGrade;
+        readonly modifier: EnemyPresentationModifier;
+        readonly variant: LabVariant;
+        readonly goldenBug: boolean;
+      }>,
+    ): void => {
+      const match = firstReachableLabCase(candidate);
+      selectCase(match);
     };
     family.value = this.current.family;
     grade.value = this.current.grade;
@@ -171,12 +257,53 @@ class VisualLab {
     view.value = this.current.view;
     viewport.value = this.current.viewport;
     recipe.value = this.current.recipe;
+    subject.value = this.current.subject;
+    playerStage.value = String(this.current.playerStage);
     golden.checked = this.current.goldenBug;
     motion.checked = this.current.reducedMotion;
-    [family, grade, modifier, variant, view, viewport, recipe].forEach((control) =>
+    selectReachable(this.current);
+    family.addEventListener("change", () => {
+      selectReachable({ family: family.value as EnemyFamily });
+      apply();
+    });
+    grade.addEventListener("change", () => {
+      selectReachable({ family: family.value as EnemyFamily, grade: grade.value as EnemyGrade });
+      apply();
+    });
+    modifier.addEventListener("change", () => {
+      selectReachable({
+        family: family.value as EnemyFamily,
+        grade: grade.value as EnemyGrade,
+        modifier:
+          modifier.value === "none"
+            ? null
+            : (modifier.value as Exclude<EnemyPresentationModifier, null>),
+      });
+      apply();
+    });
+    variant.addEventListener("change", () => apply());
+    [view, viewport, recipe, subject, playerStage].forEach((control) =>
       control.addEventListener("change", apply),
     );
-    [golden, motion].forEach((control) => control.addEventListener("change", apply));
+    golden.addEventListener("change", () => {
+      selectCase(
+        toggleGoldenLabCase(
+          canonicalLabCase({
+            family: family.value as EnemyFamily,
+            grade: grade.value as EnemyGrade,
+            modifier:
+              modifier.value === "none"
+                ? null
+                : (modifier.value as Exclude<EnemyPresentationModifier, null>),
+            variant: Number(variant.value) as LabVariant,
+            goldenBug: !golden.checked,
+          }),
+          golden.checked,
+        ),
+      );
+      apply();
+    });
+    motion.addEventListener("change", apply);
     overlays.forEach((name) => {
       const control = checkbox(name);
       control.addEventListener("change", () => {
@@ -214,6 +341,8 @@ class VisualLab {
       view,
       viewport,
       recipe,
+      subject,
+      playerStage,
       cue,
       replay,
       pause,
@@ -228,14 +357,21 @@ class VisualLab {
   private replace(): void {
     this.clearEffects();
     this.disposeUnit();
-    this.unit = UNIT_FACTORIES.enemy.create({
-      ...inputForCase(this.current),
-      reducedMotion: this.current.reducedMotion,
-    });
-    this.unit.dispatchEnemy({ type: "spawn", parent: this.scene });
-    this.disposeRecipe = attachLabRecipe(this.current.recipe, this.unit.view.group);
+    if (this.current.subject === "player") {
+      this.unit = new LabPlayerEvolution(this.current.playerStage, this.current.reducedMotion);
+      this.scene.add(this.unit.group);
+    } else {
+      this.unit = UNIT_FACTORIES.enemy.create({
+        ...inputForCase(this.current),
+        reducedMotion: this.current.reducedMotion,
+      });
+      this.unit.dispatchEnemy({ type: "spawn", parent: this.scene });
+      this.disposeRecipe = attachLabRecipe(this.current.recipe, this.unit.view.group);
+    }
+    this.fitCameraToUnit();
     this.setCameraPreset(this.current.view);
     this.refreshOverlays();
+    this.refreshReceipt();
   }
 
   private setCameraPreset(preset: CameraPreset): void {
@@ -264,13 +400,28 @@ class VisualLab {
   }
 
   private replay(cue: string): void {
+    if (this.unit instanceof LabPlayerEvolution) {
+      this.replayPlayer(cue);
+      return;
+    }
+    this.replayEnemy(cue);
+  }
+
+  private replayPlayer(cue: string): void {
+    if (!(this.unit instanceof LabPlayerEvolution)) return;
+    if (cue === "hit" || cue === "critical") this.unit.replay("hit");
+    if (cue === "attack" || cue.startsWith("effect-")) this.unit.replay("attack");
+  }
+
+  private replayEnemy(cue: string): void {
+    if (this.unit === undefined || this.unit instanceof LabPlayerEvolution) return;
     if (cue === "idle") return;
     if (cue === "spawn") {
-      this.unit?.dispatchEnemy({ type: "spawn", parent: this.scene });
+      this.unit.dispatchEnemy({ type: "spawn", parent: this.scene });
       return;
     }
     if (cue === "hit" || cue === "critical" || cue === "death")
-      this.unit?.dispatchEnemy({ type: cue });
+      this.unit.dispatchEnemy({ type: cue });
     else {
       const effect = effectForLabCue(cue);
       if (effect !== undefined) this.addEffect(effect);
@@ -278,7 +429,12 @@ class VisualLab {
   }
 
   private addEffect(kind: EffectKind): void {
-    const origin = this.unit?.enemyView.combatSocketWorldPosition();
+    const origin =
+      this.unit instanceof LabPlayerEvolution
+        ? this.unit.group
+            .getObjectByName("lab-player-socket-attack")
+            ?.getWorldPosition(new THREE.Vector3())
+        : this.unit?.enemyView.combatSocketWorldPosition();
     this.effects.add(kind, this.current.reducedMotion, origin, this.scene);
   }
 
@@ -292,14 +448,13 @@ class VisualLab {
     this.disposeOverlays();
     if (this.unit === undefined) return;
     if (this.overlayState.has("axes")) this.overlays.add(new THREE.AxesHelper(2));
-    this.unit.view.group.updateMatrixWorld(true);
+    const group = this.unit instanceof LabPlayerEvolution ? this.unit.group : this.unit.view.group;
+    group.updateMatrixWorld(true);
     if (this.overlayState.has("bounds"))
-      this.overlays.add(
-        new THREE.Box3Helper(new THREE.Box3().setFromObject(this.unit.view.group), 0xffcc66),
-      );
+      this.overlays.add(new THREE.Box3Helper(new THREE.Box3().setFromObject(group), 0xffcc66));
     if (this.overlayState.has("sockets"))
-      this.unit.view.group.traverse((node) => {
-        if (node.name.startsWith("enemy-socket-")) {
+      group.traverse((node) => {
+        if (node.name.startsWith("enemy-socket-") || node.name.startsWith("lab-player-socket-")) {
           const marker = new THREE.AxesHelper(0.18);
           node.getWorldPosition(marker.position);
           node.getWorldQuaternion(marker.quaternion);
@@ -327,6 +482,21 @@ class VisualLab {
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
+    this.fitCameraToUnit();
+  }
+
+  private fitCameraToUnit(): void {
+    if (this.unit === undefined) return;
+    const group = this.unit instanceof LabPlayerEvolution ? this.unit.group : this.unit.view.group;
+    group.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(group);
+    if (bounds.isEmpty()) return;
+    const radius = bounds.getSize(new THREE.Vector3()).length() / 2;
+    const verticalFov = THREE.MathUtils.degToRad(this.camera.fov);
+    const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * this.camera.aspect);
+    const limitingFov = Math.min(verticalFov, horizontalFov);
+    this.cameraFocus.copy(bounds.getCenter(new THREE.Vector3()));
+    this.cameraDistance = Math.max(4, (radius / Math.sin(limitingFov / 2)) * 1.1);
   }
 
   private frame(): void {
@@ -337,13 +507,13 @@ class VisualLab {
         this.fractionalFrames -= 1;
       }
     }
-    const distance = 7 * this.zoom;
+    const distance = this.cameraDistance * this.zoom;
     this.camera.position.set(
-      Math.sin(this.azimuth) * distance,
-      Math.sin(this.elevation) * distance + 1.4,
-      Math.cos(this.azimuth) * distance,
+      this.cameraFocus.x + Math.sin(this.azimuth) * distance,
+      this.cameraFocus.y + Math.sin(this.elevation) * distance,
+      this.cameraFocus.z + Math.cos(this.azimuth) * distance,
     );
-    this.camera.lookAt(0, 0.7, 0);
+    this.camera.lookAt(this.cameraFocus);
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(() => this.frame());
   }
@@ -353,6 +523,10 @@ class VisualLab {
     const last =
       this.lastReceipt === undefined ? "" : ` | last disposal ${resourceReceipt(this.lastReceipt)}`;
     this.receipt.textContent = `case ${serializeLabCase(this.current)} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
+    this.correction.textContent =
+      this.current.correction === undefined
+        ? ""
+        : `Corrected visual-lab case: requested ${this.current.correction.requested}; canonical ${this.current.correction.canonical}`;
   }
 
   private clearEffects(): void {
@@ -362,10 +536,12 @@ class VisualLab {
 
   private disposeUnit(): void {
     if (this.unit === undefined) return;
-    const receipt = observeResourceDisposal(this.unit.view.group);
+    const group = this.unit instanceof LabPlayerEvolution ? this.unit.group : this.unit.view.group;
+    const receipt = observeResourceDisposal(group);
     this.disposeRecipe?.();
     this.disposeRecipe = undefined;
-    this.unit.dispatchEnemy({ type: "dispose" });
+    if (this.unit instanceof LabPlayerEvolution) this.unit.dispose();
+    else this.unit.dispatchEnemy({ type: "dispose" });
     this.lastReceipt = receipt();
     this.unit = undefined;
   }

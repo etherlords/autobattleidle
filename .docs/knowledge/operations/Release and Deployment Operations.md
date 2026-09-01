@@ -16,11 +16,11 @@ tags:
 
 ## Release checklist
 
-1. Run `pnpm check`.
+1. Run `pnpm check`; for a lab release also run `pnpm build:visual-lab` locally.
 2. Complete independent review and QA with recorded Planner evidence.
-3. Verify a clean production build starts locally and supports the release acceptance path.
-4. Push the coherent code, Planner, and Vault checkpoint; confirm the Pages workflow succeeds.
-5. Open the deployed Pages URL and prove loading, input, reload persistence, malformed-save recovery, and continued progression.
+3. Verify the production-only build starts locally and supports the release acceptance path.
+4. Push the coherent code, Planner, and Vault checkpoint; Pages uses `pnpm build:visual-lab` to publish one artifact with the game at `/` and the debug lab at `/visual-lab.html`.
+5. At the exact deployed SHA, verify `/` still owns gameplay and persistence, then verify `/visual-lab.html` loads independently and performs no persistence, leaderboard, or gameplay-state mutation.
 
 ## Rollback
 
