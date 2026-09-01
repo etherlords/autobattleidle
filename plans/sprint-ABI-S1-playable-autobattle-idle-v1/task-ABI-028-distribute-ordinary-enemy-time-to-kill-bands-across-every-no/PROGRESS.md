@@ -4,8 +4,8 @@ id: ABI-028
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 96
-status: Ready for Manager
+revision: 98
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 96
-- Last update: Manager acceptance mapping, Vault closure, exact-SHA CI/Pages, deployed QA, and final closure receipt are complete.
+- Status: Done
+- Revision: 98
+- Last update: Close ordinary-enemy TTK distribution after all required gates and exact-SHA release checks passed.
 
 ## Execution plan
 
@@ -1651,3 +1651,40 @@ requiredGates:
   - Independent deployed QA PASS
   - Verification gate evt-3d10fce4-245d-456c-8592-5e9def36872c
   - Vault contentHash e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277 and doctor 0 findings
+
+### evt-18adcf43-36fb-476b-89ea-af48a37590d9
+
+- Timestamp: 2026-09-01T02:13:12.665Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: Manager accepts ordinary-enemy balance after exact-SHA CI, Pages, deployed QA, independent review, persistence, and Vault readback.
+- Idempotency key: abi028-manager-closure-gate-a3d59ce
+- Request fingerprint: d82f69135656add34b4f175764cd41840599e9364f20063178c3e47c82875129
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - git:a3d59ce
+  - github-actions:CI/33461605525=success
+  - github-actions:Deploy GitHub Pages/33461605492=success
+  - https://etherlords.github.io/autobattleidle/
+  - vault:AUTOBATTLEIDLE-DOC-20260827-A7FD1F#accepted-ordinary-enemy-health-calibration@e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277
+
+### evt-57366d7c-d428-4433-bd42-41e43323e7c7
+
+- Timestamp: 2026-09-01T02:13:18.963Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Close ordinary-enemy TTK distribution after all required gates and exact-SHA release checks passed.
+- Idempotency key: abi028-ready-manager-to-done-a3d59ce-v2
+- Request fingerprint: f94f16b392f62c04c6dfa38b46ebf1c9a5f66b212b833a86749115561a4be931
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - git:a3d59ce
+  - github-actions:CI/33461605525=success
+  - github-actions:Deploy GitHub Pages/33461605492=success
+  - planner-gate:manager-closure=pass

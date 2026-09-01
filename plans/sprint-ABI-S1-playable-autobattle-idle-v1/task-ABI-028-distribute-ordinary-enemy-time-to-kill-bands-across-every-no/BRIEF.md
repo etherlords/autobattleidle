@@ -4,8 +4,8 @@ id: ABI-028
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 12
-status: Ready for Manager
+revision: 13
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -29,7 +29,7 @@ Distribute ordinary-enemy time-to-kill bands across every non-boss stage
 
 - Type: bug
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
