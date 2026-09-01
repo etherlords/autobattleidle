@@ -1,0 +1,47 @@
+.visual-lab-page {
+  margin: 0;
+  background: #07121f;
+  color: #eaf4ff;
+  font: 14px system-ui;
+}
+.visual-lab-root {
+  display: grid;
+  gap: 12px;
+  justify-content: center;
+  padding: 12px;
+}
+.visual-lab-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 1080px;
+}
+.visual-lab-controls button,
+.visual-lab-controls select,
+.visual-lab-controls input {
+  min-height: 36px;
+}
+.visual-lab-controls button,
+.visual-lab-controls select {
+  max-width: 150px;
+}
+.visual-lab-canvas {
+  max-width: 100%;
+  touch-action: none;
+}
+.visual-lab-root output {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .visual-lab-root {
+    padding: 8px;
+  }
+  .visual-lab-controls > * {
+    flex: 1 1 120px;
+  }
+  .visual-lab-controls button,
+  .visual-lab-controls select {
+    max-width: none;
+  }
+}

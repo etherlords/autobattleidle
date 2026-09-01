@@ -6,6 +6,7 @@ export type {
   AutomaticPacketSchedule,
 } from "./combat/automatic-packets";
 export { COMBAT_BALANCE } from "./combat/balance";
+export { ENEMY_MODIFIERS } from "./combat/enemy-modifiers/enemy-modifier-registry";
 export { selectEnemyFamilyIdentity, stableEnemySeed } from "./combat/family-identity";
 export type {
   AttackCommand,

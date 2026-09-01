@@ -23,8 +23,14 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS — independent review found no remaining material issue after the bounded repair.
 
 ## Findings
 
-_Pending._
+- Production registries are the source of truth for families, grades, and modifiers; the lab does not keep a parallel handwritten catalogue.
+- Spawn replay constructs a real `EnemyUnit`; the effect-only spawn cue remains a separate control.
+- Reduced-motion selection reaches every production body factory without mutating the browser preference.
+- URL parsing is bounded and deterministic; serial matrix replacement returns live resources to the captured baseline and disposal is idempotent.
+- The normal production build excludes `visual-lab.html`; the explicit debug build includes it.
+
+Evidence: `evt-ad3d7ca9-2567-41bb-b9bb-4571546d5911`, focused Vitest suites, `git diff --check`, and direct review of the visual-lab, production visual, and build-boundary sources.

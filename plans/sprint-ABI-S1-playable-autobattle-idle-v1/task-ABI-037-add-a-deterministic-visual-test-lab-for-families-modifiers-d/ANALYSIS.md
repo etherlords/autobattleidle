@@ -33,6 +33,8 @@ requiredGates:
 - ABI-029 contains a concept-lab acceptance step, but that is a design workflow for new candidates. A persistent production-parity test lab is a separate tool: it must enumerate current registries and reproduce defects without becoming another renderer or content source.
 - `createBattlefield`, Unit MVC, body/decorator registries, and animation commands are reusable seams. The lab can compose them with an injected renderer/clock and a developer-only UI.
 - Persistence impact is **no schema change** and ideally no storage at all. Reproducible case state belongs in validated URL parameters or an in-memory fixture.
+- The exact production construction path is `UNIT_FACTORIES.enemy.create` -> `EnemyUnitFactory` -> `EnemyUnitBuilder.composeView` -> body/grade/modifier/seeded decorators. Unit commands cover spawn, hit, critical, and death; idle is `tick`. Armor, reward, boss, and Golden Bug presentation remain battlefield effect cues.
+- The current root entry imports the application eagerly, so a lab must use a debug-only entry selected at build time. Its module graph may import game/domain code only and must never import application, persistence, HUD, or leaderboard modules.
 
 ## Approach
 
@@ -40,6 +42,7 @@ requiredGates:
 - Add orbit and canonical view presets, pause/replay/speed/frame-step controls, and opt-in overlays for axes, sockets, bounds, object/mesh/material/texture counts, active effects, and disposal receipts.
 - Encode a bounded case ID in query parameters so review/QA can reopen exact state. Validate every value against registries and clamp numeric inputs.
 - Keep the normal game bundle/route unchanged unless the debug flag is explicitly built. Never load saves, leaderboard, network clients, or production progression.
+- Prefer one thin Three.js inspection host around production enemy units/effects. Do not broaden `Battlefield` merely to expose its private scene, and do not copy any body, decorator, material, socket, animation, or effect implementation.
 
 ## Risks
 
@@ -47,3 +50,4 @@ requiredGates:
 - A debug route accidentally shipped publicly can expand surface area or bundle size. Test both normal and debug builds and make the boundary explicit.
 - Full matrices can allocate thousands of WebGL objects. Enumerate serially, dispose each case, and assert bounded resources rather than rendering all combinations at once.
 - Screenshots alone cannot prove animations or cleanup. QA records case ID plus state, action/time, and visible/resource result.
+- Reduced-motion is sampled when a unit/effect is constructed, so changing that case input must replace the current case before replay.

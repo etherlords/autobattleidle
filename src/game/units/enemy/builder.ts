@@ -38,7 +38,7 @@ export class EnemyUnitBuilder {
   static composeView(snapshot: EnemyVisualInput): EnemyViewComposition {
     const spec = enemyVisualSpec(snapshot);
     const builder = new EnemyViewBuilder();
-    builder.add(enemyBodyFactories[spec.body](spec.profile));
+    builder.add(enemyBodyFactories[spec.body](spec.profile, snapshot.reducedMotion));
     builder.add(fitCue(decorateGrade(spec.gradeCue), spec.profile));
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
     spec.decorations.forEach((decoration, index) =>

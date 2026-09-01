@@ -4,7 +4,10 @@ import type { BodyFamily, EnemyVisualProfile } from "./spec";
 import { component, mesh, type EnemyVisualCommand, type EnemyVisualComponent } from "./components";
 import { enemyVisualAnimation, enemyVisualGeometry, enemyVisualTransforms } from "./config";
 
-export type EnemyBodyFactory = (profile?: EnemyVisualProfile) => EnemyVisualComponent;
+export type EnemyBodyFactory = (
+  profile?: EnemyVisualProfile,
+  reducedMotionOverride?: boolean,
+) => EnemyVisualComponent;
 
 const defaultProfile: EnemyVisualProfile = {
   attachment: [0.7, 0.2, 0],
@@ -134,6 +137,7 @@ const riggedBody = (
   head: THREE.Object3D,
   motion: Motion = "standard",
   deathDrop = 0.2,
+  reducedMotionOverride?: boolean,
 ): EnemyVisualComponent => {
   const pose = new THREE.Group();
   pose.name = `enemy-pose-${family}`;
@@ -173,8 +177,9 @@ const riggedBody = (
   let frames = 0;
   let phase = 0;
   const reducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+    reducedMotionOverride ??
+    (typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true);
   let captured:
     | {
         readonly position: THREE.Vector3;
@@ -301,7 +306,7 @@ const riggedBody = (
   );
 };
 
-const beetle: EnemyBodyFactory = (profile = defaultProfile) => {
+const beetle: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const body = core(
     new THREE.SphereGeometry(...enemyVisualGeometry.body.beetleCore),
     profile,
@@ -330,10 +335,18 @@ const beetle: EnemyBodyFactory = (profile = defaultProfile) => {
       return leg;
     }),
   );
-  return riggedBody("beetle", body, [shell, head, ...legs], head);
+  return riggedBody(
+    "beetle",
+    body,
+    [shell, head, ...legs],
+    head,
+    "standard",
+    0.2,
+    reducedMotionOverride,
+  );
 };
 
-const brute: EnemyBodyFactory = (profile = defaultProfile) => {
+const brute: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const body = core(new THREE.BoxGeometry(...enemyVisualGeometry.body.brute), profile, "brute");
   const head = part("enemy-part-brute-head", new THREE.BoxGeometry(0.68, 0.48, 0.52), profile);
   head.position.y = 0.64;
@@ -356,10 +369,18 @@ const brute: EnemyBodyFactory = (profile = defaultProfile) => {
     foot.position.set(side * 0.34, -0.64, 0.06);
     return foot;
   });
-  return riggedBody("brute", body, [head, ...arms, ...feet], head);
+  return riggedBody(
+    "brute",
+    body,
+    [head, ...arms, ...feet],
+    head,
+    "standard",
+    0.2,
+    reducedMotionOverride,
+  );
 };
 
-const wisp: EnemyBodyFactory = (profile = defaultProfile) => {
+const wisp: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const body = core(new THREE.OctahedronGeometry(enemyVisualGeometry.body.wisp), profile, "wisp");
   const aura = part("enemy-part-wisp-aura", new THREE.TorusGeometry(0.58, 0.045, 6, 12), profile);
   aura.rotation.x = Math.PI / 2;
@@ -376,10 +397,18 @@ const wisp: EnemyBodyFactory = (profile = defaultProfile) => {
     spark.position.set(side * 0.48, 0.18, 0.08);
     return spark;
   });
-  return riggedBody("wisp", body, [aura, tail, ...sparks], body, "wisp");
+  return riggedBody(
+    "wisp",
+    body,
+    [aura, tail, ...sparks],
+    body,
+    "wisp",
+    0.2,
+    reducedMotionOverride,
+  );
 };
 
-const mantis: EnemyBodyFactory = (profile = defaultProfile) => {
+const mantis: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const thorax = core(
     new THREE.CapsuleGeometry(...enemyVisualGeometry.body.mantisThorax),
     profile,
@@ -405,10 +434,18 @@ const mantis: EnemyBodyFactory = (profile = defaultProfile) => {
     scythe.scale.y = 0.84;
     return scythe;
   });
-  return riggedBody("mantis", thorax, [head, abdomen, ...scythes], head);
+  return riggedBody(
+    "mantis",
+    thorax,
+    [head, abdomen, ...scythes],
+    head,
+    "standard",
+    0.2,
+    reducedMotionOverride,
+  );
 };
 
-const sentinel: EnemyBodyFactory = (profile = defaultProfile) => {
+const sentinel: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const coreBody = core(
     new THREE.CylinderGeometry(...enemyVisualGeometry.body.sentinelCore),
     profile,
@@ -434,10 +471,18 @@ const sentinel: EnemyBodyFactory = (profile = defaultProfile) => {
     leg.position.set(side * 0.32, -0.58, 0);
     return leg;
   });
-  return riggedBody("sentinel", coreBody, [visor, ...pylons, ...legs], visor);
+  return riggedBody(
+    "sentinel",
+    coreBody,
+    [visor, ...pylons, ...legs],
+    visor,
+    "standard",
+    0.2,
+    reducedMotionOverride,
+  );
 };
 
-const drake: EnemyBodyFactory = (profile = defaultProfile) => {
+const drake: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const torso = core(
     new THREE.OctahedronGeometry(enemyVisualGeometry.body.drakeTorso),
     profile,
@@ -520,10 +565,14 @@ const drake: EnemyBodyFactory = (profile = defaultProfile) => {
     torso,
     [neck, head, snout, ...nativeHorns, ...wingRoots, tail],
     head,
+    "standard",
+    0.2,
+    reducedMotionOverride,
   );
   const reducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+    reducedMotionOverride ??
+    (typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true);
   const tailBases = tailSegments.map((segment) => segment.quaternion.clone());
   let phase = 0;
   return {
@@ -547,7 +596,7 @@ const drake: EnemyBodyFactory = (profile = defaultProfile) => {
   };
 };
 
-const colossus: EnemyBodyFactory = (profile = defaultProfile) => {
+const colossus: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const body = core(
     new THREE.CylinderGeometry(...enemyVisualGeometry.body.colossus),
     profile,
@@ -595,10 +644,11 @@ const colossus: EnemyBodyFactory = (profile = defaultProfile) => {
     head,
     "standard",
     0.1,
+    reducedMotionOverride,
   );
 };
 
-const hydra: EnemyBodyFactory = (profile = defaultProfile) => {
+const hydra: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) => {
   const body = core(
     new THREE.SphereGeometry(...enemyVisualGeometry.body.hydraCore),
     profile,
@@ -629,7 +679,7 @@ const hydra: EnemyBodyFactory = (profile = defaultProfile) => {
   });
   const centerHead = heads[4];
   if (centerHead === undefined) throw new Error("Hydra requires a center head");
-  return riggedBody("boss-hydra", body, heads, centerHead);
+  return riggedBody("boss-hydra", body, heads, centerHead, "standard", 0.2, reducedMotionOverride);
 };
 
 export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> = {

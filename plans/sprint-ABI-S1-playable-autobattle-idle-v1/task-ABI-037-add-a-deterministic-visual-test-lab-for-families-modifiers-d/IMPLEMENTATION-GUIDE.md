@@ -35,6 +35,15 @@ requiredGates:
 5. Run serial full-matrix construction/animation/disposal smoke tests and desktop/narrow human QA.
 6. Complete independent review/QA, Testing Strategy Vault update, `pnpm check`, and release/debug-build proof.
 
+## Ownership and proof
+
+- **Implementation owner:** debug entry/build boundary, bounded case codec/catalogue, production-object scene harness, controls/diagnostics, serial matrix test, and focused build/isolation checks.
+- **Independent Reviewer:** production registry/factory parity, no copied visuals, strict URL allocation bounds, save/network isolation, disposal, and normal-build exclusion.
+- **Independent QA:** exact case reopen; desktop/narrow layout; all camera, replay, reduced-motion, overlay, and resource controls; state -> action/time -> visible result evidence.
+- **Manager:** exact-SHA `pnpm check`, normal/debug artifact inspection, Vault testing guidance, publication, CI/Pages identity, and closure mapping.
+
+The implementation should stop at the existing seams: create enemies through `UNIT_FACTORIES.enemy`, route spawn/hit/critical/death through `EnemyUnit.dispatchEnemy`, advance idle through `tick`, and create/advance supported battlefield cues through the production effect functions. The lab owns only inspection state, camera, clock, overlays, and DOM controls.
+
 ## Verification matrix
 
 - **Unit:** exhaustive registry case generation; URL validation; deterministic selection; finite transforms/bounds; cap enforcement; idempotent disposal.

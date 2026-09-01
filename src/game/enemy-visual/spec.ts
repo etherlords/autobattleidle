@@ -12,11 +12,18 @@ export type EnemyVisualInput = {
   readonly level: number;
   readonly modifier: EnemyPresentationModifier;
   readonly goldenBug?: boolean;
+  readonly reducedMotion?: boolean;
 };
 export type PresentationModifier = EnemyPresentationModifier;
 export type BodyFamily = EnemyFamily;
 export type Decoration = "fins" | "horns" | "orbitals" | "satellites" | "scar";
 export type GradeCue = "none" | "crest" | "spikes" | "crown";
+export const ENEMY_VISUAL_GRADES = [
+  "normal",
+  "veteran",
+  "elite",
+  "boss",
+] as const satisfies readonly EnemyGrade[];
 export type ModifierCue =
   | "shield-plates"
   | "vitality-core"
@@ -226,7 +233,7 @@ const modifierCueRegistry: Readonly<
   "critical-guard": "prism-guard",
   "manual-guard": "directional-barrier",
 };
-const gradeCueRegistry: Readonly<Record<EnemyGrade, GradeCue>> = {
+export const ENEMY_VISUAL_GRADE_CUES: Readonly<Record<EnemyGrade, GradeCue>> = {
   normal: "none",
   veteran: "crest",
   elite: "spikes",
@@ -260,7 +267,7 @@ export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
   return {
     body,
     decorations: profile.decorations,
-    gradeCue: enemy.goldenBug ? "crown" : gradeCueRegistry[enemy.grade],
+    gradeCue: enemy.goldenBug ? "crown" : ENEMY_VISUAL_GRADE_CUES[enemy.grade],
     modifierCue: visualModifierCue(enemy),
     profile,
     scale: visualScaleRegistry[enemy.grade],
