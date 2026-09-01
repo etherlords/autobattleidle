@@ -63,6 +63,20 @@ class FakeElement {
   setAttribute(name: string, value: string): void {
     this.attributes.set(name, value);
   }
+
+  get dataset(): Record<string, string | undefined> {
+    const attributes = this.attributes;
+    return new Proxy(
+      {},
+      {
+        get: (_target, key: string) => attributes.get(`data-${key}`),
+        set: (_target, key: string, value: string) => {
+          attributes.set(`data-${key}`, value);
+          return true;
+        },
+      },
+    ) as Record<string, string | undefined>;
+  }
 }
 
 const dispatchListeners = (element: FakeElement, type: string, event: Event): void => {
@@ -114,7 +128,19 @@ const snapshot: BattleSnapshot = {
     modifier: null,
     name: "Ash Wisp",
   },
-  events: [{ id: 1, message: "Manual hit: 1 damage" }],
+  events: [
+    {
+      id: 1,
+      message: "Hit: 1 damage",
+      attack: {
+        kind: "hit",
+        source: "manual",
+        packets: { count: 1, units: 1 },
+        damage: 1,
+        defeated: false,
+      },
+    },
+  ],
   playerStats: {
     armorPenetration: 0.375,
     automaticAttacksPerSecond: 1,
@@ -339,6 +365,15 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
   });
+  it("keeps event log border colors tied to their combat source", () => {
+    expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');
+    expect(stylesheet).toContain(
+      '.event-log li[data-source="manual"] {\n  border-left: 3px solid #ffb35c;',
+    );
+    expect(stylesheet).toContain(
+      '.event-log li[data-source="automatic"] {\n  border-left: 3px solid #75c7ff;',
+    );
+  });
 
   it("routes canvas input once and contains upgrades in an accessible modal", () => {
     const document = new FakeDocument();
@@ -505,7 +540,13 @@ describe("createHud", () => {
     expect(restores).toBe(1);
     expect(restore.hidden).toBe(false);
     expect(element(host, "persistence-status").textContent).toBe("Restored");
-    expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
+    const logItems = element(host, "event-log").children;
+    const logItem = logItems[0];
+    if (logItem === undefined) throw new Error("Expected an event log item");
+    expect(logItem.textContent).toBe("Hit: 1 damage");
+    expect(logItem.attributes.get("data-source")).toBe("manual");
+    expect(logItem.attributes.get("data-kind")).toBe("hit");
+    expect(logItem.attributes.get("data-damage")).toBe("1");
     expect(intents).toEqual([
       { type: "attack" },
       { type: "attack" },

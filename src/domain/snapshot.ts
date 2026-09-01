@@ -12,7 +12,19 @@ import {
 import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
-export type BattleEvent = { readonly id: number; readonly message: string };
+export type BattleAttackSource = "automatic" | "manual";
+export type BattleAttackMetadata = {
+  readonly kind: "critical" | "hit";
+  readonly source: BattleAttackSource;
+  readonly packets: { readonly count: number; readonly units: number };
+  readonly damage: number;
+  readonly defeated: boolean;
+};
+export type BattleEvent = {
+  readonly id: number;
+  readonly message: string;
+  readonly attack?: BattleAttackMetadata;
+};
 export type BattleAttackVisualCue = {
   readonly kind: "armor" | "critical" | "hit";
   readonly packets: { readonly count: number; readonly units: number };

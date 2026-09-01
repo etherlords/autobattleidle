@@ -227,10 +227,16 @@ describe("BattleController", () => {
     const events: BattleControllerEvent[] = [];
     controller.subscribe((event) => events.push(event));
     expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
-    expect(events[0]?.events.at(-1)?.message).toMatch(/^Golden Bug reward: \+/);
     expect(events[0]?.events.at(-1)).toEqual({
       id: 1,
-      message: expect.any(String),
+      message: "Golden Bug reward: +1,550 coins",
+      attack: {
+        kind: "hit",
+        source: "manual",
+        packets: { count: 1, units: 1 },
+        damage: 40,
+        defeated: true,
+      },
     });
   });
   it("publishes complete synchronous commands with exact history and persistence flags", () => {
@@ -261,11 +267,11 @@ describe("BattleController", () => {
 
     expect(updates.map((event) => event.type)).toEqual(["attack", "purchase", "frame"]);
     expect(updates.map((event) => event.persistenceChanged)).toEqual([true, true, true]);
-    expect(updates.at(0)?.events.map((event) => event.message)).toEqual(["Manual kill: +1 coins"]);
+    expect(updates.at(0)?.events.map((event) => event.message)).toEqual(["Kill: +1 coins"]);
     expect(updates.at(-1)?.events.map((event) => event.message)).toEqual([
-      "Manual kill: +1 coins",
+      "Kill: +1 coins",
       "Purchased Unlock automatic attack",
-      "Automatic hit: 40 damage",
+      "Hit: 40 damage",
     ]);
     expect(updates.at(-1)?.events.map((event) => event.id)).toEqual([1, 2, 3]);
     const lastUpdate = updates.at(-1);

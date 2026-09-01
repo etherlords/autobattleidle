@@ -309,6 +309,25 @@ body {
   margin: 0.2rem 0;
 }
 
+.event-log li[data-source="manual"] {
+  border-left: 3px solid #ffb35c;
+  color: #ffd9a8;
+}
+
+.event-log li[data-source="automatic"] {
+  border-left: 3px solid #75c7ff;
+  color: #9fd8ff;
+}
+
+.event-log-source-label {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 @media (max-width: 600px) {
   .event-log {
     bottom: 4.25rem;

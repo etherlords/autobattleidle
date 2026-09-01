@@ -15,24 +15,50 @@ import {
 import { formatNumber } from "../../ui/number-format";
 import type { BattleControllerEvent, BattleUpdate } from "./contracts";
 
+export type AttackLogComposition = {
+  readonly kind: "critical" | "hit";
+  readonly packets: { readonly count: number; readonly units: number };
+  readonly baseDamage: number;
+};
+
+const formatMultiplier = (units: number): string => {
+  const bounded = Math.round(units * 100) / 100;
+  return Number.isInteger(bounded) ? String(bounded) : String(bounded).replace(/(\.\d*?)0+$/, "$1");
+};
+
 const attackMessage = (
-  source: "manual" | "automatic",
-  outcome: AttackEvent,
+  outcome: Extract<AttackEvent, { type: "hit" }>,
   goldenBugBefore = false,
-): string | undefined => {
-  if (outcome.type === "ignored") return undefined;
-  const label = source === "manual" ? "Manual" : "Automatic";
-  if (!outcome.defeated) return `${label} hit: ${formatNumber(outcome.damage).text} damage`;
+  composition?: AttackLogComposition,
+): string => {
+  if (!outcome.defeated) {
+    const damage = formatNumber(outcome.damage);
+    if (composition === undefined || composition.packets.count <= 1)
+      return `Hit: ${damage.text} damage`;
+    const units = formatMultiplier(composition.packets.units);
+    const baseText =
+      composition.baseDamage > 0 && !Number.isInteger(composition.baseDamage)
+        ? String(Math.round(composition.baseDamage * 100) / 100)
+        : formatNumber(composition.baseDamage).text;
+    return `Hit: ${baseText} × ${units} = ${damage.text} damage`;
+  }
   const reward = formatNumber(outcome.reward);
   if (goldenBugBefore)
     return `Golden Bug reward: +${reward.text} coins${reward.text === reward.exact ? "" : ` (${reward.exact})`}`;
-  return `${label} kill: +${reward.text} coins`;
+  return `Kill: +${reward.text} coins`;
 };
 
 export const battleEventMessages = {
-  attack: attackMessage,
-  frame: (outcome: AttackEvent | null, goldenBugBefore = false): string | undefined =>
-    outcome === null ? undefined : attackMessage("automatic", outcome, goldenBugBefore),
+  attack: (outcome: Extract<AttackEvent, { type: "hit" }>, goldenBugBefore = false): string =>
+    attackMessage(outcome, goldenBugBefore),
+  frame: (
+    outcome: Extract<AttackEvent, { type: "hit" }> | null,
+    goldenBugBefore = false,
+    composition?: AttackLogComposition,
+  ): string | undefined => {
+    if (outcome === null) return undefined;
+    return attackMessage(outcome, goldenBugBefore, composition);
+  },
   purchase: (id: string, reason: string | null): string =>
     reason ?? `Purchased ${UPGRADES.find((upgrade) => upgrade.id === id)?.label ?? id}`,
   reset: (): undefined => undefined,

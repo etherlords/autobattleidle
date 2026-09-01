@@ -1,8 +1,8 @@
 import { attack as resolveAttack, expireGoldenBug, purchaseUpgrade } from "../../domain/combat";
 import { COMBAT_BALANCE, resolveAutomaticPackets } from "../../domain/combat";
 import type { AttackEvent, AttackSource, CombatState, UpgradeId } from "../../domain/combat";
-import type { BattleEvent } from "../../domain/snapshot";
-import { battleEventMessages } from "./presenter";
+import type { BattleAttackMetadata, BattleEvent } from "../../domain/snapshot";
+import { battleEventMessages, type AttackLogComposition } from "./presenter";
 import type {
   BattleCommand,
   BattleCommandContext,
@@ -87,17 +87,22 @@ export class BattleController {
     this.state = result.state;
     this.syncGoldenBugDeadline();
     if (result.event.type === "ignored") return false;
-    return this.publishMessage(
-      {
-        ...this.update(true),
-        outcome: result.event,
-        goldenBugBefore,
-        previousEnemy,
-        source,
-        type: "attack",
-      },
-      battleEventMessages.attack(source, result.event, goldenBugBefore),
-    );
+    const outcome = result.event;
+    this.addEvent(battleEventMessages.attack(outcome, goldenBugBefore), {
+      kind: outcome.critical ? "critical" : "hit",
+      source,
+      packets: { count: 1, units: 1 },
+      damage: outcome.damage,
+      defeated: outcome.defeated,
+    });
+    return this.publish({
+      ...this.update(true),
+      outcome: result.event,
+      goldenBugBefore,
+      previousEnemy,
+      source,
+      type: "attack",
+    });
   }
 
   private performFrame(nowMs: number): boolean {
@@ -124,21 +129,30 @@ export class BattleController {
     const goldenBugBefore = this.state.goldenBug !== null;
     const { outcome: automaticOutcome, receipt: automaticReceipt } = this.automaticAttack();
     if (automaticOutcome.type === "ignored") return false;
-    return this.publishMessage(
-      {
-        ...this.update(true),
-        automaticOutcome,
-        automaticReceipt,
-        goldenBugBefore,
-        previousEnemy,
-        type: "frame",
-      },
-      battleEventMessages.frame(automaticOutcome, goldenBugBefore),
-    );
+    const composition: AttackLogComposition = {
+      kind: automaticOutcome.critical ? "critical" : "hit",
+      packets: automaticReceipt,
+      baseDamage: this.state.player.damage,
+    };
+    this.addEvent(battleEventMessages.frame(automaticOutcome, goldenBugBefore, composition) ?? "", {
+      kind: composition.kind,
+      source: "automatic",
+      packets: automaticReceipt,
+      damage: automaticOutcome.damage,
+      defeated: automaticOutcome.defeated,
+    });
+    return this.publish({
+      ...this.update(true),
+      automaticOutcome,
+      automaticReceipt,
+      goldenBugBefore,
+      previousEnemy,
+      type: "frame",
+    });
   }
 
   private automaticAttack(): {
-    readonly outcome: AttackEvent;
+    readonly outcome: { readonly type: "ignored" } | Extract<AttackEvent, { type: "hit" }>;
     readonly receipt: AutomaticAttackReceipt;
   } {
     const resolution = resolveAutomaticPackets(this.state, this.nowMs, (state, packet) =>
@@ -298,8 +312,12 @@ export class BattleController {
     return true;
   }
 
-  private addEvent(message: string): void {
-    this.events = [...this.events, { id: this.nextEventId, message }].slice(-EVENT_HISTORY_LIMIT);
+  private addEvent(message: string, attack?: BattleAttackMetadata): void {
+    const event: BattleEvent =
+      attack === undefined
+        ? { id: this.nextEventId, message }
+        : { id: this.nextEventId, message, attack };
+    this.events = [...this.events, event].slice(-EVENT_HISTORY_LIMIT);
     this.nextEventId += 1;
   }
 

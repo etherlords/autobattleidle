@@ -38,7 +38,7 @@ const attackEvent = (
 describe("battleEventMessages", () => {
   it("formats numeric combat logs before the event log receives them", () => {
     expect(
-      battleEventMessages.attack("manual", {
+      battleEventMessages.attack({
         armorPreventedDamage: 0,
         critical: false,
         damage: 900_000,
@@ -47,9 +47,9 @@ describe("battleEventMessages", () => {
         reward: 0,
         type: "hit",
       }),
-    ).toBe("Manual hit: 900K damage");
+    ).toBe("Hit: 900K damage");
     expect(
-      battleEventMessages.attack("automatic", {
+      battleEventMessages.attack({
         armorPreventedDamage: 0,
         critical: false,
         damage: 0,
@@ -58,10 +58,9 @@ describe("battleEventMessages", () => {
         reward: 1_000_000,
         type: "hit",
       }),
-    ).toBe("Automatic kill: +1M coins");
+    ).toBe("Kill: +1M coins");
     expect(
-      battleEventMessages.attack(
-        "manual",
+      battleEventMessages.frame(
         {
           armorPreventedDamage: 0,
           critical: false,
@@ -74,6 +73,39 @@ describe("battleEventMessages", () => {
         true,
       ),
     ).toBe("Golden Bug reward: +123K coins (123,456)");
+  });
+
+  it("explains grouped automatic packet math without float noise", () => {
+    const outcome = {
+      armorPreventedDamage: 0,
+      critical: false,
+      damage: 62,
+      defeated: false,
+      penetration: 0,
+      reward: 0,
+      type: "hit" as const,
+    };
+    expect(
+      battleEventMessages.frame(outcome, false, {
+        kind: "hit",
+        packets: { count: 4, units: 3.4 },
+        baseDamage: 18,
+      }),
+    ).toBe("Hit: 18 × 3.4 = 62 damage");
+    expect(
+      battleEventMessages.frame(outcome, false, {
+        kind: "hit",
+        packets: { count: 4, units: 4 },
+        baseDamage: 15.5,
+      }),
+    ).toBe("Hit: 15.5 × 4 = 62 damage");
+    expect(
+      battleEventMessages.frame(outcome, false, {
+        kind: "hit",
+        packets: { count: 1, units: 1 },
+        baseDamage: 62,
+      }),
+    ).toBe("Hit: 62 damage");
   });
 
   it("maps one immutable combat event to exact presentation-only visual cues", () => {
