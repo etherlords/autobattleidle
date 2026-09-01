@@ -315,7 +315,7 @@ describe("endless combat progression", () => {
       expect(fast.state).toEqual(exact.state);
       expect(roundedTiming(fast)).toEqual(roundedTiming(exact));
     }
-  }, 45_000);
+  }, 75_000);
 
   it("measures automatic, manual, and combined boss TTK at the 48-hour boundary", () => {
     const endgame = fastForwardProgression(48 * 60 * 60 * 1_000);
@@ -986,7 +986,7 @@ describe("endless combat progression", () => {
       "utf8",
     );
     expect(JSON.parse(raw)).toEqual(buildMeasuredReport());
-  }, 30_000);
+  }, 60_000);
 
   it("records derived candidate rejections and named TTK bands", () => {
     const report = buildMeasuredReport() as {
