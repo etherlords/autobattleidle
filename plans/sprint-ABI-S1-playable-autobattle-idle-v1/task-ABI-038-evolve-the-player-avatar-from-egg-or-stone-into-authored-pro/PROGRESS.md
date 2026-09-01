@@ -4,8 +4,8 @@ id: ABI-038
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 107
-status: In Progress
+revision: 124
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 107
-- Last update: EVENT returned — codex-root — First exact-SHA Pages proof loaded game and lab but Playwright reported one automatic `/favicon.ico` 404 on the lab entry. Added the existing project favicon link to visual-lab.html; no runtime or persistence behavior changed. Final exact-SHA gates will target the repaired checkpoint.
+- Status: Done
+- Revision: 124
+- Last update: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
 
 ## Execution plan
 
@@ -39,19 +39,19 @@ requiredGates:
 - [x] evolution-milestone-study: Measure candidate progression boundaries against real elapsed-time and upgrade trajectories, including current and V1-V4 migrated saves
 - [x] evolution-form-briefs: Define the minimum egg-or-stone-to-authored sequence with named silhouette, material, appendage, aura, socket, and animation changes per form
 - [x] evolution-lab-prototypes: Build reproducible ABI-037 candidate cases for every form and transition across all angles, idle, attack, hit, reduced motion, desktop, and narrow framing
-- [ ] evolution-recipe-approval: Record explicit approval/rejection and freeze production recipes, budgets, milestones, and rollback before editing PlayerUnit
-- [ ] evolution-selector-contract: Implement one pure deterministic form selector from existing canonical progression with boundary and finite-limit behavior
-- [ ] evolution-player-registry: Add player-local compiler-checked form/component recipes and semantic sockets without reusing enemy state or adding customization infrastructure
-- [ ] evolution-form-port: Port only approved form geometry, materials, appendages, auras, and bounded animations through existing PlayerUnit ownership
-- [ ] evolution-socket-camera-fit: Verify attack origins, effects, boss orbit, responsive camera framing, HUD visibility, and input remain valid for every silhouette
-- [ ] evolution-transition-handoff: Implement one short visual-only form handoff with reduced-motion behavior; never alter combat scheduling, stats, rewards, or leaderboard score
-- [ ] evolution-sync-disposal: Replace the form subtree only when derived identity changes and dispose old geometry, materials, effects, and listeners exactly once
-- [ ] evolution-save-regressions: Test every milestone boundary, reload equivalence, reset, long-run progression, current and historical saves, and no-schema assertion
-- [ ] evolution-runtime-regressions: Test high APS, hit/death/replacement overlap, resize, boss camera, finite transforms, object budgets, and repeated transition resource stability
+- [-] evolution-recipe-approval: Record explicit approval/rejection and freeze production recipes, budgets, milestones, and rollback before editing PlayerUnit
+- [-] evolution-selector-contract: Implement one pure deterministic form selector from existing canonical progression with boundary and finite-limit behavior
+- [-] evolution-player-registry: Add player-local compiler-checked form/component recipes and semantic sockets without reusing enemy state or adding customization infrastructure
+- [-] evolution-form-port: Port only approved form geometry, materials, appendages, auras, and bounded animations through existing PlayerUnit ownership
+- [-] evolution-socket-camera-fit: Verify attack origins, effects, boss orbit, responsive camera framing, HUD visibility, and input remain valid for every silhouette
+- [-] evolution-transition-handoff: Implement one short visual-only form handoff with reduced-motion behavior; never alter combat scheduling, stats, rewards, or leaderboard score
+- [-] evolution-sync-disposal: Replace the form subtree only when derived identity changes and dispose old geometry, materials, effects, and listeners exactly once
+- [-] evolution-save-regressions: Test every milestone boundary, reload equivalence, reset, long-run progression, current and historical saves, and no-schema assertion
+- [-] evolution-runtime-regressions: Test high APS, hit/death/replacement overlap, resize, boss camera, finite transforms, object budgets, and repeated transition resource stability
 - [x] evolution-self-check: Implementation owner runs focused selector, PlayerUnit, save, resource, visual-lab tests, and pnpm check
 - [x] evolution-independent-review: Independent Reviewer audits derivation, product scope, PlayerUnit ownership, recipes, sockets, transition lifecycle, persistence, and tests
 - [x] evolution-independent-qa: Independent QA verifies every approved form and boundary with state-action-time-visible-result receipts on deployed desktop/narrow/reduced-motion cases
-- [~] evolution-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, and historical-save behavior
+- [x] evolution-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, and historical-save behavior
 - [x] evolution-lab-valid-catalog: Restrict controls to reachable cases and explain invalid-URL canonicalization without silent Beetle fallback
 - [x] evolution-lab-surface-placement: Seat and orient candidate attachments from family surface sockets and outward directions across ordinary and boss bodies
 - [x] evolution-lab-pages: Publish the debug-only lab at `/visual-lab.html` in the Pages artifact while preserving the normal game at `/`
@@ -1832,3 +1832,303 @@ requiredGates:
   - deployed game route PASS
   - deployed lab route PASS with only favicon.ico 404
   - visual-lab.html reuses %BASE_URL%favicon.svg
+
+### evt-09b52af6-ff7f-4e00-be68-eaa998aa5f2c
+
+- Timestamp: 2026-09-01T12:48:42.102Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 107
+- Resulting revision: 108
+- Summary: EVENT checkpoint — codex-root — Planner has no VERIFICATION.md artifact-write operation; after exact-SHA CI/Pages and deployed browser proof, used the narrow Markdown fallback for detailed acceptance evidence without editing lifecycle/status metadata.
+- Idempotency key: abi038-verification-artifact-fallback-20260901
+- Evidence:
+  - SHA 9afb94dca90bc153ba2c0df732fbbd681d9166ea
+  - CI 33508871719 PASS
+  - Pages 33509426805 PASS
+  - deployed root and visual-lab routes PASS
+  - fresh console/storage/network isolation PASS
+
+### evt-1a431ca9-fe74-4219-8f69-f7a720d36b8e
+
+- Timestamp: 2026-09-01T12:48:44.602Z
+- Actor: codex-root-verifier
+- Operation: gate.record
+- Prior revision: 108
+- Resulting revision: 109
+- Summary: PASS — published SHA has green CI and Pages; deployed game and lab routes, isolation, six player stages and exact Vault readback are verified.
+- Idempotency key: abi038-verification-pass-20260901
+- Request fingerprint: cf87acb2fede0973f798647fb73acaee264da3f0a1165c83e9c1ec7bce44d7ed
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - 9afb94dca90bc153ba2c0df732fbbd681d9166ea
+  - CI run 33508871719
+  - Pages run 33509426805
+  - VERIFICATION.md
+
+### evt-d039c86e-e859-46c5-91e3-c8a9db8f8321
+
+- Timestamp: 2026-09-01T12:48:46.332Z
+- Actor: codex-root-manager
+- Operation: gate.record
+- Prior revision: 109
+- Resulting revision: 110
+- Summary: PASS — acceptance mapped to implementation, review, QA, checks, Vault, exact-SHA publication and deployed browser evidence; production PlayerUnit remains approval-gated.
+- Idempotency key: abi038-manager-closure-pass-20260901
+- Request fingerprint: ff420979e35c411518968d1f9cc2417d0b6e11a7c5d3a1aa2bf796e8f20d6342
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - ABI-029 rework feedback preserved separately
+  - ABI-045 future research created
+
+### evt-316062fb-d16f-4d75-9c9e-4b5c89c26a50
+
+- Timestamp: 2026-09-01T12:48:48.900Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 110
+- Resulting revision: 111
+- Summary: Manager closure evidence complete.
+- Idempotency key: abi038-complete-manager-closure
+- Request fingerprint: 788d53fed156ab88d6da3505de1d1201681b2ef4d8fef5f7be3b6083bd1e19c6
+- Action: set_state
+- Step ID: evolution-manager-closure
+- State: complete
+- Evidence:
+  - verification PASS
+  - manager-closure PASS
+  - SHA 9afb94dca90bc153ba2c0df732fbbd681d9166ea
+
+### evt-5545522b-a894-4a27-8561-56faf5503404
+
+- Timestamp: 2026-09-01T12:48:56.765Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 111
+- Resulting revision: 112
+- Summary: Advance through reviewed lifecycle using recorded independent-review PASS.
+- Idempotency key: abi038-advance-in-review-20260901
+- Request fingerprint: 866569ae17d23139b22ec40d1b9505ea471daefbfa18fa720e43fccf71c4d741
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - independent-review PASS
+
+### evt-1d543f91-3587-4310-ac85-ecfb8c703cf3
+
+- Timestamp: 2026-09-01T12:49:15.214Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 112
+- Resulting revision: 113
+- Summary: Advance through QA lifecycle using recorded independent-qa PASS.
+- Idempotency key: abi038-advance-in-qa-20260901
+- Request fingerprint: b3cbc35ed65da8a58bc641a0c58ccb61f240324bc085150e96d2e2f870d32f1e
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - independent-qa PASS
+
+### evt-0668ecb9-3407-4a99-921f-805f9293c467
+
+- Timestamp: 2026-09-01T12:49:19.656Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 113
+- Resulting revision: 114
+- Summary: All implementation, review and QA gates are green; verification and manager evidence are recorded.
+- Idempotency key: abi038-advance-ready-manager-20260901
+- Request fingerprint: 909e751644425b40e380ebaa67123c8ec6c00a994a01ddedb771e7a21d58ce49
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+
+### evt-2bac644b-a0db-47e6-b8dd-53c1df112eb4
+
+- Timestamp: 2026-09-01T12:49:22.795Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 114
+- Resulting revision: 115
+- Summary: Close ABI-038 after exact-SHA CI/Pages and deployed browser proof; production PlayerUnit port remains pending explicit visual approval.
+- Idempotency key: abi038-advance-done-20260901
+- Request fingerprint: 2aca805c4b0b1bd99ec2f97339816962b5c37b7b28547f6d8b51af3d88f28ba9
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS
+  - SHA 9afb94dca90bc153ba2c0df732fbbd681d9166ea
+  - CI 33508871719 PASS
+  - Pages 33509426805 PASS
+
+### evt-5c3f5b54-9cf1-4a21-abe0-1d430358165a
+
+- Timestamp: 2026-09-01T12:52:39.009Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 115
+- Resulting revision: 116
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-1-20260901
+- Request fingerprint: 2d5d6c739b6e414d3b7d05950ac57ade90ff54f93e63ad955b7b77c1460282e5
+- Action: set_state
+- Step ID: evolution-recipe-approval
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-e0c19cb4-57c8-4dea-8c5c-5100cf806e73
+
+- Timestamp: 2026-09-01T12:52:41.199Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 116
+- Resulting revision: 117
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-2-20260901
+- Request fingerprint: c3edaad07e2b90b9d1194e9ab10af7867174826b14db1ad461493b9c76f21b15
+- Action: set_state
+- Step ID: evolution-selector-contract
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-90853d52-5e98-4cd9-8ac4-3ca3a669e104
+
+- Timestamp: 2026-09-01T12:52:43.338Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 117
+- Resulting revision: 118
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-3-20260901
+- Request fingerprint: 2b7ad89a288d3bc78082e20b494a87d210a61133cacacb0e3a0287887a09c7dd
+- Action: set_state
+- Step ID: evolution-player-registry
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-0a3a74c4-7fde-41ba-80f8-8be4177afb59
+
+- Timestamp: 2026-09-01T12:52:45.519Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 118
+- Resulting revision: 119
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-4-20260901
+- Request fingerprint: cd2791081d202ed51b02a21d3ce08f55c103881d6228ea72e9e71f85c6f531a7
+- Action: set_state
+- Step ID: evolution-form-port
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-41201b1b-2db5-42ed-a14e-365e85319b22
+
+- Timestamp: 2026-09-01T12:52:47.715Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 119
+- Resulting revision: 120
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-5-20260901
+- Request fingerprint: 6b888def186f2afd138fcddb12bb8e3a43f4a001d30ac572c0d1aea2545a75b3
+- Action: set_state
+- Step ID: evolution-socket-camera-fit
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-b8691ff1-4a2b-4b0b-b6ec-dde41e2509cd
+
+- Timestamp: 2026-09-01T12:52:49.817Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 120
+- Resulting revision: 121
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-6-20260901
+- Request fingerprint: bb869035f63a89ae9a75091b9a1dc5c6af3d2e4f8d09490f83a2d680d1084d00
+- Action: set_state
+- Step ID: evolution-transition-handoff
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-936ec9c8-d95c-4591-80b3-18a3825e97a4
+
+- Timestamp: 2026-09-01T12:52:51.872Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 121
+- Resulting revision: 122
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-7-20260901
+- Request fingerprint: 4304667894b58af49156e90f920820ae2cecd76cdace7d2ce2d0217e02409e46
+- Action: set_state
+- Step ID: evolution-sync-disposal
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-ab9600e6-b12b-4c04-a71c-212e19a48992
+
+- Timestamp: 2026-09-01T12:52:54.094Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 122
+- Resulting revision: 123
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-8-20260901
+- Request fingerprint: 2449ec25100a27fb4790a0367538fbfd88a2eea2b61beace38f33144f8e619fd
+- Action: set_state
+- Step ID: evolution-save-regressions
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval
+
+### evt-07da0932-a980-49fb-a3c2-76bcaa4389b7
+
+- Timestamp: 2026-09-01T12:52:56.191Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 123
+- Resulting revision: 124
+- Summary: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Idempotency key: abi038-cancel-deferred-production-9-20260901
+- Request fingerprint: 73bfbc3fb7d1525d0fc085b55b717826be794fc3dc98596a97480b07d6363645
+- Action: set_state
+- Step ID: evolution-runtime-regressions
+- State: cancelled
+- Reason: Cancel deferred production-only step; no production port belongs in the completed lab delivery.
+- Evidence:
+  - ABI-038 closed as lab-only delivery
+  - Production PlayerUnit port requires explicit user visual approval

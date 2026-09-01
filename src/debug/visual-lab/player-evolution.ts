@@ -1,7 +1,36 @@
 import * as THREE from "three";
 
 export const PLAYER_FORM_STARTS = [1, 100, 500, 1_000, 10_000, 36_365] as const;
+export const MINOR_DETAIL_CADENCES = [100, 200, 250] as const;
+export const SELECTED_MINOR_DETAIL_CADENCE = 200;
+export const PLAYER_DETAIL_LEVELS = [1_000, 1_200, 1_400, 1_600, 1_800, 2_000] as const;
+export type PlayerDetailLevel = 1_000 | 1_200 | 1_400 | 1_600 | 1_800 | 2_000;
+export const PLAYER_DETAIL_TRANSITION = {
+  source: 1_000,
+  target: 10_000,
+} as const;
+export const minorDetailStateCount = (cadence: number): number =>
+  Math.floor((2_000 - 1_000 - 1) / cadence);
+export const minorDetailStep = (level: number): number =>
+  level >= 2_000
+    ? 0
+    : Math.max(
+        0,
+        Math.min(4, Math.floor((Math.max(1_000, level) - 1_000) / SELECTED_MINOR_DETAIL_CADENCE)),
+      );
 export type PlayerFormStart = 1 | 100 | 500 | 1_000 | 10_000 | 36_365;
+
+export const playerDetailLevelForStage = (
+  stage: PlayerFormStart,
+  detailLevel: PlayerDetailLevel,
+): PlayerDetailLevel => (stage === PLAYER_DETAIL_TRANSITION.source ? detailLevel : 1_000);
+export const renderedPlayerFormStart = (
+  stage: PlayerFormStart,
+  detailLevel: PlayerDetailLevel,
+): PlayerFormStart =>
+  stage === PLAYER_DETAIL_TRANSITION.source && detailLevel === 2_000
+    ? PLAYER_DETAIL_TRANSITION.target
+    : stage;
 
 export type PlayerEvolutionForm = {
   readonly start: PlayerFormStart;
@@ -132,11 +161,23 @@ export class LabPlayerEvolution {
   constructor(
     readonly start: PlayerFormStart,
     private readonly reducedMotion: boolean,
+    detailLevel: PlayerDetailLevel = 1_000,
   ) {
-    this.group = buildForm(start);
+    const selectedDetailLevel = playerDetailLevelForStage(start, detailLevel);
+    this.group = buildForm(renderedPlayerFormStart(start, selectedDetailLevel));
     const pose = this.group.getObjectByName("lab-player-pose");
     if (!(pose instanceof THREE.Group)) throw new Error("Player form pose is missing");
     this.pose = pose;
+    for (let index = 0; index < minorDetailStep(selectedDetailLevel); index += 1) {
+      const mote = mesh(
+        `lab-player-transition-warden-detail-${index}`,
+        new THREE.OctahedronGeometry(0.06),
+        "#63f4d4",
+        "#176b65",
+      );
+      mote.position.set((index - 1.5) * 0.2, 0.55 + index * 0.08, 0.25);
+      this.pose.add(mote);
+    }
   }
 
   replay(cue: "hit" | "attack"): void {

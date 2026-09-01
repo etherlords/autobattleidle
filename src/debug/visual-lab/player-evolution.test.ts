@@ -2,9 +2,40 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 
 import { observeResourceDisposal, resourceCounts } from "./resource-ledger";
-import { LabPlayerEvolution, PLAYER_EVOLUTION_FORMS, PLAYER_FORM_STARTS } from "./player-evolution";
+import {
+  LabPlayerEvolution,
+  MINOR_DETAIL_CADENCES,
+  minorDetailStateCount,
+  minorDetailStep,
+  PLAYER_EVOLUTION_FORMS,
+  PLAYER_DETAIL_TRANSITION,
+  PLAYER_FORM_STARTS,
+} from "./player-evolution";
 
 describe("player evolution lab prototypes", () => {
+  it("selects bounded 200-level minor details across one 1000-level transition", () => {
+    expect(MINOR_DETAIL_CADENCES).toEqual([100, 200, 250]);
+    expect(MINOR_DETAIL_CADENCES.map((cadence) => minorDetailStateCount(cadence))).toEqual([
+      9, 4, 3,
+    ]);
+    expect(
+      [1_000, 1_200, 1_400, 1_600, 1_800, 2_000].map((level) => minorDetailStep(level)),
+    ).toEqual([0, 1, 2, 3, 4, 0]);
+    expect(minorDetailStep(1_999)).toBe(4);
+    const player = new LabPlayerEvolution(1_000, false, 1_800);
+    const receipt = observeResourceDisposal(player.group);
+    expect(player.group.getObjectByName("lab-player-transition-warden-detail-3")).toBeDefined();
+    expect(player.group.getObjectByName("lab-player-transition-warden-detail-4")).toBeUndefined();
+    player.dispose();
+    expect(receipt()).toMatchObject({ disposed: receipt().expectedDisposals });
+    const endpoint = new LabPlayerEvolution(1_000, false, 2_000);
+    const endpointReceipt = observeResourceDisposal(endpoint.group);
+    expect(endpoint.group.name).toBe(`lab-player-form-${PLAYER_DETAIL_TRANSITION.target}`);
+    expect(endpoint.group.getObjectByName("lab-player-warden")).toBeDefined();
+    expect(endpoint.group.getObjectByName("lab-player-transition-warden-detail-0")).toBeUndefined();
+    endpoint.dispose();
+    expect(endpointReceipt()).toMatchObject({ disposed: endpointReceipt().expectedDisposals });
+  });
   it("keeps every named progression form reachable, distinct, finite, socketed, and disposable", () => {
     expect(PLAYER_EVOLUTION_FORMS.map((form) => form.start)).toEqual(PLAYER_FORM_STARTS);
     const baseline = new THREE.Group();

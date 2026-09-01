@@ -111,6 +111,16 @@ describe("visual lab cases", () => {
       playerStage: 36_365,
     });
     expect(parseLabCase("?subject=player&stage=2")).toMatchObject({ playerStage: 1 });
+    expect(parseLabCase("?subject=player&stage=1000&detail=1600")).toMatchObject({
+      playerDetailLevel: 1_600,
+    });
+    expect(parseLabCase("?subject=player&stage=1000&detail=1700")).toMatchObject({
+      playerDetailLevel: 1_000,
+    });
+    expect(parseLabCase("?subject=player&stage=500&detail=2000")).toMatchObject({
+      playerStage: 500,
+      playerDetailLevel: 1_000,
+    });
     expect(LAB_RECIPES).toEqual([
       "production",
       "socket-probe",

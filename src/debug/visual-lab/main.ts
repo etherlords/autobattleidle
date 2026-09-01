@@ -23,7 +23,13 @@ import { parseLabCase, serializeLabCase, type LabView, type LabViewport } from "
 import { attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
 import {
   LabPlayerEvolution,
+  PLAYER_DETAIL_LEVELS,
+  PLAYER_DETAIL_TRANSITION,
   PLAYER_EVOLUTION_FORMS,
+  minorDetailStep,
+  playerDetailLevelForStage,
+  SELECTED_MINOR_DETAIL_CADENCE,
+  type PlayerDetailLevel,
   type PlayerFormStart,
 } from "./player-evolution";
 import {
@@ -156,6 +162,16 @@ class VisualLab {
         value: String(form.start),
       })),
     );
+    const playerDetailLevel = select(
+      `Runeblade → Aether details (${SELECTED_MINOR_DETAIL_CADENCE}-level cadence)`,
+      PLAYER_DETAIL_LEVELS.map((level) => ({
+        label:
+          level === 2_000
+            ? "2000 — next major form"
+            : `${level} — detail step ${minorDetailStep(level)}`,
+        value: String(level),
+      })),
+    );
     const golden = checkbox("Golden Bug");
     const motion = checkbox("Reduced motion");
     const overlays = ["axes", "sockets", "bounds"] as const;
@@ -184,7 +200,13 @@ class VisualLab {
         recipe: recipe.value as LabRecipe,
         subject: subject.value as "enemy" | "player",
         playerStage: Number(playerStage.value) as PlayerFormStart,
+        playerDetailLevel: playerDetailLevelForStage(
+          Number(playerStage.value) as PlayerFormStart,
+          Number(playerDetailLevel.value) as PlayerDetailLevel,
+        ),
       };
+      playerDetailLevel.value = String(this.current.playerDetailLevel);
+      playerDetailLevel.disabled = this.current.playerStage !== PLAYER_DETAIL_TRANSITION.source;
       history.replaceState(null, "", serializeLabCase(this.current));
       this.replace();
       this.resize();
@@ -259,6 +281,8 @@ class VisualLab {
     recipe.value = this.current.recipe;
     subject.value = this.current.subject;
     playerStage.value = String(this.current.playerStage);
+    playerDetailLevel.value = String(this.current.playerDetailLevel);
+    playerDetailLevel.disabled = this.current.playerStage !== PLAYER_DETAIL_TRANSITION.source;
     golden.checked = this.current.goldenBug;
     motion.checked = this.current.reducedMotion;
     selectReachable(this.current);
@@ -282,7 +306,7 @@ class VisualLab {
       apply();
     });
     variant.addEventListener("change", () => apply());
-    [view, viewport, recipe, subject, playerStage].forEach((control) =>
+    [view, viewport, recipe, subject, playerStage, playerDetailLevel].forEach((control) =>
       control.addEventListener("change", apply),
     );
     golden.addEventListener("change", () => {
@@ -343,6 +367,7 @@ class VisualLab {
       recipe,
       subject,
       playerStage,
+      playerDetailLevel,
       cue,
       replay,
       pause,
@@ -358,7 +383,11 @@ class VisualLab {
     this.clearEffects();
     this.disposeUnit();
     if (this.current.subject === "player") {
-      this.unit = new LabPlayerEvolution(this.current.playerStage, this.current.reducedMotion);
+      this.unit = new LabPlayerEvolution(
+        this.current.playerStage,
+        this.current.reducedMotion,
+        this.current.playerDetailLevel,
+      );
       this.scene.add(this.unit.group);
     } else {
       this.unit = UNIT_FACTORIES.enemy.create({
@@ -522,7 +551,12 @@ class VisualLab {
     const live = resourceSnapshot(this.scene, this.renderer.info);
     const last =
       this.lastReceipt === undefined ? "" : ` | last disposal ${resourceReceipt(this.lastReceipt)}`;
-    this.receipt.textContent = `case ${serializeLabCase(this.current)} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
+    const playerDetail =
+      this.current.subject === "player" &&
+      this.current.playerStage === PLAYER_DETAIL_TRANSITION.source
+        ? ` | Runeblade 1000 → Aether Warden 10000: detail ${this.current.playerDetailLevel}, step ${minorDetailStep(this.current.playerDetailLevel)}/4 at ${SELECTED_MINOR_DETAIL_CADENCE}-level cadence`
+        : "";
+    this.receipt.textContent = `case ${serializeLabCase(this.current)}${playerDetail} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
     this.correction.textContent =
       this.current.correction === undefined
         ? ""

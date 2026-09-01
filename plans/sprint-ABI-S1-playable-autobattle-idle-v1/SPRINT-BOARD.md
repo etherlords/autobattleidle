@@ -4,7 +4,7 @@ id: ABI-S1
 artifact: sprint-board
 project: ABI
 profile: high-assurance
-revision: 550
+revision: 566
 status: Active
 sourceRevisions:
   ABI-001: 12
@@ -46,26 +46,28 @@ sourceRevisions:
   ABI-035: 9
   ABI-036: 1
   ABI-037: 6
-  ABI-038: 1
+  ABI-038: 8
   ABI-039: 1
   ABI-040: 6
   ABI-041: 16
   ABI-042: 6
   ABI-043: 20
   ABI-044: 9
+  ABI-045: 4
 ---
 
 # ABI-S1 board
 
 | Task | Status | Dependencies | Priority |
 | --- | --- | --- | --- |
+| ABI-045 | In Progress | ABI-038 | low |
 | ABI-044 | Done | ABI-018, ABI-028 | high |
 | ABI-043 | Done | ABI-020, ABI-028, ABI-040 | high |
 | ABI-042 | Done | ABI-017, ABI-018 | normal |
 | ABI-041 | Done | ABI-040 | critical |
 | ABI-040 | Done | ABI-013, ABI-020 | critical |
 | ABI-039 | Blocked | ABI-006, ABI-020, ABI-026, ABI-029 | high |
-| ABI-038 | Blocked | ABI-020, ABI-023, ABI-026, ABI-037 | normal |
+| ABI-038 | Done | ABI-020, ABI-023, ABI-026, ABI-037 | normal |
 | ABI-037 | Done | ABI-023, ABI-026, ABI-031 | normal |
 | ABI-036 | Blocked | ABI-023, ABI-026, ABI-029 | normal |
 | ABI-035 | Done | ABI-018, ABI-020, ABI-023, ABI-031 | high |

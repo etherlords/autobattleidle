@@ -4,8 +4,8 @@ id: ABI-038
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In Progress
+revision: 8
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -30,7 +30,7 @@ Evolve the player avatar from egg or stone into authored progression forms
 
 - Type: task
 - Priority: normal
-- Status: In Progress
+- Status: Done
 
 ## Acceptance criteria
 
