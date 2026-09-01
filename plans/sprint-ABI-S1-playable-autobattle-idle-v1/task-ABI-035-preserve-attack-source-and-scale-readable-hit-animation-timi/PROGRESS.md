@@ -4,8 +4,8 @@ id: ABI-035
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 69
-status: In QA
+revision: 77
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 69
-- Last update: Prepare isolated production-codec low, mid, and 10-plus APS browser fixtures for deployed QA.
+- Status: Ready for Manager
+- Revision: 77
+- Last update: Publish QA and verification evidence, then complete terminal Manager closure.
 
 ## Execution plan
 
@@ -44,11 +44,11 @@ requiredGates:
 - [x] attack-effect-integration: Drive existing animation/effect owners from the timing policy without adding RAF loops, domain timers, saved presentation state, or unbounded overlap
 - [x] attack-lethal-lifecycle: Preserve hit-pause-death sequencing, critical/armor identity, replacement, reset, reduced motion, camera behavior, and exact one-time disposal
 - [x] attack-contract-regressions: Add source, packet, cue exhaustiveness, finite timing, low-mid-high APS, critical, armor, lethal, reset, replacement, and disposal tests
-- [~] attack-browser-fixtures: Add deterministic manual, low-APS, mid-APS, and 10-plus-APS browser cases with frame/state-action-time-visible-result receipts
+- [x] attack-browser-fixtures: Add deterministic manual, low-APS, mid-APS, and 10-plus-APS browser cases with frame/state-action-time-visible-result receipts
 - [x] attack-self-check: Implementation owner runs focused tests, unchanged combat/save byte checks, resource checks, and pnpm check
 - [x] attack-independent-review: Independent Reviewer audits all producers/consumers, ABI-020 packet reuse, timing math, sequencing, disposal, and regression completeness
-- [ ] attack-independent-qa: Independent QA verifies source distinction, readable timing, bounded high-APS visuals, lethal order, reduced motion, desktop/narrow, and clean resources
-- [ ] attack-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and deployed Pages behavior
+- [x] attack-independent-qa: Independent QA verifies source distinction, readable timing, bounded high-APS visuals, lethal order, reduced motion, desktop/narrow, and clean resources
+- [~] attack-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and deployed Pages behavior
 - [x] attack-review-repair-v1: Implementation owner normalizes slash phase to each bounded cue lifetime and proves endpoint completion
 - [x] attack-independent-review-v2: Fresh independent reviewer verifies the trajectory repair and complete ABI-035 contract
 
@@ -1204,3 +1204,162 @@ requiredGates:
   - task-status:In QA
   - review:APPROVE
   - Vault Combat Loop contentHash 26d3747707197c1b89a3066f69c307a8134628537f3ea5ef492e5032adc52106
+
+### evt-4dd7df92-99b5-47f2-8338-d7a4ef95fa88
+
+- Timestamp: 2026-09-01T03:43:13.741Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 69
+- Resulting revision: 70
+- Summary: Isolated production-codec fixtures cover deployed manual, automatic, low/mid/high APS, persistence, desktop, and narrow scenarios.
+- Idempotency key: abi035-complete-browser-fixtures-20260901
+- Request fingerprint: b889327b6c6b7a899cfae6f078d9e560fe06d41346baf77ae9de5567fac4757a
+- Action: set_state
+- Step ID: attack-browser-fixtures
+- State: complete
+- Evidence:
+  - production-codec V3 fixture
+  - desktop 1440x900
+  - narrow 390x844
+  - output/playwright/abi035-desktop.png
+  - output/playwright/abi035-mobile.png
+
+### evt-36e6a6eb-931a-4971-a076-54ff3a85c56e
+
+- Timestamp: 2026-09-01T03:43:14.937Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 70
+- Resulting revision: 71
+- Summary: Begin independent deployed QA against the exact published candidate.
+- Idempotency key: abi035-start-independent-qa-20260901
+- Request fingerprint: 490387913828a321237a4c3c1ac3edba926f046c5371a4020089288b980cc7d9
+- Action: set_state
+- Step ID: attack-independent-qa
+- State: in_progress
+- Evidence:
+  - candidate 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+
+### evt-e09bc68c-b468-4973-b9fd-0233207bfb63
+
+- Timestamp: 2026-09-01T03:43:15.992Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: EVENT qa-pass — abi035-independent-qa-v1 — Recorded narrow QA.md and VERIFICATION.md fallbacks after exact-SHA deployed QA passed desktop, narrow, APS timing, persistence, and health acceptance.
+- Idempotency key: abi035-qa-verification-markdown-fallback-20260901
+- Evidence:
+  - QA.md
+  - VERIFICATION.md
+  - candidate 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+  - output/playwright/abi035-desktop.png
+  - output/playwright/abi035-mobile.png
+
+### evt-2fe165eb-5608-4f78-b7b4-029acfd81dc7
+
+- Timestamp: 2026-09-01T03:43:27.322Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: Independent exact-SHA deployed QA passed all ABI-035 acceptance scenarios.
+- Idempotency key: abi035-complete-independent-qa-20260901
+- Request fingerprint: 3d4b938a4abb421a23d12123ebf28166b270abd2645ff018cf70fc02373a3d93
+- Action: set_state
+- Step ID: attack-independent-qa
+- State: complete
+- Evidence:
+  - QA.md
+  - candidate 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+  - desktop and narrow artifacts
+
+### evt-9c69b27b-6864-4ca6-b498-75a29694cdc0
+
+- Timestamp: 2026-09-01T03:43:28.346Z
+- Actor: abi035_independent_qa_v1
+- Operation: gate.record
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: Independent deployed QA passes source distinction, low/mid/high APS timing, persistence, desktop/narrow, and console/network health.
+- Idempotency key: abi035-independent-qa-pass-20260901
+- Request fingerprint: e46e02778b11f00f02f910e815f803ea5b375705b9446410d914e9960882ccb0
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md
+  - 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+  - output/playwright/abi035-desktop.png
+  - output/playwright/abi035-mobile.png
+  - pnpm check 187/187
+
+### evt-985b3184-9e52-469d-a4e4-23392c8835fe
+
+- Timestamp: 2026-09-01T03:43:43.111Z
+- Actor: root-manager-verification
+- Operation: gate.record
+- Prior revision: 74
+- Resulting revision: 75
+- Summary: Acceptance maps to the reviewed code, focused/full checks, Vault contract, exact-SHA CI/Pages, and independent deployed browser QA.
+- Idempotency key: abi035-verification-pass-20260901
+- Request fingerprint: 718003f31e0591889a93e28a0dee7b7740f4151503543b53893818b89e22ab71
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+  - Vault AUTOBATTLEIDLE-DOC-20260827-584401 contentHash 26d3747707197c1b89a3066f69c307a8134628537f3ea5ef492e5032adc52106
+  - independent-review=pass
+  - independent-qa=pass
+
+### evt-775290b0-1ec1-4f82-8d40-b24530de49a5
+
+- Timestamp: 2026-09-01T03:43:49.815Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 75
+- Resulting revision: 76
+- Summary: All review, deployed QA, and verification gates passed; begin terminal Manager closure.
+- Idempotency key: abi035-advance-ready-for-manager-after-verification-20260901
+- Request fingerprint: 9fca13a3f469a69ca493ac04b35b33ca740675a84ba2bc8fb9b01f681cf8d7f8
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - planner-gate:independent-review=pass
+  - planner-gate:independent-qa=pass
+  - planner-gate:verification=pass
+  - QA.md
+  - VERIFICATION.md
+  - 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
+
+### evt-1577d907-90fa-42b8-9869-4092dfbddb2a
+
+- Timestamp: 2026-09-01T03:44:02.941Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 76
+- Resulting revision: 77
+- Summary: Publish QA and verification evidence, then complete terminal Manager closure.
+- Idempotency key: abi035-start-manager-closure-20260901
+- Request fingerprint: 0939c71560d25defcaed884920cedb6fd438a3ed17944f028baf7f87b0172ba4
+- Action: set_state
+- Step ID: attack-manager-closure
+- State: in_progress
+- Evidence:
+  - all required pre-closure gates pass
+  - candidate 4ac3421770ad1369858bccb3b4c3f266400a8956
+  - CI 33466759392 success
+  - Pages 33466759433 success
