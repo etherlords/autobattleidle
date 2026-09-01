@@ -4,8 +4,8 @@ id: ABI-041
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 87
-status: Ready for Manager
+revision: 90
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-040
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 87
-- Last update: Manager prepares the coherent Planner evidence checkpoint and exact-SHA closure proof.
+- Status: Done
+- Revision: 90
+- Last update: Close the migration compatibility matrix after all independent gates and exact-SHA release checks passed.
 
 ## Execution plan
 
@@ -33,7 +33,7 @@ workspaceProject: autobattleidle
 - [x] failure-precedence: Cover precedence, corruption, write failure, Restore, and stale retry cases
 - [x] independent-review: Independently review authenticity and non-loss assertions
 - [x] independent-qa: Run isolated browser and canonical check acceptance
-- [~] manager-close: Publish exact-SHA evidence and close
+- [x] manager-close: Publish exact-SHA evidence and close
 - [x] review-repair-v1: Same implementation owner strengthens full-state projections, SAVE_VERSION manifest linkage, and fixture reuse
 - [x] independent-review-v2: Fresh independent reviewer verifies the full-state matrix and closed supported-version coverage
 - [x] review-repair-v2: Same implementation owner extracts and matrix-tracks the remaining nonzero-speed V3 Golden fixture
@@ -1514,3 +1514,56 @@ workspaceProject: autobattleidle
 - Evidence:
   - verification pass
   - Ready for Manager
+
+### evt-c922fbb9-2f4a-4753-bd6d-97385eeffde4
+
+- Timestamp: 2026-09-01T02:05:57.748Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 87
+- Resulting revision: 88
+- Summary: Manager accepts the exact-SHA CI and Pages release evidence for the complete migration compatibility matrix.
+- Idempotency key: abi041-manager-closure-gate-root-5a9b0cc
+- Request fingerprint: b45063819ec3f7f94aa8e4f0e24555d25536afae5a471d34dae088fc8ead5f22
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - git:5a9b0cc
+  - github-actions:CI/33461160593=success
+  - github-actions:Deploy GitHub Pages/33461160647=success
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-c37cde8a-fb89-4cca-aa23-d456edf30f04
+
+- Timestamp: 2026-09-01T02:06:05.615Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 88
+- Resulting revision: 89
+- Summary: Exact-SHA CI, Pages, and manager closure gates are complete.
+- Idempotency key: abi041-manager-close-step-complete-5a9b0cc
+- Request fingerprint: b375636ea27c3e20cfe6ee54bcaeba6aa0f966e7acf0b43e11ebb5f588e5034f
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - git:5a9b0cc
+  - planner-gate:manager-closure=pass
+
+### evt-8b8cfeb9-8277-4c65-8f2e-2dd1b5197387
+
+- Timestamp: 2026-09-01T02:06:12.466Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: Close the migration compatibility matrix after all independent gates and exact-SHA release checks passed.
+- Idempotency key: abi041-ready-manager-to-done-5a9b0cc
+- Request fingerprint: c9f31b6d35295bd20549ff8e3b3cbdbcc7dd736c522ed9ac7c4fbb962a6d220f
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - git:5a9b0cc
+  - github-actions:CI/33461160593=success
+  - github-actions:Deploy GitHub Pages/33461160647=success
+  - planner-gate:manager-closure=pass
