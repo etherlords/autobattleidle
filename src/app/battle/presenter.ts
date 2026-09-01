@@ -37,16 +37,21 @@ export const battleEventMessages = {
   restore: (): undefined => undefined,
 } as const;
 
-const attackVisualCue = (outcome: AttackEvent): BattleVisualCue[] => {
+const attackVisualCue = (
+  outcome: AttackEvent,
+  source: "automatic" | "manual",
+  packets: { readonly count: number; readonly units: number },
+): BattleVisualCue[] => {
   if (outcome.type === "ignored") return [];
+  const cue = (kind: "armor" | "critical" | "hit"): BattleVisualCue => ({ kind, packets, source });
   if (outcome.defeated)
     return [
-      outcome.critical ? "critical" : "hit",
+      cue(outcome.critical ? "critical" : "hit"),
       "death",
       ...(outcome.reward > 0 ? (["coin"] as const) : []),
     ];
-  if (outcome.critical) return ["critical"];
-  return outcome.armorPreventedDamage > 0 ? ["armor"] : ["hit"];
+  if (outcome.critical) return [cue("critical")];
+  return [cue(outcome.armorPreventedDamage > 0 ? "armor" : "hit")];
 };
 
 const eventOutcome = (event: BattleControllerEvent): AttackEvent | null => {
@@ -69,7 +74,12 @@ export const battleVisualCues = (event: BattleControllerEvent): readonly BattleV
   if (event.type === "frame" && event.goldenBugEscaped) return ["golden-escape"];
   const outcome = eventOutcome(event);
   if (outcome === null || outcome.type === "ignored") return [];
-  const cues = attackVisualCue(outcome);
+  const source = event.type === "attack" ? event.source : "automatic";
+  const packets =
+    event.type === "frame" && event.automaticReceipt !== undefined
+      ? event.automaticReceipt
+      : { count: 1, units: 1 };
+  const cues = attackVisualCue(outcome, source, packets);
   return outcome.defeated ? defeatVisualCues(event, cues) : cues;
 };
 

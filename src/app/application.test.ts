@@ -2,11 +2,11 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { createApplication, startApplication } from "./application";
 import { createCombatState, type UpgradeId } from "../domain/combat";
-import type { BattleSnapshot } from "../domain/snapshot";
+import type { BattleSnapshot, BattleVisualCue } from "../domain/snapshot";
 import type { LeaderboardView } from "../leaderboard/contracts";
 import type { HudIntent } from "../ui/hud/intents";
 
-const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly string[] => {
+const visualCuesOf = (snapshot: BattleSnapshot | undefined): readonly BattleVisualCue[] => {
   if (snapshot === undefined) throw new Error("Expected rendered snapshot");
   return snapshot.visualCues ?? [];
 };
@@ -328,9 +328,15 @@ describe("startApplication", () => {
     const beforeManualHit = snapshots.length;
     attack();
     expect(snapshots).toHaveLength(beforeManualHit + 1);
-    expect(visualCuesOf(snapshots.at(-1))).toEqual(["hit"]);
+    expect(visualCuesOf(snapshots.at(-1))).toEqual([
+      { kind: "hit", packets: { count: 1, units: 1 }, source: "manual" },
+    ]);
     attack();
-    expect(visualCuesOf(snapshots.at(-1))).toEqual(["hit", "death", "coin"]);
+    expect(visualCuesOf(snapshots.at(-1))).toEqual([
+      { kind: "hit", packets: { count: 1, units: 1 }, source: "manual" },
+      "death",
+      "coin",
+    ]);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
       "Manual hit: 40 damage",
       "Manual kill: +1 coins",

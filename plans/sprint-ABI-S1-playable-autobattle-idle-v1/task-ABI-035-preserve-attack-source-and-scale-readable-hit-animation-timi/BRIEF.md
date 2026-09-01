@@ -4,8 +4,8 @@ id: ABI-035
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: Ready
+revision: 7
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -30,7 +30,7 @@ Preserve attack source and scale readable hit animation timing with effective AP
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: In QA
 
 ## Acceptance criteria
 

@@ -77,16 +77,21 @@ describe("battleEventMessages", () => {
   });
 
   it("maps one immutable combat event to exact presentation-only visual cues", () => {
-    expect(battleVisualCues(attackEvent(hit()))).toEqual(["hit"]);
-    expect(battleVisualCues(attackEvent(hit({ armorPreventedDamage: 2 })))).toEqual(["armor"]);
-    expect(battleVisualCues(attackEvent(hit({ critical: true })))).toEqual(["critical"]);
+    const manual = { packets: { count: 1, units: 1 }, source: "manual" };
+    expect(battleVisualCues(attackEvent(hit()))).toEqual([{ kind: "hit", ...manual }]);
+    expect(battleVisualCues(attackEvent(hit({ armorPreventedDamage: 2 })))).toEqual([
+      { kind: "armor", ...manual },
+    ]);
+    expect(battleVisualCues(attackEvent(hit({ critical: true })))).toEqual([
+      { kind: "critical", ...manual },
+    ]);
     expect(battleVisualCues(attackEvent(hit({ defeated: true, reward: 3 })))).toEqual([
-      "hit",
+      { kind: "hit", ...manual },
       "death",
       "coin",
     ]);
     expect(battleVisualCues(attackEvent(hit({ defeated: true, critical: true })))).toEqual([
-      "critical",
+      { kind: "critical", ...manual },
       "death",
     ]);
     expect(
@@ -95,7 +100,7 @@ describe("battleEventMessages", () => {
           state: { ...state, enemy: { ...state.enemy, grade: "boss" } },
         }),
       ),
-    ).toEqual(["hit", "death", "boss"]);
+    ).toEqual([{ kind: "hit", ...manual }, "death", "boss"]);
     expect(
       battleVisualCues(
         attackEvent(hit({ defeated: true, reward: 3 }), {
@@ -103,7 +108,16 @@ describe("battleEventMessages", () => {
           previousEnemy: { ...state.enemy, grade: "boss" },
         }),
       ),
-    ).toEqual(["hit", "death", "coin", "boss", "golden-kill"]);
+    ).toEqual([{ kind: "hit", ...manual }, "death", "coin", "boss", "golden-kill"]);
+    expect(
+      battleVisualCues({
+        ...update,
+        automaticOutcome: hit(),
+        automaticReceipt: { count: 4, units: 3.4 },
+        previousEnemy: state.enemy,
+        type: "frame",
+      }),
+    ).toEqual([{ kind: "hit", packets: { count: 4, units: 3.4 }, source: "automatic" }]);
     expect(
       battleVisualCues({
         ...update,

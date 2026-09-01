@@ -14,11 +14,20 @@ import { enemyVisualAnimation } from "./enemy-visual/config";
 import type { EliteModifier, EnemyGrade } from "../domain/combat/contracts";
 import type { BattleSnapshot, BattleVisualCue } from "../domain/snapshot";
 
+type TestVisualCue = BattleVisualCue | "armor" | "critical" | "hit";
+
+const normalizedVisualCue = (cue: TestVisualCue): BattleVisualCue =>
+  typeof cue === "string" && (cue === "armor" || cue === "critical" || cue === "hit")
+    ? { kind: cue, packets: { count: 1, units: 1 }, source: "manual" }
+    : cue;
+const normalizedVisualCues = (cues: readonly TestVisualCue[]): readonly BattleVisualCue[] =>
+  cues.map(normalizedVisualCue);
+
 const snapshot = (
   grade: EnemyGrade,
   level: number,
   health = 10,
-  visualCues: readonly BattleVisualCue[] = [],
+  visualCues: readonly TestVisualCue[] = [],
   modifier: EliteModifier | null = null,
   goldenBug = false,
 ): BattleSnapshot => ({
@@ -27,7 +36,7 @@ const snapshot = (
   encounter: "Test",
   enemy: { grade, health, level, maxHealth: 10, modifier, name: "Test enemy", goldenBug },
   events: [],
-  visualCues,
+  visualCues: normalizedVisualCues(visualCues),
   playerStats: {
     armorPenetration: 0,
     automaticAttacksPerSecond: 0.1,
@@ -147,7 +156,7 @@ describe("nextBattlefieldFrame", () => {
       };
       const animationSamples: string[] = [];
       for (const visualCues of [[], ["hit"], [], ["critical"], []] as const) {
-        battlefield.render({ ...candidate, visualCues });
+        battlefield.render({ ...candidate, visualCues: normalizedVisualCues(visualCues) });
         expect(capturedCamera.position.toArray()).toEqual(cameraTransform.position);
         expect(capturedCamera.quaternion.toArray()).toEqual(cameraTransform.quaternion);
         expect(capturedCamera.projectionMatrix.toArray()).toEqual(cameraTransform.projection);
@@ -224,7 +233,7 @@ describe("nextBattlefieldFrame", () => {
       const minimumTop = height * BATTLEFIELD_CONFIG.camera.ordinaryHudSafeTopRatio;
       for (const candidate of compositions.values()) {
         for (const cues of [[], ["hit"], ["critical"]] as const) {
-          battlefield.render({ ...candidate, visualCues: cues });
+          battlefield.render({ ...candidate, visualCues: normalizedVisualCues(cues) });
           expect(Number(dataset.enemyTopPx)).toBeGreaterThanOrEqual(minimumTop);
         }
       }
@@ -371,9 +380,15 @@ describe("nextBattlefieldFrame", () => {
   });
 
   it("restores enemy hit animation only from immutable combat cues", () => {
-    expect(enemyAnimationForEffects(["hit"])).toBe("hit");
-    expect(enemyAnimationForEffects(["armor"])).toBe("hit");
-    expect(enemyAnimationForEffects(["critical", "armor"])).toBe("critical");
+    const manual = { packets: { count: 1, units: 1 }, source: "manual" } as const;
+    expect(enemyAnimationForEffects([{ kind: "hit", ...manual }])).toBe("hit");
+    expect(enemyAnimationForEffects([{ kind: "armor", ...manual }])).toBe("hit");
+    expect(
+      enemyAnimationForEffects([
+        { kind: "critical", ...manual },
+        { kind: "armor", ...manual },
+      ]),
+    ).toBe("critical");
     expect(enemyAnimationForEffects(["death", "coin"])).toBeNull();
   });
 
@@ -553,7 +568,10 @@ describe("nextBattlefieldFrame", () => {
         expect(original.parent).toBe(scene);
         expect(body.userData.lastCommand).toBe("hit");
 
-        battlefield.render({ ...replacement, visualCues: [impact, "death", "coin"] });
+        battlefield.render({
+          ...replacement,
+          visualCues: [normalizedVisualCue(impact), "death", "coin"],
+        });
         expect(original.parent).toBe(scene);
         expect(body.userData.lastCommand).toBe(impact);
 
@@ -645,7 +663,10 @@ describe("nextBattlefieldFrame", () => {
       expect(camera?.quaternion.toArray()).toEqual(cameraTransform.quaternion);
     };
 
-    battlefield.render({ ...replacement, visualCues: ["critical", "death", "coin", "boss"] });
+    battlefield.render({
+      ...replacement,
+      visualCues: [normalizedVisualCue("critical"), "death", "coin", "boss"],
+    });
     expect(body.userData.lastCommand).toBe("critical");
     assertBossPresentation();
 

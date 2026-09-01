@@ -6,6 +6,7 @@ import {
   createBattlefieldEffect,
   effectEvictions,
   effectVisualScale,
+  attackEffectLife,
   type EffectKind,
   MAX_ACTIVE_EFFECTS,
 } from "./effects";
@@ -22,6 +23,27 @@ const effectKinds = [
 ] as const satisfies readonly EffectKind[];
 
 describe("battlefield effects", () => {
+  it("keeps manual strikes fast and clamps automatic timing across low and high APS", () => {
+    expect(attackEffectLife("manual", 12)).toBe(8);
+    expect(attackEffectLife("automatic", 0.1)).toBe(12);
+    expect(attackEffectLife("automatic", 6)).toBe(9);
+    expect(attackEffectLife("automatic", 12)).toBe(6);
+    expect(attackEffectLife("automatic", Number.POSITIVE_INFINITY)).toBe(12);
+    const automatic = createBattlefieldEffect(
+      { kind: "critical", packets: { count: 4, units: 3.4 }, source: "automatic" },
+      false,
+      undefined,
+      1,
+      10.2,
+    );
+    expect(automatic.source).toBe("automatic");
+    expect(automatic.maximumLife).toBe(7);
+    expect(
+      createBattlefieldEffect({ kind: "armor", packets: { count: 1, units: 1 }, source: "manual" })
+        .maximumLife,
+    ).toBe(8);
+  });
+
   it("uses distinct geometry for every readable combat cue", () => {
     const geometries = effectKinds
       .filter((kind) => kind !== "critical" && kind !== "hit")
@@ -143,5 +165,38 @@ describe("battlefield effects", () => {
       expect(hitMaterial.opacity).toBeGreaterThan(0);
     }
     expect(hitMaterial.opacity).toBe(0);
+  });
+
+  it("reaches fixed endpoints on manual and high-APS expiry without moving in reduced motion", () => {
+    const effects = [
+      createBattlefieldEffect({ kind: "hit", packets: { count: 1, units: 1 }, source: "manual" }),
+      createBattlefieldEffect(
+        { kind: "critical", packets: { count: 4, units: 4 }, source: "automatic" },
+        false,
+        undefined,
+        1,
+        12,
+      ),
+    ];
+    for (const effect of effects) {
+      for (let frame = 1; frame < effect.maximumLife; frame += 1)
+        expect(advanceBattlefieldEffect(effect)).toBe(true);
+      expect(advanceBattlefieldEffect(effect)).toBe(false);
+      for (const slash of effect.slashes) expect(slash.mesh.position).toEqual(slash.to);
+    }
+
+    const reduced = createBattlefieldEffect(
+      { kind: "hit", packets: { count: 1, units: 1 }, source: "manual" },
+      true,
+    );
+    const slash = reduced.slashes[0];
+    if (slash === undefined) throw new Error("Expected reduced-motion slash");
+    const material = slash.mesh.material;
+    if (!(material instanceof THREE.MeshBasicMaterial)) throw new Error("Expected slash material");
+    while (advanceBattlefieldEffect(reduced)) {
+      // Reduced motion keeps the fixed origin but completes the semantic phase.
+    }
+    expect(slash.mesh.position).toEqual(slash.from);
+    expect(material.opacity).toBe(0);
   });
 });

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import type { BattleEnemySnapshot, BattleSnapshot } from "../../domain/snapshot";
+import type { BattleEnemySnapshot, BattleSnapshot, BattleVisualCue } from "../../domain/snapshot";
 import type { EnemyUnit } from "../units/enemy";
 import { UNIT_FACTORIES } from "../units/factories";
 import type { PlayerUnit } from "../units/player";
@@ -11,7 +11,6 @@ import {
   createBattlefieldEffect,
   effectEvictions,
   type BattlefieldEffect,
-  type EffectKind,
 } from "./effects";
 
 export type Battlefield = {
@@ -23,13 +22,13 @@ export type Battlefield = {
 };
 
 export type BattlefieldFrame = {
-  readonly effects: readonly EffectKind[];
+  readonly effects: readonly BattleVisualCue[];
   readonly enemyChanged: boolean;
 };
 
 type PendingLethalReplacement = {
   displayed: BattleEnemySnapshot;
-  effects: readonly EffectKind[];
+  effects: readonly BattleVisualCue[];
   frames: number;
   snapshot: BattleEnemySnapshot;
   stage: "impact" | "pause" | "death";
@@ -59,10 +58,11 @@ export const nextBattlefieldFrame = (
 };
 
 export const enemyAnimationForEffects = (
-  effects: readonly EffectKind[],
+  effects: readonly BattleVisualCue[],
 ): "critical" | "hit" | null => {
-  if (effects.includes("critical")) return "critical";
-  return effects.includes("armor") || effects.includes("hit") ? "hit" : null;
+  const kinds = effects.map((effect) => (typeof effect === "string" ? effect : effect.kind));
+  if (kinds.includes("critical")) return "critical";
+  return kinds.includes("armor") || kinds.includes("hit") ? "hit" : null;
 };
 
 const disposeObject = (object: THREE.Object3D): void =>
@@ -133,7 +133,7 @@ class ThreeBattlefield implements Battlefield {
     this.enemy?.tick();
     const frame = nextBattlefieldFrame(this.previous, snapshot);
     const sequencedEffects = this.advanceLethalReplacement();
-    let startedEffects: readonly EffectKind[] = [];
+    let startedEffects: readonly BattleVisualCue[] = [];
     if (this.pendingLethalReplacement !== undefined) {
       this.pendingLethalReplacement.snapshot = snapshot.enemy;
     } else if (this.enemy === undefined || frame.enemyChanged) {
@@ -148,7 +148,7 @@ class ThreeBattlefield implements Battlefield {
     const effects =
       sequencedEffects ??
       (this.pendingLethalReplacement === undefined ? frame.effects : startedEffects);
-    this.addEffects(effects);
+    this.addEffects(effects, snapshot.playerStats.automaticAttacksPerSecond);
     this.bossFramingEnabled =
       this.pendingLethalReplacement === undefined
         ? snapshot.enemy.grade === "boss"
@@ -314,30 +314,43 @@ class ThreeBattlefield implements Battlefield {
   }
 
   private isLethalReplacement(frame: BattlefieldFrame): boolean {
+    const effects = frame.effects.map((effect) =>
+      typeof effect === "string" ? effect : effect.kind,
+    );
     return (
       frame.enemyChanged &&
-      frame.effects.includes("death") &&
-      (frame.effects.includes("hit") || frame.effects.includes("critical"))
+      effects.includes("death") &&
+      (effects.includes("hit") || effects.includes("critical"))
     );
   }
 
   private beginLethalReplacement(
     snapshot: BattleEnemySnapshot,
-    effects: readonly EffectKind[],
-  ): readonly EffectKind[] {
-    const impact = effects.includes("critical") ? "critical" : "hit";
-    this.enemy?.dispatchEnemy({ type: impact });
+    effects: readonly BattleVisualCue[],
+  ): readonly BattleVisualCue[] {
+    const impact = effects.find((effect) => {
+      const kind = typeof effect === "string" ? effect : effect.kind;
+      return kind === "critical" || kind === "hit";
+    });
+    if (impact === undefined) throw new Error("Expected lethal impact cue");
+    const impactKind = typeof impact === "string" ? impact : impact.kind;
+    if (impactKind !== "critical" && impactKind !== "hit")
+      throw new Error("Expected critical or hit lethal impact cue");
+    this.enemy?.dispatchEnemy({ type: impactKind });
     this.pendingLethalReplacement = {
       displayed: this.previous?.enemy ?? snapshot,
-      effects: effects.filter((effect) => effect !== "hit" && effect !== "critical"),
-      frames: enemyVisualAnimation.commandFrames[impact],
+      effects: effects.filter(
+        (effect) =>
+          typeof effect === "string" || (effect.kind !== "hit" && effect.kind !== "critical"),
+      ),
+      frames: enemyVisualAnimation.commandFrames[impactKind],
       snapshot,
       stage: "impact",
     };
     return [impact];
   }
 
-  private advanceLethalReplacement(): readonly EffectKind[] | undefined {
+  private advanceLethalReplacement(): readonly BattleVisualCue[] | undefined {
     const pending = this.pendingLethalReplacement;
     if (pending === undefined) return undefined;
     if (pending.stage === "pause") {
@@ -362,22 +375,23 @@ class ThreeBattlefield implements Battlefield {
     return [];
   }
 
-  private addEffects(kinds: readonly EffectKind[]): void {
-    const evicted = this.effects.splice(0, effectEvictions(this.effects.length, kinds.length));
+  private addEffects(cues: readonly BattleVisualCue[], automaticAttacksPerSecond: number): void {
+    const evicted = this.effects.splice(0, effectEvictions(this.effects.length, cues.length));
     for (const effect of evicted) this.retire(effect.mesh);
-    for (const kind of kinds) {
+    for (const cue of cues) {
       const effect = createBattlefieldEffect(
-        kind,
+        cue,
         this.reducedMotion,
         this.enemy?.enemyView.combatSocketWorldPosition(),
         this.cameraFramingScale(),
+        automaticAttacksPerSecond,
       );
       this.effects.push(effect);
       this.scene.add(effect.mesh);
     }
   }
 
-  private updateCanvasReceipt(snapshot: BattleSnapshot, effects: readonly EffectKind[]): void {
+  private updateCanvasReceipt(snapshot: BattleSnapshot, effects: readonly BattleVisualCue[]): void {
     const visual = this.enemy?.spec;
     const displayed = this.displayedEnemy(snapshot);
     const dataset = this.renderer.domElement.dataset;
@@ -388,7 +402,10 @@ class ThreeBattlefield implements Battlefield {
     dataset.enemyModifier = displayed.modifier ?? "none";
     dataset.goldenBug = String(displayed.goldenBug === true);
     dataset.activeEffectCount = String(this.effects.length);
-    dataset.lastEffectKinds = effects.slice(0, 8).join(",");
+    dataset.lastEffectKinds = effects
+      .slice(0, 8)
+      .map((effect) => (typeof effect === "string" ? effect : effect.kind))
+      .join(",");
     this.setEffectOriginReceipt(dataset);
     dataset.enemyTopPx = this.projectedEnemyTop();
   }

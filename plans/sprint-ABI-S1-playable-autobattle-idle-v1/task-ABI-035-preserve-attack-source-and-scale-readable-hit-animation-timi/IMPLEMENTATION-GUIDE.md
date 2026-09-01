@@ -26,12 +26,12 @@ requiredGates:
 
 - Preserve attack source and make existing hit visuals readable across manual, low APS, and 10+ effective APS. No combat formula, audio, new effect style, or save change.
 - Reuse `BattleController -> presenter -> BattleSnapshot -> battlefield -> effect lifecycle`; add one typed cue contract at the current lossy seam.
-- Wait for ABI-020 closure and use its final visible tick/packet receipt rather than guessing.
+- Reuse ABI-020's accepted 3 Hz visible tick and shared packet schedule; do not derive a second scheduler or animate every resolved packet.
 
 ## Implementation sequence
 
 1. Enumerate every `BattleVisualCue` producer/consumer and freeze manual, automatic, batched, critical, armor, lethal, replacement, reset, and reduced-motion expectations.
-2. Introduce the minimum discriminated cue type and carry source/aggregation through presenter and snapshot tests.
+2. Introduce the minimum discriminated cue type at the current string-only seam and carry source plus the existing packet receipt through presenter and snapshot tests.
 3. Centralize manual and automatic duration bounds in battlefield effect configuration; drive existing phases and retire when visually complete.
 4. Preserve lethal pause/death order and decoration/camera behavior; add no scheduler outside the existing render tick.
 5. Add focused unit/integration tests and deterministic browser fixtures for low, mid, and 10+ APS.

@@ -55,6 +55,8 @@ ABI-020 is accepted current automatic timing. Automatic throughput uses `APS(L) 
 
 Packets in one visual tick share a timestamp but roll critical independently. When an earlier packet defeats an enemy, remaining packets may continue against the spawned enemy at the same timestamp; the next automatic tick is committed only after the batch. The elite automatic-slow modifier keeps its existing 500 ms addition. See [[High-APS Packet Batching Example]] and its revision-bound [[High-APS Packet Batching Example#L20-L26|metadata plus stored-source link]] (contentHash `4f74cde6b85769893cdf4f602ee379c796dfcf7e829a26b050ed474cbc7de9d1`).
 
+ABI-035 preserves each transient visual cue's `manual` or `automatic` source plus the resolved packet count and effective packet units from controller through presenter, snapshot, battlefield, and effects. Manual cues live for 8 frames; automatic cues scale within 6–12 frames from effective APS. Every bounded lifetime completes the same fixed authored trajectory and retires at zero opacity; reduced motion remains non-displacing. These values are presentation-only and add no scheduler, timer, or save state.
+
 ABI-019 remains a separate planned session-only pause for automatic attacks. Pause must freeze the exact cooldown remainder, resume without a catch-up attack, leave manual attacks active, and clear on reload. ABI-020 changes no pause ownership.
 
 ## Accepted headless ordinary-balance telemetry

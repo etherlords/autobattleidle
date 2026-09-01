@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+import type { AttackSource } from "../../domain/combat";
+import type { BattleVisualCue } from "../../domain/snapshot";
+
 export type EffectKind =
   | "armor"
   | "boss"
@@ -41,7 +44,12 @@ export const BATTLEFIELD_EFFECT_CONFIG = {
     framingCompensation: 0.25,
     hitRootScale: 2.05,
     maximumOpacity: 0.42,
-    sweep: 12,
+  },
+  timing: {
+    automaticMaximumLife: 12,
+    automaticMinimumLife: 6,
+    automaticReferenceAps: 12,
+    manualLife: 8,
   },
   variants: {
     armor: { color: "#8bdbff", life: 10, size: 0.42 },
@@ -64,7 +72,12 @@ export const BATTLEFIELD_EFFECT_CONFIG = {
     readonly framingCompensation: number;
     readonly hitRootScale: number;
     readonly maximumOpacity: number;
-    readonly sweep: number;
+  };
+  readonly timing: {
+    readonly automaticMaximumLife: number;
+    readonly automaticMinimumLife: number;
+    readonly automaticReferenceAps: number;
+    readonly manualLife: number;
   };
   readonly variants: Readonly<Record<EffectKind, EffectDefinition>>;
 };
@@ -85,6 +98,24 @@ export type BattlefieldEffect = {
   readonly mesh: THREE.Object3D;
   readonly reducedMotion: boolean;
   readonly slashes: readonly Slash[];
+  readonly source?: AttackSource;
+};
+
+type EffectCue = BattleVisualCue | EffectKind;
+
+const effectKind = (cue: EffectCue): EffectKind => (typeof cue === "string" ? cue : cue.kind);
+const effectSource = (cue: EffectCue): AttackSource | undefined =>
+  typeof cue === "string" ? undefined : cue.source;
+
+export const attackEffectLife = (source: AttackSource, aps: number): number => {
+  if (source === "manual") return BATTLEFIELD_EFFECT_CONFIG.timing.manualLife;
+  const boundedAps = Math.min(
+    BATTLEFIELD_EFFECT_CONFIG.timing.automaticReferenceAps,
+    Math.max(0, Number.isFinite(aps) ? aps : 0),
+  );
+  const ratio = boundedAps / BATTLEFIELD_EFFECT_CONFIG.timing.automaticReferenceAps;
+  const { automaticMaximumLife, automaticMinimumLife } = BATTLEFIELD_EFFECT_CONFIG.timing;
+  return Math.round(automaticMaximumLife - (automaticMaximumLife - automaticMinimumLife) * ratio);
 };
 
 const effectGeometry = (kind: EffectKind, size: number): THREE.BufferGeometry => {
@@ -132,6 +163,8 @@ const createSlashEffect = (
   reducedMotion: boolean,
   origin: THREE.Vector3,
   framingScale: number,
+  life = definition.life,
+  source?: AttackSource,
 ): BattlefieldEffect => {
   const root = new THREE.Group();
   root.name = `battlefield-effect-${kind}`;
@@ -174,21 +207,27 @@ const createSlashEffect = (
   root.position.copy(origin);
   return {
     kind,
-    life: definition.life,
-    maximumLife: definition.life,
+    life,
+    maximumLife: life,
     mesh: root,
     reducedMotion,
     slashes,
+    ...(source === undefined ? {} : { source }),
   };
 };
 
 export const createBattlefieldEffect = (
-  kind: EffectKind,
+  cue: EffectCue,
   reducedMotion = false,
   origin?: THREE.Vector3,
   framingScale = 1,
+  automaticAttacksPerSecond = 0,
 ): BattlefieldEffect => {
+  const kind = effectKind(cue);
+  const source = effectSource(cue);
   const definition = BATTLEFIELD_EFFECT_CONFIG.variants[kind];
+  const life =
+    source === undefined ? definition.life : attackEffectLife(source, automaticAttacksPerSecond);
   const fallback = BATTLEFIELD_EFFECT_CONFIG.actorAnchor;
   const effectOrigin = origin ?? new THREE.Vector3(fallback.x, fallback.y, fallback.z);
   if (kind === "critical" || kind === "hit") {
@@ -198,6 +237,8 @@ export const createBattlefieldEffect = (
       reducedMotion,
       effectOrigin,
       effectVisualScale(framingScale),
+      life,
+      source,
     );
   }
   const material = new THREE.MeshStandardMaterial({
@@ -212,11 +253,12 @@ export const createBattlefieldEffect = (
   mesh.position.copy(effectOrigin);
   return {
     kind,
-    life: definition.life,
-    maximumLife: definition.life,
+    life,
+    maximumLife: life,
     mesh,
     reducedMotion,
     slashes: [],
+    ...(source === undefined ? {} : { source }),
   };
 };
 
@@ -225,10 +267,7 @@ export const advanceBattlefieldEffect = (effect: BattlefieldEffect): boolean => 
   effect.life -= 1;
   if (effect.slashes.length > 0) {
     for (const slash of effect.slashes) {
-      const phase = Math.min(
-        1,
-        Math.max(0, (age - slash.delay) / BATTLEFIELD_EFFECT_CONFIG.slash.sweep),
-      );
+      const phase = Math.min(1, Math.max(0, (age - slash.delay) / effect.maximumLife));
       const opacity =
         phase === 0 || phase === 1
           ? 0

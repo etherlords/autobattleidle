@@ -10,6 +10,7 @@ import type {
   BattleControllerListener,
   BattleControllerOptions,
   BattleUpdate,
+  AutomaticAttackReceipt,
   Unsubscribe,
 } from "./contracts";
 
@@ -121,12 +122,13 @@ export class BattleController {
       return false;
     const previousEnemy = this.state.enemy;
     const goldenBugBefore = this.state.goldenBug !== null;
-    const automaticOutcome = this.automaticAttack();
+    const { outcome: automaticOutcome, receipt: automaticReceipt } = this.automaticAttack();
     if (automaticOutcome.type === "ignored") return false;
     return this.publishMessage(
       {
         ...this.update(true),
         automaticOutcome,
+        automaticReceipt,
         goldenBugBefore,
         previousEnemy,
         type: "frame",
@@ -135,7 +137,10 @@ export class BattleController {
     );
   }
 
-  private automaticAttack(): AttackEvent {
+  private automaticAttack(): {
+    readonly outcome: AttackEvent;
+    readonly receipt: AutomaticAttackReceipt;
+  } {
     const resolution = resolveAutomaticPackets(this.state, this.nowMs, (state, packet) =>
       resolveAttack(state, {
         atMs: this.nowMs,
@@ -151,18 +156,28 @@ export class BattleController {
     const hits = outcomes.filter(
       (outcome): outcome is Exclude<AttackEvent, { type: "ignored" }> => outcome.type === "hit",
     );
-    if (hits.length === 0) return { type: "ignored" };
-    return {
-      armorPreventedDamage: hits.reduce(
-        (total, outcome) => total + outcome.armorPreventedDamage,
+    const receipt = {
+      count: resolution.schedule.packets.length,
+      units: resolution.schedule.packets.reduce(
+        (total, packet) => total + packet.damageMultiplier,
         0,
       ),
-      critical: hits.some((outcome) => outcome.critical),
-      damage: hits.reduce((total, outcome) => total + outcome.damage, 0),
-      defeated: hits.some((outcome) => outcome.defeated),
-      penetration: hits.at(-1)?.penetration ?? 0,
-      reward: hits.reduce((total, outcome) => total + outcome.reward, 0),
-      type: "hit",
+    };
+    if (hits.length === 0) return { outcome: { type: "ignored" }, receipt };
+    return {
+      outcome: {
+        armorPreventedDamage: hits.reduce(
+          (total, outcome) => total + outcome.armorPreventedDamage,
+          0,
+        ),
+        critical: hits.some((outcome) => outcome.critical),
+        damage: hits.reduce((total, outcome) => total + outcome.damage, 0),
+        defeated: hits.some((outcome) => outcome.defeated),
+        penetration: hits.at(-1)?.penetration ?? 0,
+        reward: hits.reduce((total, outcome) => total + outcome.reward, 0),
+        type: "hit",
+      },
+      receipt,
     };
   }
 

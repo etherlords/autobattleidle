@@ -12,8 +12,13 @@ import { COMBAT_BALANCE } from "./combat/balance";
 import type { CombatState, EliteModifier, EnemyGrade, UpgradeId } from "./combat/contracts";
 
 export type BattleEvent = { readonly id: number; readonly message: string };
+export type BattleAttackVisualCue = {
+  readonly kind: "armor" | "critical" | "hit";
+  readonly packets: { readonly count: number; readonly units: number };
+  readonly source: "automatic" | "manual";
+};
 export type BattleVisualCue =
-  "armor" | "boss" | "coin" | "critical" | "death" | "golden-escape" | "golden-kill" | "hit";
+  BattleAttackVisualCue | "boss" | "coin" | "death" | "golden-escape" | "golden-kill" | "spawn";
 export type UpgradeSnapshot = {
   readonly cost: number;
   readonly disabledReason: string | null;

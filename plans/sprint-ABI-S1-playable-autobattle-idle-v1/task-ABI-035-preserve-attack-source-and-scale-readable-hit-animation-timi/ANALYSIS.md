@@ -31,7 +31,7 @@ requiredGates:
 ## Verified current state
 
 - `BattleController.performAttack` and the automatic frame path still know `AttackSource`, and `presenter.ts` uses it for log text. The transport then collapses presentation into `BattleSnapshot.visualCues`, where an attack is represented only by effect kind. Battlefield effects therefore cannot distinguish a fast manual click from an APS-driven automatic visual.
-- ABI-020 raises effective automatic throughput above 10 APS while intentionally capping visible attack ticks near 3 Hz. This separates combat packet truth from presentation cadence; animating every packet would spam effects, while one fixed duration makes low APS sluggish or high APS overlap.
+- ABI-020 is closed and raises effective automatic throughput above 10 APS while capping visible attack ticks at 3 Hz. Each tick resolves the shared packet schedule; animating every packet would spam effects, while one fixed duration makes low APS sluggish or high APS overlap.
 - ABI-031 already established fixed slash trajectories, distinct critical/armor cues, hit pause before death, semantic attachment sockets, reduced-motion handling, and bounded effect disposal. This task must extend that accepted system, not redesign it.
 - Persistence impact is **no schema change**. Attack source, packet aggregation, cue timing, and effect phase are transient event/presentation data.
 
@@ -47,4 +47,11 @@ requiredGates:
 - Adding source only to one caller recreates the loss at automatic/batched or lethal paths. Trace every creator and consumer of `visualCues` and exhaustively test manual, automatic, critical, armor, lethal, replacement, and Golden paths.
 - Raw APS-to-duration mapping can approach zero or produce overlapping invisible objects. Clamp named phases and assert retirement no later than invisibility.
 - Aggregation can accidentally change semantic counts or critical identity. Keep combat packets authoritative; presentation receives a receipt only.
-- ABI-020 is still active. Remain Blocked until its final packet/cadence contract is closed, then refresh this analysis against the published implementation.
+- The current lossy seam is confirmed in `src/app/battle/presenter.ts`: controller events retain manual/automatic ownership, but `BattleVisualCue` reduces attacks to effect-kind strings before `src/game/battlefield/lifecycle.ts` creates effects. Fix that shared seam once; do not infer source in Three.js or future audio consumers.
+
+## Acceptance and persistence classification
+
+- **Unit:** cue exhaustiveness, source and packet receipt, finite duration bounds, critical/armor identity, reduced motion, retirement.
+- **Integration:** controller -> presenter -> snapshot -> battlefield for manual, automatic, batched, lethal, replacement, reset, and disposal paths.
+- **Deployed:** low-APS and 10-plus-APS state -> action/time -> visible-result receipts on desktop and 390px layouts, with clean resources and exact-SHA Pages identity.
+- **Persistence:** no schema change. Cue source, packet receipt, and timing remain transient; supported V1-V4 fixtures must still load, render, save, and reload without semantic reset.

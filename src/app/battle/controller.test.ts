@@ -54,6 +54,10 @@ describe("BattleController", () => {
       automaticAttacksPerSecond(initial.player.automaticSpeedLevel),
     );
     expect(rollIndex).toBe(packets.length);
+    expect(outcome.automaticReceipt).toEqual({
+      count: packets.length,
+      units: packets.reduce((total, packet) => total + packet, 0),
+    });
     expect(outcome.automaticOutcome.critical).toBe(true);
     expect(controller.currentUpdate().state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
     expect(controller.dispatch(battleCommands.frame(100))).toBe(false);

@@ -8,6 +8,11 @@ import type {
 } from "../../domain/combat";
 import type { BattleEvent } from "../../domain/snapshot";
 
+export type AutomaticAttackReceipt = {
+  readonly count: number;
+  readonly units: number;
+};
+
 export type BattleCommandContext = {
   attack(source: AttackSource): boolean;
   toggleAutomaticPause(): boolean;
@@ -57,6 +62,7 @@ export type BattleControllerEvent =
   | (BattleUpdate & {
       readonly type: "frame";
       readonly automaticOutcome: AttackEvent | null;
+      readonly automaticReceipt?: AutomaticAttackReceipt;
       readonly previousEnemy?: CombatEnemy;
       readonly goldenBugBefore?: boolean;
       readonly goldenBugEscaped?: boolean;
