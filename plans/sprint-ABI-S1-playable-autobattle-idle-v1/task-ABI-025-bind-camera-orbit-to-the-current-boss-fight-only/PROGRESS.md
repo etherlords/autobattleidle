@@ -4,8 +4,8 @@ id: ABI-025
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 112
-status: Ready for Manager
+revision: 115
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 112
-- Last update: Advance the independently verified exact-SHA universal-orbit fix to Manager closure.
+- Status: Done
+- Revision: 115
+- Last update: Close the universally orbitable, replacement-stable camera release after all exact-SHA gates passed.
 
 ## Execution plan
 
@@ -44,7 +44,7 @@ requiredGates:
 - [x] orbit-self-check-v2: Implementation owner runs focused battlefield/application tests, persistence regressions, pnpm check, and diff check
 - [x] orbit-independent-review-v2: Fresh independent Reviewer verifies the corrected product contract, root-cause removal, transition continuity, input behavior, and regression coverage
 - [x] orbit-independent-qa-v2: Fresh independent QA verifies ordinary/boss/Golden orbit and continuous angle on desktop, 390px touch, keyboard, reload boundary, and exact-SHA Pages
-- [~] orbit-manager-closure-v2: Manager records verification, updates Vault behavior, commits and publishes the coherent fix, proves exact-SHA deployment, and closes the reopened task
+- [x] orbit-manager-closure-v2: Manager records verification, updates Vault behavior, commits and publishes the coherent fix, proves exact-SHA deployment, and closes the reopened task
 - [x] orbit-review-repair-v2: Implementation owner adds explicit Reset camera reset, updates universal-orbit accessibility text, and reconciles the Vault contract
 - [x] orbit-vault-readback-repair-v2: Manager forces a fresh Vault index and records the corrected hash-bound HUD/input readback
 - [x] orbit-golden-exit-repair-v2: Implementation owner proves Golden Bug exit preserves a nonzero azimuth before separately testing boss rotation and Reset
@@ -1978,3 +1978,60 @@ requiredGates:
   - planner-gate:independent-qa=pass
   - planner-gate:verification=pass
   - git:643c47f
+
+### evt-b835cff7-c709-4a07-9aab-4f1d1bcb5fd7
+
+- Timestamp: 2026-09-01T03:00:05.785Z
+- Actor: abi025-manager-closure
+- Operation: gate.record
+- Prior revision: 112
+- Resulting revision: 113
+- Summary: Manager accepts the reviewed and deployed universal camera orbit release and its published closure evidence.
+- Idempotency key: abi025-manager-closure-v2-pass-5f102d7-actor2
+- Request fingerprint: 7abcd87265249ed6e10ac26cf00742545dceddfde958f9975f66666f8c4c01ab
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - git:5f102d747132d80499fff6b03af91b43cce08618
+  - github-actions:CI/33464511593=success
+  - github-actions:Deploy GitHub Pages/33464511580=success
+  - implementation-sha:643c47fa71ceeabbf617107869544126dca890f4
+  - planner-gate:verification=pass
+
+### evt-9be882e5-c569-44d4-93f1-67d077e057e0
+
+- Timestamp: 2026-09-01T03:00:12.132Z
+- Actor: abi025-manager-closure
+- Operation: execution_plan.update
+- Prior revision: 113
+- Resulting revision: 114
+- Summary: Published the coherent closure checkpoint and verified exact-SHA CI and Pages.
+- Idempotency key: abi025-orbit-manager-closure-complete-5f102d7
+- Request fingerprint: 0f78148c9d960d66371f5a7cf4d1086afd749019e9be28f70b8c64c0cdce9c36
+- Action: set_state
+- Step ID: orbit-manager-closure-v2
+- State: complete
+- Evidence:
+  - planner-gate:manager-closure=pass
+  - git:5f102d747132d80499fff6b03af91b43cce08618
+  - github-actions:CI/33464511593=success
+  - github-actions:Deploy GitHub Pages/33464511580=success
+
+### evt-a17206a9-5fca-442f-b284-b569042408d1
+
+- Timestamp: 2026-09-01T03:00:18.532Z
+- Actor: abi025-manager-closure
+- Operation: task.advance
+- Prior revision: 114
+- Resulting revision: 115
+- Summary: Close the universally orbitable, replacement-stable camera release after all exact-SHA gates passed.
+- Idempotency key: abi025-ready-manager-to-done-5f102d7
+- Request fingerprint: 4ee0107bfb9f185436b7b07c13c524045d012d3b488d50bb701c5091aa9799f9
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - planner-gate:manager-closure=pass
+  - planner-plan:orbit-manager-closure-v2=complete
+  - git:5f102d747132d80499fff6b03af91b43cce08618
+  - github-actions:CI/33464511593=success
+  - github-actions:Deploy GitHub Pages/33464511580=success

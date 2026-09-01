@@ -4,8 +4,8 @@ id: ABI-025
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 24
-status: Ready for Manager
+revision: 25
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -28,7 +28,7 @@ Allow camera orbit around every enemy and preserve the current viewing angle acr
 
 - Type: bug
 - Priority: high
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
