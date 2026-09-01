@@ -5,6 +5,7 @@ import {
   criticalChanceForLevel,
   damageForLevel,
   doubleRewardChanceForLevel,
+  effectiveArmor,
   selectEnemyFamilyIdentity,
   type EnemyFamily,
 } from "./combat";
@@ -28,6 +29,7 @@ export type UpgradeSnapshot = {
   readonly level: number;
 };
 export type BattleEnemySnapshot = {
+  readonly armor: { readonly effective: number; readonly raw: number };
   readonly family?: EnemyFamily;
   readonly grade: EnemyGrade;
   readonly health: number;
@@ -95,6 +97,10 @@ export const createBattleSnapshot = (
     coins: state.coins,
     encounter: "Scout the Emberfields",
     enemy: {
+      armor: {
+        effective: effectiveArmor(state.enemy.armor, state.player.armorPenetrationLevel ?? 0),
+        raw: state.enemy.armor,
+      },
       family: identity.family,
       goldenBug: state.goldenBug !== null,
       grade: state.enemy.grade,

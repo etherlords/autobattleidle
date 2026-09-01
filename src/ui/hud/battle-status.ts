@@ -24,6 +24,7 @@ export class BattleStatus {
   private readonly automaticPause = button("automatic-pause", "⏸");
   private pauseListener: (() => void) | undefined;
   private readonly coins = makeText("p", "");
+  private readonly armor = makeText("p", "");
   private readonly goldenBug = makeText("p", "");
 
   constructor() {
@@ -35,6 +36,7 @@ export class BattleStatus {
     this.automaticRow.className = "automatic-control-row";
     this.automaticRow.append(this.automatic, this.automaticPause);
     this.goldenBug.className = "golden-bug-countdown";
+    this.armor.className = "armor-status";
     this.automaticPause.addEventListener("click", this.togglePause);
     this.element.append(
       this.enemy,
@@ -42,6 +44,7 @@ export class BattleStatus {
       this.automaticRow,
       this.automaticText,
       this.goldenBug,
+      this.armor,
       this.coins,
     );
   }
@@ -94,6 +97,15 @@ export class BattleStatus {
       goldenBug === null || goldenBug === undefined
         ? ""
         : `Golden Bug escaping in ${(goldenBug.remainingMs / 1000).toFixed(1)}s`;
+    this.armor.hidden = enemy.armor.raw === 0;
+    if (!this.armor.hidden) {
+      const penetration = `${(playerStats.armorPenetration * 100).toFixed(1)}%`;
+      this.armor.textContent = `Armor: ${enemy.armor.raw} · Effective: ${enemy.armor.effective} · Penetration: ${penetration}`;
+      this.armor.setAttribute(
+        "aria-label",
+        `Armor ${enemy.armor.raw}; effective armor after ${penetration} penetration: ${enemy.armor.effective}`,
+      );
+    }
   }
   private readonly togglePause = (): void => this.pauseListener?.();
 }

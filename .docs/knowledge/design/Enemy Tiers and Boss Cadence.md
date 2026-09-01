@@ -31,11 +31,14 @@ The live modifier catalog contains armor (paired shield plates), vitality (a vis
 slow (an animated time ring), hardened (combined bounded health and armor plus a reinforced band),
 critical guard (critical-multiplier suppression plus a prism guard), and manual guard (manual-only
 post-armor reduction plus a directional barrier). All six use deterministic finite roll ranges and
-serializable derived enemy state. Existing armor, vitality, automatic-slow, cadence, and reward formulas
-remain unchanged. The factory also contains a gold-orbital wealth composition for explicitly labeled
-synthetic visual proof, but it is dormant: the current domain has no wealth enemy modifier or wealth
-reward multiplier. Wealth must not activate until a domain rule and balance proof supply it through the
-snapshot. Regeneration, ward charges, thorns, lifesteal, and evasion remain excluded because they require
+serializable derived enemy state. Armor and hardened elites retain their encounter-derived armor only
+while it is below half the current canonical non-critical player damage; this player-relative ceiling
+bounds zero-penetration durability at 20 and 25 attacks respectively, and penetration reduces it further.
+Vitality, automatic-slow, cadence, boss armor, Golden Bug, reward, and upgrade formulas remain unchanged.
+The factory also contains a gold-orbital wealth composition for explicitly labeled synthetic visual
+proof, but it is dormant: the current domain has no wealth enemy modifier or wealth reward multiplier.
+Wealth must not activate until a domain rule and balance proof supply it through the snapshot.
+Regeneration, ward charges, thorns, lifesteal, and evasion remain excluded because they require
 unsupported mutable state, player health, or hidden randomness.
 
 Ordinary enemies retain beetle, brute, and wisp for existing modifier/null identities. Hardened,
@@ -66,15 +69,46 @@ Encounters use deterministic safe-number epochs. At the largest encounter whose 
 
 ## Accepted ordinary-enemy health calibration
 
-ABI-020 is accepted current behavior. Production ordinary and boss health is derived from the player's current integer damage rather than a fixed low encounter base: normal targets 1 hit, veteran 5 hits, elite 10 hits, and bosses 30 hits before deterministic elite modifiers and armor. Boss cadence remains every 35 encounters. Golden Bug keeps its separate time-window formula and never enters ordinary cohorts, walls, grades, or grade-transition telemetry.
+ABI-020 remains the health owner. Ordinary and boss health is derived from the player's current integer
+damage rather than a fixed low encounter base: normal targets 1 hit, veteran 5 hits, elite 10 hits, and
+bosses 30 hits before deterministic elite modifiers and armor. ABI-044 changes only the armor added by
+the armor and hardened elite modifiers: their encounter-derived raw armor is capped at half the current
+canonical non-critical player damage. At zero penetration this bounds armored elites to at most 20
+attacks and hardened elites to at most 25; penetration lowers both. Boss armor and health, boss cadence,
+Golden Bug, rewards, upgrades, and ordinary HP variety are unchanged.
 
-The endgame boundary is time-based. Under the accepted unattended upgrade strategy, exact checkpoints are encounter 21 at 1 hour, 39 at 4 hours, 70 at 8 hours, 1,200 at 24 hours, 24,920 at 48 hours, and 30,234 at 49 hours. The 48-hour checkpoint is the configured start of endgame, not a promised encounter number. Its player damage is 17,303 and APS is approximately 11.995.
+The endgame boundary is time-based, not a promised encounter number. Under the accepted unattended
+production strategy, the corrected exact 48-hour non-boss probe is encounter 250,863 after boss 250,845,
+and the 49-hour state is encounter 257,354. These receipts supersede 24,920/30,234: the prior measurements
+included hundreds or thousands of minimum-damage packets from the uncapped armored-elite defect.
+Exact and event-jump simulation still agree. The warmed 48-hour event-jump leg measures about 6.17
+seconds on the reference workstation and is guarded by an 8-second portable bound.
 
-The prior 0.5% and 0.8% exponential ordinary-health candidates were each measured over 3,000 ordinary encounters and rejected for walls and adjacent-band jumps. Cadence, damage, APS, critical, penetration, reward, and upgrade-cost alternatives were also measured over at least 3,000 ordinary encounters; the retained production policies preserve 35-encounter bosses, asymptotic critical and penetration curves, current damage/economy, and bounded 3 Hz presentation.
+The prior 0.5% and 0.8% exponential ordinary-health candidates were each measured over 3,000 ordinary
+encounters and rejected for walls and adjacent-band jumps. Cadence, damage, APS, critical, penetration,
+reward, and upgrade-cost alternatives remain measured through the production simulator. The retained
+policies preserve 35-encounter bosses, asymptotic critical and penetration curves, current damage/economy,
+and bounded 3 Hz presentation; the generated measurement receipt is rebaselined after the armor repair.
 
-ABI-028 may add deterministic fast/medium/durable composition inside each non-boss stage, but it must consume these accepted targets and the time-based envelope; it must not replace the ABI-020 health owner, rebalance Golden Bug, or leak bosses into ordinary telemetry. See [[Combat Loop#Accepted headless ordinary-balance telemetry|accepted simulator ownership]] and [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted economy evidence]].
+ABI-028 remains the measurement and regression contract. Its headless simulator reports automatic-only,
+manual-only, and combined ordinary-enemy TTK across early `1–99`, start+ `100–499`, late start
+`500–999`, midgame `1,000–9,999`, endgame start `10,000–250,862`, and open-ended endgame
+`250,863+`. The endgame probe begins at the actual 48-hour current non-boss encounter; it does not
+replace the ABI-020 health owner.
 
-Reviewed measurements are preserved in [[ABI-020 Reviewed Measurement Receipt]]. Revision-bound metadata and stored-source evidence: [[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and asset link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).
+Raw attack packet events remain separate from logical attack units. Fractional high-APS packets
+accumulate as integer micro-units, per-enemy attribution preserves mid-batch spill and event-jump work,
+manual-only state remains finite without automatic unlocks, and exact/event-jump reports agree through
+49 hours. Historical V3/V4 saves with an active pre-cap armored or hardened elite are recognized only
+when their former derived enemy is exact, then normalized to the capped spawn while preserving health
+fraction, encounter, player, currency, and V4 counters. The save schema does not change.
+
+See [[Combat Loop#Accepted headless ordinary-balance telemetry|accepted simulator ownership]] and
+[[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted economy evidence]]. Reviewed
+ABI-020 measurements remain preserved in [[ABI-020 Reviewed Measurement Receipt]]; revision-bound
+metadata and stored-source evidence are at
+[[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and asset link]]
+(contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).
 
 ## Presentation
 

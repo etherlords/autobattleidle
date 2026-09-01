@@ -4,7 +4,8 @@ import { type EnemyModifierDraft, EnemyModifierStrategy } from "./enemy-modifier
 export class ArmorEnemyModifier extends EnemyModifierStrategy {
   readonly id = "armor" as const;
 
-  decorate(draft: EnemyModifierDraft, encounter: number): EnemyModifierDraft {
-    return { ...draft, armor: encounter * COMBAT_FORMULAS.enemyArmorPerEncounter };
+  decorate(draft: EnemyModifierDraft, encounter: number, armorCap?: number): EnemyModifierDraft {
+    const armor = encounter * COMBAT_FORMULAS.enemyArmorPerEncounter;
+    return { ...draft, armor: armorCap === undefined ? armor : Math.min(armor, armorCap) };
   }
 }

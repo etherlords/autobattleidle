@@ -5,7 +5,11 @@ import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
 import v3GoldenFixture from "./fixtures/save-v3-active-golden.json";
 import v3GoldenHighApsFixture from "./fixtures/save-v3-active-golden-high-aps.json";
 import v3Encounter2170Fixture from "./fixtures/save-v3-encounter-2170.json";
+import v3ArmoredPreCapFixture from "./fixtures/save-v3-active-armored-pre-cap.json";
+import v3HardenedPreCapFixture from "./fixtures/save-v3-active-hardened-pre-cap.json";
+import v4ArmoredPreCapFixture from "./fixtures/save-v4-active-armored-pre-cap.json";
 import v4GoldenDefeatsFixture from "./fixtures/save-v4-golden-defeats.json";
+import v4HardenedPreCapFixture from "./fixtures/save-v4-active-hardened-pre-cap.json";
 
 import {
   automaticInterval,
@@ -595,6 +599,34 @@ describe("persistence boundary", () => {
       expect(loaded.goldenBug).toEqual(legacy.goldenBug);
       const roundTrip = decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200);
       expect(roundTrip).toMatchObject({ goldenBug: legacy.goldenBug });
+    }
+  });
+  it("normalizes active V3 and V4 pre-cap armored and hardened enemies through save and reload", () => {
+    for (const [fixture, expectedArmor, expectedDefeats] of [
+      [v3ArmoredPreCapFixture, 15, 0],
+      [v3HardenedPreCapFixture, 18, 0],
+      [v4ArmoredPreCapFixture, 15, 2],
+      [v4HardenedPreCapFixture, 18, 3],
+    ] as const) {
+      const loaded = decodeSave(fixture, fallback(), 100);
+      expect(loaded).toMatchObject({
+        automaticUnlocked: fixture.automaticUnlocked,
+        coins: fixture.coins,
+        enemy: {
+          armor: expectedArmor,
+          encounter: fixture.enemy.encounter,
+          health: fixture.enemy.health,
+          maxHealth: fixture.enemy.maxHealth,
+          modifier: fixture.enemy.modifier,
+        },
+        goldenBugDefeats: expectedDefeats,
+        player: fixture.player,
+      });
+      const reloaded = decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200);
+      expect(reloaded).toEqual({
+        ...loaded,
+        nextAutomaticAttackAtMs: 200 + automaticInterval(loaded.enemy, loaded.player),
+      });
     }
   });
   it("round-trips an integer high-APS visual tick without a save-schema change", () => {

@@ -8,7 +8,11 @@ export type EnemyModifierDraft = {
 export abstract class EnemyModifierStrategy {
   abstract readonly id: EliteModifier;
 
-  abstract decorate(draft: EnemyModifierDraft, encounter: number): EnemyModifierDraft;
+  abstract decorate(
+    draft: EnemyModifierDraft,
+    encounter: number,
+    armorCap?: number,
+  ): EnemyModifierDraft;
 
   allowsCritical(_source: AttackSource): boolean {
     return true;

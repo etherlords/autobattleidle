@@ -105,7 +105,15 @@ const snapshot: BattleSnapshot = {
   automatic: { intervalMs: 1_000, remainingMs: 500, unlocked: true },
   coins: 2,
   encounter: "Test",
-  enemy: { grade: "normal", health: 9, level: 1, maxHealth: 10, modifier: null, name: "Ash Wisp" },
+  enemy: {
+    armor: { effective: 0, raw: 0 },
+    grade: "normal",
+    health: 9,
+    level: 1,
+    maxHealth: 10,
+    modifier: null,
+    name: "Ash Wisp",
+  },
   events: [{ id: 1, message: "Manual hit: 1 damage" }],
   playerStats: {
     armorPenetration: 0.375,
@@ -381,6 +389,19 @@ describe("createHud", () => {
     expect(element(host, "hud-status").children[3]?.textContent).toBe(
       "Automatic attack: 1.00 APS · 0.500s",
     );
+    expect(element(host, "armor-status").hidden).toBe(true);
+    hud.render({
+      ...snapshot,
+      enemy: { ...snapshot.enemy, armor: { effective: 12, raw: 15 }, modifier: "armor" },
+    });
+    expect(element(host, "armor-status")).toMatchObject({
+      hidden: false,
+      textContent: "Armor: 15 · Effective: 12 · Penetration: 37.5%",
+    });
+    expect(element(host, "armor-status").attributes.get("aria-label")).toBe(
+      "Armor 15; effective armor after 37.5% penetration: 12",
+    );
+    hud.render(snapshot);
     const automaticPause = element(host, "automatic-pause");
     automaticPause.dispatch("click");
     expect(automaticPause.attributes.get("aria-label")).toBe("Pause auto attack");

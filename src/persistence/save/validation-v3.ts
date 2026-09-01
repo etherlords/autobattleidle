@@ -1,5 +1,6 @@
 import { automaticInterval, damageForLevel, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
 import type { CombatEnemy, CombatState } from "../../domain/combat";
+import { COMBAT_FORMULAS } from "../../domain/combat/balance";
 import { decodeV2 } from "./validation-v2";
 import {
   hasExactKeys,
@@ -40,6 +41,14 @@ const matchesPrePlayerRelativeEnemy = (enemy: CombatEnemy, expected: CombatEnemy
   enemy.reward ===
     Math.min(Number.MAX_SAFE_INTEGER, expected.reward * PRE_PLAYER_RELATIVE_REWARD_FACTOR);
 
+const matchesPreArmorCapEnemy = (enemy: CombatEnemy, expected: CombatEnemy): boolean =>
+  (expected.modifier === "armor" || expected.modifier === "hardened") &&
+  enemy.grade === expected.grade &&
+  enemy.modifier === expected.modifier &&
+  enemy.armor === expected.encounter * COMBAT_FORMULAS.enemyArmorPerEncounter &&
+  enemy.maxHealth === expected.maxHealth &&
+  enemy.reward === expected.reward;
+
 const decodePrePlayerRelativeV3 = (
   value: Record<string, unknown>,
   nowMs: number,
@@ -47,11 +56,15 @@ const decodePrePlayerRelativeV3 = (
   const player = parseV2Player(value.player);
   const enemy = parseEnemyShape(value.enemy);
   if (!player || !enemy) return undefined;
-  const expected = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
-  if (!matchesPrePlayerRelativeEnemy(enemy, expected)) return undefined;
+  const prePlayerRelative = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
+  const normalized = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
+  if (
+    !matchesPrePlayerRelativeEnemy(enemy, prePlayerRelative) &&
+    !matchesPreArmorCapEnemy(enemy, normalized)
+  )
+    return undefined;
   if (typeof value.automaticUnlocked !== "boolean" || !integer(value.coins, 0)) return undefined;
   if (!value.automaticUnlocked && player.automaticSpeedLevel !== 0) return undefined;
-  const normalized = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
   return {
     automaticUnlocked: value.automaticUnlocked,
     coins: value.coins,

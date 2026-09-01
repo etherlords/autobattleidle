@@ -57,6 +57,11 @@ const productionBaseHealth = (player: CombatPlayer, grade: EnemyGrade): number =
   return damage * ENEMY_TIERS[grade].multiplier(1);
 };
 
+const eliteArmorCap = (player: CombatPlayer | undefined): number | undefined => {
+  if (player === undefined) return undefined;
+  return Math.floor(damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1)) / 2);
+};
+
 const validateOrdinaryHealthGrowthRate = (ordinaryHealthGrowthRate: number | undefined): void => {
   if (
     ordinaryHealthGrowthRate !== undefined &&
@@ -107,7 +112,11 @@ export const spawnEnemy = (
   if (grade === "elite") {
     const modifierStrategy = modifierForRoll(eliteModifierRoll);
     modifier = modifierStrategy.id;
-    modifierDraft = modifierStrategy.decorate(baseModifierDraft, safeEncounter);
+    modifierDraft = modifierStrategy.decorate(
+      baseModifierDraft,
+      safeEncounter,
+      eliteArmorCap(player),
+    );
   }
   const maxHealth = Math.max(
     COMBAT_FORMULAS.minimumDamage,

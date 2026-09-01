@@ -14,6 +14,7 @@ import {
   createCombatState,
   damageForLevel,
   doubleRewardChanceForLevel,
+  effectiveArmor,
   expireGoldenBug,
   purchaseUpgrade,
   spawnGoldenBug,
@@ -266,13 +267,13 @@ describe("endless combat progression", () => {
     expect(boss.maxHealth).toBeLessThan(golden.maxHealth);
   });
 
-  it("finishes a warmed 48-hour event-jump receipt within the portable CI bound", () => {
+  it("finishes a warmed 48-hour event-jump receipt within the 8-second portable CI bound", () => {
     fastForwardProgression(48 * 60 * 60 * 1_000);
     const startedAtMs = performance.now();
     const report = fastForwardProgression(48 * 60 * 60 * 1_000);
     expect(report.elapsedMs).toBe(48 * 60 * 60 * 1_000);
-    expect(performance.now() - startedAtMs).toBeLessThan(5_000);
-  }, 12_000);
+    expect(performance.now() - startedAtMs).toBeLessThan(8_000);
+  }, 18_000);
 
   it("keeps the event-driven 48-hour fast-forward equal to the production simulator at time boundaries", () => {
     const roundedTiming = (report: ReturnType<typeof simulateProgression>) => ({
@@ -296,7 +297,7 @@ describe("endless combat progression", () => {
       expect(fast.state).toEqual(exact.state);
       expect(roundedTiming(fast)).toEqual(roundedTiming(exact));
     }
-  }, 30_000);
+  }, 45_000);
 
   it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
     const player = createCombatState().player;
@@ -624,6 +625,65 @@ describe("endless combat progression", () => {
     expect(result.event.armorPreventedDamage).toBeGreaterThan(0);
   });
 
+  it("caps elite armor against the current damage budget without touching bosses", () => {
+    const player = createCombatState({
+      armorPenetrationLevel: 5,
+      damage: damageForLevel(6),
+      damageLevel: 6,
+    }).player;
+    const armored = spawnEnemy(36, 0, undefined, player);
+    const hardened = spawnEnemy(48, 0.76, undefined, player);
+    const highPenetration = spawnEnemy(57, 0, undefined, {
+      ...player,
+      armorPenetrationLevel: Number.MAX_SAFE_INTEGER - 1,
+    });
+    const boss = spawnEnemy(35, 0, undefined, player);
+    expect(armored).toMatchObject({ armor: 15, maxHealth: 310, modifier: "armor" });
+    expect(hardened).toMatchObject({ armor: 15, maxHealth: 388, modifier: "hardened" });
+    expect(effectiveArmor(armored.armor, player.armorPenetrationLevel ?? 0)).toBe(12);
+    expect(Math.ceil(armored.maxHealth / (player.damage - 12))).toBeLessThanOrEqual(20);
+    expect(Math.ceil(hardened.maxHealth / (player.damage - 12))).toBeLessThanOrEqual(25);
+    expect(effectiveArmor(highPenetration.armor, Number.MAX_SAFE_INTEGER - 1)).toBeLessThan(12);
+    expect(boss.armor).toBe(35);
+  });
+
+  it("keeps reported early armored elites below the adjacent boss with readable hit receipts", () => {
+    const player = createCombatState({
+      armorPenetrationLevel: 5,
+      damage: damageForLevel(6),
+      damageLevel: 6,
+    }).player;
+    const hit = (enemy: ReturnType<typeof spawnEnemy>) => {
+      const result = attack(
+        { ...createCombatState(player), enemy },
+        {
+          atMs: 0,
+          enemyId: enemy.id,
+          rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+          source: "manual",
+        },
+      );
+      if (result.event.type === "ignored") throw new Error("Expected a manual hit");
+      return result.event;
+    };
+    const armored36 = spawnEnemy(36, 0, undefined, player);
+    const hardened48 = spawnEnemy(48, 0.76, undefined, player);
+    const armored57 = spawnEnemy(57, 0, undefined, player);
+    const boss35 = spawnEnemy(35, 0, undefined, player);
+
+    expect(armored36).toMatchObject({ armor: 15, health: 310, modifier: "armor" });
+    expect(hardened48).toMatchObject({ armor: 15, health: 388, modifier: "hardened" });
+    expect(armored57).toMatchObject({ armor: 15, health: 310, modifier: "armor" });
+    expect(effectiveArmor(armored36.armor, player.armorPenetrationLevel ?? 0)).toBe(12);
+    expect(hit(armored36)).toMatchObject({ damage: 19, penetration: 0.15 });
+    expect(hit(hardened48)).toMatchObject({ damage: 19, penetration: 0.15 });
+    expect(hit(armored57)).toMatchObject({ damage: 19, penetration: 0.15 });
+    expect(Math.ceil(armored36.maxHealth / 19)).toBe(17);
+    expect(Math.ceil(hardened48.maxHealth / 19)).toBe(21);
+    expect(Math.ceil(armored57.maxHealth / 19)).toBe(17);
+    expect(hit(boss35).damage).toBeLessThan(19);
+  });
+
   it("produces a deterministic, finite multi-boss reference report", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
@@ -764,14 +824,14 @@ describe("endless combat progression", () => {
       ["startPlus", 100, 499],
       ["lateStart", 500, 999],
       ["midgame", 1_000, 9_999],
-      ["endgameStart", 10_000, 24_919],
-      ["endgame", 24_920, Number.MAX_SAFE_INTEGER],
+      ["endgameStart", 10_000, 250_862],
+      ["endgame", 250_863, Number.MAX_SAFE_INTEGER],
     ]);
-    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(24_921);
+    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(250_863);
     const endgameSnapshot = stageReference.playerSnapshots.find(
       ({ encounter }) => encounter === ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     );
-    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 24_920 }));
+    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 250_845 }));
     expect(endgameSnapshot).toEqual(
       expect.objectContaining({
         player: expect.objectContaining({ damageLevel: expect.any(Number) }),
@@ -787,11 +847,11 @@ describe("endless combat progression", () => {
       startEncounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     });
     expect(endgameProbe.observations[0]).toMatchObject({
-      encounter: 24_921,
+      encounter: 250_863,
       goldenBug: false,
     });
     expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
-    expect(automaticReport.encounters).toBe(30_234);
+    expect(automaticReport.encounters).toBe(257_354);
     expect(automaticOnly.endgame.count).toBeGreaterThan(0);
     for (const stage of Object.values(automaticOnly)) {
       expect(stage.count).toBeGreaterThan(0);

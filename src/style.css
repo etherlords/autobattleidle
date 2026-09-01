@@ -58,6 +58,10 @@ body {
   margin: 0;
 }
 
+.armor-status {
+  font-size: 0.875rem;
+}
+
 .enemy-health {
   background: #25120b;
   border: 1px solid #f8d28b;

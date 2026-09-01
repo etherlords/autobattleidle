@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createCombatState, spawnEnemy, spawnGoldenBug } from "./combat";
+import { attack, createCombatState, effectiveArmor, spawnEnemy, spawnGoldenBug } from "./combat";
 import { createBattleSnapshot } from "./snapshot";
 import { enemyVisualSpec } from "../game/enemy-visual/spec";
 import { decodeSave, encodeSave } from "../persistence/persistence-boundary";
@@ -64,5 +64,27 @@ describe("battle snapshots", () => {
       expect(snapshot.enemy).toMatchObject({ family: visual.body, seed: visual.seed });
       expect(snapshot.enemy.name).toBe(expectedName);
     }
+  });
+
+  it("reports the same armor values used by attack resolution", () => {
+    const player = createCombatState({
+      armorPenetrationLevel: 5,
+      damageLevel: 6,
+      damage: 31,
+    }).player;
+    const state = { ...createCombatState(player), enemy: spawnEnemy(36, 0, undefined, player) };
+    const snapshot = createBattleSnapshot(state, 0, [], []);
+    const result = attack(state, {
+      atMs: 0,
+      enemyId: state.enemy.id,
+      rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+      source: "manual",
+    });
+    if (result.event.type === "ignored") throw new Error("Expected resolved attack");
+    expect(snapshot.enemy.armor).toEqual({
+      effective: effectiveArmor(state.enemy.armor, player.armorPenetrationLevel ?? 0),
+      raw: state.enemy.armor,
+    });
+    expect(result.event.armorPreventedDamage).toBe(snapshot.enemy.armor.effective);
   });
 });

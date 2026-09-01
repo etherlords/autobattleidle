@@ -34,7 +34,16 @@ const snapshot = (
   automatic: { intervalMs: 1_000, remainingMs: 0, unlocked: false },
   coins: 0,
   encounter: "Test",
-  enemy: { grade, health, level, maxHealth: 10, modifier, name: "Test enemy", goldenBug },
+  enemy: {
+    armor: { effective: 0, raw: 0 },
+    grade,
+    health,
+    level,
+    maxHealth: 10,
+    modifier,
+    name: "Test enemy",
+    goldenBug,
+  },
   events: [],
   visualCues: normalizedVisualCues(visualCues),
   playerStats: {

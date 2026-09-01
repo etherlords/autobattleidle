@@ -233,14 +233,14 @@ const ATTACK_UNIT_SCALE = 1_000_000;
 const attackUnitsToMicroUnits = (units: number): number => Math.round(units * ATTACK_UNIT_SCALE);
 const microUnitsToAttackUnits = (microUnits: number): number => microUnits / ATTACK_UNIT_SCALE;
 
-/** ABI-028's fixed product stages; endgame begins at ABI-020's 48-hour encounter receipt. */
+/** Product stages; endgame begins at the current 48-hour production encounter receipt. */
 export const ORDINARY_TTK_STAGE_CONTRACT = [
   ["early", 1, 99],
   ["startPlus", 100, 499],
   ["lateStart", 500, 999],
   ["midgame", 1_000, 9_999],
-  ["endgameStart", 10_000, 24_919],
-  ["endgame", 24_920, Number.MAX_SAFE_INTEGER],
+  ["endgameStart", 10_000, 250_862],
+  ["endgame", 250_863, Number.MAX_SAFE_INTEGER],
 ] as const satisfies readonly (readonly [OrdinaryTtkStage, number, number])[];
 
 const firstOrdinaryEncounterAtOrAfter = (encounter: number): number =>
