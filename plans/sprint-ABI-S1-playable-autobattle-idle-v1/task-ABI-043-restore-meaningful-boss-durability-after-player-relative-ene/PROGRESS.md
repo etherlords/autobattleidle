@@ -4,8 +4,8 @@ id: ABI-043
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 56
-status: In QA
+revision: 74
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -24,9 +24,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In QA
-- Revision: 56
-- Last update: Start deployed exact-SHA QA.
+- Status: Done
+- Revision: 74
+- Last update: Close ABI-043 after review, deployed QA, verification, and independent manager closure all passed.
 
 ## Execution plan
 
@@ -35,12 +35,14 @@ workspaceProject: autobattleidle
 - [x] simulation-proof: Prove exact and fast-forward boss bands plus 48/49-hour progression
 - [x] persistence-proof: Prove V3/V4 migration and reload preserve encounter and remain beatable
 - [x] independent-review: Independently review balance math and preserved contracts
-- [~] independent-qa: Verify representative deployed bosses and persistence
-- [ ] manager-close: Publish exact-SHA evidence and close
+- [x] independent-qa: Verify representative deployed bosses and persistence
+- [x] manager-close: Publish exact-SHA evidence and close
 - [x] doc-contract-repair: Remove obsolete APS contract from the current Economy design article
 - [x] independent-review-v3: Recheck the repaired canonical APS contract
 - [x] vault-current-contract-repair: Remove the remaining stale current APS contract from Vault
 - [x] independent-review-v4: Globally verify no stale current APS contract remains
+- [x] deployed-save-repair: Diagnose and repair deployed V3/V4 boss-save rejection
+- [x] independent-qa-v2: Repeat deployed QA with compact fixture injection
 
 ## Events
 
@@ -1004,3 +1006,321 @@ workspaceProject: autobattleidle
 - State: in_progress
 - Evidence:
   - evt-6a78d870-624e-413a-b71e-1fdeca37c266
+
+### evt-19058d90-d1ff-4507-8603-a1b179700ff2
+
+- Timestamp: 2026-09-01T07:48:36.551Z
+- Actor: abi043-independent-qa-v1
+- Operation: gate.record
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: Deployed QA FAIL: exact-SHA production build rejects canonical V3 and both previous/current V4 boss fixtures despite unit acceptance.
+- Idempotency key: abi043-qa-v1-fail-runtime-persistence-20260901
+- Request fingerprint: 734fba7bd8bcbbb85ef4efa7749cb3f970849757947851a8c132b032c41982c2
+- Gate: independent-qa
+- Verdict: fail
+- Evidence:
+  - exact SHA ee6fb6847f8fc83beeb5c961e5f780b7778a9918
+  - CI run 33483012127: pass
+  - Pages run 33483012130: pass
+  - isolated V3 save.v3 encounter 2170 -> reload -> Level 1; no V4 publication
+  - isolated previous V4 17777/191100 -> reload -> Level 1; no normalization
+  - isolated normalized V4 1805505/19373445 -> reload -> Level 1
+  - console 0 errors/warnings; network 200
+
+### evt-7c78f922-f987-4407-80c9-19426310be3a
+
+- Timestamp: 2026-09-01T07:48:43.939Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Return deployed persistence failure to the same implementation owner for root-cause diagnosis and repair.
+- Idempotency key: abi043-return-runtime-save-diagnosis-20260901
+- Request fingerprint: 325d0b018f65bf93b0a22e2bc96072de011935966f32c15d4871be0983a4c1e0
+- From status: In QA
+- To status: In Progress
+- Evidence:
+  - evt-19058d90-d1ff-4507-8603-a1b179700ff2
+
+### evt-73e178ff-f063-4d2b-abc6-898ba393143c
+
+- Timestamp: 2026-09-01T07:48:58.533Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Complete QA v1 with a deployed persistence failure.
+- Idempotency key: abi043-plan-complete-qa-v1-20260901
+- Request fingerprint: 9fcc3ce81fe6729df38d82e385e1b4842d3343e20aa981111b80c4e418eb92b5
+- Action: set_state
+- Step ID: independent-qa
+- State: complete
+- Evidence:
+  - evt-19058d90-d1ff-4507-8603-a1b179700ff2
+
+### evt-819af484-4b99-4a6b-a204-cfb2d548230e
+
+- Timestamp: 2026-09-01T07:49:15.304Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: Add the root-cause deployed persistence repair after QA failure.
+- Idempotency key: abi043-plan-add-runtime-save-repair-20260901
+- Request fingerprint: 370efac77276dc355604cd421967ae3b0681724b7ed60fe3328b326dad218bd0
+- Action: add
+- Step ID: deployed-save-repair
+- Evidence:
+  - evt-19058d90-d1ff-4507-8603-a1b179700ff2
+
+### evt-5965e16d-05b7-45c3-b3f0-edb255072973
+
+- Timestamp: 2026-09-01T07:49:28.093Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Start root-cause diagnosis at the deployed storage lifecycle boundary.
+- Idempotency key: abi043-plan-start-runtime-save-repair-20260901
+- Request fingerprint: a41f693b01e624cbbe81ba7c087779223bbe3ae7a1f9e09487d3d799189f1931
+- Action: set_state
+- Step ID: deployed-save-repair
+- State: in_progress
+- Evidence:
+  - evt-819af484-4b99-4a6b-a204-cfb2d548230e
+
+### evt-7fbbcb30-9d56-4a61-8b58-7f0dc4f93e9f
+
+- Timestamp: 2026-09-01T07:57:03.786Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 61
+- Resulting revision: 62
+- Summary: Complete runtime-save diagnosis: QA fixture quoting caused the false failure; no source repair required.
+- Idempotency key: abi043-plan-complete-runtime-diagnosis-20260901
+- Request fingerprint: 68724a5d0b588d72020b5ae27f6929cfdcad3149d36bb1e33a264b946eb45915
+- Action: set_state
+- Step ID: deployed-save-repair
+- State: complete
+- Evidence:
+  - Playwright CLI multiline injection stored only `{`
+  - compact V3 fixture -> Level 2170 / V4 publication / console clean
+  - compact previous and normalized V4 -> no reset
+  - focused persistence: 24 passed
+  - no production code changes
+
+### evt-80e95e54-728c-4e5c-939a-4e72f047c4c8
+
+- Timestamp: 2026-09-01T07:57:12.026Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 62
+- Resulting revision: 63
+- Summary: Add a fresh independent deployed QA after correcting the test harness.
+- Idempotency key: abi043-plan-add-qa-v2-20260901
+- Request fingerprint: de816c08ba91a9aaeb7e585e7a63af836c7ff7871450673467dbb651c49dc111
+- Action: add
+- Step ID: independent-qa-v2
+- Evidence:
+  - evt-7fbbcb30-9d56-4a61-8b58-7f0dc4f93e9f
+
+### evt-2b1db585-5070-4288-8884-41be7bba3e8b
+
+- Timestamp: 2026-09-01T07:57:35.363Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 63
+- Resulting revision: 64
+- Summary: Return through review lifecycle with no source change; prior independent APPROVE remains applicable.
+- Idempotency key: abi043-route-review-no-code-20260901
+- Request fingerprint: 1e2389f04fb468f521171d3af4adfafb1b189cb325499c5c9f1868f34373af3e
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-7fbbcb30-9d56-4a61-8b58-7f0dc4f93e9f
+  - evt-59099699-dc34-4af3-9a53-4393774823ff
+
+### evt-d771b26a-6d83-44bf-8607-82713b024c3b
+
+- Timestamp: 2026-09-01T07:57:43.748Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 64
+- Resulting revision: 65
+- Summary: Independent review remains valid because diagnosis changed no source; route to fresh deployed QA.
+- Idempotency key: abi043-route-qa-v2-after-review-20260901
+- Request fingerprint: 210547e713579d398e21985e52f2deaf6f499005d676e309ae67b00e090fb2b2
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-2b1db585-5070-4288-8884-41be7bba3e8b
+  - evt-59099699-dc34-4af3-9a53-4393774823ff
+
+### evt-8ccc7416-b61d-4e0f-ab60-d71db4b51332
+
+- Timestamp: 2026-09-01T07:57:53.028Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 65
+- Resulting revision: 66
+- Summary: Start fresh exact-SHA deployed QA with safe compact fixture injection.
+- Idempotency key: abi043-plan-start-qa-v2-20260901
+- Request fingerprint: e024bf5f00028b07dfb86c4ceb6dfd31d5560af7c04cd57438b50fad4dc5bb38
+- Action: set_state
+- Step ID: independent-qa-v2
+- State: in_progress
+- Evidence:
+  - evt-d771b26a-6d83-44bf-8607-82713b024c3b
+
+### evt-c69bd83b-9eeb-45f7-8dc5-338fff7bb7d2
+
+- Timestamp: 2026-09-01T08:07:56.697Z
+- Actor: abi043-independent-qa-v2
+- Operation: gate.record
+- Prior revision: 66
+- Resulting revision: 67
+- Summary: Deployed QA PASS on exact SHA: V3/V4 boss saves migrate and reload, attacks progress, layouts are stable, and early Armored damage remains above one.
+- Idempotency key: abi043-qa-v2-pass-20260901
+- Request fingerprint: 3e7526b2f771d99f094b6a6c6635adf3bb168a816f3d7dda1d9f8ddead917052
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - exact SHA ee6fb6847f8fc83beeb5c961e5f780b7778a9918
+  - CI run 33483012127: pass
+  - Pages run 33483012130: pass
+  - V3 encounter 2170 -> V4 boss maxHealth 19373445 / health fraction preserved
+  - previous V4 191100 -> 19373445 / encounter preserved
+  - manual click -> visible Manual hit / HP decreases
+  - Armored level 36 -> armor 15 / effective 12 / manual damage 19
+  - desktop 1440x900 and narrow 390x844
+  - console 0 errors/warnings; identity 201; score 204
+  - .playwright-cli/page-2026-09-01T08-05-49-432Z.png
+  - .playwright-cli/page-2026-09-01T08-06-08-867Z.png
+  - .playwright-cli/page-2026-09-01T08-06-23-701Z.png
+  - .playwright-cli/page-2026-09-01T08-04-15-283Z.yml
+
+### evt-045f9416-e0b4-4252-b4b1-8ae4baa180d2
+
+- Timestamp: 2026-09-01T08:08:12.894Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 67
+- Resulting revision: 68
+- Summary: Complete fresh deployed QA with PASS.
+- Idempotency key: abi043-plan-complete-qa-v2-20260901
+- Request fingerprint: 21f3ec3fda0395e398ea1abbf0b1cb5bfa9d59d90c2072721477fc2ed3142ac2
+- Action: set_state
+- Step ID: independent-qa-v2
+- State: complete
+- Evidence:
+  - evt-c69bd83b-9eeb-45f7-8dc5-338fff7bb7d2
+
+### evt-01c1b1b4-3bf3-4c49-baff-6538266c8d31
+
+- Timestamp: 2026-09-01T08:08:38.568Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 68
+- Resulting revision: 69
+- Summary: Manager verification PASS: exact-SHA tests, CI, Pages, Vault, review, and deployed save/balance behavior satisfy acceptance.
+- Idempotency key: abi043-verification-pass-20260901
+- Request fingerprint: e00b00b3699c9323631f01200ff6d843582036bb6807f5dc2554f1044b53a738
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - commit ee6fb6847f8fc83beeb5c961e5f780b7778a9918
+  - local pnpm check: 20 files / 199 tests pass
+  - CI run 33483012127: pass exact SHA
+  - Pages run 33483012130: pass exact SHA
+  - independent review evt-59099699-dc34-4af3-9a53-4393774823ff: pass
+  - independent deployed QA evt-c69bd83b-9eeb-45f7-8dc5-338fff7bb7d2: pass
+  - Vault doctor: 17 files / 0 errors / 0 warnings
+  - 48h encounter 36365; 49h encounter 37135
+  - encounter 2170 boss maxHealth 19373445
+
+### evt-01abb25e-7397-4007-88b6-1e48edec7c52
+
+- Timestamp: 2026-09-01T08:08:55.024Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 69
+- Resulting revision: 70
+- Summary: Verification and deployed QA passed; route ABI-043 to manager closure.
+- Idempotency key: abi043-route-manager-after-verification-20260901
+- Request fingerprint: 772c43f95d38b0b9e5c612358a9320d510b769926b63458de4c857f0d7103ac4
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-01c1b1b4-3bf3-4c49-baff-6538266c8d31
+  - evt-c69bd83b-9eeb-45f7-8dc5-338fff7bb7d2
+
+### evt-91a6b9e2-329e-4e12-956d-42eba3ad9c9e
+
+- Timestamp: 2026-09-01T08:09:55.118Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 70
+- Resulting revision: 71
+- Summary: Start manager closure after all required acceptance gates passed.
+- Idempotency key: abi043-plan-start-manager-close-20260901
+- Request fingerprint: 64a558eca20d847b3854977e4a61ecddd8b3c65a55bd7956c74bcdbe9dfc90e9
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - evt-01abb25e-7397-4007-88b6-1e48edec7c52
+
+### evt-7db574db-e0e3-4f9e-962c-211f559a7a2c
+
+- Timestamp: 2026-09-01T08:12:29.507Z
+- Actor: abi043-manager-closure-auditor-v1
+- Operation: gate.record
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: Independent manager closure audit PASS: all acceptance criteria, required gates, exact-SHA CI/Pages, and deployed behavior are satisfied.
+- Idempotency key: abi043-manager-closure-audit-pass-20260901
+- Request fingerprint: b24729b6aa097c2e5411ab2ccaa380833b75bb6103e15e7669a560175fb633f5
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - commit ee6fb6847f8fc83beeb5c961e5f780b7778a9918
+  - evt-59099699-dc34-4af3-9a53-4393774823ff
+  - evt-c69bd83b-9eeb-45f7-8dc5-338fff7bb7d2
+  - evt-01c1b1b4-3bf3-4c49-baff-6538266c8d31
+  - CI 33483012127
+  - Pages 33483012130
+  - Planner doctor healthy
+  - Vault doctor 0 errors / 0 warnings
+
+### evt-17333b88-6d56-4edf-91b5-1a989b71b56e
+
+- Timestamp: 2026-09-01T08:12:40.066Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: Complete manager closure after independent audit PASS.
+- Idempotency key: abi043-plan-complete-manager-close-20260901
+- Request fingerprint: fe36d75ee7dbe44a8502de1772eb271cc0b0305ac17e763c072ee2bcd29e74be
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - evt-7db574db-e0e3-4f9e-962c-211f559a7a2c
+
+### evt-a2ac79b5-2ade-4f80-9b16-fc9b257b8d70
+
+- Timestamp: 2026-09-01T08:12:53.556Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: Close ABI-043 after review, deployed QA, verification, and independent manager closure all passed.
+- Idempotency key: abi043-close-done-20260901
+- Request fingerprint: 6bc09fc2d2b8eb21cd73b25ce1e96035a8426db564bd6b1957536d311d23e5c0
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-7db574db-e0e3-4f9e-962c-211f559a7a2c
+  - evt-17333b88-6d56-4edf-91b5-1a989b71b56e

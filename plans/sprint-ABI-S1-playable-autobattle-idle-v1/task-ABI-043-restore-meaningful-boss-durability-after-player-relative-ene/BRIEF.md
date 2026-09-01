@@ -4,8 +4,8 @@ id: ABI-043
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 15
-status: In QA
+revision: 20
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -30,7 +30,7 @@ Restore meaningful boss durability after player-relative enemy health
 
 - Type: bug
 - Priority: high
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 
