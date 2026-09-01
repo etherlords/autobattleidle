@@ -23,7 +23,7 @@ requiredGates:
 
 ## Verdict
 
-LOCAL_PASS_WITH_DEPLOYED_PENDING — independent QA v1.
+PASS — independent QA v1 final deployed replay.
 
 ## Evidence
 
@@ -35,6 +35,13 @@ LOCAL_PASS_WITH_DEPLOYED_PENDING — independent QA v1.
   functional; reload restored the saved elite state in V4 localStorage.
 - At 390×844 the elite identity and HP remained readable; browser console errors: zero.
 - Local artifacts are under ignored `.playwright-cli/` and are not release authority.
-- **Pending:** publish the exact implementation SHA to Pages and replay V2 load, manual HP transition,
-  veteran/elite progression, narrow resize, reload persistence, console/network checks, and asset-SHA
-  identity before recording the independent-QA PASS gate.
+- Deployed URL: `https://etherlords.github.io/autobattleidle/`.
+- Exact published commit: `8c9bd65e3e377716542996654d77cd10d8a0deb1`.
+- CI run `33451548829`: PASS. Pages run `33451548786`: PASS; `gh run view 33451548786 --repo etherlords/autobattleidle --json headSha,status,conclusion,workflowName` returned the exact commit SHA.
+- Deployed static requests: document, JS, CSS, and favicon all HTTP 200; no failed requests.
+- Asset identity: Pages artifact downloaded from the successful Pages run (`github-pages`, via `gh run download`) contained `assets/index-Mgw-pTlb.js`; SHA-256 `1D0A278D65D67EA2665367C9AF78BEC3D1951890CA2BE7C735A1F59456FC5ECA`, 660355 bytes. The served URL `https://etherlords.github.io/autobattleidle/assets/index-Mgw-pTlb.js` matched byte-for-byte (same SHA-256 and size), tying the live asset to the exact run/commit.
+- Deployed Playwright session `abi028-final`, isolated query URL `https://etherlords.github.io/autobattleidle/?qa=abi028-final`: V2 fixture loaded as `Ember Brute · Level 1 · normal`, `84/140`, `Coins: 7`, proving V2 load/migration; one manual click plus automatic hit changed HP to `60/140` and showed both `Automatic hit: 12 damage` and `Manual hit: 12 damage`.
+- Twenty real pointer clicks advanced the live app to `Ash Drake · Level 3 · elite · Manual Guard`, `42/120`; the intermediate snapshot showed `Ash Wisp · Level 2 · veteran`. The automatic source remained active throughout and rewards advanced (`Coins: 9`).
+- At `390×844`, the elite heading and `30/120` HP remained readable. Reload at the same narrow viewport restored `Ash Drake · Level 3 · elite · Manual Guard`, `18/120`; V4 localStorage held the saved encounter/player state and the elapsed automatic tick was visible.
+- Browser console: 0 errors. All captured deployed requests were HTTP 200. Snapshots: `.playwright-cli/page-2026-08-31T23-43-10-165Z.yml`, `.playwright-cli/page-2026-08-31T23-43-23-329Z.yml`, `.playwright-cli/page-2026-08-31T23-44-04-400Z.yml`.
+- No source, dependency, Planner lifecycle, Git, or Vault mutations were made by QA. Front-matter `status: Blocked` is retained as Planner-controlled lifecycle state; this file records the independent QA verdict only.

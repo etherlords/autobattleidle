@@ -4,8 +4,8 @@ id: ABI-028
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 89
-status: In QA
+revision: 96
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 89
-- Last update: Independent QA starts headless stage receipts, persistence, browser state-action-result, and deployed-readiness checks.
+- Status: Ready for Manager
+- Revision: 96
+- Last update: Manager acceptance mapping, Vault closure, exact-SHA CI/Pages, deployed QA, and final closure receipt are complete.
 
 ## Execution plan
 
@@ -48,8 +48,8 @@ requiredGates:
 - [-] ttk-browser-fixtures: Add deterministic browser fixtures that expose representative fast, medium, and durable ordinary sequences on desktop and narrow layouts
 - [x] ttk-self-check: Implementation owner runs focused matrices, resource checks, and pnpm check; records implementation-self-check evidence
 - [x] ttk-independent-review: Independent Reviewer audits formula ownership, candidate evidence, balance risks, exclusions, and regression coverage
-- [~] ttk-independent-qa: Independent QA reruns headless receipts and browser state-action-result sequences against every acceptance band
-- [ ] ttk-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and Pages before closure
+- [x] ttk-independent-qa: Independent QA reruns headless receipts and browser state-action-result sequences against every acceptance band
+- [x] ttk-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and Pages before closure
 - [x] ttk-review-repair-v1: Same implementation owner removes the manual-only Infinity sentinel and extends deterministic stage receipts through the accepted 48-hour/endgame boundary
 - [x] ttk-independent-review-v2: Fresh independent Reviewer verifies the finite manual-only state repair and complete open-ended stage contract
 - [x] ttk-review-repair-v2: Same implementation owner adds logical attack-unit TTK classification and efficient endgame receipts for automatic-only, manual-only, and combined modes
@@ -1526,3 +1526,128 @@ requiredGates:
 - State: in_progress
 - Evidence:
   - abi028-independent-review-v4-pass
+
+### evt-985fa1f3-ea43-4956-aeb6-39c157113eef
+
+- Timestamp: 2026-08-31T23:45:16.668Z
+- Actor: abi028-independent-qa-v1
+- Operation: gate.record
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: PASS — exact-SHA deployed replay proved persistence migration, combat transitions, grade progression, narrow UI, reload, clean runtime, and byte-identical Pages asset.
+- Idempotency key: abi-028-independent-qa-deployed-8c9bd65
+- Request fingerprint: 01576e8ff566ff06ca57513b896e08b345e0dc9eb6a0ae7f080e7762304404ef
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md final deployed PASS
+  - CI run 33451548829 success for 8c9bd65e3e377716542996654d77cd10d8a0deb1
+  - Pages run 33451548786 success; served JS byte-identical to github-pages artifact
+  - V2 migration, manual/automatic combat, normal-veteran-elite, 390x844, V4 reload, console/network PASS
+
+### evt-e4c154d9-6720-457d-bb78-b26f83744797
+
+- Timestamp: 2026-08-31T23:45:23.859Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 90
+- Resulting revision: 91
+- Summary: Independent deployed QA completed against exact published SHA with byte-identical Pages asset proof.
+- Idempotency key: abi-028-complete-deployed-qa-step-8c9bd65
+- Request fingerprint: fadd507e7c87fe7e8565646eaf5d3c10ec93fbeb448b3bb40fee3e1c39a00e08
+- Action: set_state
+- Step ID: ttk-independent-qa
+- State: complete
+- Evidence:
+  - Independent QA gate evt-985fa1f3-ea43-4956-aeb6-39c157113eef
+  - QA.md deployed PASS
+  - Pages run 33451548786 exact SHA 8c9bd65
+
+### evt-edfc68ff-4722-4974-9dcf-d0c72bfd1a9d
+
+- Timestamp: 2026-08-31T23:46:49.854Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 91
+- Resulting revision: 92
+- Summary: Manager populated VERIFICATION.md through the documented narrow Markdown fallback because Planner V1.1 exposes no artifact-section writer; acceptance, exact-SHA deployment, deployed QA, persistence, and Vault readback are mapped.
+- Idempotency key: abi-028-verification-artifact-fallback-8c9bd65
+- Evidence:
+  - VERIFICATION.md acceptance mapping
+  - Planner doctor/recovery not required; current state and prior mutations read back cleanly
+  - Vault AUTOBATTLEIDLE-DOC-20260827-A7FD1F contentHash e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277
+  - CI 33451548829 and Pages 33451548786 for 8c9bd65e3e377716542996654d77cd10d8a0deb1
+
+### evt-3d10fce4-245d-456c-8592-5e9def36872c
+
+- Timestamp: 2026-08-31T23:46:59.153Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 92
+- Resulting revision: 93
+- Summary: PASS — every acceptance criterion is mapped to deterministic tests, independent review, exact-SHA CI/Pages, deployed functional QA, historical-save continuity, and canonical Vault evidence.
+- Idempotency key: abi-028-manager-verification-8c9bd65
+- Request fingerprint: 544129d167103865f0cf978153ac3b7f5926980604f74040d3fee4322c7e22ed
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md acceptance matrix
+  - Independent review v4 APPROVE
+  - Independent deployed QA PASS
+  - CI 33451548829 and Pages 33451548786 exact SHA 8c9bd65e3e377716542996654d77cd10d8a0deb1
+  - Vault readback AUTOBATTLEIDLE-DOC-20260827-A7FD1F#accepted-ordinary-enemy-health-calibration contentHash e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277; doctor 0 findings
+
+### evt-98b84944-bdf0-4dcd-a29f-b97e271b57f8
+
+- Timestamp: 2026-08-31T23:47:05.886Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: All pre-manager gates passed with exact-SHA deployed evidence and Vault readback.
+- Idempotency key: abi-028-in-qa-to-ready-manager-after-verification-8c9bd65
+- Request fingerprint: 0cb7be4770a26cd84cc9dedcc4ee78b86160db1b23bcd755987bafb566c88aac
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - Independent QA evt-985fa1f3-ea43-4956-aeb6-39c157113eef
+  - Verification evt-3d10fce4-245d-456c-8592-5e9def36872c
+  - CI/Pages exact SHA 8c9bd65e3e377716542996654d77cd10d8a0deb1
+
+### evt-a28a3996-86fb-4c05-940b-de6aa7c0392d
+
+- Timestamp: 2026-08-31T23:47:24.028Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Manager closure starts after exact-SHA deployed QA, verification, and Vault acceptance readback passed.
+- Idempotency key: abi-028-manager-closure-start-8c9bd65
+- Request fingerprint: 6909da4de4d21b3ef018c3988ec188a9f4bf8c29df6fb98a483bb76e58b191d7
+- Action: set_state
+- Step ID: ttk-manager-closure
+- State: in_progress
+- Evidence:
+  - Task ABI-028 revision 12 Ready for Manager
+  - Verification gate evt-3d10fce4-245d-456c-8592-5e9def36872c
+  - Vault doctor 0 findings
+
+### evt-f647f14c-d579-4b45-b85c-039fc26d5c91
+
+- Timestamp: 2026-08-31T23:47:38.283Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: Manager acceptance mapping, Vault closure, exact-SHA CI/Pages, deployed QA, and final closure receipt are complete.
+- Idempotency key: abi-028-manager-closure-step-complete-8c9bd65
+- Request fingerprint: a5059d209319d4918417ddc1ce8e78568d06102b662c07360684a4b236572107
+- Action: set_state
+- Step ID: ttk-manager-closure
+- State: complete
+- Evidence:
+  - VERIFICATION.md complete acceptance and sign-off matrix
+  - Independent review v4 APPROVE
+  - Independent deployed QA PASS
+  - Verification gate evt-3d10fce4-245d-456c-8592-5e9def36872c
+  - Vault contentHash e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277 and doctor 0 findings
