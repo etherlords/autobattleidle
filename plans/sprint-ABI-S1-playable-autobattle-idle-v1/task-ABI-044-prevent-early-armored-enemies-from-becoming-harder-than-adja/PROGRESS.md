@@ -4,8 +4,8 @@ id: ABI-044
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 32
-status: In QA
+revision: 42
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -23,9 +23,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In QA
-- Revision: 32
-- Last update: Independent review passed; publish candidate for exact-SHA CI, Pages, and deployed QA.
+- Status: Done
+- Revision: 42
+- Last update: Close ABI-044 after exact-SHA publication, independent review, deployed QA, verification, and manager closure.
 
 ## Execution plan
 
@@ -35,8 +35,8 @@ workspaceProject: autobattleidle
 - [x] armor-fix: Apply the smallest centralized balance and readability repair
 - [x] armor-regressions: Prove early boundaries, penetration cases, simulation equivalence, and save compatibility
 - [x] independent-review: Independently review balance math, ownership, and regression coverage
-- [ ] independent-qa: Verify deployed armored combat and readable mitigation on desktop and narrow layouts
-- [ ] manager-close: Publish exact-SHA evidence and close
+- [x] independent-qa: Verify deployed armored combat and readable mitigation on desktop and narrow layouts
+- [x] manager-close: Publish exact-SHA evidence and close
 - [x] review-repair-v1: Repair historical active armored/hardened save normalization, deterministic performance gate, and canonical design
 
 ## Events
@@ -571,3 +571,186 @@ workspaceProject: autobattleidle
   - independent-review pass progress revision31
   - pnpm check 196 tests
   - No P0-P3 findings
+
+### evt-b65c1c4f-f160-4f2c-beae-0c190ea6c2bd
+
+- Timestamp: 2026-09-01T06:17:17.445Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: EVENT checkpoint — codex-root — Exact-SHA candidate passed CI and Pages; independent deployed QA started.
+- Idempotency key: abi044-candidate-published-3eb13c2
+- Evidence:
+  - Candidate SHA 3eb13c213945db9cb4fc307750296f747888bdd8 pushed to main
+  - CI run 33476780919 success
+  - Pages run 33476780923 success
+  - Public URL https://etherlords.github.io/autobattleidle/
+
+### evt-08457c4f-4d90-4cad-830f-3cad1ee48167
+
+- Timestamp: 2026-09-01T06:17:26.295Z
+- Actor: abi044-independent-qa-v1
+- Operation: execution_plan.update
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: Start isolated deployed functional QA on the exact published candidate.
+- Idempotency key: abi044-start-independent-qa-v1-20260901
+- Request fingerprint: 48d93dac6ca72c47dc2c62ef095de8916d8577875f7bbf875500163171a48615
+- Action: set_state
+- Step ID: independent-qa
+- State: in_progress
+- Evidence:
+  - SHA 3eb13c213945db9cb4fc307750296f747888bdd8
+  - CI 33476780919 success
+  - Pages 33476780923 success
+
+### evt-6f2b8e62-eac8-431b-9a95-28f8fe990c55
+
+- Timestamp: 2026-09-01T06:22:54.326Z
+- Actor: abi044-independent-qa-v1
+- Operation: execution_plan.update
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Independent deployed QA passed on exact published SHA.
+- Idempotency key: abi044-complete-independent-qa-v1-20260901
+- Request fingerprint: 732dcb52cac9012bff34857af6b5d8177c8f6d402a6abb5bd419605ac4bed165
+- Action: set_state
+- Step ID: independent-qa
+- State: complete
+- Evidence:
+  - Exact SHA 3eb13c213945db9cb4fc307750296f747888bdd8
+  - Armored 72->15 effective12 damage19
+  - Hardened 96->18 effective14 damage23
+  - V3/V4 reload preserved progress
+  - Desktop/narrow, console/network PASS
+
+### evt-cd1f4872-7731-4836-85bd-12bf6faf97c1
+
+- Timestamp: 2026-09-01T06:23:07.942Z
+- Actor: abi044-independent-qa-v1
+- Operation: gate.record
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Independent deployed functional QA passed all balance, persistence, HUD, responsive, and health checks.
+- Idempotency key: abi044-independent-qa-pass-v1-20260901
+- Request fingerprint: 973158e4bc6cb2d24280339eb9366d4b0670b48bfafbc99be74ba4e77bb362ef
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Deployed SHA 3eb13c213945db9cb4fc307750296f747888bdd8
+  - Armored/Hardened combat transitions match expected cap and effective armor
+  - Historical V3/V4 reload preserved state without reset
+  - Desktop 1440x900 and narrow 390x844 PASS
+  - Console/network clean; Pages run 33476780923
+
+### evt-8db0b43f-89f9-4bf9-bfb0-fe4d69e2cc60
+
+- Timestamp: 2026-09-01T06:23:30.777Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: Manager verification maps source, persistence, simulation, documentation, exact-SHA publication, and deployed QA evidence to acceptance.
+- Idempotency key: abi044-manager-verification-pass-20260901
+- Request fingerprint: 460859f709a976fdc2c18de85a05bfec233cf9659cb102cef7285cbb9fdf4061
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - All six BRIEF acceptance criteria mapped in VERIFICATION.md
+  - pnpm check 196 tests
+  - Independent review v2 APPROVE
+  - Exact-SHA CI 33476780919 success and Pages 33476780923 success
+  - Independent deployed QA PASS
+  - Vault contentHash e0e8b996cab7e820137f178af009ee047572dd24d0325fe67dfdea896d927b52
+
+### evt-27473c91-20f7-4a6b-acb6-0e539cde8d80
+
+- Timestamp: 2026-09-01T06:23:37.155Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: All implementation, review, verification, CI/Pages, and deployed QA gates pass.
+- Idempotency key: abi044-in-qa-to-manager-v2-20260901
+- Request fingerprint: d88339ed00de819d38f5d14c7ef7c4ac7b773fbc0adc13fc9679bc9085fe34a0
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification pass progress revision37
+  - independent-review and independent-qa pass
+  - Exact SHA 3eb13c213945db9cb4fc307750296f747888bdd8
+
+### evt-92ec5d8d-634e-4729-b14c-b6bc99e94561
+
+- Timestamp: 2026-09-01T06:24:05.432Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Started manager closure after all gates passed
+- Idempotency key: abi044-manager-close-in_progress-38-20260901
+- Request fingerprint: d310755d4653b58161b7dd97b4483393783c6cd5d45b925a1b338917200732e3
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - Candidate exact-SHA CI/Pages and deployed QA complete
+
+### evt-0348c714-613e-4dff-a51a-6c1cd6370722
+
+- Timestamp: 2026-09-01T06:24:07.286Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Manager acceptance mapping and terminal artifacts complete
+- Idempotency key: abi044-manager-close-complete-39-20260901
+- Request fingerprint: 8cdb4a5628c664cffe8be59531d6d75880dcbd7ac504bb1d62e636ba63eebf87
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - QA.md and VERIFICATION.md populated
+  - All required gates have passing evidence
+  - Terminal Planner checkpoint ready
+
+### evt-1e4c1294-35ba-4108-9858-872dc0776d33
+
+- Timestamp: 2026-09-01T06:24:30.240Z
+- Actor: abi044-manager-closure
+- Operation: gate.record
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Independent manager-closure actor confirms all acceptance criteria and gates on the published candidate.
+- Idempotency key: abi044-manager-closure-pass-independent-20260901
+- Request fingerprint: e5666a4184242fc22e2071c4c3ca05757d25117b774b2b7affffb9b5b23b5e25
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Implementation self-check pass
+  - Independent review v2 pass
+  - Independent deployed QA pass
+  - Verification pass by codex-root
+  - Candidate SHA 3eb13c213945db9cb4fc307750296f747888bdd8 on main
+  - CI 33476780919 and Pages 33476780923 success
+  - QA.md and VERIFICATION.md complete
+
+### evt-c6b53705-ea74-4015-8d9a-3662c34f1273
+
+- Timestamp: 2026-09-01T06:24:40.174Z
+- Actor: abi044-manager-closure
+- Operation: task.advance
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Close ABI-044 after exact-SHA publication, independent review, deployed QA, verification, and manager closure.
+- Idempotency key: abi044-ready-manager-to-done-20260901
+- Request fingerprint: 28d860bb51d8f85bda376882548badb7b30e5e6b5e5681145f964079065374b6
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All required gates pass through progress revision41
+  - Exact SHA 3eb13c213945db9cb4fc307750296f747888bdd8
+  - CI 33476780919 success
+  - Pages 33476780923 success
+  - Independent deployed QA pass

@@ -4,8 +4,8 @@ id: ABI-044
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 7
-status: In QA
+revision: 9
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-018
@@ -29,7 +29,7 @@ Prevent early armored enemies from becoming harder than adjacent bosses
 
 - Type: bug
 - Priority: high
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 
