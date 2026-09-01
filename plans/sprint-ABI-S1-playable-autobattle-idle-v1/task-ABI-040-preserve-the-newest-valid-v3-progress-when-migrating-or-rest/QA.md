@@ -22,7 +22,7 @@ requiredGates:
 
 ## Verdict
 
-LOCAL PASS — exact-SHA deployed Pages proof remains pending.
+PASS — local and exact-SHA deployed Pages proof complete.
 
 ## Evidence
 
@@ -35,3 +35,8 @@ LOCAL PASS — exact-SHA deployed Pages proof remains pending.
 - Isolated browser migration/Restore preserved encounter 2170 and reload continued at 2171 only
   because live automatic combat progressed. Console errors: zero.
 - User Chrome and its real localStorage were not modified.
+- Published commit `204cb4c3ede153d925d7ad58654efe892212f5b7`: CI `33454549754` and Pages
+  `33454549765` succeeded. Served `assets/index--QT5leaw.js` was 660,672 bytes with SHA-256
+  `d1b667064807f107a50df363bb898dd2347ab4eb3327a1386b801c49bdd2a252`.
+- Deployed `1280x800` fixture proved v3 2170 -> v4 2170, reload 2170, explicit Restore 2170,
+  valid-V4 startup precedence, identical historical V3 bytes, zero console errors, and zero network failures.

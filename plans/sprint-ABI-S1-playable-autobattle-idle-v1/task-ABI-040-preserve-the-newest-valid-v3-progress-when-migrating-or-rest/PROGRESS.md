@@ -4,8 +4,8 @@ id: ABI-040
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 8
-status: In QA
+revision: 12
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-013
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 8
-- Last update: Local review and QA passed; exact-SHA deployed persistence proof pending
+- Status: Done
+- Revision: 12
+- Last update: Exact-SHA deployed migration, Restore, and reload proof passed; manager closed
 
 ## Execution plan
 
@@ -32,8 +32,8 @@ requiredGates:
 - [x] v3-loss-implementation: Implementation owner repairs V3 recognition and historical-source selection at the persistence boundary without deleting or rewriting source slots
 - [x] v3-loss-regressions: Implementation owner adds the exact user-save regression, precedence/Restore/failure tests, and runs focused persistence plus pnpm check
 - [x] v3-loss-independent-review: Independent Reviewer audits non-loss invariants, validation strictness, atomic publication, and regression coverage
-- [-] v3-loss-independent-qa: Independent QA replays isolated authentic V3 migration/Restore/reload locally and against exact-SHA Pages
-- [ ] v3-loss-manager-closure: Manager maps acceptance, updates Vault, publishes the coherent repair, and closes only after exact-SHA CI/Pages proof
+- [x] v3-loss-independent-qa: Independent QA replays isolated authentic V3 migration/Restore/reload locally and against exact-SHA Pages
+- [x] v3-loss-manager-closure: Manager maps acceptance, updates Vault, publishes the coherent repair, and closes only after exact-SHA CI/Pages proof
 
 ## Events
 
@@ -69,3 +69,18 @@ requiredGates:
   - Independent review rerun: APPROVE with no P0-P3 findings
   - Independent local QA: PASS; user Chrome/storage untouched
   - Vault `Persistence Contract` contentHash `de611159417695f3400a413a2ef51cab77c24a55478ff212095fa4ab6bea4191`; doctor 0 errors / 0 warnings
+
+### fallback-abi040-close-20260901
+
+- Timestamp: 2026-09-01T00:28:00Z
+- Actor: codex-root
+- Operation: narrow Markdown fallback lifecycle/gate closure
+- Prior revision: 8
+- Resulting revision: 12
+- Summary: EVENT closed — exact-SHA CI and Pages passed; independent deployed QA proved authentic V3 2170 migration, Restore, V4 startup precedence, source-byte retention, reload continuity, and clean console/network. ABI-040 advanced through Ready for Manager to Done.
+- Evidence:
+  - Commit `204cb4c3ede153d925d7ad58654efe892212f5b7`
+  - CI run `33454549754`: success
+  - Pages run `33454549765`: success
+  - Served JS `assets/index--QT5leaw.js`, SHA-256 `d1b667064807f107a50df363bb898dd2347ab4eb3327a1386b801c49bdd2a252`
+  - Deployed isolated QA: PASS at `https://etherlords.github.io/autobattleidle/`; user Chrome untouched

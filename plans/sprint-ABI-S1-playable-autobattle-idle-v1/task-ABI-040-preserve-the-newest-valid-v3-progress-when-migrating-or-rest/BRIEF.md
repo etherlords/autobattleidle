@@ -4,8 +4,8 @@ id: ABI-040
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In QA
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-013
@@ -28,7 +28,7 @@ Preserve the newest valid V3 progress when migrating or restoring V4
 
 - Type: bug
 - Priority: critical
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

@@ -27,11 +27,14 @@ requiredGates:
 - Independent local QA: PASS in isolated storage/browser context.
 - Vault: `Persistence Contract` records strict V3 -> V2 -> legacy -> V1 precedence, valid-V4 startup,
   explicit Restore, historical derived-semantics validation, and stale-pending cancellation.
-- Publication/deployed acceptance: pending exact commit SHA, CI/Pages runs, served asset identity, and
-  isolated production migration/Restore/reload proof.
+- Publication/deployed acceptance: PASS at commit `204cb4c3ede153d925d7ad58654efe892212f5b7`;
+  CI `33454549754` and Pages `33454549765` succeeded. Served JS SHA-256 is
+  `d1b667064807f107a50df363bb898dd2347ab4eb3327a1386b801c49bdd2a252`.
+- Deployed acceptance: isolated v3 2170 migrated/restored/reloaded at 2170 with coins/levels/unlock and
+  historical bytes preserved; valid V4 won normal startup; console/network clean.
 
 ## Sign-off
 
 - Reviewer: APPROVE (fresh rerun)
-- QA: local PASS; deployed pending
-- Manager close: pending
+- QA: PASS local and deployed exact-SHA
+- Manager close: PASS
