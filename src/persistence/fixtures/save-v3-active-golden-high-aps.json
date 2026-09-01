@@ -1,0 +1,29 @@
+{
+  "automaticUnlocked": true,
+  "coins": 7,
+  "enemy": {
+    "armor": 0,
+    "encounter": 51,
+    "grade": "normal",
+    "health": 50,
+    "id": 3002399751580381,
+    "maxHealth": 50,
+    "modifier": null,
+    "reward": 1220
+  },
+  "goldenBug": {
+    "id": 50,
+    "resumeEncounter": 51
+  },
+  "player": {
+    "automaticSpeedLevel": 100,
+    "armorPenetrationLevel": 0,
+    "criticalChance": 0,
+    "criticalLevel": 0,
+    "damage": 1,
+    "damageLevel": 0,
+    "doubleRewardChance": 0,
+    "doubleRewardLevel": 0
+  },
+  "version": 3
+}

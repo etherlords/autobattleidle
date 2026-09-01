@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import v1Fixture from "./fixtures/save-v1.json";
 import v2Fixture from "./fixtures/save-v2.json";
 import legacyV2Fixture from "./fixtures/legacy-save-v2.json";
+import v3GoldenFixture from "./fixtures/save-v3-active-golden.json";
+import v3GoldenHighApsFixture from "./fixtures/save-v3-active-golden-high-aps.json";
+import v3Encounter2170Fixture from "./fixtures/save-v3-encounter-2170.json";
+import v4GoldenDefeatsFixture from "./fixtures/save-v4-golden-defeats.json";
 
 import {
   automaticInterval,
@@ -32,7 +36,398 @@ const fallback = () =>
     false,
   );
 
+type FixtureExpectation = {
+  readonly automaticUnlocked: boolean;
+  readonly coins: number;
+  readonly enemy: {
+    readonly armor: number;
+    readonly encounter: number;
+    readonly grade: "normal" | "veteran" | "elite" | "boss";
+    readonly health: number;
+    readonly id: number;
+    readonly maxHealth: number;
+    readonly modifier: "armor" | "health" | "automatic-slow" | null;
+    readonly reward: number;
+  };
+  readonly goldenBugDefeats: number;
+  readonly goldenBug: { readonly id: number; readonly resumeEncounter: number } | null;
+  readonly player: {
+    readonly automaticSpeedLevel: number;
+    readonly armorPenetrationLevel: number;
+    readonly criticalChance: number;
+    readonly criticalLevel: number;
+    readonly damage: number;
+    readonly damageLevel: number;
+    readonly doubleRewardChance: number;
+    readonly doubleRewardLevel: number;
+  };
+};
+
+const fixtureManifest = [
+  { key: SAVE_V1_KEY, fixture: v1Fixture, historical: true, name: "V1", sourceVersion: 1 },
+  { key: SAVE_V2_KEY, fixture: v2Fixture, historical: true, name: "V2", sourceVersion: 2 },
+  {
+    key: LEGACY_SAVE_KEY,
+    fixture: legacyV2Fixture,
+    historical: true,
+    name: "legacy V2",
+    sourceVersion: 2,
+  },
+  {
+    key: SAVE_V3_KEY,
+    fixture: v3Encounter2170Fixture,
+    historical: true,
+    name: "V3 encounter 2170",
+    sourceVersion: 3,
+  },
+  {
+    key: SAVE_V3_KEY,
+    fixture: v3GoldenFixture,
+    historical: true,
+    name: "V3 active Golden",
+    sourceVersion: 3,
+  },
+  {
+    key: SAVE_V3_KEY,
+    fixture: v3GoldenHighApsFixture,
+    historical: true,
+    name: "V3 active Golden high APS",
+    sourceVersion: 3,
+  },
+  {
+    key: SAVE_V4_KEY,
+    fixture: v4GoldenDefeatsFixture,
+    historical: false,
+    name: "V4 Golden defeats",
+    sourceVersion: SAVE_VERSION,
+  },
+] as const;
+
+const fixtureExpectations: readonly FixtureExpectation[] = [
+  {
+    automaticUnlocked: true,
+    coins: 7,
+    enemy: {
+      armor: 0,
+      encounter: 1,
+      grade: "normal",
+      health: 8,
+      id: 1,
+      maxHealth: 12,
+      modifier: null,
+      reward: 1,
+    },
+    goldenBug: null,
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 1,
+      armorPenetrationLevel: 0,
+      criticalChance: 0.02857142857142857,
+      criticalLevel: 1,
+      damage: 12,
+      damageLevel: 1,
+      doubleRewardChance: 0.05454545454545454,
+      doubleRewardLevel: 2,
+    },
+  },
+  {
+    automaticUnlocked: true,
+    coins: 7,
+    enemy: {
+      armor: 0,
+      encounter: 1,
+      grade: "normal",
+      health: 84,
+      id: 1,
+      maxHealth: 140,
+      modifier: null,
+      reward: 1,
+    },
+    goldenBug: null,
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 1,
+      armorPenetrationLevel: 0,
+      criticalChance: 0.02857142857142857,
+      criticalLevel: 1,
+      damage: 12,
+      damageLevel: 1,
+      doubleRewardChance: 0.05454545454545454,
+      doubleRewardLevel: 2,
+    },
+  },
+  {
+    automaticUnlocked: true,
+    coins: 25,
+    enemy: {
+      armor: 30,
+      encounter: 30,
+      grade: "boss",
+      health: 10793,
+      id: 30,
+      maxHealth: 19980,
+      modifier: null,
+      reward: 4860,
+    },
+    goldenBug: null,
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 4,
+      armorPenetrationLevel: 7,
+      criticalChance: 0.12,
+      criticalLevel: 5,
+      damage: 52,
+      damageLevel: 14,
+      doubleRewardChance: 0.13846153846153844,
+      doubleRewardLevel: 6,
+    },
+  },
+  {
+    automaticUnlocked: true,
+    coins: 427_622_176,
+    enemy: {
+      armor: 2170,
+      encounter: 2170,
+      grade: "boss",
+      health: 17810,
+      id: 2170,
+      maxHealth: 191100,
+      modifier: null,
+      reward: 16883685,
+    },
+    goldenBug: null,
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 4093,
+      armorPenetrationLevel: 1074,
+      criticalChance: 0.589873417721519,
+      criticalLevel: 1165,
+      damage: 6370,
+      damageLevel: 5620,
+      doubleRewardChance: 0.5941775836972343,
+      doubleRewardLevel: 2041,
+    },
+  },
+  {
+    automaticUnlocked: false,
+    coins: 7,
+    enemy: {
+      armor: 0,
+      encounter: 51,
+      grade: "normal",
+      health: 16,
+      id: 3002399751580381,
+      maxHealth: 16,
+      modifier: null,
+      reward: 1550,
+    },
+    goldenBug: { id: 50, resumeEncounter: 51 },
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 0,
+      armorPenetrationLevel: 0,
+      criticalChance: 0,
+      criticalLevel: 0,
+      damage: 1,
+      damageLevel: 0,
+      doubleRewardChance: 0,
+      doubleRewardLevel: 0,
+    },
+  },
+  {
+    automaticUnlocked: true,
+    coins: 7,
+    enemy: {
+      armor: 0,
+      encounter: 51,
+      grade: "normal",
+      health: 123,
+      id: 3002399751580381,
+      maxHealth: 123,
+      modifier: null,
+      reward: 1550,
+    },
+    goldenBug: { id: 50, resumeEncounter: 51 },
+    goldenBugDefeats: 0,
+    player: {
+      automaticSpeedLevel: 100,
+      armorPenetrationLevel: 0,
+      criticalChance: 0,
+      criticalLevel: 0,
+      damage: 1,
+      damageLevel: 0,
+      doubleRewardChance: 0,
+      doubleRewardLevel: 0,
+    },
+  },
+  {
+    automaticUnlocked: true,
+    coins: 427_622_176,
+    enemy: {
+      armor: 2170,
+      encounter: 2170,
+      grade: "boss",
+      health: 17810,
+      id: 2170,
+      maxHealth: 191100,
+      modifier: null,
+      reward: 16883685,
+    },
+    goldenBug: null,
+    goldenBugDefeats: 3,
+    player: {
+      automaticSpeedLevel: 4093,
+      armorPenetrationLevel: 1074,
+      criticalChance: 0.589873417721519,
+      criticalLevel: 1165,
+      damage: 6370,
+      damageLevel: 5620,
+      doubleRewardChance: 0.5941775836972343,
+      doubleRewardLevel: 2041,
+    },
+  },
+];
+
+const createFixtureBoundary = (values: Map<string, string>) =>
+  createPersistenceBoundary({
+    page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+    storage: {
+      getItem: (key) => values.get(key) ?? null,
+      removeItem: (key) => values.delete(key),
+      setItem: (key, value) => values.set(key, value),
+    },
+  });
+
+const expectFixtureState = (
+  state: ReturnType<typeof fallback>,
+  expected: FixtureExpectation,
+): void => {
+  const { nextAutomaticAttackAtMs: ignoredTimestamp, ...persisted } = state;
+  void ignoredTimestamp;
+  expect(persisted).toEqual({
+    automaticUnlocked: expected.automaticUnlocked,
+    coins: expected.coins,
+    enemy: expected.enemy,
+    goldenBug: expected.goldenBug,
+    goldenBugDefeats: expected.goldenBugDefeats,
+    player: expected.player,
+  });
+};
+
 describe("persistence boundary", () => {
+  it("keeps a closed, table-driven migration matrix for every supported save fixture", () => {
+    expect(fixtureManifest.map(({ name }) => name)).toEqual([
+      "V1",
+      "V2",
+      "legacy V2",
+      "V3 encounter 2170",
+      "V3 active Golden",
+      "V3 active Golden high APS",
+      "V4 Golden defeats",
+    ]);
+    expect(fixtureExpectations).toHaveLength(fixtureManifest.length);
+    expect(fixtureManifest.map(({ sourceVersion }) => sourceVersion)).toEqual([
+      1,
+      2,
+      2,
+      3,
+      3,
+      3,
+      SAVE_VERSION,
+    ]);
+    expect(new Set(fixtureManifest.map(({ sourceVersion }) => sourceVersion))).toEqual(
+      new Set(Array.from({ length: SAVE_VERSION }, (_value, index) => index + 1)),
+    );
+
+    for (const [index, source] of fixtureManifest.entries()) {
+      const expected = fixtureExpectations[index];
+      if (expected === undefined) throw new Error(`Missing fixture expectation for ${source.name}`);
+      const raw = JSON.stringify(source.fixture);
+      expect(source.fixture.version).toBe(source.sourceVersion);
+      const values = new Map<string, string>([[source.key, raw]]);
+      const boundary = createFixtureBoundary(values);
+      const migrated = boundary.load(fallback(), 100);
+
+      expectFixtureState(migrated, expected);
+      expect(values.get(source.key)).toBe(raw);
+      if (source.historical) expect(values.get(SAVE_V4_KEY)).toBe(encodeSave(migrated));
+      else expect(values.get(SAVE_V4_KEY)).toBe(raw);
+
+      const reloaded = boundary.load(fallback(), 200);
+      expectFixtureState(reloaded, expected);
+      expect(values.get(source.key)).toBe(raw);
+    }
+  });
+
+  it("repairs all historical slots in strict V3, V2, legacy, then V1 precedence", () => {
+    const sources = [
+      {
+        expected: fixtureExpectations[3],
+        key: SAVE_V3_KEY,
+        raw: JSON.stringify(v3Encounter2170Fixture),
+      },
+      { expected: fixtureExpectations[1], key: SAVE_V2_KEY, raw: JSON.stringify(v2Fixture) },
+      {
+        expected: fixtureExpectations[2],
+        key: LEGACY_SAVE_KEY,
+        raw: JSON.stringify(legacyV2Fixture),
+      },
+      { expected: fixtureExpectations[0], key: SAVE_V1_KEY, raw: JSON.stringify(v1Fixture) },
+    ];
+    const scenarios = [
+      { expectedIndex: 0, mutate: () => undefined },
+      {
+        expectedIndex: 1,
+        mutate: (values: Map<string, string>) => values.set(SAVE_V3_KEY, "invalid"),
+      },
+      {
+        expectedIndex: 2,
+        mutate: (values: Map<string, string>) => {
+          values.delete(SAVE_V3_KEY);
+          values.set(SAVE_V2_KEY, "invalid");
+        },
+      },
+      {
+        expectedIndex: 3,
+        mutate: (values: Map<string, string>) => {
+          values.delete(SAVE_V3_KEY);
+          values.delete(SAVE_V2_KEY);
+          values.set(LEGACY_SAVE_KEY, "invalid");
+        },
+      },
+    ];
+
+    for (const scenario of scenarios) {
+      const values = new Map(sources.map(({ key, raw }) => [key, raw]));
+      scenario.mutate(values);
+      const historicalBeforeLoad = new Map(sources.map(({ key }) => [key, values.get(key)]));
+      const selected = sources[scenario.expectedIndex];
+      if (selected?.expected === undefined)
+        throw new Error("Missing historical precedence expectation");
+      const writtenKeys: string[] = [];
+      const boundary = createPersistenceBoundary({
+        page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+        storage: {
+          getItem: (key) => values.get(key) ?? null,
+          removeItem: (key) => values.delete(key),
+          setItem: (key, value) => {
+            writtenKeys.push(key);
+            values.set(key, value);
+          },
+        },
+      });
+      const loaded = boundary.load(fallback(), 100);
+
+      expectFixtureState(loaded, selected.expected);
+      expect(values.get(selected.key)).toBe(selected.raw);
+      expect(values.get(SAVE_V4_KEY)).toBe(encodeSave(loaded));
+      expect(writtenKeys).toEqual([SAVE_V4_KEY]);
+      for (const source of sources) {
+        expect(values.get(source.key)).toBe(historicalBeforeLoad.get(source.key));
+      }
+    }
+  });
+
   it("retains a versioned V2 source byte-for-byte while publishing and reloading V4", () => {
     const v2 = JSON.stringify(v2Fixture);
     const values = new Map<string, string>([[SAVE_V2_KEY, v2]]);
@@ -54,8 +449,7 @@ describe("persistence boundary", () => {
   });
 
   it("keeps the authentic encounter-2170 V3 ahead of lower historical saves", () => {
-    const v3 =
-      '{"automaticUnlocked":true,"coins":427622176,"enemy":{"armor":2170,"encounter":2170,"grade":"boss","health":1805505,"id":2170,"maxHealth":19373445,"modifier":null,"reward":67534740},"goldenBug":null,"player":{"automaticSpeedLevel":4093,"armorPenetrationLevel":1074,"criticalChance":0.589873417721519,"criticalLevel":1165,"damage":6370,"damageLevel":5620,"doubleRewardChance":0.5941775836972343,"doubleRewardLevel":2041},"version":3}';
+    const v3 = JSON.stringify(v3Encounter2170Fixture);
     const legacy = JSON.stringify(legacyV2Fixture);
     const values = new Map<string, string>([
       [SAVE_V3_KEY, v3],
@@ -104,8 +498,7 @@ describe("persistence boundary", () => {
   });
 
   it("does not let a stale failed autosave overwrite a successful V3 Restore", () => {
-    const v3 =
-      '{"automaticUnlocked":true,"coins":427622176,"enemy":{"armor":2170,"encounter":2170,"grade":"boss","health":1805505,"id":2170,"maxHealth":19373445,"modifier":null,"reward":67534740},"goldenBug":null,"player":{"automaticSpeedLevel":4093,"armorPenetrationLevel":1074,"criticalChance":0.589873417721519,"criticalLevel":1165,"damage":6370,"damageLevel":5620,"doubleRewardChance":0.5941775836972343,"doubleRewardLevel":2041},"version":3}';
+    const v3 = JSON.stringify(v3Encounter2170Fixture);
     const values = new Map<string, string>([[SAVE_V3_KEY, v3]]);
     const timers = new Map<number, () => void>();
     let writable = false;
@@ -156,8 +549,7 @@ describe("persistence boundary", () => {
     });
   });
   it("normalizes a literal legacy active-V3 Golden Bug reward through load, save, and reload", () => {
-    const oldActiveV3 =
-      '{"automaticUnlocked":false,"coins":7,"enemy":{"armor":0,"encounter":51,"grade":"normal","health":5,"id":3002399751580381,"maxHealth":5,"modifier":null,"reward":1220},"goldenBug":{"id":50,"resumeEncounter":51},"player":{"automaticSpeedLevel":0,"armorPenetrationLevel":0,"criticalChance":0,"criticalLevel":0,"damage":1,"damageLevel":0,"doubleRewardChance":0,"doubleRewardLevel":0},"version":3}';
+    const oldActiveV3 = JSON.stringify(v3GoldenFixture);
     const values = new Map<string, string>([[SAVE_V3_KEY, oldActiveV3]]);
     const pagehide = new Set<() => void>();
     const boundary = createPersistenceBoundary({
@@ -185,31 +577,7 @@ describe("persistence boundary", () => {
     ).toEqual(fallback());
   });
   it("recognizes nonzero-speed V3 and V4 Golden Bugs with the pre-ABI APS curve", () => {
-    const legacy = {
-      automaticUnlocked: true,
-      coins: 7,
-      enemy: {
-        armor: 0,
-        encounter: 51,
-        grade: "normal",
-        health: 50,
-        id: 3002399751580381,
-        maxHealth: 50,
-        modifier: null,
-        reward: 1220,
-      },
-      goldenBug: { id: 50, resumeEncounter: 51 },
-      player: {
-        automaticSpeedLevel: 100,
-        armorPenetrationLevel: 0,
-        criticalChance: 0,
-        criticalLevel: 0,
-        damage: 1,
-        damageLevel: 0,
-        doubleRewardChance: 0,
-        doubleRewardLevel: 0,
-      },
-    };
+    const legacy = v3GoldenHighApsFixture;
     for (const [key, source] of [
       [SAVE_V3_KEY, { ...legacy, version: 3 }],
       [SAVE_V4_KEY, { ...legacy, goldenBugDefeats: 0, version: 4 }],
