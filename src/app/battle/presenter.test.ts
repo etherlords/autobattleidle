@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createCombatState, type AttackEvent } from "../../domain/combat";
+import { createCombatState, purchaseUpgrade, type AttackEvent } from "../../domain/combat";
 import type { BattleControllerEvent } from "./contracts";
-import { battleEventMessages, battleVisualCues } from "./presenter";
+import { battleEventMessages, battleVisualCues, presentBattleUpdate } from "./presenter";
 
 const state = createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 });
 const update = {
@@ -127,5 +127,32 @@ describe("battleEventMessages", () => {
         type: "frame",
       }),
     ).toEqual(["golden-escape"]);
+  });
+});
+
+describe("presentBattleUpdate", () => {
+  it("projects exact enabled gains and recomputes them after a purchase", () => {
+    const richState = { ...state, coins: Number.MAX_SAFE_INTEGER };
+    const before = presentBattleUpdate({ ...update, state: richState });
+    expect(before.upgrades.find((upgrade) => upgrade.id === "damage")?.effect?.exact).toMatch(
+      /^\+\d+ damage$/,
+    );
+    expect(before.upgrades.find((upgrade) => upgrade.id === "automatic-unlock")?.effect).toEqual({
+      exact: "Unlock automatic attacks",
+      text: "Unlock auto attack",
+    });
+    const purchased = purchaseUpgrade(richState, "damage", 0);
+    const after = presentBattleUpdate({ ...update, state: purchased.state });
+    expect(after.upgrades.find((upgrade) => upgrade.id === "damage")?.effect?.exact).toMatch(
+      /^\+\d+ damage$/,
+    );
+    expect(after.upgrades.find((upgrade) => upgrade.id === "automatic-speed")?.effect).toBeNull();
+  });
+
+  it("keeps the next gain visible when coins are the only purchase blocker", () => {
+    const snapshot = presentBattleUpdate(update);
+    const damage = snapshot.upgrades.find((upgrade) => upgrade.id === "damage");
+    expect(damage?.disabledReason).toBe("Need 2 coins");
+    expect(damage?.effect?.exact).toMatch(/^\+\d+ damage$/);
   });
 });

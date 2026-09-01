@@ -2,8 +2,10 @@ import {
   UPGRADES,
   upgradeCost,
   upgradeDisabledReason,
+  upgradeEffectPreview,
   upgradeLevel,
   type AttackEvent,
+  type UpgradeId,
 } from "../../domain/combat";
 import {
   createBattleSnapshot,
@@ -36,6 +38,28 @@ export const battleEventMessages = {
   reset: (): undefined => undefined,
   restore: (): undefined => undefined,
 } as const;
+
+const upgradeEffect = (
+  id: UpgradeId,
+  preview: ReturnType<typeof upgradeEffectPreview>,
+): { readonly exact: string; readonly text: string } | null => {
+  if (preview === null) return null;
+  if (preview.kind === "unlock")
+    return { exact: "Unlock automatic attacks", text: "Unlock auto attack" };
+  if (id === "damage") {
+    const damage = formatNumber(preview.delta);
+    return { exact: `+${damage.exact} damage`, text: `+${damage.text} damage` };
+  }
+  if (id === "automatic-speed") {
+    const value = (preview.delta / 100).toFixed(2);
+    return { exact: `+${value} APS`, text: `+${value} APS` };
+  }
+  let label = "double reward";
+  if (id === "armor-penetration") label = "armor penetration";
+  else if (id === "critical-chance") label = "critical chance";
+  const value = (preview.delta / 10).toFixed(1);
+  return { exact: `+${value}% ${label}`, text: `+${value}% ${label}` };
+};
 
 const attackVisualCue = (
   outcome: AttackEvent,
@@ -91,13 +115,20 @@ export const presentBattleUpdate = (
     update.state,
     update.nowMs,
     update.events,
-    UPGRADES.map((upgrade) => ({
-      cost: upgradeCost(update.state, upgrade.id),
-      disabledReason: upgradeDisabledReason(update.state, upgrade.id),
-      id: upgrade.id,
-      label: upgrade.label,
-      level: upgradeLevel(update.state, upgrade.id),
-    })),
+    UPGRADES.map((upgrade) => {
+      const disabledReason = upgradeDisabledReason(update.state, upgrade.id);
+      return {
+        cost: upgradeCost(update.state, upgrade.id),
+        disabledReason,
+        effect:
+          disabledReason === null || disabledReason.startsWith("Need ")
+            ? upgradeEffect(upgrade.id, upgradeEffectPreview(update.state, upgrade.id))
+            : null,
+        id: upgrade.id,
+        label: upgrade.label,
+        level: upgradeLevel(update.state, upgrade.id),
+      };
+    }),
     update.goldenBugRemainingMs,
     event === undefined ? [] : battleVisualCues(event),
     update.automaticPaused ?? false,

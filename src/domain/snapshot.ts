@@ -22,6 +22,7 @@ export type BattleVisualCue =
 export type UpgradeSnapshot = {
   readonly cost: number;
   readonly disabledReason: string | null;
+  readonly effect: { readonly exact: string; readonly text: string } | null;
   readonly id: UpgradeId;
   readonly label: string;
   readonly level: number;

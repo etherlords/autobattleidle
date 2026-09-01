@@ -22,6 +22,7 @@ import {
   UPGRADES,
   upgradeCost,
   upgradeDisabledReason,
+  upgradeEffectPreview,
   upgradeLevel,
 } from "./combat";
 import {
@@ -423,6 +424,32 @@ describe("endless combat progression", () => {
     }
   });
 
+  it("previews the exact displayed gain from the same next level that purchase applies", () => {
+    const state = {
+      ...createCombatState(),
+      automaticUnlocked: true,
+      coins: Number.MAX_SAFE_INTEGER,
+    };
+    for (const id of [
+      "damage",
+      "armor-penetration",
+      "critical-chance",
+      "double-reward",
+      "automatic-speed",
+    ] as const) {
+      const preview = upgradeEffectPreview(state, id);
+      expect(preview).toMatchObject({ kind: "delta" });
+      if (preview === null || preview.kind !== "delta")
+        throw new Error("Expected a numeric preview");
+      const purchase = purchaseUpgrade(state, id, 0);
+      expect(upgradeLevel(purchase.state, id)).toBe(preview.targetLevel);
+      expect(preview.delta).toBeGreaterThan(0);
+    }
+    expect(upgradeEffectPreview(createCombatState(), "automatic-unlock")).toEqual({
+      kind: "unlock",
+    });
+  });
+
   it("uses the same legacy player-level derivation for attacks and upgrades", () => {
     const state = {
       ...createCombatState({
@@ -528,6 +555,24 @@ describe("endless combat progression", () => {
     expect(upgradeDisabledReason(purchase.state, "critical-chance")).toBe(
       "Level cannot advance safely",
     );
+  });
+
+  it("combines skipped levels into one preview and exposes no terminal gain", () => {
+    const state = {
+      ...createCombatState(),
+      coins: Number.MAX_SAFE_INTEGER,
+      player: { ...createCombatState().player, criticalLevel: 1_000_000 },
+    };
+    const preview = upgradeEffectPreview(state, "critical-chance");
+    expect(preview).toMatchObject({ kind: "delta" });
+    if (preview === null || preview.kind !== "delta") throw new Error("Expected a numeric preview");
+    expect(preview.targetLevel).toBeGreaterThan(1_000_001);
+    expect(preview.delta).toBeGreaterThan(0);
+    const endpoint = {
+      ...state,
+      player: { ...state.player, damageLevel: Number.MAX_SAFE_INTEGER },
+    };
+    expect(upgradeEffectPreview(endpoint, "damage")).toBeNull();
   });
 
   it("treats rounded 12.00 APS as the terminal automatic-speed quantum", () => {

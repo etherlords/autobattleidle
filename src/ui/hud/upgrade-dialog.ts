@@ -26,6 +26,7 @@ export class UpgradeDialog {
     UpgradeId,
     {
       readonly button: HTMLButtonElement;
+      readonly effect: HTMLSpanElement;
       readonly listener: (event: MouseEvent) => void;
       readonly price: HTMLSpanElement;
       readonly title: HTMLSpanElement;
@@ -110,11 +111,13 @@ export class UpgradeDialog {
         title.className = "upgrade-title";
         const price = document.createElement("span");
         price.className = "upgrade-price";
-        upgradeButton.append(title, price);
+        const effect = document.createElement("span");
+        effect.className = "upgrade-effect";
+        upgradeButton.append(title, price, effect);
         const listener = (event: MouseEvent): void =>
           this.upgradeListener?.(upgrade.id, upgradeQuantity(event));
         upgradeButton.addEventListener("click", listener);
-        entry = { button: upgradeButton, listener, price, title };
+        entry = { button: upgradeButton, effect, listener, price, title };
         this.upgradeButtons.set(upgrade.id, entry);
         this.upgrades.append(upgradeButton);
       }
@@ -124,9 +127,11 @@ export class UpgradeDialog {
         upgrade.disabledReason === `Need ${upgrade.cost} coins`
           ? `Need ${cost.text} coins`
           : upgrade.disabledReason;
-      const actionLabel = `${upgrade.label} - ${level.exact}; ${cost.exact} coins${disabledReason === null ? "" : `; ${disabledReason}`}`;
+      const effect = upgrade.effect;
+      const actionLabel = `${upgrade.label} - ${level.exact}; ${cost.exact} coins${effect === null ? "" : `; ${effect.exact}`}${disabledReason === null ? "" : `; ${disabledReason}`}`;
       entry.title.textContent = `${upgrade.label} - ${level.text}`;
       entry.price.textContent = `${cost.text} coins`;
+      entry.effect.textContent = effect?.text ?? disabledReason ?? "Unavailable";
       entry.button.setAttribute("aria-label", actionLabel);
       entry.button.disabled = upgrade.disabledReason !== null;
       entry.button.title = actionLabel;

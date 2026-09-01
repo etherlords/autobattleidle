@@ -117,11 +117,27 @@ const snapshot: BattleSnapshot = {
   upgrades: UPGRADES.map((upgrade, index) => ({
     cost: upgrade.baseCost,
     disabledReason: index === 1 ? "Need 45 coins" : null,
+    effect: { exact: "+1 damage", text: "+1 damage" },
     id: upgrade.id,
     label: upgrade.label,
     level: 0,
   })),
 };
+
+const withLongFirstUpgrade = (value: BattleSnapshot): BattleSnapshot => ({
+  ...value,
+  upgrades: value.upgrades.map((upgrade, index) =>
+    index === 0
+      ? {
+          ...upgrade,
+          cost: 123_456,
+          disabledReason: "Requires a longer prerequisite than the card can display",
+          label: "A deliberately long upgrade label for stable-grid coverage",
+          level: 99,
+        }
+      : upgrade,
+  ),
+});
 
 const originalDocument = globalThis.document;
 
@@ -305,12 +321,12 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".upgrades-dialog {");
     expect(stylesheet).toContain("max-height: calc(100vh - 2rem);");
     expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
-    expect(stylesheet).toContain("grid-auto-rows: 4.75rem;");
+    expect(stylesheet).toContain("grid-auto-rows: 5.75rem;");
     expect(stylesheet).toContain("height: 100%;");
     expect(stylesheet).toContain(
       ".battlefield {\n  grid-area: 1 / 1;\n  min-height: 100vh;\n  touch-action: none;\n}",
     );
-    expect(stylesheet).toContain("grid-template-rows: 1fr 1fr;");
+    expect(stylesheet).toContain("grid-template-rows: 1fr 1fr 1fr;");
     expect(stylesheet).toContain(".upgrade-title,");
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
@@ -387,20 +403,7 @@ describe("createHud", () => {
     );
     hud.render({ ...snapshot, coins: 3 });
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 3");
-    hud.render({
-      ...snapshot,
-      upgrades: snapshot.upgrades.map((upgrade, index) =>
-        index === 0
-          ? {
-              ...upgrade,
-              cost: 123_456,
-              disabledReason: "Requires a longer prerequisite than the card can display",
-              label: "A deliberately long upgrade label for stable-grid coverage",
-              level: 99,
-            }
-          : upgrade,
-      ),
-    });
+    hud.render(withLongFirstUpgrade(snapshot));
 
     const launcher = element(host, "upgrades-launcher");
     const modal = element(host, "upgrades-modal");
@@ -413,6 +416,9 @@ describe("createHud", () => {
       "Damage - 0",
     );
     expect(element(upgradeButtons[1] as FakeElement, "upgrade-price").textContent).toBe("2 coins");
+    expect(element(upgradeButtons[1] as FakeElement, "upgrade-effect").textContent).toBe(
+      "+1 damage",
+    );
     expect(element(upgradeButtons[1] as FakeElement, "upgrade-title").textContent).not.toContain(
       "Need",
     );
@@ -424,6 +430,7 @@ describe("createHud", () => {
       "123K coins",
     );
     expect(upgradeButtons[0]?.attributes.get("aria-label")).toContain("123,456 coins");
+    expect((upgradeButtons[0] as FakeElement).attributes.get("aria-label")).toContain("+1 damage");
     hud.render({
       ...snapshot,
       coins: 900_000,
@@ -517,6 +524,34 @@ describe("createHud", () => {
     expect([...battlefield.listeners.values()].every((listeners) => listeners.size === 0)).toBe(
       true,
     );
+  });
+
+  it("keeps a compact damage preview exact in its accessible label", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = new FakeElement();
+    const hud = createHud(
+      host as unknown as HTMLElement,
+      new FakeElement() as unknown as HTMLElement,
+    );
+    const damage = snapshot.upgrades[1];
+    if (damage === undefined) throw new Error("Expected damage upgrade");
+    hud.render({
+      ...snapshot,
+      upgrades: [
+        snapshot.upgrades[0] ?? damage,
+        {
+          ...damage,
+          disabledReason: null,
+          effect: { exact: "+123,456 damage", text: "+123K damage" },
+        },
+        ...snapshot.upgrades.slice(2),
+      ],
+    });
+    const damageButton = element(host, "upgrades").children[1];
+    expect(element(damageButton as FakeElement, "upgrade-effect").textContent).toBe("+123K damage");
+    expect(damageButton?.attributes.get("aria-label")).toContain("+123,456 damage");
+    hud.dispose();
   });
 
   it("arbitrates drag, cancel, and stationary battlefield pointer input", () => {

@@ -143,6 +143,11 @@ type UpgradeStrategy = {
   readonly apply: (player: CombatPlayer, level: number) => CombatPlayer;
 };
 
+export type UpgradeEffectPreview =
+  | { readonly delta: number; readonly kind: "delta"; readonly targetLevel: number }
+  | { readonly kind: "unlock" }
+  | null;
+
 const UPGRADE_STRATEGIES = {
   "automatic-unlock": {
     definition: { id: "automatic-unlock", label: "Unlock automatic attack", baseCost: 1 },
@@ -282,6 +287,21 @@ const nextUpgradeLevel = (state: CombatState, id: UpgradeId): number | null => {
     else low = middle + 1;
   }
   return low;
+};
+
+/** The same displayed quantum, target level, and selector used by purchase validation. */
+export const upgradeEffectPreview = (state: CombatState, id: UpgradeId): UpgradeEffectPreview => {
+  const targetLevel = nextUpgradeLevel(state, id);
+  if (targetLevel === null) return null;
+  if (id === "automatic-unlock") return { kind: "unlock" };
+  const strategy = UPGRADE_STRATEGIES[id];
+  return {
+    delta:
+      strategy.displayedValue(state.player, targetLevel) -
+      strategy.displayedValue(state.player, upgradeLevel(state, id)),
+    kind: "delta",
+    targetLevel,
+  };
 };
 
 export const upgradeDisabledReason = (

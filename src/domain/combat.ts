@@ -54,5 +54,7 @@ export {
   UPGRADES,
   upgradeCost,
   upgradeDisabledReason,
+  upgradeEffectPreview,
   upgradeLevel,
 } from "./combat/upgrades";
+export type { UpgradeEffectPreview } from "./combat/upgrades";
