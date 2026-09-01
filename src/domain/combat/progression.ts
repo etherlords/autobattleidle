@@ -6,9 +6,15 @@ import type {
   EliteModifier,
   EnemyGrade,
 } from "./contracts";
-import { automaticAttacksPerSecond, damageForLevel } from "./upgrades";
+import {
+  automaticAttacksPerSecond,
+  criticalChanceForLevel,
+  damageForLevel,
+  effectiveArmor,
+} from "./upgrades";
 import { modifierForRoll } from "./enemy-modifiers";
 import { ENEMY_TIERS } from "./enemy-definitions";
+import { armorPenetrationLevelFor, criticalLevelFor, damageLevelFor } from "./player-stats";
 
 type OrdinaryGrade = Exclude<EnemyGrade, "boss">;
 type MissingOrdinaryGrades<Order extends readonly OrdinaryGrade[]> =
@@ -51,11 +57,57 @@ const legacyMultiplier = (grade: EnemyGrade, encounter: number): number => {
   return 1;
 };
 
-const productionBaseHealth = (player: CombatPlayer, grade: EnemyGrade): number => {
-  const damage = damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1));
+const playerDamage = (player: CombatPlayer): number => damageForLevel(damageLevelFor(player));
+
+const safeRounded = (value: number): number =>
+  Math.min(Number.MAX_SAFE_INTEGER, Math.max(COMBAT_FORMULAS.minimumDamage, Math.round(value)));
+
+const productionBaseHealth = (player: CombatPlayer, grade: OrdinaryGrade): number => {
+  const damage = playerDamage(player);
   if (grade === "normal") return damage;
   return damage * ENEMY_TIERS[grade].multiplier(1);
 };
+
+const legacyStageHealth = (grade: EnemyGrade, encounter: number): number => {
+  const growth =
+    COMBAT_FORMULAS.enemyHealthGrowthBase +
+    (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) * (encounter - 1);
+  return safeRounded(
+    Math.round(COMBAT_BALANCE.baseEnemyHealth * growth) * legacyMultiplier(grade, encounter),
+  );
+};
+
+/** Same post-armor non-critical damage owner used by production attack resolution. */
+const bossNonCriticalDamage = (player: CombatPlayer, encounter: number): number => {
+  const armor = effectiveArmor(encounter, armorPenetrationLevelFor(player));
+  return Math.max(COMBAT_FORMULAS.minimumDamage, playerDamage(player) - armor);
+};
+
+/** Expected automatic damage uses the same player-stat and armor rules as production attacks. */
+const expectedAutomaticBossDps = (player: CombatPlayer, encounter: number): number => {
+  const nonCriticalDamage = bossNonCriticalDamage(player, encounter);
+  const expectedDamage =
+    nonCriticalDamage *
+    (1 +
+      criticalChanceForLevel(criticalLevelFor(player)) *
+        (COMBAT_FORMULAS.criticalDamageMultiplier - 1));
+  return automaticAttacksPerSecond(player.automaticSpeedLevel) * expectedDamage;
+};
+
+const productionBossHealth = (player: CombatPlayer, encounter: number): number => {
+  const currentThirtyHitHealth = safeRounded(
+    bossNonCriticalDamage(player, encounter) * COMBAT_FORMULAS.bossTargetHits,
+  );
+  const automaticThreeMinuteHealth = safeRounded(expectedAutomaticBossDps(player, encounter) * 180);
+  return Math.min(
+    legacyStageHealth("boss", encounter),
+    Math.max(currentThirtyHitHealth, automaticThreeMinuteHealth),
+  );
+};
+
+/** The immediately preceding V4 representation, retained only for save recognition. */
+export const previousPlayerRelativeBossHealth = (player: CombatPlayer): number =>
+  safeRounded(playerDamage(player) * COMBAT_FORMULAS.bossTargetHits);
 
 const eliteArmorCap = (player: CombatPlayer | undefined): number | undefined => {
   if (player === undefined) return undefined;
@@ -73,6 +125,25 @@ const validateOrdinaryHealthGrowthRate = (ordinaryHealthGrowthRate: number | und
 const validateBossInterval = (bossInterval: number): void => {
   if (!Number.isSafeInteger(bossInterval) || bossInterval < 2)
     throw new RangeError("Boss interval must be a safe integer of at least two");
+};
+
+const baseHealthForSpawn = (
+  grade: EnemyGrade,
+  encounter: number,
+  candidateGrowth: number,
+  ordinaryHealthGrowthRate: number | undefined,
+  player: CombatPlayer | undefined,
+): number => {
+  if (player !== undefined)
+    return grade === "boss"
+      ? productionBossHealth(player, encounter)
+      : productionBaseHealth(player, grade) * candidateGrowth;
+  if (ordinaryHealthGrowthRate !== undefined && grade !== "boss")
+    return safeRounded(
+      Math.round(COMBAT_BALANCE.baseEnemyHealth * candidateGrowth) *
+        legacyMultiplier(grade, encounter),
+    );
+  return legacyStageHealth(grade, encounter);
 };
 
 export const spawnEnemy = (
@@ -93,19 +164,13 @@ export const spawnEnemy = (
     ordinaryHealthGrowthRate === undefined || grade === "boss"
       ? 1
       : (1 + ordinaryHealthGrowthRate) ** (safeEncounter - 1);
-  const legacyGrowth =
-    COMBAT_FORMULAS.enemyHealthGrowthBase +
-    (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) *
-      (safeEncounter - 1);
-  const baseHealth =
-    player === undefined
-      ? Math.round(
-          COMBAT_BALANCE.baseEnemyHealth *
-            (ordinaryHealthGrowthRate === undefined || grade === "boss"
-              ? legacyGrowth
-              : candidateGrowth),
-        ) * legacyMultiplier(grade, safeEncounter)
-      : productionBaseHealth(player, grade) * candidateGrowth;
+  const baseHealth = baseHealthForSpawn(
+    grade,
+    safeEncounter,
+    candidateGrowth,
+    ordinaryHealthGrowthRate,
+    player,
+  );
   const tier = ENEMY_TIERS[grade];
   const baseModifierDraft = { armor: tier.armor(safeEncounter), healthMultiplier: 1 };
   let modifierDraft = baseModifierDraft;

@@ -10,6 +10,7 @@ import v3HardenedPreCapFixture from "./fixtures/save-v3-active-hardened-pre-cap.
 import v4ArmoredPreCapFixture from "./fixtures/save-v4-active-armored-pre-cap.json";
 import v4GoldenDefeatsFixture from "./fixtures/save-v4-golden-defeats.json";
 import v4HardenedPreCapFixture from "./fixtures/save-v4-active-hardened-pre-cap.json";
+import v4PlayerRelativeBossFixture from "./fixtures/save-v4-player-relative-boss.json";
 
 import {
   automaticInterval,
@@ -193,11 +194,11 @@ const fixtureExpectations: readonly FixtureExpectation[] = [
       armor: 2170,
       encounter: 2170,
       grade: "boss",
-      health: 17810,
+      health: 1_805_505,
       id: 2170,
-      maxHealth: 191100,
+      maxHealth: 19_373_445,
       modifier: null,
-      reward: 16883685,
+      reward: 67_534_740,
     },
     goldenBug: null,
     goldenBugDefeats: 0,
@@ -271,11 +272,11 @@ const fixtureExpectations: readonly FixtureExpectation[] = [
       armor: 2170,
       encounter: 2170,
       grade: "boss",
-      health: 17810,
+      health: 1_805_505,
       id: 2170,
-      maxHealth: 191100,
+      maxHealth: 19_373_445,
       modifier: null,
-      reward: 16883685,
+      reward: 67_534_740,
     },
     goldenBug: null,
     goldenBugDefeats: 3,
@@ -499,6 +500,20 @@ describe("persistence boundary", () => {
     values.set(SAVE_V3_KEY, JSON.stringify(corrupted));
     values.delete(SAVE_V4_KEY);
     expect(boundary.load(fallback(), 400).enemy.encounter).toBe(legacyV2Fixture.enemy.encounter);
+  });
+
+  it("normalizes the deployed V4 30-hit boss by health fraction through save and reload", () => {
+    const loaded = decodeSave(v4PlayerRelativeBossFixture, fallback(), 100);
+    expect(loaded).toMatchObject({
+      coins: v4PlayerRelativeBossFixture.coins,
+      enemy: { encounter: 2_170, health: 1_802_207, maxHealth: 19_373_445 },
+      goldenBugDefeats: 4,
+    });
+    expect(loaded.enemy.health / loaded.enemy.maxHealth).toBeCloseTo(17_777 / 191_100, 5);
+    expect(decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200)).toEqual({
+      ...loaded,
+      nextAutomaticAttackAtMs: 200 + automaticInterval(loaded.enemy, loaded.player),
+    });
   });
 
   it("does not let a stale failed autosave overwrite a successful V3 Restore", () => {

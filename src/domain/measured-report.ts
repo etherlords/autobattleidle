@@ -18,6 +18,14 @@ import {
 } from "./combat";
 import type { ProgressionObservation, SimulationOptions } from "./progression-simulator";
 
+const BOSS_TTK_STAGE_PROBES = {
+  starter: 35,
+  early: 70,
+  midgame: 1_015,
+  endgameStart: 10_010,
+  endgame: 36_365,
+} as const;
+
 const run = (
   manualIntervalMs: number | null,
   ordinaryHealthGrowthRate?: number,
@@ -138,6 +146,49 @@ const timeDistribution = (values: readonly ProgressionObservation[]) => {
   return { max: times.at(-1) ?? 0, p50: at(0.5), p90: at(0.9) };
 };
 
+const bossTtkStages = () => {
+  const stages = Object.entries(BOSS_TTK_STAGE_PROBES) as readonly [
+    keyof typeof BOSS_TTK_STAGE_PROBES,
+    number,
+  ][];
+  const snapshots = simulateProgression({
+    eventJump: true,
+    horizonMs: 49 * 60 * 60 * 1_000,
+    playerSnapshotEncounters: stages.map(([, encounter]) => encounter),
+  }).playerSnapshots;
+  const playerAt = new Map(snapshots.map(({ encounter, player }) => [encounter, player]));
+  const measure = (
+    encounter: number,
+    automaticEnabled: boolean,
+    manualIntervalMs: number | null,
+  ) => {
+    const player = playerAt.get(encounter);
+    if (player === undefined)
+      throw new Error(`Missing production player snapshot for boss ${encounter}`);
+    const observation = simulateProgression({
+      automaticEnabled,
+      bossCount: 1,
+      eventJump: true,
+      initialPlayer: player,
+      manualIntervalMs,
+      startEncounter: encounter,
+    }).observations.find(({ grade, goldenBug }) => grade === "boss" && !goldenBug);
+    if (observation === undefined) throw new Error(`Missing boss TTK receipt for ${encounter}`);
+    return { hits: observation.hits, timeToKillMs: observation.timeToKillMs };
+  };
+  return Object.fromEntries(
+    stages.map(([stage, encounter]) => [
+      stage,
+      {
+        automaticOnly: measure(encounter, true, null),
+        combined: measure(encounter, true, 100),
+        encounter,
+        manualOnly: measure(encounter, false, 100),
+      },
+    ]),
+  );
+};
+
 export const buildMeasuredReport = (): Record<string, unknown> => {
   if (cachedMeasuredReport !== undefined) return cachedMeasuredReport;
   const bosses = simulateProgression(3).bosses;
@@ -152,9 +203,14 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
   const highApsPlayer = { ...endgameStart.player, automaticSpeedLevel: 1_000 };
   const highApsGoldenAutoOnly = goldenBugOutcome(highApsPlayer, null);
   const highApsGoldenManualPlusAutomatic = goldenBugOutcome(highApsPlayer, 100);
+  const bossTtk = bossTtkStages();
   const report = {
     acceptedHealth: {
-      bossTargetHits: 30,
+      boss: {
+        automaticTargetSeconds: 180,
+        postArmorNonCriticalThirtyHitFloor: 30,
+        legacyStageCeiling: true,
+      },
       ordinaryTargetHits: { elite: 10, normal: 1, veteran: 5 },
     },
     automaticOnlyWalls: run(null, undefined, 3_000, { eventJump: true }).telemetry.walls,
@@ -162,6 +218,7 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
       .slice(1)
       .map((boss, index) => boss.encounter - (bosses[index]?.encounter ?? 0)),
     bosses,
+    bossTtk,
     briefRevision: 19,
     candidates: Object.fromEntries(
       [0.005, 0.008].map((rate) => {

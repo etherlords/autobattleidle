@@ -239,8 +239,8 @@ export const ORDINARY_TTK_STAGE_CONTRACT = [
   ["startPlus", 100, 499],
   ["lateStart", 500, 999],
   ["midgame", 1_000, 9_999],
-  ["endgameStart", 10_000, 250_862],
-  ["endgame", 250_863, Number.MAX_SAFE_INTEGER],
+  ["endgameStart", 10_000, 36_364],
+  ["endgame", 36_365, Number.MAX_SAFE_INTEGER],
 ] as const satisfies readonly (readonly [OrdinaryTtkStage, number, number])[];
 
 const firstOrdinaryEncounterAtOrAfter = (encounter: number): number =>

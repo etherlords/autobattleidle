@@ -72,11 +72,11 @@ The controller applies the existing pure single-level purchase sequentially and 
 
 The implementation does not change the save schema, balance, modal layout model, focus trap, keyboard activation, dismissal, disabled reasons, or listener ownership. Focused tests and desktop/390px browser QA prove modifier precedence, x100 parity, partial-stop behavior, bounded event order, failed-attempt identity, coherent persistence/reload, accessibility, responsive layout, and no modal/focus regression.
 
-## Planned current upgrade stats and automatic-speed balance
+## Current upgrade stats and automatic-speed balance
 
 ABI-018 is accepted current behavior. The primary automatic-attack HUD reports APS while locked and reports APS plus remaining cooldown while unlocked. The upgrades dialog adds a compact aria-readable panel for current damage, armor penetration, critical chance, double-reward chance, and APS without changing its layout model.
 
-Automatic speed uses `APS(level) = 0.1 + 2.9 * level^2 / (level^2 + 150^2)` and `intervalMs = 1000 / APS(level)`: 0.1 APS at level 0, about 0.99 at level 100 and 1.96 at level 200, finite and asymptotically below 3 APS. The elite automatic-slow modifier still adds 500 ms. Armor penetration and critical chance keep their existing diminishing-return formulas; double reward is displayed but not rebalanced.
+Automatic speed uses `APS(level) = 0.1 + 11.9 * level^2 / (level^2 + 100^2)` and `intervalMs = 1000 / APS(level)`: 0.1 APS at level 0, 6.05 APS at level 100, and 9.64 APS at level 200, finite and asymptotically below 12 APS. The elite automatic-slow modifier still adds 500 ms. Armor penetration and critical chance keep their existing diminishing-return formulas; double reward is displayed but not rebalanced.
 
 The change has no save-schema impact: levels remain canonical and displayed stats are recomputed into immutable snapshots. Independent desktop/390px browser QA proved locked/unlocked APS, cooldown, an automatic-speed purchase changing 0.11 to 0.12 APS, modal ARIA/layout, V3 reload, V2 migration without reset, no overflow, and a clean console.
 

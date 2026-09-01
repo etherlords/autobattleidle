@@ -32,7 +32,7 @@ workspaceProject: autobattleidle
 
 ## Approach
 
-- Use the existing legacy boss curve as the stage-growth ceiling, the current 30-base-hit formula as the non-regression floor, and a calibrated expected automatic-DPS envelope between them. The envelope composes existing damage, effective boss armor, penetration, critical chance, and APS owners rather than duplicating attack rules.
+- Use the existing legacy boss curve as the stage-growth ceiling, 30 actual non-critical post-armor hits as the floor, and a calibrated expected automatic-DPS envelope between them. The deployed raw-damage `damage * 30` formula is not a real 30-hit floor when boss armor reduces damage to one: measured stage receipts showed 77.5- and 142.3-minute early automatic walls. Both the floor and envelope therefore compose the existing damage, effective boss armor, penetration, critical chance, critical multiplier, and APS owners rather than duplicating attack rules.
 - The envelope target is 180 seconds of expected automatic damage. This is calibrated from the authentic encounter-2170 legacy boss (`19,373,445` HP divided by its real expected automatic DPS), not selected as an unrelated multiplier. It must reproduce that legacy anchor while preventing the 77.5-minute first-boss wall measured for the uncapped legacy curve.
 - Measure automatic-only, manual-only, and combined boss TTK at representative stage bosses, including the authentic encounter-2170 snapshot, before accepting the formula. The boss must be materially tougher than adjacent ordinary enemies but remain finite and beatable.
 - Extend the existing simulator/report surface only as much as needed to emit boss TTK receipts and prove exact/event-jump agreement, continued 48/49-hour progression, and unchanged ordinary/Golden cohorts.
@@ -41,6 +41,6 @@ workspaceProject: autobattleidle
 ## Risks
 
 - Restoring the old curve can materially slow every 35th encounter; exact and fast-forward receipts must prove no unwinnable wall and continued progress after 48 hours.
-- The literal uncapped legacy curve is rejected evidence: it produced a 4,650,000 ms first-boss automatic TTK, only 0.361858 APS at 48 hours, and captured only two of six stages by 49 hours. It must not be reintroduced.
+- The literal uncapped legacy curve and the raw-damage 30-hit floor are rejected evidence: each produced a 4,650,000 ms first-boss automatic TTK because boss armor reduced accepted hits to minimum damage. The accepted post-armor floor must remain finite and boss-like without reintroducing that wall.
 - If save validation recognizes the new formula only, currently deployed V4 boss saves would reset. Compatibility recognition is therefore acceptance-critical, not optional cleanup.
 - Boss measurement must not accidentally include Golden Bug or ordinary cohorts, and fractional high-APS packets must keep their current exact accounting.

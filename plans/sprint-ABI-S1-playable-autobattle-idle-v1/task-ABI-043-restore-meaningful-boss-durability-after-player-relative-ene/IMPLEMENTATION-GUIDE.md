@@ -25,15 +25,15 @@ workspaceProject: autobattleidle
 ## Frozen scope
 
 - Change only boss durability, its deterministic measurement receipts, and compatibility validation for already-valid boss saves.
-- Boss max HP is `min(legacyStageHealth, max(currentThirtyHitHealth, expectedAutomaticDps * 180 seconds))`, safe-rounded/saturated through the existing numeric policy. Expected automatic DPS composes the current base damage, effective encounter armor after penetration, critical chance, critical multiplier, and APS formulas.
-- At encounter 2170 the envelope must leave the legacy anchor intact at max HP `19,373,445`; the authentic stored fraction must normalize back to current HP `1,805,505` (allowing only documented integer rounding). Early bosses must never be weaker than the deployed 30-hit formula.
+- Boss max HP is `min(legacyStageHealth, max(postArmorNonCriticalDamage * 30, expectedAutomaticDps * 180 seconds))`, safe-rounded/saturated through the existing numeric policy. Both terms compose the current base damage and effective encounter armor after penetration; expected automatic DPS additionally composes critical chance, the shared critical multiplier, and APS.
+- At encounter 2170 the envelope must leave the legacy anchor intact at max HP `19,373,445`; the authentic stored fraction must normalize back to current HP `1,805,505` (allowing only documented integer rounding). Early bosses retain at least 30 accepted non-critical post-armor hits without the false raw-damage floor that measured as 77.5- and 142.3-minute automatic walls.
 - Keep ordinary 1/5/10-hit health, Golden Bug health/reward/window, boss cadence/reward/armor, player upgrades, attack packet logic, UI, worker, and save shape/version unchanged.
-- No new dependency or speculative balance abstraction. The uncapped legacy curve is rejected and must not return; if this calibrated bounded envelope still fails the required measurements, return the measured blocker instead of inventing a third formula.
+- No new dependency or speculative balance abstraction. The uncapped legacy curve and raw-damage 30-hit floor are rejected and must not return. Automatic, manual, and combined stage receipts must prove the post-armor floor remains finite and boss-like.
 
 ## Implementation sequence
 
 1. Add focused boss-formula and encounter-2170 regression receipts around the existing spawn owner.
-2. Route production bosses through the legacy ceiling / current floor / 180-second expected-DPS envelope while leaving all ordinary calls byte-for-byte equivalent in behavior.
+2. Route production bosses through the legacy ceiling / post-armor 30-hit floor / 180-second expected-DPS envelope while leaving all ordinary calls byte-for-byte equivalent in behavior.
 3. Recognize the prior player-relative boss representation at the persistence boundary and normalize remaining-health fraction; preserve source slots.
 4. Add bounded boss TTK summaries to the existing simulator/report path and prove exact/event-jump equivalence plus 48/49-hour continuation.
 5. Run focused domain/persistence/simulator tests, the migration matrix, `pnpm check`, and diff check before independent review.

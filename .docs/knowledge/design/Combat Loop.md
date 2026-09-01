@@ -61,10 +61,14 @@ ABI-019 remains a separate planned session-only pause for automatic attacks. Pau
 
 ## Accepted headless ordinary-balance telemetry
 
-ABI-020 is accepted current behavior. The headless harness executes production `spawnEnemy`, `attack`, `purchaseUpgrade`, reward, packet, boss, and Golden transitions without Three.js or DOM. It has an exact oracle and an event-jump implementation whose final state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons. A warmed 48-hour run completes in 1.524 seconds under the 2.5-second budget.
+The headless harness executes production `spawnEnemy`, `attack`, `purchaseUpgrade`, reward, packet, boss, and Golden transitions without Three.js or DOM. It has an exact oracle and an event-jump implementation whose final state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons.
 
 Ordinary observations are filtered to non-boss, non-Golden encounters before grade/modifier distributions, walls, armor, bands, and adjacent grade transitions are computed. Boss and Golden metrics are separate. Golden automatic-only scheduling escapes with zero reward; deterministic manual plus automatic input defeats it and grants one reward.
 
-The accepted player-relative health targets are normal 1 hit, veteran 5 hits, elite 10 hits, and boss 30 hits before modifiers and armor. Endgame begins by elapsed time around the exact 48-hour checkpoint, which reaches encounter 24,920 at approximately 11.995 APS; 49 hours reaches encounter 30,234 without currency saturation.
+Ordinary player-relative health remains normal 1 hit, veteran 5 hits, and elite 10 hits before modifiers and armor. Boss health is now `min(legacyStageHealth, max(postArmorNonCriticalDamage * 30, expectedAutomaticDps * 180 seconds))`. This preserves a real 30 accepted-hit floor under boss armor, uses the shared critical multiplier and APS, restores encounter 2,170 to `19,373,445` HP, and avoids the rejected early minimum-damage walls.
 
-The full generated report remains a rebuildable task asset. Durable conclusions and gates are in [[ABI-020 Reviewed Measurement Receipt]]; revision-bound metadata is [[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and stored-source link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`). Economy and upgrade ownership is linked at [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted simulator economy]].
+Named production-snapshot boss receipts cover automatic-only, 100 ms manual-only, and combined modes at encounters 35, 70, 1,015, 10,010, and 36,365. Automatic TTKs are respectively 300.000 s, 216.308 s, 140.777 s, 143.750 s, and 143.750 s; manual and combined receipts remain finite and combined is never slower.
+
+Endgame begins by elapsed time around 48 hours. The corrected checkpoint is boss encounter `36,365`, its first ordinary probe is `36,366`, and 49 hours reaches `37,135` at approximately 11.995 APS. Valid V3 legacy and previous V4 30-raw-hit boss saves normalize by health fraction without resetting progress; the save schema remains V4.
+
+The full regenerated report remains a rebuildable Planner task asset. [[ABI-020 Reviewed Measurement Receipt]] remains historical evidence; its earlier boss and time checkpoints are superseded by ABI-043. Economy and upgrade ownership is linked at [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted simulator economy]].

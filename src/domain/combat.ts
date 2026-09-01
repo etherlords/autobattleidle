@@ -34,6 +34,7 @@ export type {
 export {
   expireGoldenBug,
   goldenBugHealth,
+  previousPlayerRelativeBossHealth,
   spawnEnemy,
   spawnGoldenBug,
   spawnStarterEnemy,

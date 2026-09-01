@@ -1,5 +1,11 @@
-import { automaticInterval, damageForLevel, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
-import type { CombatEnemy, CombatState } from "../../domain/combat";
+import {
+  automaticInterval,
+  damageForLevel,
+  previousPlayerRelativeBossHealth,
+  spawnEnemy,
+  spawnGoldenBug,
+} from "../../domain/combat";
+import type { CombatEnemy, CombatPlayer, CombatState } from "../../domain/combat";
 import { COMBAT_FORMULAS } from "../../domain/combat/balance";
 import { decodeV2 } from "./validation-v2";
 import {
@@ -49,6 +55,17 @@ const matchesPreArmorCapEnemy = (enemy: CombatEnemy, expected: CombatEnemy): boo
   enemy.maxHealth === expected.maxHealth &&
   enemy.reward === expected.reward;
 
+const matchesPreviousPlayerRelativeBoss = (
+  enemy: CombatEnemy,
+  expected: CombatEnemy,
+  player: CombatPlayer,
+): boolean =>
+  enemy.grade === "boss" &&
+  enemy.modifier === expected.modifier &&
+  enemy.armor === expected.armor &&
+  enemy.maxHealth === previousPlayerRelativeBossHealth(player) &&
+  enemy.reward === expected.reward;
+
 const decodePrePlayerRelativeV3 = (
   value: Record<string, unknown>,
   nowMs: number,
@@ -60,7 +77,8 @@ const decodePrePlayerRelativeV3 = (
   const normalized = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
   if (
     !matchesPrePlayerRelativeEnemy(enemy, prePlayerRelative) &&
-    !matchesPreArmorCapEnemy(enemy, normalized)
+    !matchesPreArmorCapEnemy(enemy, normalized) &&
+    !matchesPreviousPlayerRelativeBoss(enemy, normalized, player)
   )
     return undefined;
   if (typeof value.automaticUnlocked !== "boolean" || !integer(value.coins, 0)) return undefined;

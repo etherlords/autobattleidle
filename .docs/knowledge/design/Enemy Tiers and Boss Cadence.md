@@ -69,46 +69,19 @@ Encounters use deterministic safe-number epochs. At the largest encounter whose 
 
 ## Accepted ordinary-enemy health calibration
 
-ABI-020 remains the health owner. Ordinary and boss health is derived from the player's current integer
-damage rather than a fixed low encounter base: normal targets 1 hit, veteran 5 hits, elite 10 hits, and
-bosses 30 hits before deterministic elite modifiers and armor. ABI-044 changes only the armor added by
-the armor and hardened elite modifiers: their encounter-derived raw armor is capped at half the current
-canonical non-critical player damage. At zero penetration this bounds armored elites to at most 20
-attacks and hardened elites to at most 25; penetration lowers both. Boss armor and health, boss cadence,
-Golden Bug, rewards, upgrades, and ordinary HP variety are unchanged.
+ABI-020 remains the ordinary-health owner: normal targets 1 hit, veteran 5 hits, and elite 10 hits before deterministic elite modifiers and armor. ABI-044 caps only Armor and Hardened elite armor at half the current canonical non-critical player damage, bounding zero-penetration durability at 20 and 25 attacks respectively.
 
-The endgame boundary is time-based, not a promised encounter number. Under the accepted unattended
-production strategy, the corrected exact 48-hour non-boss probe is encounter 250,863 after boss 250,845,
-and the 49-hour state is encounter 257,354. These receipts supersede 24,920/30,234: the prior measurements
-included hundreds or thousands of minimum-damage packets from the uncapped armored-elite defect.
-Exact and event-jump simulation still agree. The warmed 48-hour event-jump leg measures about 6.17
-seconds on the reference workstation and is guarded by an 8-second portable bound.
+ABI-043 owns boss durability. Boss maximum health is the safe-rounded value `min(legacyStageHealth, max(postArmorNonCriticalDamage * 30, expectedAutomaticDps * 180 seconds))`. The floor is 30 accepted non-critical hits after the existing boss armor and penetration calculation, not the rejected raw-damage floor that produced 77.5- and 142.3-minute early automatic walls. Expected DPS reuses canonical damage, effective boss armor, penetration, critical chance, `criticalDamageMultiplier`, and APS; the legacy curve remains only a stage-aware ceiling.
 
-The prior 0.5% and 0.8% exponential ordinary-health candidates were each measured over 3,000 ordinary
-encounters and rejected for walls and adjacent-band jumps. Cadence, damage, APS, critical, penetration,
-reward, and upgrade-cost alternatives remain measured through the production simulator. The retained
-policies preserve 35-encounter bosses, asymptotic critical and penetration curves, current damage/economy,
-and bounded 3 Hz presentation; the generated measurement receipt is rebaselined after the armor repair.
+At the authentic encounter-2170 player state, boss max health is `19,373,445`; the historical V3 remaining fraction normalizes to `1,805,505`. The immediately previous V4 30-raw-hit boss is recognized separately and normalized by remaining-health fraction. Valid source slots, encounter, coins, counters, and player upgrades are preserved; the save schema remains V4.
 
-ABI-028 remains the measurement and regression contract. Its headless simulator reports automatic-only,
-manual-only, and combined ordinary-enemy TTK across early `1–99`, start+ `100–499`, late start
-`500–999`, midgame `1,000–9,999`, endgame start `10,000–250,862`, and open-ended endgame
-`250,863+`. The endgame probe begins at the actual 48-hour current non-boss encounter; it does not
-replace the ABI-020 health owner.
+The endgame boundary is time-based, not a promised encounter number. Under the accepted unattended production strategy, the exact 48-hour boundary is boss encounter `36,365`, the first ordinary endgame probe is `36,366`, and 49 hours reaches encounter `37,135`. Continued 49-hour progress is required; encounter number is measured output.
 
-Raw attack packet events remain separate from logical attack units. Fractional high-APS packets
-accumulate as integer micro-units, per-enemy attribution preserves mid-batch spill and event-jump work,
-manual-only state remains finite without automatic unlocks, and exact/event-jump reports agree through
-49 hours. Historical V3/V4 saves with an active pre-cap armored or hardened elite are recognized only
-when their former derived enemy is exact, then normalized to the capped spawn while preserving health
-fraction, encounter, player, currency, and V4 counters. The save schema does not change.
+Five production-snapshot boss receipts cover automatic-only, 100 ms manual-only, and combined combat. Automatic TTK is 300.000 s at boss 35, 216.308 s at boss 70, 140.777 s at boss 1,015, and 143.750 s at bosses 10,010 and 36,365. Manual/combined receipts remain finite; combined is never slower than either isolated mode. Ordinary 1/5/10-hit bands, Golden Bug health/reward/window, rewards, boss armor, upgrade formulas, and attack packet rules are unchanged.
 
-See [[Combat Loop#Accepted headless ordinary-balance telemetry|accepted simulator ownership]] and
-[[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted economy evidence]]. Reviewed
-ABI-020 measurements remain preserved in [[ABI-020 Reviewed Measurement Receipt]]; revision-bound
-metadata and stored-source evidence are at
-[[ABI-020 Reviewed Measurement Receipt#L19-L25|receipt summary and asset link]]
-(contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).
+Exact and event-jump simulation agree through 49 hours. The regenerated `MEASURED-REPORT.json` is the canonical current receipt. The earlier `24,920/30,234` and `250,863/257,354` checkpoints in [[ABI-020 Reviewed Measurement Receipt]] are historical and superseded by ABI-043.
+
+See [[Combat Loop#Accepted headless ordinary-balance telemetry|accepted simulator ownership]] and [[Economy and Upgrade Curves#Accepted ordinary-balance simulator|accepted economy evidence]].
 
 ## Presentation
 

@@ -31,7 +31,7 @@ V2 persistence validates safe levels and cross-checks stored derived damage/chan
 - `Armor penetration`: repeatable; `0.75 * L / (L + 20)` reduces effective armor while minimum hit damage remains one.
 - `Critical`: repeatable; chance is `0.6 * L / (L + 20)` and critical damage is 2x.
 - `Double reward`: repeatable; chance uses the same `0.6 * L / (L + 20)` curve and requested reward multiplier is 2x.
-- `Auto attack speed`: repeatable; `APS(L) = 0.1 + 2.9 * L^2 / (L^2 + 150^2)` and `intervalMs = 1000 / APS(L)` before an enemy slow modifier. The curve starts at 0.1 APS, is about 0.99 at level 100 and 1.96 at level 200, and remains strictly below 3 APS.
+- `Auto attack speed`: repeatable; `APS(L) = 0.1 + 11.9 * L^2 / (L^2 + 100^2)` and `intervalMs = 1000 / APS(L)` before an enemy slow modifier. The curve starts at 0.1 APS, is finite and strictly increasing, and approaches but never exceeds 12 APS.
 
 All five repeatable paths have no catalog/gameplay maximum and have a positive adjacent effect at tested 999,999→1,000,000. The shared effect-aware guard disables only a next step that the numeric representation cannot express as strictly better. Safe saturated costs prevent high-level HUD rendering failures. Purchases validate, subtract once, apply once, and persist. The UI consumes derived snapshot values; no combat formula is duplicated in the HUD.
 
@@ -39,9 +39,7 @@ All five repeatable paths have no catalog/gameplay maximum and have a positive a
 
 Golden Bug health is five times the base automatic damage envelope in its 10,000 ms window: `ceil(window / automaticInterval) * baseDamage * 5`. This guarantees automatic-only failure even with critical outcomes while a measured 10 Hz manual envelope can succeed without resetting automatic cooldown. Kill reward is exactly ten times the resumed progression enemy base reward, safe-saturated, unaffected by double-reward randomness, and awarded once; timeout awards zero.
 
-`simulateProgression(3)` uses production attack, purchase, spawn, cost, interval, chance, penetration, safe-currency, ordinary/boss, and Golden Bug timeout paths with deterministic rolls. With the accepted APS curve it reaches bosses 35, 70, and 105 at 8,079,407.359888906 ms, 18,222,883.009831183 ms, and 25,581,417.26164943 ms. The report performs 2,780 automatic attacks, ends at encounter 106 with 36,501 coins, records 142,681 armor-prevented damage, and finishes at penetration 0.35526315789473684. Purchases remain unlock 1, damage 72, armor penetration 18, automatic speed 11, critical 3, and double reward 0.
-
-Tests assert the exact deterministic report, one purchase per defeated progression enemy, Golden Bug zero-reward timeouts, manual/automatic envelope, exact reward, safe saturation, APS formula levels/bounds, elite +500 ms slow, persistence, rollover, and stale-attack rejection. `pnpm check` passes 14 files and 89 tests.
+The deterministic simulator is the current balance proof: it reuses production attack, purchase, spawn, cost, interval, chance, penetration, currency, boss, and Golden Bug timeout paths. Current receipts are generated from the simulator and verified by the repository check; historical 2.9-APS run totals and the former `14 files / 89 tests` count are not a production contract.
 
 ## Accepted derived-stat presentation and automatic-speed curve
 
@@ -55,10 +53,14 @@ The concrete packet values are preserved in [[High-APS Packet Batching Example]]
 
 ## Accepted ordinary-balance simulator
 
-ABI-020 is accepted current behavior. The pure deterministic simulator reuses production spawn, attack, packet schedule, purchase, reward, critical, penetration, boss, and Golden Bug operations. It supports an exact oracle and a mathematically equivalent event-jump mode; final combat state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons.
+ABI-020 remains the ordinary-health and unattended-economy owner. The pure deterministic simulator reuses production spawn, attack, packet schedule, purchase, reward, critical, penetration, boss, and Golden Bug operations. It supports an exact oracle and a mathematically equivalent event-jump mode; final combat state matches at exact 1, 4, 8, 24, 48, and 49-hour horizons.
 
 The accepted unattended strategy attempts at most one affordable repeatable purchase after each defeated progression enemy in deterministic round-robin order. Per-stage receipts separate ordinary, boss, and Golden outcomes; ordinary telemetry reports grade/modifier hit and time distributions, one/5/10-hit fractions, transitions, armor, walls, and bands. Golden observations are excluded from every ordinary cohort including grade transitions.
 
-The 48-hour checkpoint reaches encounter 24,920 at approximately 11.995 APS with unsaturated currency; 49 hours reaches encounter 30,234 and proves continued progression. This time-based boundary defines the start of endgame. Linear-capped critical and penetration, altered cadence, damage, APS, reward, upgrade-cost, and both exponential health candidates were measured over at least 3,000 ordinary encounters and rejected; production policies remain the baseline.
+ABI-043 replaces the old boss 30-raw-hit target with a stage-aware envelope: a 30 post-armor non-critical-hit floor, 180 seconds of expected automatic DPS, and the historical stage curve as ceiling. It changes no price, reward, purchase-order, ordinary-health, Golden Bug, or upgrade formula.
 
-The complete generated JSON stays with the task packet. Vault preserves only the reviewed portable [[ABI-020 Reviewed Measurement Receipt]] and the concrete [[High-APS Packet Batching Example]]. The receipt's revision-bound metadata is [[ABI-020 Reviewed Measurement Receipt#L19-L25|summary and stored-source link]] (contentHash `a3450bcde391b5135fbf34125b0fbbef35d0e5557c3d306e2ed962561123e79d`).
+The 48-hour checkpoint reaches boss encounter `36,365` at approximately 11.995 APS with unsaturated currency; 49 hours reaches `37,135` and proves continued progression. Endgame is defined by elapsed time, while encounter number is measured output. The earlier `24,920/30,234` and `250,863/257,354` checkpoints are superseded.
+
+The regenerated task `MEASURED-REPORT.json` contains named automatic/manual/combined boss TTK receipts for bosses 35, 70, 1,015, 10,010, and 36,365, plus exact 48/49-hour economy and cohort telemetry. Linear-capped critical and penetration, altered cadence, damage, APS, reward, upgrade-cost, and exponential ordinary-health candidates remain rejected; production policies remain the baseline.
+
+Vault preserves the earlier portable [[ABI-020 Reviewed Measurement Receipt]] and [[High-APS Packet Batching Example]] as historical reviewed evidence. The current ABI-043 conclusions in this section and the regenerated Planner task asset supersede only their old boss/48-hour checkpoint values.

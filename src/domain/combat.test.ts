@@ -17,6 +17,7 @@ import {
   effectiveArmor,
   expireGoldenBug,
   purchaseUpgrade,
+  previousPlayerRelativeBossHealth,
   spawnGoldenBug,
   type CombatState,
   spawnEnemy,
@@ -248,7 +249,7 @@ describe("endless combat progression", () => {
     });
   });
 
-  it("scales live ordinary and boss health from the current player damage without changing Golden Bug health", () => {
+  it("keeps ordinary health player-relative while giving bosses a bounded stage durability envelope", () => {
     const player = createCombatState({
       automaticSpeedLevel: 2_000,
       damageLevel: 10_000,
@@ -262,9 +263,26 @@ describe("endless combat progression", () => {
     expect(normal.maxHealth).toBe(damageForLevel(10_000));
     expect(veteran.maxHealth).toBe(damageForLevel(10_000) * 5);
     expect(elite.maxHealth).toBe(damageForLevel(10_000) * 15);
-    expect(boss.maxHealth).toBe(damageForLevel(10_000) * 30);
+    expect(boss.maxHealth).toBeGreaterThan(damageForLevel(10_000) * 30);
     expect(normal.maxHealth).toBeGreaterThan(200);
-    expect(boss.maxHealth).toBeLessThan(golden.maxHealth);
+    expect(golden.maxHealth).toBeGreaterThan(damageForLevel(10_000));
+  });
+
+  it("keeps the encounter-2170 boss at its accepted legacy ceiling above the prior 30-hit save", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 4_093,
+      armorPenetrationLevel: 1_074,
+      criticalChance: 0.589873417721519,
+      criticalLevel: 1_165,
+      damage: 6_370,
+      damageLevel: 5_620,
+      doubleRewardChance: 0.5941775836972343,
+      doubleRewardLevel: 2_041,
+    }).player;
+    const boss = spawnEnemy(2_170, 0, undefined, player);
+    expect(previousPlayerRelativeBossHealth(player)).toBe(191_100);
+    expect(boss.maxHealth).toBe(19_373_445);
+    expect(boss.maxHealth).toBeGreaterThan(previousPlayerRelativeBossHealth(player));
   });
 
   it("finishes a warmed 48-hour event-jump receipt within the 8-second portable CI bound", () => {
@@ -298,6 +316,28 @@ describe("endless combat progression", () => {
       expect(roundedTiming(fast)).toEqual(roundedTiming(exact));
     }
   }, 45_000);
+
+  it("measures automatic, manual, and combined boss TTK at the 48-hour boundary", () => {
+    const endgame = fastForwardProgression(48 * 60 * 60 * 1_000);
+    const measure = (automaticEnabled: boolean, manualIntervalMs: number | null) => {
+      const report = simulateProgression({
+        automaticEnabled,
+        bossCount: 1,
+        eventJump: true,
+        initialPlayer: endgame.player,
+        manualIntervalMs,
+        startEncounter: 36_365,
+      });
+      return report.observations.find(({ grade }) => grade === "boss");
+    };
+    const automatic = measure(true, null);
+    const manual = measure(false, 100);
+    const combined = measure(true, 100);
+    expect(automatic?.timeToKillMs).toBeGreaterThan(0);
+    expect(manual?.timeToKillMs).toBeGreaterThan(0);
+    expect(combined?.timeToKillMs).toBeLessThan(automatic?.timeToKillMs ?? Infinity);
+    expect(combined?.timeToKillMs).toBeLessThan(manual?.timeToKillMs ?? Infinity);
+  });
 
   it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
     const player = createCombatState().player;
@@ -824,14 +864,14 @@ describe("endless combat progression", () => {
       ["startPlus", 100, 499],
       ["lateStart", 500, 999],
       ["midgame", 1_000, 9_999],
-      ["endgameStart", 10_000, 250_862],
-      ["endgame", 250_863, Number.MAX_SAFE_INTEGER],
+      ["endgameStart", 10_000, 36_364],
+      ["endgame", 36_365, Number.MAX_SAFE_INTEGER],
     ]);
-    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(250_863);
+    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(36_366);
     const endgameSnapshot = stageReference.playerSnapshots.find(
       ({ encounter }) => encounter === ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     );
-    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 250_845 }));
+    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 36_365 }));
     expect(endgameSnapshot).toEqual(
       expect.objectContaining({
         player: expect.objectContaining({ damageLevel: expect.any(Number) }),
@@ -847,11 +887,11 @@ describe("endless combat progression", () => {
       startEncounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     });
     expect(endgameProbe.observations[0]).toMatchObject({
-      encounter: 250_863,
+      encounter: 36_366,
       goldenBug: false,
     });
     expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
-    expect(automaticReport.encounters).toBe(257_354);
+    expect(automaticReport.encounters).toBe(37_135);
     expect(automaticOnly.endgame.count).toBeGreaterThan(0);
     for (const stage of Object.values(automaticOnly)) {
       expect(stage.count).toBeGreaterThan(0);
@@ -1016,13 +1056,34 @@ describe("endless combat progression", () => {
   it("records actual 10-plus APS at the 48-hour endgame boundary", () => {
     const report = buildMeasuredReport() as {
       briefRevision: number;
+      bossTtk: Record<
+        string,
+        {
+          automaticOnly: { hits: number; timeToKillMs: number };
+          combined: { hits: number; timeToKillMs: number };
+          manualOnly: { hits: number; timeToKillMs: number };
+        }
+      >;
       realTimeBands: readonly { hours: number; automaticAttacksPerSecond: number }[];
     };
     expect(report.briefRevision).toBe(19);
     expect(
       report.realTimeBands.find(({ hours }) => hours === 48)?.automaticAttacksPerSecond,
     ).toBeGreaterThanOrEqual(10);
-  });
+    expect(Object.keys(report.bossTtk)).toEqual([
+      "starter",
+      "early",
+      "midgame",
+      "endgameStart",
+      "endgame",
+    ]);
+    for (const receipt of Object.values(report.bossTtk)) {
+      expect(receipt.automaticOnly.timeToKillMs).toBeGreaterThan(0);
+      expect(receipt.manualOnly.timeToKillMs).toBeGreaterThan(0);
+      expect(receipt.combined.timeToKillMs).toBeLessThan(receipt.automaticOnly.timeToKillMs);
+      expect(receipt.combined.timeToKillMs).toBeLessThanOrEqual(receipt.manualOnly.timeToKillMs);
+    }
+  }, 30_000);
 
   it("uses the configured deterministic manual cadence without moving automatic cooldowns", () => {
     const automaticOnly = simulateProgression({ bossCount: 0, ordinaryEncounters: 100 });
