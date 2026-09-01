@@ -4,8 +4,8 @@ id: ABI-046
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 25
-status: In QA
+revision: 30
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-038
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 25
-- Last update: Start manager publish, deployed verification and closure.
+- Status: Done
+- Revision: 30
+- Last update: Close bounded production PlayerUnit evolution after review, QA, exact-SHA CI/Pages and deployed behavior proof.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [x] evolution-production-regressions: Add boundary, V1-V4 save/reload, socket, high-APS, reduced-motion, camera and disposal regressions; run pnpm check.
 - [x] evolution-production-review: Independent reviewer audits finite mapping, ownership, persistence, gameplay isolation and resource lifecycle.
 - [x] evolution-production-qa: Independent browser QA verifies transitions, historical reload, responsive views, reduced motion, combat isolation and deployed behavior.
-- [~] evolution-production-close: Manager updates Vault, publishes exact SHA, verifies CI/Pages and closes the task.
+- [x] evolution-production-close: Manager updates Vault, publishes exact SHA, verifies CI/Pages and closes the task.
 
 ## Events
 
@@ -455,3 +455,104 @@ requiredGates:
   - Independent review PASS
   - Independent QA PASS
   - Vault architecture hash 77a637f6f42c66073b376bbf261a6c1c7689a1e3a23189537721d7085ebda49f
+
+### evt-6510e094-2c0f-48f3-95be-15c7dbbea57c
+
+- Timestamp: 2026-09-01T15:12:22.412Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: Exact-SHA CI, Pages and deployed production browser verification pass for bounded PlayerUnit evolution.
+- Idempotency key: abi046-verification-exact-sha-pages-pass-20260901
+- Request fingerprint: 96040976a43fcb39526e4ee7bc46e43b387bbce2ae64b69bbd5c85f825e2f659
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Production SHA d8e65033a7cd141ce3842e4c7694fa8fbac8d128 on origin/main
+  - CI run 33523568860 PASS exact SHA
+  - Pages run 33523568854 PASS exact SHA
+  - Deployed asset app-DFTCSRLW.js
+  - Fresh receipt form 1 detail 0; manual HP 10 to 9; reload retained HP 9 and identity
+  - Historical V3 encounter 2170 migrated to V4 and rendered form 10000 detail 0
+  - Deployed console 0 errors 0 warnings
+  - Vault hash 77a637f6f42c66073b376bbf261a6c1c7689a1e3a23189537721d7085ebda49f doctor clean
+
+### evt-1c2cdd42-2374-40ee-af4c-36262ad726e2
+
+- Timestamp: 2026-09-01T15:13:08.778Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Exact-SHA deployment and production browser behavior are verified.
+- Idempotency key: abi046-ready-for-manager-after-deploy-20260901
+- Request fingerprint: e9c899bf829bc8c279f80887eb92cb06fc298a1774010dfe8ce9b7eba9f40440
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification PASS
+  - CI 33523568860 PASS
+  - Pages 33523568854 PASS
+  - Deployed browser production proof PASS
+
+### evt-efcac9a7-9fa7-4714-8fc1-7f99697fee70
+
+- Timestamp: 2026-09-01T15:14:28.873Z
+- Actor: abi046-manager
+- Operation: gate.record
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: Manager accepts all ABI-046 criteria with independent gates, exact-SHA deployment and deployed behavior evidence complete.
+- Idempotency key: abi046-manager-role-closure-pass-20260901
+- Request fingerprint: 52102e45e878648db62321293f9d2fc88a9c06d73f4fb40d13cffa8b59d56764
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS after one bounded repair
+  - independent-qa PASS
+  - verification PASS on exact production SHA d8e65033a7cd141ce3842e4c7694fa8fbac8d128
+  - CI 33523568860 and Pages 33523568854 PASS
+  - Deployed production browser proof PASS
+  - Vault architecture readback and doctor clean
+
+### evt-ee4566d9-cfd3-4718-a495-143db655fd6e
+
+- Timestamp: 2026-09-01T15:14:56.366Z
+- Actor: abi046-manager
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Complete publish, deployed verification and manager closure step.
+- Idempotency key: abi046-close-step-complete-20260901
+- Request fingerprint: 1e034c85e0620f8e1c915dfc0299ac66ed6552afdbc0334018974802d8d73f2a
+- Action: set_state
+- Step ID: evolution-production-close
+- State: complete
+- Evidence:
+  - All required gates PASS
+  - SHA d8e65033a7cd141ce3842e4c7694fa8fbac8d128 published
+  - CI and Pages exact-SHA PASS
+  - Deployed browser behavior PASS
+
+### evt-92ee3aad-046c-4b72-9edb-95b912e8d908
+
+- Timestamp: 2026-09-01T15:17:41.305Z
+- Actor: abi046-manager
+- Operation: task.advance
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Close bounded production PlayerUnit evolution after review, QA, exact-SHA CI/Pages and deployed behavior proof.
+- Idempotency key: abi046-advance-done-after-deployed-proof-20260901
+- Request fingerprint: 65cddaa2e93fdbc4e4c963384e201dd926891d13f695f6de918634e509bf05f9
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - All five required gates PASS
+  - Execution plan complete
+  - Production SHA d8e65033a7cd141ce3842e4c7694fa8fbac8d128
+  - CI 33523568860 PASS
+  - Pages 33523568854 PASS
+  - Deployed production browser PASS
+  - Planner recovery readback matched journal afterHash and doctor is healthy
