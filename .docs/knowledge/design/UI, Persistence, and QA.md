@@ -49,11 +49,16 @@ page itself must not expose vertical or horizontal scrollbars at supported deskt
 Upgrades are hidden by default. A fixed `Upgrades` launcher sits over the canvas near the lower left.
 Activating it opens a centered bounded dialog card over a viewport backdrop without reflowing the
 battlefield. The dialog repeats the current coin balance and presents every upgrade as a stable
-two-row action (`TITLE - LEVEL`, then `PRICE coins`) in a two-column desktop grid and one-column narrow
-grid; disabled reasons remain available through accessible names and titles without resizing the
-visible controls. The modal owns only its controls, traps/restores focus, toggles with `U`, closes by an
-explicit control, Escape, or a backdrop-only pointer activation, and does not turn the passive HUD into
-click targets or leak input or camera rotation to the battlefield.
+three-row action: `TITLE - LEVEL`, `PRICE coins`, then the exact displayed-stat gain bought by the next
+activation. Damage, armor penetration, critical chance, double-reward chance, and APS reuse the domain
+purchase selector and existing display precision; a one-click internal level skip shows its combined
+purchased delta. Coin-only-disabled rows retain the gain beside their disabled reason, while one-time,
+already-unlocked, prerequisite, and numeric-endpoint rows never invent a gain. Compact visual values
+retain full precision in accessible names and titles.
+
+The modal owns only its controls, traps/restores focus, toggles with `U`, closes by an explicit control,
+Escape, or a backdrop-only pointer activation, and does not turn the passive HUD into click targets or
+leak input or camera rotation to the battlefield.
 
 Overlay layering is explicit: passive HUD and log ignore pointer events; upgrade launcher/modal accept
 them; the remaining viewport routes pointer input to the battlefield. Responsive QA proves no overlap,

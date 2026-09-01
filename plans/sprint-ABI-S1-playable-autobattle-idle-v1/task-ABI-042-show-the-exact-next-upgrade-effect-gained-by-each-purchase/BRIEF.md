@@ -4,8 +4,8 @@ id: ABI-042
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In QA
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-017
@@ -29,7 +29,7 @@ Show the exact next-upgrade effect gained by each purchase
 
 - Type: task
 - Priority: normal
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

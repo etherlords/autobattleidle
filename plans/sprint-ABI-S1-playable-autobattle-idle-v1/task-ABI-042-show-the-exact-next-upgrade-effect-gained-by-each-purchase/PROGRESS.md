@@ -4,8 +4,8 @@ id: ABI-042
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 20
-status: In QA
+revision: 30
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-017
@@ -23,9 +23,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In QA
-- Revision: 20
-- Last update: Independent review passed; advance the exact bounded candidate to deployed acceptance QA.
+- Status: Done
+- Revision: 30
+- Last update: All required gates passed; exact next-upgrade gain previews are reviewed, deployed, independently verified, and closed.
 
 ## Execution plan
 
@@ -33,8 +33,8 @@ workspaceProject: autobattleidle
 - [x] delta-ui: Render readable visual and accessible deltas in existing upgrade rows
 - [x] delta-tests: Cover normal, multi-level skip, restored, disabled, desktop, and narrow cases
 - [x] independent-review: Independently review formula ownership and accessibility
-- [~] independent-qa: Verify deployed purchase previews and resulting stats
-- [ ] manager-close: Publish exact-SHA evidence and close
+- [x] independent-qa: Verify deployed purchase previews and resulting stats
+- [x] manager-close: Publish exact-SHA evidence and close
 
 ## Events
 
@@ -374,3 +374,187 @@ workspaceProject: autobattleidle
   - independent-review gate evt-67daf139-39fc-4eeb-ae5b-620536785ad6
   - execution-plan:independent-qa=in-progress
   - REVIEW.md
+
+### evt-2d87fcca-655f-4983-9c9b-e5c98376db85
+
+- Timestamp: 2026-09-01T04:33:59.345Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: Recorded independent deployed QA PASS and exact-SHA acceptance evidence in QA.md and VERIFICATION.md through the documented narrow Markdown fallback.
+- Idempotency key: abi042-qa-verification-markdown-fallback-20260901
+- Evidence:
+  - QA.md
+  - VERIFICATION.md
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f
+  - CI 33469394608 success
+  - Pages 33469394651 success
+  - deployed desktop/narrow QA PASS
+  - V3 -> V4 reload retained progress
+
+### evt-574129c5-b5a4-4b83-9e41-e11dd0ad5324
+
+- Timestamp: 2026-09-01T04:34:09.034Z
+- Actor: abi042_independent_qa_v1
+- Operation: gate.record
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: Independent deployed QA passed exact gains, combined purchase result, restore/migration, disabled semantics, accessibility, and desktop/narrow layout.
+- Idempotency key: abi042-independent-qa-pass-v1-20260901
+- Request fingerprint: 3f66f359080597922e80cbc1e23cabe1965d5b36bf63b7f6d6ce8f0ee1a66fe1
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - QA.md
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f
+  - CI 33469394608 success
+  - Pages 33469394651 success
+  - desktop screenshot page-2026-09-01T04-32-47-553Z.png
+  - narrow screenshot page-2026-09-01T04-31-45-920Z.png
+
+### evt-1beff9fe-926e-4767-a974-55244dcc2965
+
+- Timestamp: 2026-09-01T04:34:20.955Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: Exact-SHA deployed QA passed every acceptance criterion.
+- Idempotency key: abi042-complete-independent-qa-20260901
+- Request fingerprint: e8f91a7eb1e1736041e280c1f665f53bc431ae23355bea1e9fef704c69fbda86
+- Action: set_state
+- Step ID: independent-qa
+- State: complete
+- Evidence:
+  - evt-574129c5-b5a4-4b83-9e41-e11dd0ad5324
+  - QA.md
+  - CI and Pages success
+
+### evt-67d3e332-26fc-4470-bab3-69d8e579a8b2
+
+- Timestamp: 2026-09-01T04:35:18.810Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Manager mapped exact-SHA CI, Pages, independent review, deployed QA, and historical-save evidence to every acceptance criterion.
+- Idempotency key: abi042-verification-pass-20260901
+- Request fingerprint: 2c7e3c4285e8e8b7448925297c4ad41bf1588cd0213548920db88cf5f5c6e377
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f
+  - CI 33469394608 success
+  - Pages 33469394651 success
+  - review PASS
+  - deployed QA PASS
+  - pnpm check 192/192 PASS
+
+### evt-cd2a0d7e-c46c-4867-8801-e8899875088a
+
+- Timestamp: 2026-09-01T04:35:30.527Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Verification passed against exact-SHA CI, Pages, independent review, deployed QA, and save compatibility evidence.
+- Idempotency key: abi042-advance-ready-for-manager-20260901-b
+- Request fingerprint: a73962ea75534ed9ff25b356ad9a5b1d2f4332dcb4c1e1830eddf976ebcfc1fa
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification gate evt-67d3e332-26fc-4470-bab3-69d8e579a8b2
+  - independent-qa gate evt-574129c5-b5a4-4b83-9e41-e11dd0ad5324
+  - VERIFICATION.md
+
+### evt-feab2e75-cc77-46ec-8601-d6def77ed3da
+
+- Timestamp: 2026-09-01T04:35:41.557Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: Finalize the closure checkpoint with exact-SHA evidence and no unrelated dirty changes.
+- Idempotency key: abi042-start-manager-close-20260901
+- Request fingerprint: 84feb3ce317fdf8813f89ea0c4ae91954bbb9d5e0b88f29824eeab6a8cf8b4d9
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - status Ready for Manager
+  - verification PASS
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f deployed
+
+### evt-43132381-2be5-4f15-8ded-270d26598872
+
+- Timestamp: 2026-09-01T04:36:00.132Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Recorded Manager close PASS in VERIFICATION.md through the documented narrow Markdown fallback after all exact-SHA gates passed.
+- Idempotency key: abi042-manager-signoff-markdown-fallback-20260901
+- Evidence:
+  - VERIFICATION.md
+  - review PASS
+  - QA PASS
+  - verification PASS
+  - candidate deployed successfully
+
+### evt-96dd3bb8-d76d-4efb-a3a1-14910ea06c0b
+
+- Timestamp: 2026-09-01T04:36:41.385Z
+- Actor: abi042-manager-closure
+- Operation: gate.record
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: Distinct closure actor confirms the coherent task-only exact-SHA release evidence and all required prior gates.
+- Idempotency key: abi042-manager-closure-pass-20260901-b
+- Request fingerprint: 521dba581a46617da97b6e641778352828dee448927d4a53b501f67c0112c801
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - VERIFICATION.md
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f
+  - CI 33469394608 success
+  - Pages 33469394651 success
+  - review, QA, and verification gates PASS
+
+### evt-5587d427-ae04-460b-a623-d71b112f1efa
+
+- Timestamp: 2026-09-01T04:36:53.897Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Exact-SHA release evidence is published and all required gates pass.
+- Idempotency key: abi042-complete-manager-close-20260901
+- Request fingerprint: b7b63e8a4924af85b72212bc956ef57d3562c2ed51141284eafecd6a14950073
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - evt-96dd3bb8-d76d-4efb-a3a1-14910ea06c0b
+  - candidate deployed
+  - VERIFICATION.md
+
+### evt-b264cc81-d211-42c8-86f1-b2afa3ee8f94
+
+- Timestamp: 2026-09-01T04:37:06.062Z
+- Actor: abi042-manager-closure
+- Operation: task.advance
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: All required gates passed; exact next-upgrade gain previews are reviewed, deployed, independently verified, and closed.
+- Idempotency key: abi042-advance-done-20260901
+- Request fingerprint: 2699aeaa735b01f6727cb98a0dc0e8b87ad813e9e988e5798b06b5943797708d
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure gate evt-96dd3bb8-d76d-4efb-a3a1-14910ea06c0b
+  - execution-plan complete
+  - candidate b866bacef60f7bf2237300d21de5d456c962767f
+  - CI 33469394608
+  - Pages 33469394651
