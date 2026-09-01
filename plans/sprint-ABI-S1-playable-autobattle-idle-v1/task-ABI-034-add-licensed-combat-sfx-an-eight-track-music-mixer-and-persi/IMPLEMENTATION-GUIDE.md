@@ -46,3 +46,10 @@ requiredGates:
 - **Integration:** one application subscription; manual/automatic/critical/armor/death/reward/boss/Golden events; high-APS coalescing without combat changes; UI focus/keyboard; separate localStorage reload/reset; current and V1-V4 save compatibility.
 - **Asset/legal:** every shipped file matches manifest hash and provenance; Suno tier evidence exists; CC-BY attribution renders when used; CC-BY-NC and unknown rights are absent.
 - **Browser/deployed:** first gesture unlock, category sliders, mute/unmute, track order/crossfade, background/resume, failure fallback, desktop/390px layout, clean console/network, public assets at exact SHA, and audible state-action-result receipts.
+
+## Fresh preflight gate 2026-09-01
+
+- Do not advance ABI-034 to `In Progress` while the Suno subscription tier at the embedded 2026-08-30 generation timestamps is unproven.
+- Acceptable unblock evidence is a dated billing/subscription receipt or authoritative account history showing Pro/Premier covered those timestamps. A current subscription alone is insufficient.
+- If the evidence shows Basic or remains unavailable, exclude all affected MP3s and return to product planning for eight replacement tracks with explicit redistribution/commercial-use provenance; do not reinterpret possession, download access, or embedded generation IDs as a license.
+- Once rights are proven, copy from the read-only Downloads sources into the repository through the reviewed manifest workflow, then verify every copied SHA-256 against the fresh inventory before implementation proceeds.

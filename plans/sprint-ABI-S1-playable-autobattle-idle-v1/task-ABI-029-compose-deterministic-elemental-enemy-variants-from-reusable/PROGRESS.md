@@ -4,7 +4,7 @@ id: ABI-029
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 59
+revision: 61
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 59
-- Last update: EVENT checkpoint — codex-root — Used the documented narrow Markdown fallback to preserve detailed step-level concept review and QA evidence because Planner exposes no artifact-section writer; required final task gates were not recorded.
+- Revision: 61
+- Last update: Released task claim: Await fresh user visual approval before production geometry port
 
 ## Execution plan
 
@@ -994,3 +994,37 @@ requiredGates:
   - planner_doctor healthy; no recovery required
   - REVIEW.md and QA.md concept checkpoint sections
   - Final ABI-029 required gates deliberately remain pending
+
+### evt-37782316-ed8a-4480-8e8f-bff4a6bf9478
+
+- Timestamp: 2026-09-01T14:10:29.533Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: EVENT checkpoint — codex-root — Published the revised boss-only concept recipes at exact SHA a1f6cea; CI, Pages, and representative Hydra/Colossus deployed browser proof pass. Production port remains paused for fresh user visual approval.
+- Idempotency key: abi029-boss-recipes-public-checkpoint-a1f6cea
+- Evidence:
+  - commit a1f6ceaef119d599245aabd19559a975064f3a44
+  - CI run 33517479692 PASS
+  - Pages run 33517479731 PASS
+  - Hydra spines public route loaded with canonical receipt
+  - Colossus runes public route loaded with canonical receipt
+  - Console 0 errors/0 warnings; storage empty; five static GET requests all 200
+
+### evt-1dce79df-0dea-49de-a58f-47226d44ef73
+
+- Timestamp: 2026-09-01T14:12:29.148Z
+- Actor: codex-root
+- Operation: claim.release
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Released task claim: Await fresh user visual approval before production geometry port
+- Idempotency key: abi029-release-awaiting-visual-approval-20260901
+- Request fingerprint: 4553191ee91489ffa44ccf7330d55d6cc1975a3b923897abfeb522e4b80f0c80
+- Agent ID: codex-root
+- Session ID: root-abi029-20260901
+- Intent: Await fresh user visual approval before production geometry port
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None

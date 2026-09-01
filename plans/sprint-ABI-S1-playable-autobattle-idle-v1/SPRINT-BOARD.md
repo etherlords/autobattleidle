@@ -42,7 +42,7 @@ sourceRevisions:
   ABI-031: 82
   ABI-032: 11
   ABI-033: 8
-  ABI-034: 3
+  ABI-034: 5
   ABI-035: 9
   ABI-036: 1
   ABI-037: 6

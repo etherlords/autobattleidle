@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
+revision: 36
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 30
-- Last update: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
+- Revision: 36
+- Last update: Released task claim: Await subscription-at-generation evidence or replacement-music decision
 
 ## Execution plan
 
@@ -38,7 +38,7 @@ requiredGates:
 - [-] audio-ui-persistence: Add accessible Master/UI/Combat/Music controls, mute, and separate versioned preference storage
 - [-] audio-self-check: Run focused unit/integration/browser checks, pnpm check, and asset/license validation
 - [-] audio-gates: Complete independent review, audible browser QA, Vault update, exact-SHA deploy proof, and Manager closure
-- [ ] audio-music-rights-gate: Verify subscription tier at generation time for all eight Suno-tagged tracks; record generation IDs, hashes, dates, allowed use, attribution, and ship or exclude decision
+- [~] audio-music-rights-gate: Verify subscription tier at generation time for all eight Suno-tagged tracks; record generation IDs, hashes, dates, allowed use, attribution, and ship or exclude decision
 - [ ] audio-sfx-source-gate: Select the minimum UI, combat, material, boss, and reward SFX set; verify each CC0, Unlicense, or CC-BY source and reject unknown or non-commercial licenses
 - [ ] audio-asset-manifest: Create the machine-checkable asset manifest and repository layout with duration, bytes, SHA-256, provenance, attribution, and deterministic build-path validation
 - [ ] audio-event-audit: After ABI-035 closes, trace controller, presenter, HUD, and lifecycle events and map manual, automatic, critical, armor, lethal, reward, boss, Golden, and material cues once
@@ -507,3 +507,106 @@ requiredGates:
 - Evidence:
   - Planner doctor healthy with no recovery required before fallback.
   - ABI-035 -> ABI-034 attack-source reuse; ABI-028 and ABI-037 -> ABI-029 balance/lab reuse; ABI-029 -> ABI-036/ABI-039 content reuse.
+
+### evt-57bfd9f9-4015-4c26-8cd7-98b3f62dd938
+
+- Timestamp: 2026-09-01T09:55:26.230Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: ABI-035 and every declared dependency are Done; release stale dependency block while retaining explicit music/SFX rights gates in the execution plan.
+- Idempotency key: abi034-dependencies-closed-to-ready-20260901
+- Request fingerprint: 8133419beb3eb8937b785e8045a5b01c7f55a38b8b171aefe566d996c1d549a1
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - planner_tasks_list openDependencies=[]
+  - declared dependencies verified Done
+
+### evt-da679bba-ce30-49fb-9cf2-b1e080d68010
+
+- Timestamp: 2026-09-01T10:36:01.252Z
+- Actor: codex-root
+- Operation: claim.acquire
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Claimed task lease: Fresh Planner/Vault/source preflight for licensed audio delivery
+- Idempotency key: abi034-claim-preflight-20260901
+- Request fingerprint: f6b6fbf08980a63273a8a398f262751a0d78ecd512b2983a0a44e0f9db4d6fb2
+- Agent ID: codex-root
+- Session ID: abi-s1-abi034-20260901
+- Intent: Fresh Planner/Vault/source preflight for licensed audio delivery
+- Branch: continue-abis1-after-visual-families
+- Expires at: 2026-09-01T12:06:01.252Z
+- Evidence:
+  - None
+
+### evt-76c4523e-c39c-412a-b315-a3d449738ed8
+
+- Timestamp: 2026-09-01T10:37:55.553Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Started the mandatory music-rights gate before any binary import or audio implementation.
+- Idempotency key: abi034-audio-music-rights-gate-start-20260901
+- Request fingerprint: fbee2df32786842670c52ba98130418861dfa9156c00aaa688d9bb5a71134ae2
+- Action: set_state
+- Step ID: audio-music-rights-gate
+- State: in_progress
+- Evidence:
+  - Eight supplied MP3s located under C:\Users\Asfel\Downloads
+  - Embedded Suno creation timestamps and generation IDs are present
+  - Official Suno help article says commercial rights depend on Pro/Premier subscription at generation time
+
+### evt-4ffdf02d-d6c5-43e6-b42a-05f296636ee3
+
+- Timestamp: 2026-09-01T10:38:46.133Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: EVENT checkpoint — codex-root — Fresh preflight inventoried all eight supplied MP3s and confirmed a hard rights blocker: subscription tier at generation time is not evidenced, so no binary import or implementation is authorized.
+- Idempotency key: abi034-fresh-preflight-rights-blocker-20260901
+- Evidence:
+  - Planner doctor healthy; section-level write unavailable, so manager used the documented narrow Markdown fallback for ANALYSIS.md and IMPLEMENTATION-GUIDE.md only
+  - 8 MP3s: 33,361,832 bytes, 1,426.068 seconds, distinct SHA-256 and Suno IDs, created 2026-08-30
+  - Official Suno help article edited 2026-01-07: Pro/Premier at creation grants ownership/commercial use; Basic does not
+  - Persistence classification: compatible separate audio-preference document; game save V1-V4 unchanged
+  - Implementation, dependency, binary, Git, and Vault mutations not started
+
+### evt-4d22d5eb-63d1-4c3f-8153-454ee4dbabed
+
+- Timestamp: 2026-09-01T10:39:08.106Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Blocked before implementation because commercial redistribution rights for the eight supplied Suno tracks cannot be established without Pro/Premier subscription evidence covering their 2026-08-30 generation timestamps.
+- Idempotency key: abi034-blocked-suno-tier-at-generation-20260901
+- Request fingerprint: 3d05bd8b031ee1adde948789b59729654dcdf044d68a402ce63ae0b2edbf0f13
+- From status: Ready
+- To status: Blocked
+- Evidence:
+  - Fresh MP3 inventory and hashes recorded in ANALYSIS.md
+  - Official Suno ownership article requires Pro/Premier at creation
+  - No billing, subscription-history, or other tier-at-generation receipt is present
+  - No MP3 copied into Git and no implementation delegated
+
+### evt-75557591-553e-4569-9030-a65952bd2730
+
+- Timestamp: 2026-09-01T10:39:17.076Z
+- Actor: codex-root
+- Operation: claim.release
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Released task claim: Await subscription-at-generation evidence or replacement-music decision
+- Idempotency key: abi034-release-after-rights-block-20260901
+- Request fingerprint: 4fc1cfa85beed14a726dd561f17c7379a48c2b3a5e99361412ca465f91c990b8
+- Agent ID: codex-root
+- Session ID: abi-s1-abi034-20260901
+- Intent: Await subscription-at-generation evidence or replacement-music decision
+- Branch: continue-abis1-after-visual-families
+- Evidence:
+  - None

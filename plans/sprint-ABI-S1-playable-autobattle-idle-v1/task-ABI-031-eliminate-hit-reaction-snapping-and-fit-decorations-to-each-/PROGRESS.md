@@ -4,7 +4,7 @@ id: ABI-031
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 352
+revision: 353
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 352
-- Last update: ABI-031 complete: final visuals accepted, lethal hit-pause-death sequence and Time Ring tilt verified, all gates passed, lease released, and exact-SHA deployment proven.
+- Revision: 353
+- Last update: EVENT checkpoint — root-manager-continuation — Reconciled the stale pending VERIFICATION.md body from already accepted typed gate, exact-SHA CI/Pages, deployed, and Vault receipts through the documented narrow Markdown fallback; no lifecycle, code, dependency, Vault, or deployment state changed.
 
 ## Execution plan
 
@@ -6162,3 +6162,19 @@ requiredGates:
   - published feature SHA 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368
   - CI run 33323242679 success; Pages run 33323242649 success
   - public deployed QA PASS at https://etherlords.github.io/autobattleidle/
+
+### evt-5cc982cd-1c9a-412b-881f-a3c850dc4927
+
+- Timestamp: 2026-08-30T19:22:46.485Z
+- Actor: root-manager-continuation
+- Operation: progress.append
+- Prior revision: 352
+- Resulting revision: 353
+- Summary: EVENT checkpoint — root-manager-continuation — Reconciled the stale pending VERIFICATION.md body from already accepted typed gate, exact-SHA CI/Pages, deployed, and Vault receipts through the documented narrow Markdown fallback; no lifecycle, code, dependency, Vault, or deployment state changed.
+- Idempotency key: abi031-verification-artifact-reconcile-20260831-v1
+- Evidence:
+  - verification PASS evt-65323814-5414-4b73-a7d3-c6cbba15b697
+  - manager-closure PASS evt-68a2c568-7a6e-4bd0-a917-6279bc70ea6f
+  - published feature SHA 9a75d4a0a8ac04f0f74c88ffef2543c161ca7368
+  - CI 33323242679 and Pages 33323242649 success
+  - Planner doctor healthy with no recovery; artifact-section writer unavailable
