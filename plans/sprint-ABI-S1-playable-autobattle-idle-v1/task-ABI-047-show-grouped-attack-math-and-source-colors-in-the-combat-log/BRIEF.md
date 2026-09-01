@@ -4,8 +4,8 @@ id: ABI-047
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -29,7 +29,7 @@ Show grouped attack math and source colors in the combat log
 
 - Type: task
 - Priority: normal
-- Status: In Progress
+- Status: Done
 
 ## Acceptance criteria
 
