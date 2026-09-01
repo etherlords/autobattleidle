@@ -4,8 +4,8 @@ id: ABI-037
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In QA
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -29,7 +29,7 @@ Add a deterministic visual test lab for families, modifiers, decorations, and an
 
 - Type: task
 - Priority: normal
-- Status: In QA
+- Status: Done
 
 ## Acceptance criteria
 

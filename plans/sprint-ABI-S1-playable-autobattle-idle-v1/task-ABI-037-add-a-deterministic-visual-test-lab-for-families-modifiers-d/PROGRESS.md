@@ -4,8 +4,8 @@ id: ABI-037
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 75
-status: In QA
+revision: 80
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 75
-- Last update: Begin ABI-037 manager closure: checkpoint, publish, exact-SHA CI/Pages, verification, and close
+- Status: Done
+- Revision: 80
+- Last update: All required gates pass; independent manager audit confirms exact-SHA publication and deployed production/debug boundary. Close ABI-037.
 
 ## Execution plan
 
@@ -49,7 +49,7 @@ requiredGates:
 - [x] lab-self-check: Implementation owner runs focused unit/integration/browser checks, full serial matrix smoke, and pnpm check
 - [x] lab-independent-review: Independent Reviewer audits production parity, isolation, build boundaries, bounded allocation, URL validation, and future ABI-029/036/038 reuse
 - [x] lab-independent-qa: Independent QA verifies all-angle animation controls, overlays, desktop/narrow usability, exact case reopening, clean resources, and normal/debug builds
-- [~] lab-manager-closure: Manager updates Vault testing guidance, records verification, publishes the coherent checkpoint, and proves exact-SHA release/debug behavior
+- [x] lab-manager-closure: Manager updates Vault testing guidance, records verification, publishes the coherent checkpoint, and proves exact-SHA release/debug behavior
 
 ## Events
 
@@ -1250,3 +1250,97 @@ requiredGates:
 - State: in_progress
 - Evidence:
   - Vault guidance updated; release checkpoint remains
+
+### evt-e47d2233-5bc1-4e89-9c7d-e124b26eebde
+
+- Timestamp: 2026-09-01T09:45:53.831Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 75
+- Resulting revision: 76
+- Summary: PASS: exact published SHA passed CI and Pages; deployed gameplay rendered cleanly; production Pages excludes the developer-only visual lab; local normal/debug build gates pass.
+- Idempotency key: abi037-verification-pass-71a487d7-20260901
+- Request fingerprint: e5d145d6cf61174900aaad485e72ee6c5f7ca569f18bf16419e4d0d8eb89d162
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - SHA 71a487d7db31d0c076797fc4bfa803323acf2211 == origin/main
+  - CI run 33493677064 success
+  - Deploy GitHub Pages run 33493676969 success
+  - https://etherlords.github.io/autobattleidle/ rendered live battlefield and controls with clean warning/error log
+  - https://etherlords.github.io/autobattleidle/visual-lab.html returned GitHub Pages 404
+  - pnpm check: 22 files, 208 tests, worker typecheck, production build
+  - pnpm build:visual-lab: explicit debug entry built
+
+### evt-b337ad63-9f84-41fc-b542-7aa8a762b65e
+
+- Timestamp: 2026-09-01T09:46:05.929Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 76
+- Resulting revision: 77
+- Summary: Independent QA and exact-SHA deployed verification pass; advance to Manager closure.
+- Idempotency key: abi037-qa-to-ready-manager-20260901
+- Request fingerprint: 5fb4506280a646faf435e61aeb424b3fd04cc51ee380aad399610eadea02fb6b
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-e47d2233-5bc1-4e89-9c7d-e124b26eebde
+  - CI 33493677064
+  - Pages 33493676969
+
+### evt-5b249b87-4143-4526-8f9a-6c87db11e7c1
+
+- Timestamp: 2026-09-01T09:46:19.818Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 77
+- Resulting revision: 78
+- Summary: Complete ABI-037 manager closure plan: coherent implementation published and exact-SHA release/debug boundary verified
+- Idempotency key: abi037-plan-manager-closure-complete-20260901
+- Request fingerprint: 0a03ca452c61e97c9382d941ef053d5afe738fe5562c333213bf93d2361a46c4
+- Action: set_state
+- Step ID: lab-manager-closure
+- State: complete
+- Evidence:
+  - SHA 71a487d7db31d0c076797fc4bfa803323acf2211 published
+  - CI/Pages/deployed browser verification PASS
+  - Vault Testing Strategy updated and read back
+
+### evt-80a829de-8d93-4a65-9e5e-1f8e3769033c
+
+- Timestamp: 2026-09-01T09:47:44.027Z
+- Actor: abi037-manager-closure-auditor-v1
+- Operation: gate.record
+- Prior revision: 78
+- Resulting revision: 79
+- Summary: PASS: independent manager audit confirms all acceptance, gate, plan, documentation, exact-SHA CI/Pages, and deployed production-boundary evidence.
+- Idempotency key: abi037-independent-manager-closure-pass-20260901
+- Request fingerprint: 98a837021e6fc773f00a735a3e91ebf740d0ce4e43ada2fc254292ae31d8275f
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Independent read-only closure audit PASS
+  - Planner Ready for Manager revision 5, progress revision 78, dependencies empty, all 21 plan steps terminal
+  - SHA 71a487d7db31d0c076797fc4bfa803323acf2211 matches origin/main
+  - CI 33493677064 PASS; Pages 33493676969 PASS
+  - deployed gameplay clean; production /visual-lab.html 404
+  - pnpm check 22 files/208 tests; explicit visual-lab build PASS
+  - Vault Testing Strategy hash a467a635271d2a26757c83f65b1c0016aa5eb174f352e61bf0de2fae27b1ee12
+
+### evt-f9e01c28-a5fe-49c7-8da0-f7b8a9b9dd16
+
+- Timestamp: 2026-09-01T09:47:58.624Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: All required gates pass; independent manager audit confirms exact-SHA publication and deployed production/debug boundary. Close ABI-037.
+- Idempotency key: abi037-ready-manager-to-done-20260901
+- Request fingerprint: 4e3d6bd9e19a1c53d0d84cea132d729f28ba2151de2ff0afb1e652f01f8d05b2
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-80a829de-8d93-4a65-9e5e-1f8e3769033c
+  - evt-e47d2233-5bc1-4e89-9c7d-e124b26eebde
+  - SHA 71a487d7db31d0c076797fc4bfa803323acf2211
