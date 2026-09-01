@@ -4,8 +4,8 @@ id: ABI-025
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 106
-status: In QA
+revision: 112
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 106
-- Last update: Publish the reviewed SHA and verify universal orbit in isolated deployed desktop, touch, keyboard, transition, Reset, and reload scenarios.
+- Status: Ready for Manager
+- Revision: 112
+- Last update: Advance the independently verified exact-SHA universal-orbit fix to Manager closure.
 
 ## Execution plan
 
@@ -43,8 +43,8 @@ requiredGates:
 - [x] orbit-input-regressions-v2: Implementation owner preserves pointer/touch/keyboard orbit, stationary attack, drag suppression, modal isolation, finite-input guards, disposal, and no-save behavior
 - [x] orbit-self-check-v2: Implementation owner runs focused battlefield/application tests, persistence regressions, pnpm check, and diff check
 - [x] orbit-independent-review-v2: Fresh independent Reviewer verifies the corrected product contract, root-cause removal, transition continuity, input behavior, and regression coverage
-- [~] orbit-independent-qa-v2: Fresh independent QA verifies ordinary/boss/Golden orbit and continuous angle on desktop, 390px touch, keyboard, reload boundary, and exact-SHA Pages
-- [ ] orbit-manager-closure-v2: Manager records verification, updates Vault behavior, commits and publishes the coherent fix, proves exact-SHA deployment, and closes the reopened task
+- [x] orbit-independent-qa-v2: Fresh independent QA verifies ordinary/boss/Golden orbit and continuous angle on desktop, 390px touch, keyboard, reload boundary, and exact-SHA Pages
+- [~] orbit-manager-closure-v2: Manager records verification, updates Vault behavior, commits and publishes the coherent fix, proves exact-SHA deployment, and closes the reopened task
 - [x] orbit-review-repair-v2: Implementation owner adds explicit Reset camera reset, updates universal-orbit accessibility text, and reconciles the Vault contract
 - [x] orbit-vault-readback-repair-v2: Manager forces a fresh Vault index and records the corrected hash-bound HUD/input readback
 - [x] orbit-golden-exit-repair-v2: Implementation owner proves Golden Bug exit preserves a nonzero azimuth before separately testing boss rotation and Reset
@@ -1868,3 +1868,113 @@ requiredGates:
 - Evidence:
   - task-status:In-QA
   - review:APPROVE-no-P0-P3
+
+### evt-ada67e3f-6f8a-4a0b-99cf-3c213e593ed7
+
+- Timestamp: 2026-09-01T02:54:31.352Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 106
+- Resulting revision: 107
+- Summary: Recorded detailed corrected QA and verification bodies through the healthy-Planner Markdown fallback because Planner exposes no artifact-body writer.
+- Idempotency key: abi025-qa-verification-artifact-fallback-record
+- Evidence:
+  - planner-doctor:healthy-no-recovery
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only/QA.md
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only/VERIFICATION.md
+  - qa:PASS-exact-sha-643c47f
+  - github-actions:CI/33463632347=success
+  - github-actions:Deploy GitHub Pages/33463632410=success
+
+### evt-fe69d737-7466-4b3d-b967-7dc7c02a4adb
+
+- Timestamp: 2026-09-01T02:54:33.065Z
+- Actor: abi025-independent-qa-v2
+- Operation: gate.record
+- Prior revision: 107
+- Resulting revision: 108
+- Summary: Independent deployed QA passes exact-SHA desktop, touch, keyboard, transition, Reset, reload, framing, input-isolation, and artifact-identity acceptance.
+- Idempotency key: abi025-independent-qa-v2-pass
+- Request fingerprint: 55be23644407d23074a5162fc8aff89546c4a2c027121b89a5c80253a4bfd987
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - qa:PASS
+  - git:643c47fa71ceeabbf617107869544126dca890f4
+  - github-actions:CI/33463632347=success
+  - github-actions:Deploy GitHub Pages/33463632410=success
+  - artifact-sha256:3DFE6CBE4F34B9C9F8C101365DFE4F834F5262FC37939F9D7A699A8549F76064
+  - browser:desktop-pointer-keyboard-reset-reload-pass
+  - browser:narrow-touch-pass
+  - console-network:clean
+
+### evt-19660502-ce42-4e79-8412-1907c0a189ff
+
+- Timestamp: 2026-09-01T02:54:34.455Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 108
+- Resulting revision: 109
+- Summary: Independent exact-SHA deployed browser QA passes all corrected universal-orbit acceptance paths.
+- Idempotency key: abi025-independent-qa-v2-complete
+- Request fingerprint: 941af53e83a84bab714d6d3855e8afc6ce2c9fc2b5e9626d66b25d541a6271fb
+- Action: set_state
+- Step ID: orbit-independent-qa-v2
+- State: complete
+- Evidence:
+  - planner-gate:independent-qa=pass
+  - qa:PASS-exact-sha-643c47f
+
+### evt-a0d5aa64-f7f9-45a9-9008-f807d3ec78c0
+
+- Timestamp: 2026-09-01T02:54:35.500Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 109
+- Resulting revision: 110
+- Summary: Manager maps corrected ABI-025 acceptance to reviewed code, tests, Vault, exact-SHA workflows, artifact identity, and deployed behavior.
+- Idempotency key: abi025-verification-v2-pass
+- Request fingerprint: 38b1474bb9e97cede00d17b71bfdac974bf7492390753c96788d54e69fd7d1b5
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - planner-gate:independent-review=pass
+  - planner-gate:independent-qa=pass
+  - git:643c47fa71ceeabbf617107869544126dca890f4
+  - github-actions:CI/33463632347=success
+  - github-actions:Deploy GitHub Pages/33463632410=success
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b
+
+### evt-5d3641fb-9e98-439f-b20e-7b2dfabc56fb
+
+- Timestamp: 2026-09-01T02:54:37.018Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 110
+- Resulting revision: 111
+- Summary: Publish QA and verification receipts, record manager closure, and close the corrected task.
+- Idempotency key: abi025-manager-closure-v2-start
+- Request fingerprint: 5ed8f399bb71ed6f75f9ae19a0c7d61672687195eb37acb9e91dee60ca2f4376
+- Action: set_state
+- Step ID: orbit-manager-closure-v2
+- State: in_progress
+- Evidence:
+  - planner-gate:verification=pass
+  - git:643c47f
+
+### evt-822153b7-f245-416b-a154-2229a79de162
+
+- Timestamp: 2026-09-01T02:54:38.087Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 111
+- Resulting revision: 112
+- Summary: Advance the independently verified exact-SHA universal-orbit fix to Manager closure.
+- Idempotency key: abi025-qa-to-ready-manager-v2
+- Request fingerprint: 177fa1f8d90642c23c922b85287df3c54ef013f61a720637b8b4265bb66fe1cd
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - planner-gate:independent-qa=pass
+  - planner-gate:verification=pass
+  - git:643c47f

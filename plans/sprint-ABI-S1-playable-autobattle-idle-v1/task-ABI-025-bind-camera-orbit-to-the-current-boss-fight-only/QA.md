@@ -51,3 +51,48 @@ PASS — independent deployed QA at exact feature SHA `00dcc841100ed2d82959497ff
 Actor: `abi025_exceptional_deployed_qa`
 Timestamp: 2026-08-31T04:22Z
 Independent deployed QA: PASS
+
+## Corrected universal-orbit deployed QA — 2026-09-01
+
+### Verdict
+
+PASS — independent isolated deployed QA at exact SHA
+`643c47fa71ceeabbf617107869544126dca890f4`.
+
+### Exact delivery
+
+- CI `33463632347`: success.
+- Deploy GitHub Pages `33463632410`: success.
+- URL: `https://etherlords.github.io/autobattleidle/`, HTTP 200.
+- Pages artifact JS and deployed JS matched byte-for-byte:
+  SHA-256 `3DFE6CBE4F34B9C9F8C101365DFE4F834F5262FC37939F9D7A699A8549F76064`.
+
+### State -> action -> visible result
+
+- Desktop 1440x900 ordinary front view -> primary pointer drag -> visible camera orbit.
+- Rotated ordinary -> ArrowRight -> visible additional azimuth change.
+- Rotated ordinary -> drag -> no attack; stationary pointer activation -> enemy HP decreased and
+  `Manual hit` appeared.
+- Rotated ordinary -> defeat/replacement -> next ordinary retained the same azimuth.
+- Open modal -> keyboard orbit input -> battlefield camera did not change.
+- Rotated battlefield -> confirmed Reset -> progress reset and camera returned to front framing.
+- Rotated battlefield -> reload -> camera started at front; no camera field was persisted.
+- Narrow 390x844 -> touch-type drag -> visible orbit with responsive framing and no HUD overlap;
+  stationary attack remained functional.
+
+Focused lifecycle tests cover ordinary, boss, Golden Bug, all replacement pairs, nonzero Golden exit,
+lethal handoff, hit, resize, reload boundary, explicit Reset, invalid input, and disposal.
+
+### Checks and artifacts
+
+- Focused battlefield tests: 13/13 passed.
+- Full `pnpm check`: 20 files, 185/185 tests, lint, format, Worker TypeScript, and build passed.
+- Console: zero errors and zero warnings; network contained only expected static requests.
+- Screenshots:
+  - `.playwright-cli/page-2026-09-01T02-46-04-117Z.png` — initial front.
+  - `.playwright-cli/page-2026-09-01T02-46-26-317Z.png` — rotated ordinary.
+  - `.playwright-cli/page-2026-09-01T02-47-46-130Z.png` — next ordinary, same azimuth.
+  - `.playwright-cli/page-2026-09-01T02-49-24-187Z.png` — Reset/front camera.
+  - `.playwright-cli/page-2026-09-01T02-51-44-727Z.png` — narrow touch-type orbit.
+
+QA used isolated browser contexts and did not access or modify user Chrome or user storage.
