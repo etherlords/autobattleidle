@@ -50,6 +50,9 @@
     "ABI-037": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-037-add-a-deterministic-visual-test-lab-for-families-modifiers-d",
     "ABI-038": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-038-evolve-the-player-avatar-from-egg-or-stone-into-authored-pro",
     "ABI-039": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-039-add-deterministic-progression-aware-boss-cadence-and-varied-",
-    "ABI-040": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-040-preserve-the-newest-valid-v3-progress-when-migrating-or-rest"
+    "ABI-040": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-040-preserve-the-newest-valid-v3-progress-when-migrating-or-rest",
+    "ABI-041": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-041-add-a-golden-fixture-migration-matrix-for-every-supported-sa",
+    "ABI-042": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-042-show-the-exact-next-upgrade-effect-gained-by-each-purchase",
+    "ABI-043": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-043-restore-meaningful-boss-durability-after-player-relative-ene"
   }
 }
