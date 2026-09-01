@@ -8,7 +8,9 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $entrypoint = if ($env:PLANNER_UI_ENTRYPOINT) {
   $env:PLANNER_UI_ENTRYPOINT
 } else {
-  Join-Path $projectRoot ".tools\planner-runtime\node_modules\@etherlords\planner-mcp\dist\ui.js"
+  $packageLink = Get-Item -LiteralPath (Join-Path $projectRoot ".tools\planner-runtime\node_modules\@etherlords\planner-mcp")
+  $packageRoot = if ($packageLink.Target) { $packageLink.Target } else { $packageLink.FullName }
+  Join-Path $packageRoot "dist\ui.js"
 }
 if (-not (Test-Path -LiteralPath $entrypoint)) {
   throw "Planner UI runtime is missing. Run scripts/setup-agent-tooling.ps1 first."

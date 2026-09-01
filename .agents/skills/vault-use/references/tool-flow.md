@@ -18,7 +18,8 @@
 - `vault_search`: ranked discovery, multiple hits, confidence, next action.
 - `vault_get_article`: bounded canonical Markdown by stable ID; default and
   evaluation slice are at most 200 lines, then request one further slice only
-  when necessary.
+  when necessary. Its optional `locator` accepts heading anchors, `L21`,
+  `L21-L25`, and `L21C5-L23C12`; positions are 1-based Unicode code points.
 - `vault_get_summary`: compact deterministic summary with source hash.
 - `vault_get_related`: one-hop links and backlinks.
 - `vault_status`: catalog, graph, and index health.

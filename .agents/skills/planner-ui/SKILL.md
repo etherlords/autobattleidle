@@ -10,3 +10,7 @@ description: Start or verify the consumer project's read-only Planner board prev
 3. For a restart, stop only the verified Planner UI process on that exact port, then start the project script as a hidden background process with project-owned logs.
 4. Verify HTTP 200 and one representative sprint/task route. Report the URL and PID.
 5. The preview is read-only. Do not mutate Planner lifecycle state to make the UI look correct.
+
+Knowledge links support `document.md#section-anchor`, `#L21`, `#L21-L25`, and
+`#L21C5-L23C12`. Line citations open a bounded source excerpt; positions are
+1-based Unicode code points. Use these forms instead of `::line:` references.

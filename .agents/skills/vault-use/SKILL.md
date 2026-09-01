@@ -36,6 +36,20 @@ an ordinary fallback, but that fallback is not a native MCP pass.
 8. Cite stable ID, title, path, line range, and content hash when evidence
    matters.
 
+## Precise citations
+
+- Prefer `Article.md#stable-heading` or `[[Article#stable-heading|label]]` for
+  durable conceptual references.
+- Use `#L21`, `#L21-L25`, or `#L21C5-L23C12` for exact source evidence. Lines
+  and columns are 1-based; columns count Unicode code points, not UTF-16 units.
+- Pass the fragment without `#` as `locator` to `vault_get_article`. The tool
+  returns the resolved range and canonical target.
+- Wiki-link graph edges resolve at document level and retain `locator` for the
+  precise destination. Standard Markdown links render in the UI but are not
+  graph edges.
+- Line citations move when a document is edited. Include `contentHash` for
+  revision-bound evidence. Do not invent `::line:` forms.
+
 For a deterministic routing evaluation, follow the prompt's route and call
 budget literally: do not add retries, exploratory searches, or fallbacks. A
 correct article reached through a forbidden route or over the stated limit is a

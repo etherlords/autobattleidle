@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
-$plannerVersion = "1.2.4"
-$plannerSha256 = "34ce115eee3f1313bbfcd8bad94aa58c268261fc6c26c4214de627c33f49202c"
-$vaultVersion = "1.3.0"
-$vaultSha256 = "a88852ce4c51ef121f4fedbe5114f55572f26d758396952dfedc767d9958a4f1"
+$plannerVersion = "1.2.5"
+$plannerSha256 = "0f905d64b2287fd002278e6ba7861c4128e5c02cab280b1d24229c10026d430a"
+$vaultVersion = "1.3.1"
+$vaultSha256 = "8134040e96445f50b10d7611c43708c51a4560602d63c8668dbc053ca04dac5e"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $releaseRoot = Join-Path $projectRoot ".release"
 $plannerRelease = Join-Path $releaseRoot "planner"
@@ -64,7 +64,7 @@ function Sync-ManagedSkill {
   param([string]$Source, [string]$Target, [string]$Baseline, [string]$ConflictRoot)
   if (-not (Test-Path -LiteralPath $Source)) { return }
   foreach ($sourceFile in Get-ChildItem -LiteralPath $Source -Recurse -File) {
-    $relative = [IO.Path]::GetRelativePath($Source, $sourceFile.FullName)
+    $relative = $sourceFile.FullName.Substring($Source.Length).TrimStart([char[]]"\/")
     $targetFile = Join-Path $Target $relative
     $baselineFile = Join-Path $Baseline $relative
     if (-not (Test-Path -LiteralPath $targetFile)) {
@@ -105,8 +105,10 @@ finally {
 }
 
 $tomlRoot = $projectRoot.Replace("\", "\\")
-$plannerPackage = (Get-Item -LiteralPath (Join-Path $plannerRuntime "node_modules\@etherlords\planner-mcp")).Target
-$vaultPackage = (Get-Item -LiteralPath (Join-Path $vaultRuntime "node_modules\vault-mcp")).Target
+$plannerPackageLink = Get-Item -LiteralPath (Join-Path $plannerRuntime "node_modules\@etherlords\planner-mcp")
+$plannerPackage = if ($plannerPackageLink.Target) { $plannerPackageLink.Target } else { $plannerPackageLink.FullName }
+$vaultPackageLink = Get-Item -LiteralPath (Join-Path $vaultRuntime "node_modules\vault-mcp")
+$vaultPackage = if ($vaultPackageLink.Target) { $vaultPackageLink.Target } else { $vaultPackageLink.FullName }
 foreach ($skill in @("planner-workflow", "planner-migrate", "planner-upgrade", "planner-ui")) {
   Sync-ManagedSkill -Source (Join-Path $plannerPackage ".agents\skills\$skill") -Target (Join-Path $projectRoot ".agents\skills\$skill") -Baseline (Join-Path $plannerRuntime ".skill-baseline\$skill") -ConflictRoot (Join-Path $plannerRuntime ".skill-conflicts\$plannerVersion\$skill")
 }

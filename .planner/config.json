@@ -54,6 +54,8 @@
     "ABI-041": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-041-add-a-golden-fixture-migration-matrix-for-every-supported-sa",
     "ABI-042": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-042-show-the-exact-next-upgrade-effect-gained-by-each-purchase",
     "ABI-043": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-043-restore-meaningful-boss-durability-after-player-relative-ene",
-    "ABI-044": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-044-prevent-early-armored-enemies-from-becoming-harder-than-adja"
+    "ABI-044": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-044-prevent-early-armored-enemies-from-becoming-harder-than-adja",
+    "ABI-045": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-045-research-bounded-player-detail-growth-at-each-100-level-mile",
+    "ABI-046": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-046-port-bounded-200-level-player-detail-evolution-into-the-prod"
   }
 }

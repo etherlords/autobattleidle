@@ -4,6 +4,7 @@ dist/
 .codex/config.toml
 .planner/planner-install.json
 .planner/operations/
+.planner/*.log.err
 .tools/vault-runtime/
 .tools/planner-runtime/
 .vault-cache/
@@ -21,3 +22,4 @@ playwright-report/
 test-results/
 output/playwright/
 vite-qa*.err
+/WATCHDOG.yml

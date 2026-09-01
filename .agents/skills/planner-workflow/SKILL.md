@@ -33,7 +33,9 @@ for code symbols.
 5. Call `planner_get_execution_context` for bounded task artifacts and deeper
    read handles instead of scanning the whole packet.
 6. Use Vault to resolve architecture and previous incidents before designing a
-   solution.
+   solution. Cite Vault evidence with stable headings or the portable `#L21`,
+   `#L21-L25`, and `#L21C5-L23C12` locator forms; include `contentHash` for
+   revision-bound line evidence.
 7. Initialize the managed execution plan with `planner_execution_plan_update`,
    add concrete steps, and move exactly one step through pending, in-progress,
    complete, or cancelled. Read the bounded plan and attribution from current,
