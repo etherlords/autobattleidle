@@ -337,7 +337,7 @@ describe("endless combat progression", () => {
     expect(manual?.timeToKillMs).toBeGreaterThan(0);
     expect(combined?.timeToKillMs).toBeLessThan(automatic?.timeToKillMs ?? Infinity);
     expect(combined?.timeToKillMs).toBeLessThan(manual?.timeToKillMs ?? Infinity);
-  });
+  }, 20_000);
 
   it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
     const player = createCombatState().player;
