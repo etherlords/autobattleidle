@@ -43,3 +43,11 @@ requiredGates:
 - **Domain/balance:** registry exhaustiveness, deterministic seed identity, stat bounds, ABI-028 TTK preservation, distribution, bosses, Golden separation, and finite limits.
 - **Persistence/integration:** current and historical reload identity, snapshot/name/visual agreement, legacy variants, replacement, effects, and disposal.
 - **Lab/browser/deployed:** approved case IDs, all families and affinities by representative risk set, all angles, idle/hit/death, reduced motion, desktop/narrow, resources, and exact SHA.
+
+## Fresh implementation decisions — 2026-09-01
+
+1. Extend the ABI-037 recipe registry with exactly three lab-only semantic-socket candidates; do not edit production identity, stats, saves, or body factories during concept approval.
+2. Present reproducible ordinary and boss URLs for all angles plus idle, hit, and death. Record an explicit accept/reject verdict per recipe.
+3. After approval, add one compiler-checked affinity registry with 12 themes and symmetric reward factors whose mean is `1.00`; no generic material or modifier framework.
+4. Derive affinity and geometry profile inside the existing domain identity receipt, then project that receipt through snapshot and the existing visual builder.
+5. Port only approved overlay geometry as a production decorator attached to existing semantic sockets. `legacy` remains selectable and no existing body factory is replaced.

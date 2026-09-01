@@ -4,8 +4,8 @@ id: ABI-045
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 20
-status: In Progress
+revision: 27
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-038
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 20
-- Last update: EVENT checkpoint — codex-root — Planner has no REVIEW/QA/VERIFICATION/ANALYSIS section writer; used narrow Markdown fallback for the reviewed GO decision and acceptance evidence.
+- Status: Done
+- Revision: 27
+- Last update: Close bounded player detail cadence research with GO decision and deployed lab proof.
 
 ## Execution plan
 
@@ -363,3 +363,119 @@ requiredGates:
   - Independent QA PASS
   - GO: cadence 200, max four details, endpoint replacement
   - No schema change
+
+### evt-59e5f641-1716-44b6-9b9f-03cfd6d33035
+
+- Timestamp: 2026-09-01T13:29:41.935Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: EVENT checkpoint — codex-root — Added exact-SHA CI/Pages and deployed state-action-visible-result proof to VERIFICATION.md through the narrow Markdown fallback.
+- Idempotency key: abi045-deployed-verification-fallback-20260901
+- Evidence:
+  - SHA 8175e95b184c5ef3b482283503ea4529bc0ceb43
+  - CI 33513342702 PASS
+  - Pages 33513342576 PASS
+  - deployed detail 1800 -> 2000 endpoint and disposal PASS
+
+### evt-8f4b8682-ec01-4236-8c07-d594168460a4
+
+- Timestamp: 2026-09-01T13:29:57.276Z
+- Actor: abi045-verifier
+- Operation: gate.record
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: PASS — exact-SHA CI/Pages and deployed endpoint/disposal behavior verified.
+- Idempotency key: abi045-verification-pass-20260901
+- Request fingerprint: fc6a83b4ed3f8fad290a32a5f7e980ff5e5eac365f63ec8a3fee9ae833674131
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - 8175e95b184c5ef3b482283503ea4529bc0ceb43
+  - CI 33513342702 PASS
+  - Pages 33513342576 PASS
+  - Deployed detail 1800 -> 2000 PASS
+
+### evt-07a527eb-3944-4f35-8dea-16e9fce34ce8
+
+- Timestamp: 2026-09-01T13:29:59.367Z
+- Actor: codex-root-manager
+- Operation: gate.record
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: PASS — GO decision, implementation self-check, independent review, QA, Vault, publication and deployed proof map to all acceptance criteria.
+- Idempotency key: abi045-manager-closure-pass-20260901
+- Request fingerprint: 63646702e5bc8c404c1b6cc5946d1c2eb99e3edf06a6c4a7f09acf10f80edac2
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+  - Game Design Overview hash 4535a96f5e57f3889d2485bb0dcfd92304c43e758a2281c9017e1a65154a01fc
+
+### evt-51143a8f-a51e-4c9d-93a7-487e98974936
+
+- Timestamp: 2026-09-01T13:30:12.817Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Advance with independent review PASS.
+- Idempotency key: abi045-advance-review-20260901
+- Request fingerprint: 1893c0251273b62384af842c8fdc6e93f6be0ecddc262dc453cb3082deb640b0
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - independent-review PASS
+
+### evt-e9aaaaf5-b893-4299-8507-fd1d435a5d22
+
+- Timestamp: 2026-09-01T13:30:16.142Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Advance with independent QA PASS.
+- Idempotency key: abi045-advance-qa-20260901
+- Request fingerprint: 552e2993aaf3917ee95d1a8212247c1e46de244a6a655878b443cc5a65e63ea0
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - independent-qa PASS
+
+### evt-05d68c07-e6d4-4407-977e-38509d40f0bb
+
+- Timestamp: 2026-09-01T13:30:19.448Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: All research, review, QA, verification and GO decision evidence complete.
+- Idempotency key: abi045-advance-manager-ready-20260901
+- Request fingerprint: eab8933a8f44117a3e4d41a20df67dac1ef133d3719c813df75cd6cc98328007
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - implementation-self-check PASS
+  - independent-review PASS
+  - independent-qa PASS
+  - verification PASS
+
+### evt-c5d4a697-22a0-47cd-ba52-7c576c7e8545
+
+- Timestamp: 2026-09-01T13:30:22.808Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Close bounded player detail cadence research with GO decision and deployed lab proof.
+- Idempotency key: abi045-advance-done-20260901
+- Request fingerprint: ba9c17827ce4b92cfbacaa58f596974c9b49a8a1c64ef805550a78096de7513d
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure PASS
+  - SHA 8175e95b184c5ef3b482283503ea4529bc0ceb43

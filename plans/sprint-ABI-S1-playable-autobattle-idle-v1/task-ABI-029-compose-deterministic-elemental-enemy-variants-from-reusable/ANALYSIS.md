@@ -48,3 +48,11 @@ requiredGates:
 - Visual identity and stat identity can drift if selected in different layers. One canonical composition receipt must feed snapshot and presentation.
 - Affinity modifiers can undo ABI-028 TTK variety. The new dependency makes that envelope a precondition rather than a later repair.
 - New geometry can detach sockets, break camera framing, or leak resources. Approval and replacement/disposal proof happen in ABI-037 before and after production porting.
+
+## Fresh preflight — 2026-09-01
+
+- All declared dependencies are `Done`; ABI-037 is available as an explicit debug build and remains excluded from production Pages.
+- Canonical identity is owned by `selectEnemyFamilyIdentity` and projected once through `createBattleSnapshot`; production visuals consume the same snapshot through `enemyVisualSpec` and `EnemyUnitBuilder`.
+- The smallest balance-safe affinity stat is a deterministic reward multiplier in a symmetric `0.99 / 1.00 / 1.01` registry. The 12-profile mean is exactly `1.00`, so affinity changes no TTK, armor, APS, boss durability, Golden Bug window, or upgrade formula; simulation must still prove bounded economy drift.
+- Persistence impact is **no schema change**: affinity and geometry profile derive from the existing encounter identity. V1-V4 load/reload fixtures must reproduce the same derived receipt.
+- Concept work is lab-only: compare three overlays (`crystal-crown`, `orbital-runes`, `elemental-spines`) on ordinary and boss production bodies. Each candidate must use semantic sockets, preserve legacy production geometry, support reduced motion, and dispose to baseline before any production recipe is accepted.

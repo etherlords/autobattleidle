@@ -4,8 +4,8 @@ id: ABI-045
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In Progress
+revision: 8
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-038
@@ -27,7 +27,7 @@ Research bounded player detail growth at each 100-level milestone
 
 - Type: research
 - Priority: low
-- Status: In Progress
+- Status: Done
 
 ## Acceptance criteria
 

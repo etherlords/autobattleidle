@@ -4,8 +4,8 @@ id: ABI-029
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 3
-status: Blocked
+revision: 7
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -32,7 +32,7 @@ Compose deterministic elemental enemy variants from reusable family and affinity
 
 - Type: task
 - Priority: high
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 

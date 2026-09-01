@@ -28,9 +28,11 @@ requiredGates:
 - Focused Vitest: 10/10 PASS. Full `pnpm check`: 23 files / 214 tests PASS. `build:visual-lab`: PASS.
 - Browser QA: responsive views, reduced motion, URL/control/receipt synchronization, clean console, empty storage, and static-only network PASS.
 - Decision: GO with 200 cadence and a finite authored major-form catalogue; reject literal unbounded major forms every 1000 levels.
+- Published checkpoint: `8175e95b184c5ef3b482283503ea4529bc0ceb43`; exact-SHA CI `33513342702` PASS; Pages `33513342576` PASS.
+- Deployed `detail=1800` showed step 4/4 and seven meshes. Selecting `detail=2000` immediately changed URL/receipt, rendered the four-mesh Aether Warden endpoint, and disposed the prior resources `14/14`; console 0 errors/warnings, storage empty, static-only network.
 
 ## Sign-off
 
 - Reviewer: PASS — independent review v2.
 - QA: PASS — fresh isolated browser acceptance.
-- Manager close: pending publication and deployed proof.
+- Manager close: PASS — exact-SHA CI/Pages, deployed endpoint/disposal proof, Vault readback, and GO decision complete.
