@@ -49,6 +49,7 @@
     "ABI-036": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-036-research-and-add-bounded-semantic-decals-and-procedural-surf",
     "ABI-037": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-037-add-a-deterministic-visual-test-lab-for-families-modifiers-d",
     "ABI-038": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-038-evolve-the-player-avatar-from-egg-or-stone-into-authored-pro",
-    "ABI-039": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-039-add-deterministic-progression-aware-boss-cadence-and-varied-"
+    "ABI-039": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-039-add-deterministic-progression-aware-boss-cadence-and-varied-",
+    "ABI-040": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-040-preserve-the-newest-valid-v3-progress-when-migrating-or-rest"
   }
 }

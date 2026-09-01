@@ -1,11 +1,18 @@
-import { automaticInterval, damageForLevel, spawnGoldenBug } from "../../domain/combat";
-import type { CombatState } from "../../domain/combat";
+import { automaticInterval, damageForLevel, spawnEnemy, spawnGoldenBug } from "../../domain/combat";
+import type { CombatEnemy, CombatState } from "../../domain/combat";
 import { decodeV2 } from "./validation-v2";
-import { hasExactKeys, integer, isRecord, parseEnemyShape } from "./validation-primitives";
+import {
+  hasExactKeys,
+  integer,
+  isRecord,
+  modifierRoll,
+  parseEnemyShape,
+} from "./validation-primitives";
 import { parseV2Player } from "./validation-v2";
 
 const LEGACY_GOLDEN_BUG_REWARD_FACTOR = 10;
 const LEGACY_GOLDEN_BUG_HEALTH_FACTOR = 5;
+const PRE_PLAYER_RELATIVE_REWARD_FACTOR = 4;
 const legacyOrdinaryReward = (encounter: number): number => {
   let gradeMultiplier = 1;
   if (encounter % 3 === 0) gradeMultiplier = 2;
@@ -25,6 +32,42 @@ const parseGoldenBug = (
   return { id: value.id, resumeEncounter: value.resumeEncounter };
 };
 
+const matchesPrePlayerRelativeEnemy = (enemy: CombatEnemy, expected: CombatEnemy): boolean =>
+  enemy.grade === expected.grade &&
+  enemy.modifier === expected.modifier &&
+  enemy.armor === expected.armor &&
+  enemy.maxHealth === expected.maxHealth &&
+  enemy.reward ===
+    Math.min(Number.MAX_SAFE_INTEGER, expected.reward * PRE_PLAYER_RELATIVE_REWARD_FACTOR);
+
+const decodePrePlayerRelativeV3 = (
+  value: Record<string, unknown>,
+  nowMs: number,
+): CombatState | undefined => {
+  const player = parseV2Player(value.player);
+  const enemy = parseEnemyShape(value.enemy);
+  if (!player || !enemy) return undefined;
+  const expected = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
+  if (!matchesPrePlayerRelativeEnemy(enemy, expected)) return undefined;
+  if (typeof value.automaticUnlocked !== "boolean" || !integer(value.coins, 0)) return undefined;
+  if (!value.automaticUnlocked && player.automaticSpeedLevel !== 0) return undefined;
+  const normalized = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
+  return {
+    automaticUnlocked: value.automaticUnlocked,
+    coins: value.coins,
+    enemy: {
+      ...normalized,
+      health: Math.max(1, Math.ceil((enemy.health / enemy.maxHealth) * normalized.maxHealth)),
+    },
+    goldenBug: null,
+    goldenBugDefeats: 0,
+    nextAutomaticAttackAtMs: value.automaticUnlocked
+      ? nowMs + automaticInterval(normalized, player)
+      : 0,
+    player,
+  };
+};
+
 // eslint-disable-next-line complexity -- V3 validates each persisted timed-event field at the boundary.
 export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined => {
   if (
@@ -42,7 +85,8 @@ export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined
     return undefined;
   const { goldenBug: ignoredGoldenBug, ...v2 } = value;
   void ignoredGoldenBug;
-  if (value.goldenBug === null) return decodeV2({ ...v2, version: 2 }, nowMs);
+  if (value.goldenBug === null)
+    return decodeV2({ ...v2, version: 2 }, nowMs) ?? decodePrePlayerRelativeV3(value, nowMs);
   const goldenBug = parseGoldenBug(value.goldenBug);
   const enemyRecord = isRecord(value.enemy) ? value.enemy : undefined;
   const normalizedEnemy =

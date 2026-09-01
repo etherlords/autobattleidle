@@ -68,20 +68,11 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
       return undefined;
     }
   };
-  const needsV2Repair = (nowMs: number): boolean => {
-    try {
-      const raw = storage.getItem(SAVE_V2_KEY);
-      return (
-        raw === null || raw === "" || decodeV4(JSON.parse(raw) as unknown, nowMs) === undefined
-      );
-    } catch {
-      return true;
-    }
-  };
   const publish = (state: CombatState): boolean => {
     const encoded = encodeSave(state);
     try {
       storage.setItem(SAVE_V4_KEY, encoded);
+      pending = undefined;
       return true;
     } catch {
       pending = encoded;
@@ -125,20 +116,12 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
     },
     hasPreviousVersionSave: () => {
       try {
-        return (
-          (storage.getItem(SAVE_V3_KEY) !== null ||
-            storage.getItem(SAVE_V2_KEY) !== null ||
-            storage.getItem(SAVE_V1_KEY) !== null) &&
-          needsV2Repair(0)
-        );
+        return readRepairSource(0) !== undefined;
       } catch {
         return false;
       }
     },
-    restorePreviousVersion: (nowMs) =>
-      needsV2Repair(nowMs)
-        ? repairAndPublish(nowMs)
-        : { state: undefined, message: "Current-version progress is already valid." },
+    restorePreviousVersion: (nowMs) => repairAndPublish(nowMs),
     onStateChanged: (state) => {
       if (!disposed) {
         pending = encodeSave(state);

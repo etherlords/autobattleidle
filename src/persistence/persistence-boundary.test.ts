@@ -53,6 +53,92 @@ describe("persistence boundary", () => {
     });
   });
 
+  it("keeps the authentic encounter-2170 V3 ahead of lower historical saves", () => {
+    const v3 =
+      '{"automaticUnlocked":true,"coins":427622176,"enemy":{"armor":2170,"encounter":2170,"grade":"boss","health":1805505,"id":2170,"maxHealth":19373445,"modifier":null,"reward":67534740},"goldenBug":null,"player":{"automaticSpeedLevel":4093,"armorPenetrationLevel":1074,"criticalChance":0.589873417721519,"criticalLevel":1165,"damage":6370,"damageLevel":5620,"doubleRewardChance":0.5941775836972343,"doubleRewardLevel":2041},"version":3}';
+    const legacy = JSON.stringify(legacyV2Fixture);
+    const values = new Map<string, string>([
+      [SAVE_V3_KEY, v3],
+      [LEGACY_SAVE_KEY, legacy],
+    ]);
+    const boundary = createPersistenceBoundary({
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => values.set(key, value),
+      },
+    });
+
+    const migrated = boundary.load(fallback(), 100);
+    expect(migrated).toMatchObject({
+      automaticUnlocked: true,
+      coins: 427_622_176,
+      enemy: { encounter: 2170, grade: "boss" },
+      player: { automaticSpeedLevel: 4093, damageLevel: 5620 },
+    });
+    expect(migrated.enemy.health / migrated.enemy.maxHealth).toBeCloseTo(1_805_505 / 19_373_445, 5);
+    expect(values.get(SAVE_V3_KEY)).toBe(v3);
+    expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
+
+    const currentV4 = values.get(SAVE_V4_KEY);
+    expect(currentV4).toBeDefined();
+    expect(boundary.load(fallback(), 200).enemy.encounter).toBe(2170);
+    values.set(SAVE_V4_KEY, encodeSave({ ...fallback(), coins: 1 }));
+    expect(boundary.load(fallback(), 250).coins).toBe(1);
+    expect(boundary.restorePreviousVersion(300).state).toMatchObject({
+      coins: 427_622_176,
+      enemy: { encounter: 2170 },
+    });
+    expect(values.get(SAVE_V3_KEY)).toBe(v3);
+    expect(values.get(LEGACY_SAVE_KEY)).toBe(legacy);
+
+    const corrupted = JSON.parse(v3) as Record<string, unknown>;
+    corrupted.enemy = {
+      ...(corrupted.enemy as Record<string, unknown>),
+      reward: 67_534_741,
+    };
+    values.set(SAVE_V3_KEY, JSON.stringify(corrupted));
+    values.delete(SAVE_V4_KEY);
+    expect(boundary.load(fallback(), 400).enemy.encounter).toBe(legacyV2Fixture.enemy.encounter);
+  });
+
+  it("does not let a stale failed autosave overwrite a successful V3 Restore", () => {
+    const v3 =
+      '{"automaticUnlocked":true,"coins":427622176,"enemy":{"armor":2170,"encounter":2170,"grade":"boss","health":1805505,"id":2170,"maxHealth":19373445,"modifier":null,"reward":67534740},"goldenBug":null,"player":{"automaticSpeedLevel":4093,"armorPenetrationLevel":1074,"criticalChance":0.589873417721519,"criticalLevel":1165,"damage":6370,"damageLevel":5620,"doubleRewardChance":0.5941775836972343,"doubleRewardLevel":2041},"version":3}';
+    const values = new Map<string, string>([[SAVE_V3_KEY, v3]]);
+    const timers = new Map<number, () => void>();
+    let writable = false;
+    const boundary = createPersistenceBoundary({
+      debounceMs: 1,
+      page: { addEventListener: () => undefined, removeEventListener: () => undefined },
+      storage: {
+        getItem: (key) => values.get(key) ?? null,
+        removeItem: (key) => values.delete(key),
+        setItem: (key, value) => {
+          if (!writable) throw new Error("quota");
+          values.set(key, value);
+        },
+      },
+      timers: {
+        clearTimeout: (handle) => timers.delete(handle),
+        setTimeout: (callback) => {
+          timers.set(1, callback);
+          return 1;
+        },
+      },
+    });
+    boundary.onStateChanged({ ...fallback(), coins: 1 });
+    timers.get(1)?.();
+    writable = true;
+
+    expect(boundary.restorePreviousVersion(100).state?.enemy.encounter).toBe(2170);
+    const restored = values.get(SAVE_V4_KEY);
+    timers.get(1)?.();
+    expect(values.get(SAVE_V4_KEY)).toBe(restored);
+    expect(JSON.parse(restored ?? "")).toMatchObject({ coins: 427_622_176 });
+  });
+
   it("persists an active Golden Bug in V3 without a deadline and reloads a fresh event window", () => {
     const player = fallback().player;
     const state = {
