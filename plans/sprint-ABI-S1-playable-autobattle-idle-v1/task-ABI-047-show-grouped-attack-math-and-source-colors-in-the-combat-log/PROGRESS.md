@@ -4,7 +4,7 @@ id: ABI-047
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 27
+revision: 31
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ workspaceProject: autobattleidle
 ## Current state
 
 - Status: In Progress
-- Revision: 27
-- Last update: All gates complete: implementation self-check (220+ focused tests, lint, tsc, build), independent review APPROVE, extended independent QA PASS across 3.33/5.99/11.30 APS desktop+narrow plus manual/automatic kill styling and zero console errors. Implementation owner (codex-root) holds uncommitted work on main per user instruction — awaiting user authorization for checkpoint commit and publication. Remaining manager-close step requires that authorization.
+- Revision: 31
+- Last update: Closure evidence published: ae72c4b on main + 47_task-test_for_glm5; CI 33572247460 success; Pages 33572247465 success; public URL 200; deployed QA matrix proven
 
 ## Execution plan
 
@@ -35,7 +35,7 @@ workspaceProject: autobattleidle
 - [x] focused-regressions: Cover packet, critical, armor, kill, Golden Bug, compact-number, and accessibility cases
 - [x] independent-review: Independently review combat truth ownership and presentation semantics
 - [x] independent-qa: Verify desktop and narrow high-APS combat-log behavior
-- [ ] manager-close: Publish exact-SHA CI and deployed browser evidence
+- [x] manager-close: Publish exact-SHA CI and deployed browser evidence
 
 ## Events
 
@@ -420,3 +420,63 @@ workspaceProject: autobattleidle
 - Idempotency key: abi047-all-gates-await-commit-auth-20260902-1
 - Evidence:
   - None
+
+### evt-f5fb9b7a-c0ef-4158-8636-61424265da6a
+
+- Timestamp: 2026-09-01T23:44:33.505Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: EVENT checkpoint — user authorized publication. Commit ae72c4b created on 47_task-test_for_glm5 (user's target GLM branch, keeps current commits), fast-forward merged into main (both refs = ae72c4b), pushed: origin/main and origin/47_task-test_for_glm5 both at ae72c4b. Exact-SHA CI run 33572247460 success, Pages run 33572247465 success, https://etherlords.github.io/autobattleidle/ returns 200. Branch preserved. Next: user will switch to 47_task_test_for_gpt_oss.
+- Idempotency key: abi047-published-ae72c4b-20260902-1
+- Evidence:
+  - None
+
+### evt-ea49135a-591b-4fb7-8924-9bcdefd060af
+
+- Timestamp: 2026-09-01T23:45:08.341Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Publishing exact-SHA closure evidence for commit ae72c4b
+- Idempotency key: abi047-manager-close-start-20260902-1
+- Request fingerprint: 800cdb3d977a1ae91a8035a166c0543f5cf4d4c2a6276e3236998cfb96551394
+- Action: set_state
+- Step ID: manager-close
+- State: in_progress
+- Evidence:
+  - None
+
+### evt-d0c4b65e-b397-40a1-aaa6-b95c0a297de7
+
+- Timestamp: 2026-09-01T23:45:14.630Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Verification mapping complete: commit ae72c4b on main and 47_task-test_for_glm5 (fast-forward, branch preserved per user request); CI run 33572247460 success; Pages deploy run 33572247465 success; https://etherlords.github.io/autobattleidle/ HTTP 200; deployed acceptance proven by extended independent QA (grouped rows at 3.33/5.99/11.30 APS, desktop+narrow, kill source colors, zero console errors) with screenshots output/abi047-qa2-*/output/abi047-qa3-*. Gates: implementation-self-check, independent-review (APPROVE), independent-qa (PASS), verification, manager-closure evidence recorded.
+- Idempotency key: abi047-manager-close-complete-event-20260902-1
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/actions/runs/33572247460
+  - https://github.com/etherlords/autobattleidle/actions/runs/33572247465
+  - output/abi047-qa2-desktop-grouped.jpg
+  - output/abi047-qa3-aps33.jpg
+
+### evt-bcb2d6b6-b4f3-4842-ad8d-ecb69f24a046
+
+- Timestamp: 2026-09-01T23:45:21.359Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Closure evidence published: ae72c4b on main + 47_task-test_for_glm5; CI 33572247460 success; Pages 33572247465 success; public URL 200; deployed QA matrix proven
+- Idempotency key: abi047-manager-close-complete-20260902-1
+- Request fingerprint: c12115529e327c96bc860975b36d9cc2b8f3091d51a80244d4b157a78bd93caa
+- Action: set_state
+- Step ID: manager-close
+- State: complete
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/actions/runs/33572247460
+  - https://github.com/etherlords/autobattleidle/actions/runs/33572247465
