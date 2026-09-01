@@ -4,8 +4,8 @@ id: ABI-041
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 15
+status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
   - ABI-040
@@ -28,7 +28,7 @@ Add a golden-fixture migration matrix for every supported save version
 
 - Type: task
 - Priority: critical
-- Status: Ready
+- Status: Ready for Manager
 
 ## Acceptance criteria
 
