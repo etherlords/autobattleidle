@@ -4,7 +4,7 @@ id: ABI-038
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 106
+revision: 107
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 106
-- Last update: EVENT checkpoint — codex-root — Planner exposes typed gate writes but no detailed REVIEW.md/QA.md artifact-write operation; after healthy Planner/Vault diagnostics, used the narrow Markdown fallback to persist independent review and corrected QA evidence without editing lifecycle/status fields.
+- Revision: 107
+- Last update: EVENT returned — codex-root — First exact-SHA Pages proof loaded game and lab but Playwright reported one automatic `/favicon.ico` 404 on the lab entry. Added the existing project favicon link to visual-lab.html; no runtime or persistence behavior changed. Final exact-SHA gates will target the repaired checkpoint.
 
 ## Execution plan
 
@@ -1817,3 +1817,18 @@ requiredGates:
   - REVIEW.md: independent review v5 PASS and source ownership evidence
   - QA.md: browser QA v3 PASS, Golden synchronization, route/isolation and screenshot evidence
   - planner gate events remain canonical lifecycle authority
+
+### evt-790f6c92-c509-40a6-ae30-5fcf746db387
+
+- Timestamp: 2026-09-01T12:31:29.665Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 106
+- Resulting revision: 107
+- Summary: EVENT returned — codex-root — First exact-SHA Pages proof loaded game and lab but Playwright reported one automatic `/favicon.ico` 404 on the lab entry. Added the existing project favicon link to visual-lab.html; no runtime or persistence behavior changed. Final exact-SHA gates will target the repaired checkpoint.
+- Idempotency key: abi038-deployed-favicon-repair-20260901
+- Evidence:
+  - SHA 32577478c81573e3059929b075385ebdd4320ff8: CI and Pages PASS
+  - deployed game route PASS
+  - deployed lab route PASS with only favicon.ico 404
+  - visual-lab.html reuses %BASE_URL%favicon.svg
