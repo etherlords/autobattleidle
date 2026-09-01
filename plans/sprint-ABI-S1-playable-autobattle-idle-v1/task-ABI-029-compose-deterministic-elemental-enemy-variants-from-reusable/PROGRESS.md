@@ -4,8 +4,8 @@ id: ABI-029
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 48
-status: Ready
+revision: 59
+status: In Progress
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready
-- Revision: 48
-- Last update: User supplied the missing boss-only recipe decisions; concept approval is no longer blocked.
+- Status: In Progress
+- Revision: 59
+- Last update: EVENT checkpoint — codex-root — Used the documented narrow Markdown fallback to preserve detailed step-level concept review and QA evidence because Planner exposes no artifact-section writer; required final task gates were not recorded.
 
 ## Execution plan
 
@@ -43,7 +43,7 @@ requiredGates:
 - [x] affinity-owner-audit: Trace family, geometry profile, affinity, grade, modifier, encounter, naming, snapshot, save, socket, effect, animation, and disposal owners
 - [x] affinity-matrix-budget: Define the required family-affinity-geometry matrix, representative QA subset, distribution targets, stat bounds, object/effect budgets, and legacy preservation rules
 - [x] affinity-concept-cases: Prototype representative ordinary and boss recipes inside the ABI-037 production-parity lab using reproducible case IDs and all-angle animation replay
-- [~] affinity-recipe-approval: Record explicit approval or rejection for silhouettes, palettes, cues, idle-hit-death behavior, sockets, and retained legacy variants before production porting
+- [x] affinity-recipe-approval: Record explicit approval or rejection for silhouettes, palettes, cues, idle-hit-death behavior, sockets, and retained legacy variants before production porting
 - [ ] affinity-registry-contract: Define compiler-checked family, affinity, and geometry-profile registries plus deterministic composition and naming contracts without per-combination classes
 - [ ] affinity-balance-candidates: Measure every proposed affinity stat modifier against ABI-020 and ABI-028 stage envelopes; reject modifiers that collapse TTK bands or create walls/exploits
 - [ ] affinity-domain-composition: Implement canonical seed-to-family-affinity-geometry selection and snapshot identity at the existing encounter/domain ownership seam
@@ -56,6 +56,7 @@ requiredGates:
 - [ ] affinity-independent-review: Independent Reviewer audits registry architecture, ABI-028 balance reuse, deterministic identity, visual ownership, licensing, and migration classification
 - [ ] affinity-independent-qa: Independent QA verifies the representative matrix, historical reload, distribution receipts, desktop/narrow/reduced-motion behavior, and clean resources
 - [ ] affinity-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, and deployed variant behavior
+- [~] affinity-boss-recipe-rework: Rework boss-only Crown, Spines, and Orbital Rune lab recipes for Hydra and Colossus, then obtain fresh visual approval
 
 ## Events
 
@@ -812,3 +813,184 @@ requiredGates:
   - Elemental Spines use about 15-20 outward body-surface spikes, no central Hydra crown cluster
   - Orbital Runes stay placed and rings rotate like wheels around their own axes
   - Hydra and Colossus require explicit visual checks; ordinary enemies excluded from candidate recipe scope
+
+### evt-b25e245c-8903-4731-b2a0-ddbd77739195
+
+- Timestamp: 2026-09-01T13:37:26.651Z
+- Actor: codex-root
+- Operation: claim.acquire
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Claimed task lease: Implement approved boss-only Crown, Spines, and Orbital Rune recipes
+- Idempotency key: abi029-claim-approved-rework-20260901
+- Request fingerprint: da1aad21cfea92cec210e2cba4bc51dc342c9edc5c9dea178ab620dd8a0e9cdf
+- Agent ID: codex-root
+- Session ID: root-abi029-20260901
+- Intent: Implement approved boss-only Crown, Spines, and Orbital Rune recipes
+- Branch: continue-abis1-after-visual-families
+- Expires at: 2026-09-01T14:37:26.651Z
+- Evidence:
+  - None
+
+### evt-bf0a7efd-0804-4afe-8bc0-ad8885060561
+
+- Timestamp: 2026-09-01T13:39:28.713Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: EVENT preflight-ready — codex-root — Refreshed task, Vault, recipes, sockets, bounds and disposal ownership; used narrow Markdown fallback for ANALYSIS/IMPLEMENTATION-GUIDE because Planner exposes no section writer.
+- Idempotency key: abi029-approved-recipe-preflight-fallback-20260901
+- Evidence:
+  - Boss-only geometry recipes
+  - Crown floats above silhouette
+  - 15-20 outward body spines
+  - Rune rings spin like wheels
+  - Hydra and Colossus mandatory
+  - No schema change
+
+### evt-467fa905-45ef-4373-b997-9940ef2d2db9
+
+- Timestamp: 2026-09-01T13:39:49.047Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: User approved the narrowed boss-only Crown, Spines, and Rune direction.
+- Idempotency key: abi029-plan-0-50-20260901
+- Request fingerprint: b5ed45c39fa2a680811f500d3b548a7ca8985dde50b16f309c9b43741aa9996d
+- Action: set_state
+- Step ID: affinity-recipe-approval
+- State: complete
+- Evidence:
+  - User visual direction recorded
+  - Fresh Planner/Vault/code preflight
+
+### evt-6052ff3f-7fe2-4f7b-a7a9-1e860e9421ab
+
+- Timestamp: 2026-09-01T13:39:52.570Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: Add bounded lab rework step for the user's approved recipe corrections.
+- Idempotency key: abi029-plan-1-51-20260901
+- Request fingerprint: d9ccbf691d7150b1396c01086567b71620835ee27851fc4196b75c8118033b65
+- Action: add
+- Step ID: affinity-boss-recipe-rework
+- Evidence:
+  - User visual direction recorded
+  - Fresh Planner/Vault/code preflight
+
+### evt-93388b12-fc26-49b0-a506-20c44f8c2dee
+
+- Timestamp: 2026-09-01T13:39:56.069Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Start the approved boss-only lab rework before production porting.
+- Idempotency key: abi029-plan-2-52-20260901
+- Request fingerprint: 27bbba3819454c8bb93748de0fe4ea41b7a0da3ce80fc1a4020959bb44f4242e
+- Action: set_state
+- Step ID: affinity-boss-recipe-rework
+- State: in_progress
+- Evidence:
+  - User visual direction recorded
+  - Fresh Planner/Vault/code preflight
+
+### evt-dc3dc4ed-3c61-4650-b5c1-fad254d68eee
+
+- Timestamp: 2026-09-01T13:40:04.910Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Begin approved boss-only visual recipe rework before production porting.
+- Idempotency key: abi029-advance-in-progress-approved-rework-20260901
+- Request fingerprint: 17e73c874e9c97d0301bf2cedf313a1293bc473a498de47cb520c4cd47f46c48
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - Fresh task/Vault/code preflight
+  - Managed plan has affinity-boss-recipe-rework in progress
+  - User-approved boss-only recipes recorded
+  - Persistence: no schema change
+
+### evt-5f0d82b6-2136-4cf4-86fb-6d43bf254243
+
+- Timestamp: 2026-09-01T13:53:59.353Z
+- Actor: abi029-concept-worker
+- Operation: progress.append
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: EVENT checkpoint — abi029-concept-worker — Reworked boss-only lab recipes: canonical URL/apply normalization, body-mesh-only 18-spike raycast placement, crown clearance, and reduced-motion-safe local rune wheels; focused and canonical checks pass.
+- Idempotency key: abi029-boss-recipe-rework-checkpoint-20260901
+- Evidence:
+  - Focused 9/9 PASS
+  - pnpm check 23 files / 216 tests PASS
+  - build:visual-lab PASS
+  - No production/domain/save/leaderboard changes
+
+### evt-c4116a3e-d24b-48ea-a9d6-3f08920bc9d5
+
+- Timestamp: 2026-09-01T14:01:51.088Z
+- Actor: codex-root
+- Operation: claim.renew
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Renewed task lease: Record boss recipe concept gates, publish lab checkpoint, obtain user visual approval, then continue production work
+- Idempotency key: abi029-renew-20260901-boss-recipes-publish
+- Request fingerprint: cd908c8afa637750ad9b9715180b5d8d1ed1bb9aeebf90d6c55d4bbfcf40f451
+- Agent ID: codex-root
+- Session ID: root-abi029-20260901
+- Intent: Record boss recipe concept gates, publish lab checkpoint, obtain user visual approval, then continue production work
+- Branch: continue-abis1-after-visual-families
+- Expires at: 2026-09-01T15:01:51.088Z
+- Evidence:
+  - None
+
+### evt-aa5d50f7-c377-4803-8991-8a4f34b40ef7
+
+- Timestamp: 2026-09-01T14:03:23.936Z
+- Actor: abi029-boss-recipe-review
+- Operation: progress.append
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: EVENT review-pass — abi029-boss-recipe-review — Step-level concept review approved boss-only canonicalization, crown clearance, 18 body-mesh raycast spines, local rune-wheel motion, and unchanged production/domain/persistence scope; final task review remains pending.
+- Idempotency key: abi029-boss-recipe-concept-review-pass-20260901
+- Evidence:
+  - Focused tests 9/9 PASS
+  - build:visual-lab PASS
+  - No P0-P3 findings
+  - REVIEW.md boss recipe concept checkpoint
+
+### evt-2372dac2-5151-4424-a0ad-9cca6ffa3d1e
+
+- Timestamp: 2026-09-01T14:03:43.442Z
+- Actor: abi029-boss-recipe-qa
+- Operation: progress.append
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: EVENT qa-pass — abi029-boss-recipe-qa — Step-level browser QA passed Hydra/Colossus Crown, Spines, and Runes across required views, motion, replay, narrow layout, canonical fallback, and disposal; final task QA remains pending.
+- Idempotency key: abi029-boss-recipe-concept-qa-pass-20260901
+- Evidence:
+  - Hydra and Colossus all-angle browser matrix PASS
+  - Reduced motion, hit/death replay, narrow viewport PASS
+  - Ordinary recipe canonicalization PASS
+  - Disposal 26/26; console/storage/network clean
+  - QA.md boss recipe concept checkpoint
+
+### evt-85b7384f-aee3-48e9-9db0-6e4a5cf58a1f
+
+- Timestamp: 2026-09-01T14:03:53.432Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: EVENT checkpoint — codex-root — Used the documented narrow Markdown fallback to preserve detailed step-level concept review and QA evidence because Planner exposes no artifact-section writer; required final task gates were not recorded.
+- Idempotency key: abi029-boss-recipe-concept-artifact-fallback-20260901
+- Evidence:
+  - planner_doctor healthy; no recovery required
+  - REVIEW.md and QA.md concept checkpoint sections
+  - Final ABI-029 required gates deliberately remain pending

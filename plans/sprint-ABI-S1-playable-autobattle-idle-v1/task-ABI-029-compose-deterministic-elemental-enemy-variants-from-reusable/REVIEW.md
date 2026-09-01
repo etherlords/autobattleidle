@@ -29,3 +29,14 @@ PENDING — reserved for an independent owner.
 ## Findings
 
 _Pending._
+
+## Boss recipe concept checkpoint
+
+APPROVE — `abi029_boss_recipe_review`; this is a step-level concept verdict, not the final ABI-029 review gate.
+
+- Boss-only URL and UI canonicalization prevents ordinary and player cases from allocating candidate geometry.
+- Crystal Crown clears the existing Hydra and Colossus silhouettes.
+- Elemental Spines creates exactly 18 deterministic spikes from canonical `enemy-body-boss-*` ray hits and transformed face normals.
+- Orbital Runes rotate each ring on its local wheel axis and remain static under reduced motion.
+- Focused tests passed 9/9; `pnpm build:visual-lab` passed; no production, domain, or persistence files changed.
+- Findings: none.

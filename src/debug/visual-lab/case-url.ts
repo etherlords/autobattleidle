@@ -1,5 +1,5 @@
 import { canonicalLabCase, LAB_FAMILIES, LAB_GRADES, LAB_MODIFIERS, type LabCase } from "./catalog";
-import { LAB_RECIPES, type LabRecipe } from "./recipes";
+import { LAB_RECIPES, normalizeLabRecipe, type LabRecipe } from "./recipes";
 import type { EnemyPresentationModifier } from "../../domain/combat";
 import {
   PLAYER_DETAIL_LEVELS,
@@ -90,13 +90,18 @@ export const parseLabCase = (search: string): LabUrlCase => {
     goldenBug: bool(query.get("golden"), DEFAULT_LAB_CASE.goldenBug),
   });
   const selectedPlayerStage = playerStage(query.get("stage"));
+  const selectedSubject = values(query.get("subject"), ["enemy", "player"] as const, "enemy");
+  const selectedRecipe = values(query.get("recipe"), LAB_RECIPES, DEFAULT_LAB_CASE.recipe);
   const result: LabUrlCase = {
     ...visual,
     reducedMotion: bool(query.get("motion"), DEFAULT_LAB_CASE.reducedMotion),
     view: values(query.get("view"), ["orbit", "front", "side", "back", "top"] as const, "orbit"),
     viewport: values(query.get("viewport"), ["desktop", "narrow"] as const, "desktop"),
-    recipe: values(query.get("recipe"), LAB_RECIPES, DEFAULT_LAB_CASE.recipe),
-    subject: values(query.get("subject"), ["enemy", "player"] as const, "enemy"),
+    recipe: normalizeLabRecipe(
+      selectedRecipe,
+      selectedSubject === "enemy" && visual.family.startsWith("boss-"),
+    ),
+    subject: selectedSubject,
     playerStage: selectedPlayerStage,
     playerDetailLevel: playerDetailLevelForStage(
       selectedPlayerStage,

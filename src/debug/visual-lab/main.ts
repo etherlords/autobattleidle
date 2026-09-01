@@ -20,7 +20,7 @@ import {
   toggleGoldenLabCase,
 } from "./catalog";
 import { parseLabCase, serializeLabCase, type LabView, type LabViewport } from "./case-url";
-import { attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
+import { advanceLabRecipe, attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
 import {
   LabPlayerEvolution,
   PLAYER_DETAIL_LEVELS,
@@ -192,19 +192,22 @@ class VisualLab {
         variant: Number(variant.value) as LabVariant,
         goldenBug: golden.checked,
       });
-      this.current = {
-        ...visual,
-        reducedMotion: motion.checked,
-        view: view.value as LabView,
-        viewport: viewport.value as LabViewport,
-        recipe: recipe.value as LabRecipe,
-        subject: subject.value as "enemy" | "player",
-        playerStage: Number(playerStage.value) as PlayerFormStart,
-        playerDetailLevel: playerDetailLevelForStage(
-          Number(playerStage.value) as PlayerFormStart,
-          Number(playerDetailLevel.value) as PlayerDetailLevel,
-        ),
-      };
+      this.current = parseLabCase(
+        serializeLabCase({
+          ...visual,
+          reducedMotion: motion.checked,
+          view: view.value as LabView,
+          viewport: viewport.value as LabViewport,
+          recipe: recipe.value as LabRecipe,
+          subject: subject.value as "enemy" | "player",
+          playerStage: Number(playerStage.value) as PlayerFormStart,
+          playerDetailLevel: playerDetailLevelForStage(
+            Number(playerStage.value) as PlayerFormStart,
+            Number(playerDetailLevel.value) as PlayerDetailLevel,
+          ),
+        }),
+      );
+      recipe.value = this.current.recipe;
       playerDetailLevel.value = String(this.current.playerDetailLevel);
       playerDetailLevel.disabled = this.current.playerStage !== PLAYER_DETAIL_TRANSITION.source;
       history.replaceState(null, "", serializeLabCase(this.current));
@@ -469,6 +472,8 @@ class VisualLab {
 
   private tick(): void {
     this.unit?.tick();
+    if (!(this.unit instanceof LabPlayerEvolution))
+      advanceLabRecipe(this.current.recipe, this.unit?.view.group, this.current.reducedMotion);
     this.effects.advance();
     this.refreshReceipt();
   }

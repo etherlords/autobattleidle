@@ -51,3 +51,5 @@ requiredGates:
 3. After approval, add one compiler-checked affinity registry with 12 themes and symmetric reward factors whose mean is `1.00`; no generic material or modifier framework.
 4. Derive affinity and geometry profile inside the existing domain identity receipt, then project that receipt through snapshot and the existing visual builder.
 5. Port only approved overlay geometry as a production decorator attached to existing semantic sockets. `legacy` remains selectable and no existing body factory is replaced.
+6. Apply the approved boss-only geometry contract: Crown floats clear of the whole silhouette; Spines distributes 15-20 outward-oriented cones over the body surface; each Rune ring spins around its own local axis. Do not attach these recipes to ordinary families.
+7. Prove Hydra and Colossus in orbit/front/side/back/top, idle/hit/death, reduced motion, desktop/narrow, repeated replacement, and exact disposal before the production port.

@@ -9,8 +9,15 @@ export const LAB_RECIPES = [
 ] as const;
 export type LabRecipe =
   "production" | "socket-probe" | "crystal-crown" | "orbital-runes" | "elemental-spines";
+export const BOSS_ONLY_LAB_RECIPES = [
+  "crystal-crown",
+  "orbital-runes",
+  "elemental-spines",
+] as const satisfies readonly LabRecipe[];
+export const normalizeLabRecipe = (recipe: LabRecipe, boss: boolean): LabRecipe =>
+  !boss && BOSS_ONLY_LAB_RECIPES.some((candidate) => candidate === recipe) ? "production" : recipe;
 
-type CandidateAnchor = "overhead" | "orbit" | "front" | "top";
+type CandidateAnchor = "overhead" | "orbit" | "top";
 type CandidateRecipe = {
   readonly anchor: CandidateAnchor;
   build(): THREE.Group;
@@ -19,9 +26,8 @@ type CandidateRecipe = {
     bounds: THREE.Box3,
     nativeBounds: THREE.Box3,
     anchor: THREE.Object3D,
-    outward: THREE.Vector3,
-    surface: number,
-  ): void;
+    bossBody: THREE.Mesh,
+  ): boolean;
 };
 
 const socket = (unit: THREE.Object3D, anchor: CandidateAnchor): THREE.Object3D => {
@@ -59,57 +65,35 @@ const boundsInSocket = (bounds: THREE.Box3, anchor: THREE.Object3D): THREE.Box3 
   return localBounds;
 };
 
-const projectedExtent = (
-  bounds: THREE.Box3,
-  direction: THREE.Vector3,
-  maximum: boolean,
-): number => {
-  const corners = [bounds.min, bounds.max];
-  const values = corners.flatMap((x) =>
-    corners.flatMap((y) => corners.map((z) => new THREE.Vector3(x.x, y.y, z.z).dot(direction))),
-  );
-  return maximum ? Math.max(...values) : Math.min(...values);
-};
-
-const seatOnSurface = (
-  group: THREE.Group,
-  nativeBounds: THREE.Box3,
-  outward: THREE.Vector3,
-  surface: number,
-): void => {
-  const nearest = projectedExtent(nativeBounds, outward, false);
-  group.position.copy(outward.multiplyScalar(surface - nearest * group.scale.x - 0.01));
-  group.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), outward.negate());
-};
-
 const fitAbove = (
   group: THREE.Group,
   bounds: THREE.Box3,
   nativeBounds: THREE.Box3,
   heightRatio: number,
-  _anchor: THREE.Object3D,
-  outward: THREE.Vector3,
-  surface: number,
-): void => {
+): boolean => {
   const bodySize = bounds.getSize(new THREE.Vector3());
   const nativeHeight = nativeBounds.getSize(new THREE.Vector3()).y;
-  if (nativeHeight === 0 || bodySize.y === 0) return;
+  if (nativeHeight === 0 || bodySize.y === 0) return false;
   const scale = (bodySize.y * heightRatio) / nativeHeight;
+  const center = bounds.getCenter(new THREE.Vector3());
   group.scale.setScalar(scale);
-  seatOnSurface(group, nativeBounds, outward, surface);
+  group.position.set(
+    center.x,
+    bounds.max.y + bodySize.y * 0.06 - nativeBounds.min.y * scale,
+    center.z,
+  );
+  return true;
 };
 
-const fitOrbit = (
-  group: THREE.Group,
-  _bounds: THREE.Box3,
-  nativeBounds: THREE.Box3,
-  anchor: THREE.Object3D,
-): void => {
+const fitOrbit = (group: THREE.Group, bounds: THREE.Box3, nativeBounds: THREE.Box3): boolean => {
+  const bodySize = bounds.getSize(new THREE.Vector3());
   const nativeSize = nativeBounds.getSize(new THREE.Vector3());
   const nativeRadius = Math.max(nativeSize.x, nativeSize.z) / 2;
-  if (nativeRadius === 0) return;
-  const radius = Number(anchor.userData.bodyRadius) || 0.9;
+  if (nativeRadius === 0) return false;
+  const radius = Math.max(bodySize.x, bodySize.z) / 2 + bodySize.y * 0.08;
   group.scale.setScalar(radius / nativeRadius);
+  group.position.copy(bounds.getCenter(new THREE.Vector3()));
+  return true;
 };
 
 const crystalCrown = (): THREE.Group => {
@@ -146,16 +130,65 @@ const orbitalRunes = (): THREE.Group => {
 const elementalSpines = (): THREE.Group => {
   const group = new THREE.Group();
   group.name = "lab-recipe-elemental-spines";
-  [-0.22, 0, 0.22].forEach((x, index) => {
+  for (let index = 0; index < 18; index += 1) {
     const spine = new THREE.Mesh(
-      new THREE.ConeGeometry(index === 1 ? 0.16 : 0.12, index === 1 ? 0.82 : 0.62, 5),
+      new THREE.ConeGeometry(0.1, 0.55, 5),
       new THREE.MeshStandardMaterial({ color: "#ff9269", emissive: "#79220e", metalness: 0.3 }),
     );
     spine.name = `lab-elemental-spine-${index}`;
-    spine.position.set(x, 0, 0);
     group.add(spine);
-  });
+  }
   return group;
+};
+
+const spikeDirection = (index: number): THREE.Vector3 => {
+  const y = 1 - ((index + 0.5) / 18) * 2;
+  const radius = Math.sqrt(1 - y * y);
+  const angle = index * Math.PI * (3 - Math.sqrt(5));
+  return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+};
+
+const fitSpines = (
+  group: THREE.Group,
+  bounds: THREE.Box3,
+  anchor: THREE.Object3D,
+  bossBody: THREE.Mesh,
+): boolean => {
+  const size = bounds.getSize(new THREE.Vector3());
+  const scale = Math.min(1.25, Math.max(0.7, size.length() / 5));
+  const length = 0.55 * scale;
+  bossBody.updateWorldMatrix(true, false);
+  anchor.updateWorldMatrix(true, false);
+  const bodyBounds = new THREE.Box3().setFromObject(bossBody);
+  const center = bodyBounds.getCenter(new THREE.Vector3());
+  const rayDistance = bodyBounds.getSize(new THREE.Vector3()).length() * 2;
+  const normalMatrix = new THREE.Matrix3().getNormalMatrix(bossBody.matrixWorld);
+  const placements = group.children.map((node, index) => {
+    if (!(node instanceof THREE.Mesh)) return undefined;
+    const direction = spikeDirection(index);
+    const ray = new THREE.Raycaster(
+      center.clone().addScaledVector(direction, rayDistance),
+      direction.clone().negate(),
+    );
+    const hit = ray.intersectObject(bossBody, false)[0];
+    if (hit === undefined || hit.face === null || hit.face === undefined) return undefined;
+    const worldNormal = hit.face.normal.clone().applyNormalMatrix(normalMatrix).normalize();
+    const anchorWorld = anchor.getWorldPosition(new THREE.Vector3());
+    const normal = anchor
+      .worldToLocal(anchorWorld.clone().add(worldNormal))
+      .sub(anchor.worldToLocal(anchorWorld.clone()))
+      .normalize();
+    return { node, normal, point: anchor.worldToLocal(hit.point.clone()) };
+  });
+  if (placements.some((placement) => placement === undefined)) return false;
+  placements.forEach((placement) => {
+    if (placement === undefined) return;
+    const { node, normal, point } = placement;
+    node.scale.setScalar(scale);
+    node.position.copy(point).addScaledVector(normal, length * 0.42);
+    node.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+  });
+  return true;
 };
 
 const recipes: Readonly<
@@ -164,16 +197,28 @@ const recipes: Readonly<
   "crystal-crown": {
     anchor: "overhead",
     build: crystalCrown,
-    fit: (group, bounds, nativeBounds, anchor, outward, surface) =>
-      fitAbove(group, bounds, nativeBounds, 0.38, anchor, outward, surface),
+    fit: (group, bounds, nativeBounds) => fitAbove(group, bounds, nativeBounds, 0.38),
   },
   "orbital-runes": { anchor: "orbit", build: orbitalRunes, fit: fitOrbit },
   "elemental-spines": {
-    anchor: "overhead",
+    anchor: "orbit",
     build: elementalSpines,
-    fit: (group, bounds, nativeBounds, anchor, outward, surface) =>
-      fitAbove(group, bounds, nativeBounds, 0.27, anchor, outward, surface),
+    fit: (group, bounds, _nativeBounds, anchor, bossBody) =>
+      fitSpines(group, bounds, anchor, bossBody),
   },
+};
+
+const bossBody = (unit: THREE.Object3D): THREE.Mesh | undefined => {
+  let body: THREE.Mesh | undefined;
+  unit.traverse((node) => {
+    if (
+      body === undefined &&
+      node instanceof THREE.Mesh &&
+      node.name.startsWith("enemy-body-boss-")
+    )
+      body = node;
+  });
+  return body;
 };
 
 export const attachLabRecipe = (recipe: LabRecipe, unit: THREE.Object3D): (() => void) => {
@@ -188,36 +233,31 @@ export const attachLabRecipe = (recipe: LabRecipe, unit: THREE.Object3D): (() =>
     return dispose(marker);
   }
   const candidate = recipes[recipe];
+  const body = bossBody(unit);
+  if (body === undefined) return () => undefined;
   unit.updateMatrixWorld(true);
   const unitBounds = new THREE.Box3().setFromObject(unit);
   const group = candidate.build();
   const nativeBounds = new THREE.Box3().setFromObject(group);
   const anchor = socket(unit, candidate.anchor);
-  const center = unitBounds.getCenter(new THREE.Vector3());
-  const outwardWorld = anchor.getWorldPosition(new THREE.Vector3()).sub(center).normalize();
-  const anchorWorld = anchor.getWorldPosition(new THREE.Vector3());
-  const outward = anchor
-    .worldToLocal(anchorWorld.clone().add(outwardWorld))
-    .sub(anchor.worldToLocal(anchorWorld.clone()))
-    .normalize();
-  const ray = new THREE.Raycaster(
-    anchorWorld.clone().addScaledVector(outwardWorld, -10),
-    outwardWorld.normalize(),
-  );
-  const hit = ray.intersectObject(unit, true).at(-1);
-  const surface =
-    hit === undefined
-      ? projectedExtent(boundsInSocket(unitBounds, anchor), outward, true)
-      : anchor.worldToLocal(hit.point.clone()).dot(outward);
   anchor.add(group);
-  if (!unitBounds.isEmpty())
-    candidate.fit(
-      group,
-      boundsInSocket(unitBounds, anchor),
-      nativeBounds,
-      anchor,
-      outward,
-      surface,
-    );
+  if (
+    unitBounds.isEmpty() ||
+    !candidate.fit(group, boundsInSocket(unitBounds, anchor), nativeBounds, anchor, body)
+  ) {
+    dispose(group)();
+    return () => undefined;
+  }
   return dispose(group);
+};
+
+export const advanceLabRecipe = (
+  recipe: LabRecipe,
+  unit: THREE.Object3D | undefined,
+  reducedMotion: boolean,
+): void => {
+  if (recipe !== "orbital-runes" || unit === undefined || reducedMotion) return;
+  unit.getObjectByName("lab-recipe-orbital-runes")?.traverse((node) => {
+    if (node.name.startsWith("lab-orbital-rune-")) node.rotateZ(0.055);
+  });
 };

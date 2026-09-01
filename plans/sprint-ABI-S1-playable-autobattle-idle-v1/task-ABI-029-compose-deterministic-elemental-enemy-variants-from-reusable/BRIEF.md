@@ -4,8 +4,8 @@ id: ABI-029
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 7
-status: Ready
+revision: 9
+status: In Progress
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -32,21 +32,22 @@ Compose deterministic elemental enemy variants from reusable family and affinity
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: In Progress
 
 ## Acceptance criteria
 
-- [ ] A documented affinity registry defines at least 12 named themes including Cinder, Ice, and Ash; combined with every shipped ordinary and boss family it yields at least 96 deterministic family-affinity variants without one class or mesh factory per combination.
-- [ ] Every affinity has a coordinated palette, one immediately readable authored visual cue or bounded animation, and one small centralized stat modifier whose measured effect stays inside the product envelope approved by ABI-020.
-- [ ] Encounter seed and canonical registries determine family, affinity, name, visuals, and stats together; reload and historical saves preserve the same identity without render-time randomness or duplicated state ownership.
-- [ ] Ordinary encounters and boss encounters draw from multiple family-affinity combinations rather than repeatedly presenting Cinder Hydra, while existing grade, Golden Bug, decoration, and effect contracts remain compatible.
-- [ ] The implementation reuses the ABI-023 builder/component architecture and ABI-026 semantic pose/head/side anchors; adding one affinity is one compiler-guided registry change plus authored assets, not branch edits across domain, view, and UI.
-- [ ] Deterministic tests cover the full combination matrix, stat bounds, naming, save/reload stability, finite values, effect caps, reduced motion, disposal, and representative long-run distribution; pnpm check passes.
-- [ ] Independent review and desktop/narrow browser QA visually inspect a representative matrix across all affinities and every family, verify readable distinction and clean console/network/resource behavior, then Manager closure proves exact-SHA CI and Pages.
-- [ ] Before production geometry is implemented, representative family and boss candidates are prototyped in an interactive Visualize Three.js concept lab with all-angle orbit inspection and explicit idle, hit, and death previews.
-- [ ] Only a user/design-approved concept recipe is ported into production; production reuses the installed Three.js runtime plus the existing EnemyBodyFactory, rig, animation commands, and semantic sockets, with no CDN or concept-lab runtime dependency.
-- [ ] Current shipped enemy bodies remain available as legacy geometry variants; approved new bodies extend the deterministic variant set instead of replacing or silently reshaping existing variants.
-- [ ] Geometry-profile selection is derived deterministically from canonical encounter seed and registries. It adds no save-schema field while identity remains reproducible from existing persisted inputs, and historical-save load/reload proof is required.
+- [ ] A compiler-checked affinity registry defines at least 12 named themes including Cinder, Ice, and Ash; combined with every shipped ordinary and boss family it yields at least 96 deterministic family-affinity identities without one class or mesh factory per combination.
+- [ ] Every affinity has a coordinated palette, readable bounded cue, and one centralized measured stat modifier inside ABI-020/ABI-028 envelopes; encounter seed determines family, affinity, name, visuals, and stats together.
+- [ ] The Crystal Crown, Elemental Spines, and Orbital Runes geometry recipes are boss-only. Ordinary enemies keep meaningful non-intersecting palette/cue treatment and never receive these generic boss attachments.
+- [ ] Crystal Crown floats above the complete boss silhouette and clears native crowns/heads on Hydra and Colossus.
+- [ ] Elemental Spines uses about 15-20 individual spikes distributed across the boss body surface with directions pointing outward; Hydra has no three-spike cluster over its central crowned head.
+- [ ] Orbital Rune placement remains bounded; each ring rotates like a wheel around its own axis rather than orbiting the entire body.
+- [ ] Hydra and Colossus receive explicit all-angle idle/hit/death, reduced-motion, bounds, socket, responsive-camera, and disposal proof before production porting.
+- [ ] Current shipped bodies remain available as legacy variants; approved recipes extend rather than replace them. Golden Bug, grade, modifier, effect, and boss contracts remain distinct and compatible.
+- [ ] Identity reconstructs deterministically from existing persisted inputs with no save-schema field; current and historical saves reproduce the same identity after load/save/reload.
+- [ ] Deterministic tests cover registry completeness, stat bounds, names, full identity matrix, distribution, finite resources, effect caps, reduced motion, exact disposal, and pnpm check.
+- [ ] Independent review and desktop/narrow deployed browser QA inspect the risk-based representative matrix, including every affinity and both boss families, with clean console/network/resources.
+- [ ] Only the user-approved boss-only recipes are ported through existing EnemyBodyFactory, rig, animation commands, semantic sockets, and disposal ownership; the lab remains a debug route, not a production dependency.
 
 ## Dependencies
 
