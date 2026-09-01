@@ -23,3 +23,4 @@ test-results/
 output/playwright/
 vite-qa*.err
 /WATCHDOG.yml
+/.vscode/
