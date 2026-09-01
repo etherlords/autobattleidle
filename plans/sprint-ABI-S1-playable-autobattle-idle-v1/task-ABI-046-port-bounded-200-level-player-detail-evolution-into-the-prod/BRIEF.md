@@ -4,8 +4,8 @@ id: ABI-046
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
-status: Ready
+revision: 4
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-038
@@ -28,7 +28,7 @@ Port bounded 200-level player detail evolution into the production PlayerUnit
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: In QA
 
 ## Acceptance criteria
 

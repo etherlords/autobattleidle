@@ -24,15 +24,15 @@ describe("player evolution lab prototypes", () => {
     expect(minorDetailStep(1_999)).toBe(4);
     const player = new LabPlayerEvolution(1_000, false, 1_800);
     const receipt = observeResourceDisposal(player.group);
-    expect(player.group.getObjectByName("lab-player-transition-warden-detail-3")).toBeDefined();
-    expect(player.group.getObjectByName("lab-player-transition-warden-detail-4")).toBeUndefined();
+    expect(player.group.getObjectByName("player-transition-detail-3")).toBeDefined();
+    expect(player.group.getObjectByName("player-transition-detail-4")).toBeUndefined();
     player.dispose();
     expect(receipt()).toMatchObject({ disposed: receipt().expectedDisposals });
     const endpoint = new LabPlayerEvolution(1_000, false, 2_000);
     const endpointReceipt = observeResourceDisposal(endpoint.group);
-    expect(endpoint.group.name).toBe(`lab-player-form-${PLAYER_DETAIL_TRANSITION.target}`);
-    expect(endpoint.group.getObjectByName("lab-player-warden")).toBeDefined();
-    expect(endpoint.group.getObjectByName("lab-player-transition-warden-detail-0")).toBeUndefined();
+    expect(endpoint.group.name).toBe(`player-form-${PLAYER_DETAIL_TRANSITION.target}`);
+    expect(endpoint.group.getObjectByName("player-warden")).toBeDefined();
+    expect(endpoint.group.getObjectByName("player-transition-detail-0")).toBeUndefined();
     endpoint.dispose();
     expect(endpointReceipt()).toMatchObject({ disposed: endpointReceipt().expectedDisposals });
   });
@@ -48,8 +48,8 @@ describe("player evolution lab prototypes", () => {
       const bounds = new THREE.Box3().setFromObject(player.group);
       expect(bounds.isEmpty()).toBe(false);
       expect(Number.isFinite(bounds.max.y)).toBe(true);
-      expect(player.group.getObjectByName("lab-player-socket-attack")).toBeDefined();
-      expect(player.group.getObjectByName("lab-player-socket-aura")).toBeDefined();
+      expect(player.group.getObjectByName("player-socket-attack")).toBeDefined();
+      expect(player.group.getObjectByName("player-socket-aura")).toBeDefined();
       const geometry = player.group.children[0]?.children
         .filter((node): node is THREE.Mesh => node instanceof THREE.Mesh)
         .map((node) => node.geometry.type)
@@ -73,14 +73,14 @@ describe("player evolution lab prototypes", () => {
 
   it("honors reduced motion while retaining a visible authored form", () => {
     const player = new LabPlayerEvolution(10_000, true);
-    const pose = player.group.getObjectByName("lab-player-pose");
+    const pose = player.group.getObjectByName("player-pose");
     if (!(pose instanceof THREE.Group)) throw new Error("Missing player pose");
     const neutral = pose.position.clone();
     player.replay("hit");
     player.replay("attack");
     for (let frame = 0; frame < 12; frame += 1) player.tick();
     expect(pose.position).toEqual(neutral);
-    expect(player.group.getObjectByName("lab-player-wing--1")).toBeDefined();
+    expect(player.group.getObjectByName("player-wing--1")).toBeDefined();
     player.dispose();
   });
 });

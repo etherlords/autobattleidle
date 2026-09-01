@@ -149,6 +149,7 @@ class ThreeBattlefield implements Battlefield {
       sequencedEffects ??
       (this.pendingLethalReplacement === undefined ? frame.effects : startedEffects);
     this.addEffects(effects, snapshot.playerStats.automaticAttacksPerSecond);
+    this.syncPlayer(snapshot, effects);
     this.bossFramingEnabled =
       this.pendingLethalReplacement === undefined
         ? snapshot.enemy.grade === "boss"
@@ -218,6 +219,23 @@ class ThreeBattlefield implements Battlefield {
     ground.rotation.x = -Math.PI / 2;
     this.scene.add(ground);
     this.player.dispatch({ type: "attach", parent: this.scene });
+  }
+
+  private syncPlayer(snapshot: BattleSnapshot, displayedEffects: readonly BattleVisualCue[]): void {
+    this.player.tick();
+    this.player.dispatch({
+      type: "sync",
+      snapshot: {
+        level: snapshot.enemy.level,
+        position: {
+          x: BATTLEFIELD_CONFIG.player.position[0],
+          y: BATTLEFIELD_CONFIG.player.position[1],
+          z: BATTLEFIELD_CONFIG.player.position[2],
+        },
+      },
+    });
+    if (displayedEffects.some((effect) => typeof effect !== "string"))
+      this.player.dispatch({ type: "animate", name: "attack" });
   }
 
   private frameCamera(aspect: number): void {
@@ -408,6 +426,9 @@ class ThreeBattlefield implements Battlefield {
       .join(",");
     this.setEffectOriginReceipt(dataset);
     dataset.enemyTopPx = this.projectedEnemyTop();
+    const player = this.player.playerView.playerEvolutionReceipt();
+    dataset.playerFormStart = String(player.formStart);
+    dataset.playerDetailCount = String(player.detailCount);
   }
 
   private displayedEnemy(snapshot: BattleSnapshot): BattleEnemySnapshot {
@@ -430,6 +451,8 @@ class ThreeBattlefield implements Battlefield {
     delete dataset.lastEffectKinds;
     delete dataset.lastEffectOrigin;
     delete dataset.enemyTopPx;
+    delete dataset.playerFormStart;
+    delete dataset.playerDetailCount;
   }
 
   private setEffectOriginReceipt(dataset: DOMStringMap): void {

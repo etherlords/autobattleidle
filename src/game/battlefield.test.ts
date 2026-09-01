@@ -434,6 +434,48 @@ describe("nextBattlefieldFrame", () => {
     expect(dataset).toEqual({});
   });
 
+  it("routes manual and automatic impact cues to player attack without player recoil", () => {
+    for (const source of ["manual", "automatic"] as const) {
+      let scene: THREE.Scene | undefined;
+      const host = { append: () => undefined } as unknown as HTMLElement;
+      const renderer = {
+        domElement: {
+          className: "",
+          dataset: {},
+          remove: () => undefined,
+        } as unknown as HTMLCanvasElement,
+        dispose: () => undefined,
+        render: (nextScene: THREE.Scene) => {
+          scene = nextScene;
+        },
+        setPixelRatio: () => undefined,
+        setSize: () => undefined,
+      };
+      const battlefield = createBattlefieldWithRenderer(host, renderer);
+      battlefield.render(snapshot("normal", 1));
+      const impact = {
+        kind: "hit",
+        packets: { count: source === "automatic" ? 3 : 1, units: 1 },
+        source,
+      } as const;
+      battlefield.render({
+        ...snapshot("normal", 1, 9, [impact]),
+        playerStats: {
+          ...snapshot("normal", 1).playerStats,
+          automaticAttacksPerSecond: source === "automatic" ? 11 : 1,
+        },
+      });
+      battlefield.render(snapshot("normal", 1));
+      battlefield.render(snapshot("normal", 1));
+      battlefield.render(snapshot("normal", 1));
+      const pose = scene?.getObjectByName("player-pose");
+      if (!(pose instanceof THREE.Group)) throw new Error("Expected production player pose");
+      expect(pose.rotation.x).toBeGreaterThan(0);
+      expect(pose.scale.x).toBe(1);
+      battlefield.dispose();
+    }
+  });
+
   it("disposes retired visuals and clears the scene through one renderer seam", () => {
     let scene: THREE.Scene | undefined;
     let camera: THREE.Camera | undefined;

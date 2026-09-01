@@ -21,6 +21,9 @@ import {
 } from "../domain/combat";
 import { BattleController } from "../app/battle/controller";
 import { battleCommands } from "../app/battle/commands";
+import { createBattlefieldWithRenderer } from "../game/battlefield/lifecycle";
+import { playerEvolutionIdentity } from "../game/units/player/evolution";
+import { createBattleSnapshot } from "../domain/snapshot";
 import {
   createPersistenceBoundary,
   decodeSave,
@@ -106,6 +109,13 @@ const fixtureManifest = [
     name: "V4 Golden defeats",
     sourceVersion: SAVE_VERSION,
   },
+] as const;
+
+const playerEvolutionHistoricalFixtures = [
+  v1Fixture,
+  v2Fixture,
+  v3Encounter2170Fixture,
+  v4PlayerRelativeBossFixture,
 ] as const;
 
 const fixtureExpectations: readonly FixtureExpectation[] = [
@@ -361,6 +371,43 @@ describe("persistence boundary", () => {
       const reloaded = boundary.load(fallback(), 200);
       expectFixtureState(reloaded, expected);
       expect(values.get(source.key)).toBe(raw);
+    }
+  });
+
+  it("derives the same player form after every supported historical save reload without writing a visual field", () => {
+    for (const fixture of playerEvolutionHistoricalFixtures) {
+      const loaded = decodeSave(fixture, fallback(), 100);
+      const raw = encodeSave(loaded);
+      const reloaded = decodeSave(JSON.parse(raw), fallback(), 200);
+      const renderReceipt = (state: ReturnType<typeof fallback>): Record<string, string> => {
+        const dataset: Record<string, string> = {};
+        const battlefield = createBattlefieldWithRenderer(
+          { append: () => undefined } as unknown as HTMLElement,
+          {
+            domElement: {
+              className: "",
+              dataset,
+              remove: () => undefined,
+            } as unknown as HTMLCanvasElement,
+            dispose: () => undefined,
+            render: () => undefined,
+            setPixelRatio: () => undefined,
+            setSize: () => undefined,
+          },
+        );
+        battlefield.render(createBattleSnapshot(state, 0, [], []));
+        const receipt = {
+          playerDetailCount: dataset.playerDetailCount ?? "",
+          playerFormStart: dataset.playerFormStart ?? "",
+        };
+        battlefield.dispose();
+        return receipt;
+      };
+      expect(renderReceipt(reloaded)).toEqual(renderReceipt(loaded));
+      expect(Number(renderReceipt(loaded).playerFormStart)).toBe(
+        playerEvolutionIdentity(loaded.enemy.encounter).formStart,
+      );
+      expect(JSON.parse(raw)).not.toHaveProperty("playerEvolution");
     }
   });
 
