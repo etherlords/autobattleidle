@@ -81,3 +81,43 @@ No P0-P3 findings. The two focused lifecycle regressions now each use the produc
 ### Review scope
 
 Read the ABI-025 packet, the related Vault behavior/cadence articles, the complete product diff, lifecycle replacement and camera framing paths, production Golden Bug progression, and the repaired test sequences. No product code changed during this review.
+
+## Corrected universal-orbit review — 2026-09-01
+
+### Final verdict
+
+APPROVE — no P0-P3 findings.
+
+### Bounded findings and repairs
+
+- The first review required explicit camera reset on confirmed game Reset, universal-orbit ARIA text,
+  and reconciliation of the canonical HUD/input contract. The implementation added one
+  `Battlefield.resetCamera()` route, called it before the synchronous reset-state render, updated the
+  existing label, and replaced only the Vault `HUD and input` section.
+- A fresh review required Golden Bug exit continuity at a nonzero angle. The focused lifecycle test now
+  preserves 45 degrees across Golden Bug -> boss, verifies both camera axes at `distance / sqrt(2)`,
+  then separately verifies boss rotation and explicit Reset.
+- A Vault v1.3.2 per-process catalog defect initially returned current Markdown with the previous
+  content hash in reviewer contexts. The orchestrator confirmed the defect. One reviewer-context
+  lexical freshness trigger followed by exact readback returned the accepted hash without rewriting
+  or reindexing canonical Markdown.
+
+### Final evidence
+
+- `src/game/battlefield/lifecycle.ts` owns one finite session azimuth for ordinary, boss, and Golden
+  enemies; boss-specific framing remains separate; replacements never reset azimuth.
+- `src/app/application.ts` performs confirmed reset as persistence reset -> camera reset -> controller
+  reset/render. Cancelled reset performs none of those actions.
+- `src/ui/hud.ts` exposes accurate universal keyboard-orbit guidance.
+- Focused battlefield/application/HUD tests: 29/29 passed.
+- Full `pnpm check`: 20 files, 185/185 tests, lint, format, Worker TypeScript, and production build passed.
+- `git diff --check`: passed.
+- Vault `AUTOBATTLEIDLE-DOC-20260827-85CBFC#hud-and-input` readback:
+  `5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b`.
+- Vault doctor: zero errors and zero warnings.
+
+### Review scope
+
+The reviewer read the corrected Planner packet, related Vault behavior and cadence contracts, complete
+bounded source/test diff, application reset path, HUD input routing, battlefield lifecycle/framing,
+and persistence contracts. Review was read-only.

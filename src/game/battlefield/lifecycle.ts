@@ -16,6 +16,7 @@ import {
 
 export type Battlefield = {
   render(snapshot: BattleSnapshot): void;
+  resetCamera(): void;
   rotateCamera(delta: number): void;
   resize(width: number, height: number): void;
   dispose(): void;
@@ -101,8 +102,7 @@ class ThreeBattlefield implements Battlefield {
   private effects: BattlefieldEffect[] = [];
   private aspect = 1;
   private azimuth = 0;
-  private bossEncounterKey: string | undefined;
-  private bossOrbitEnabled = false;
+  private bossFramingEnabled = false;
   private pendingLethalReplacement: PendingLethalReplacement | undefined;
   private ordinaryFramingBounds: THREE.Box3 | undefined;
   private ordinaryFramingScale = 1;
@@ -149,7 +149,7 @@ class ThreeBattlefield implements Battlefield {
       sequencedEffects ??
       (this.pendingLethalReplacement === undefined ? frame.effects : startedEffects);
     this.addEffects(effects);
-    this.bossOrbitEnabled =
+    this.bossFramingEnabled =
       this.pendingLethalReplacement === undefined
         ? snapshot.enemy.grade === "boss"
         : this.enemy?.spec.body.startsWith("boss-") === true;
@@ -160,8 +160,18 @@ class ThreeBattlefield implements Battlefield {
   }
 
   rotateCamera(delta: number): void {
-    if (this.disposed || !this.bossOrbitEnabled || !Number.isFinite(delta)) return;
+    if (this.disposed || !Number.isFinite(delta)) return;
     this.azimuth = (this.azimuth + delta) % (Math.PI * 2);
+    this.refreshOrdinaryFraming();
+    this.frameCamera(this.aspect);
+    this.refreshProjectionReceipt();
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  resetCamera(): void {
+    if (this.disposed) return;
+    this.azimuth = 0;
+    this.refreshOrdinaryFraming();
     this.frameCamera(this.aspect);
     this.refreshProjectionReceipt();
     this.renderer.render(this.scene, this.camera);
@@ -214,22 +224,21 @@ class ThreeBattlefield implements Battlefield {
     const scale = cameraScaleForAspect(aspect);
     const framingScale = this.cameraFramingScale();
     const distance = BATTLEFIELD_CONFIG.camera.distance * scale * framingScale;
-    const azimuth = this.bossOrbitEnabled ? this.azimuth : 0;
     this.camera.position.set(
-      Math.sin(azimuth) * distance,
+      Math.sin(this.azimuth) * distance,
       BATTLEFIELD_CONFIG.camera.elevation * scale * framingScale,
-      Math.cos(azimuth) * distance,
+      Math.cos(this.azimuth) * distance,
     );
     this.camera.lookAt(0, 0, 0);
   }
 
   private cameraFramingScale(): number {
-    if (this.bossOrbitEnabled) return BATTLEFIELD_CONFIG.camera.bossFramingScale;
+    if (this.bossFramingEnabled) return BATTLEFIELD_CONFIG.camera.bossFramingScale;
     return this.ordinaryFramingScale;
   }
 
   private refreshOrdinaryFraming(): void {
-    if (this.enemy === undefined || this.bossOrbitEnabled) {
+    if (this.enemy === undefined || this.bossFramingEnabled) {
       this.ordinaryFramingBounds = undefined;
       this.ordinaryFramingScale = 1;
       return;
@@ -260,7 +269,11 @@ class ThreeBattlefield implements Battlefield {
     const distance = BATTLEFIELD_CONFIG.camera.distance * scale;
     const camera = this.framingCamera;
     camera.aspect = aspect;
-    camera.position.set(0, BATTLEFIELD_CONFIG.camera.elevation * scale, distance);
+    camera.position.set(
+      Math.sin(this.azimuth) * distance,
+      BATTLEFIELD_CONFIG.camera.elevation * scale,
+      Math.cos(this.azimuth) * distance,
+    );
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
@@ -289,9 +302,6 @@ class ThreeBattlefield implements Battlefield {
   }
 
   private replaceEnemy(snapshot: BattleEnemySnapshot, animateRetiring = true): void {
-    const nextBossEncounterKey = snapshot.grade === "boss" ? enemyKey(snapshot) : undefined;
-    if (nextBossEncounterKey !== this.bossEncounterKey) this.azimuth = 0;
-    this.bossEncounterKey = nextBossEncounterKey;
     if (animateRetiring) this.enemy?.dispatchEnemy({ type: "death" });
     this.enemy?.dispatchEnemy({ type: "dispose" });
     this.unsubscribeEnemy?.();
@@ -299,7 +309,7 @@ class ThreeBattlefield implements Battlefield {
     this.unsubscribeEnemy = undefined;
     this.enemy.dispatchEnemy({ type: "spawn", parent: this.scene });
     this.ordinaryFramingBounds = undefined;
-    this.bossOrbitEnabled = snapshot.grade === "boss";
+    this.bossFramingEnabled = snapshot.grade === "boss";
     this.refreshOrdinaryFraming();
   }
 

@@ -45,7 +45,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   battlefield.tabIndex = 0;
   battlefield.setAttribute(
     "aria-label",
-    "Battlefield. Press Enter or Space to attack; use Left and Right arrows to rotate during boss encounters.",
+    "Battlefield. Press Enter or Space to attack; use Left and Right arrows to rotate the camera.",
   );
   let disposed = false;
   const listeners = new Set<HudIntentListener>();

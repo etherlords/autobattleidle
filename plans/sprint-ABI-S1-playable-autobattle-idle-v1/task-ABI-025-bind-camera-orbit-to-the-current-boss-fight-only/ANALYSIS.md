@@ -22,21 +22,21 @@ requiredGates:
 
 ## Verified current state
 
-- `createHud` emits pointer/touch drag and ArrowLeft/ArrowRight rotation intents without combat knowledge; the application routes them to `BattlefieldLifecycle.rotateCamera`.
-- `BattlefieldLifecycle` already rejects rotation unless the displayed enemy is a boss and keeps `azimuth` through hits and resize. Ordinary and Golden Bug framing already force azimuth zero.
-- Root cause: `azimuth` has no boss-fight owner and `replaceEnemy` never resets it. A later boss therefore re-enables the previous session azimuth.
-- Lethal replacement deliberately keeps the defeated boss displayed through impact, pause, and death frames; reset must occur only when `replaceEnemy` installs the next enemy, not when the combat snapshot first changes.
-- Persistence impact: **no schema change**. Camera, gesture, and boss-fight ownership remain presentation-session state and never enter snapshots, codecs, or localStorage.
+- The original task contract was wrong: it explicitly required boss-only orbit and reset at every boss-fight boundary, while the requested product behavior is orbit for every enemy with one continuous viewing angle across replacements.
+- `createHud` already emits pointer/touch drag and ArrowLeft/ArrowRight rotation intents without combat knowledge; the application routes them once to `BattlefieldLifecycle.rotateCamera`. Input routing does not need another owner.
+- `BattlefieldLifecycle.rotateCamera` currently rejects input through `!bossOrbitEnabled`; `updateCamera` substitutes azimuth zero for ordinary and Golden enemies; `replaceEnemy` resets azimuth when `bossEncounterKey` changes. These three boss-only decisions are the root cause.
+- Enemy replacement already has one visual lifecycle seam and preserves defeated-enemy death frames. Azimuth should remain battlefield-session state while the enemy subtree changes.
+- Persistence impact is **no schema change**. Azimuth resets only when a new battlefield/session is created or explicitly reset, not on encounter replacement.
 
 ## Approach
 
-- Keep input routing unchanged. Bind the existing azimuth to the displayed boss encounter level inside `BattlefieldLifecycle`, the single camera/enemy lifecycle owner.
-- In `replaceEnemy`, compare the next boss identity with the current owner; reset azimuth before installing any ordinary, Golden Bug, or different boss, while preserving it for sync/hit/resize of the same displayed boss.
-- Add one focused lifecycle regression covering ordinary lock, boss rotate/resize, lethal transition preservation, ordinary reset, and next-boss canonical start. Retain existing HUD drag/click/modal/disposal tests.
-- Acceptance layers: lifecycle and input are unit/integration; desktop pointer/keyboard and 390px touch across two bosses are deployed QA.
+- Keep HUD and application routing unchanged. Make `azimuth` the only battlefield-session orbit owner and accept finite rotation deltas whenever the battlefield is active.
+- Use the same azimuth for ordinary, boss, and Golden framing. Preserve existing per-enemy distance/elevation rules; only the horizontal viewing angle becomes continuous.
+- Remove replacement-time azimuth reset and boss encounter ownership. Initialization or an explicit user reset remains the only reset boundary.
+- Replace boss-lock/reset tests with ordinary, boss, Golden, and all transition-pair continuity regressions. Deployed QA must drag ordinary enemies as well as bosses and prove the angle survives replacement.
 
 ## Risks
 
-- Resetting from the incoming combat snapshot would visibly snap the camera while the defeated boss death animation is still playing; reset only at visual replacement.
-- Gating rotation in the HUD would duplicate combat state and weaken modal/input ownership; keep the guard in the battlefield.
-- Persisting azimuth or owner would violate reload-reset behavior; no persistence changes are allowed.
+- Changing orbit eligibility must not change boss-specific distance, elevation, framing scale, attack input arbitration, modal isolation, or drag-versus-click suppression.
+- Replacement code must not briefly render the next enemy at azimuth zero before applying the preserved angle; test the actual visual handoff, not only the final state.
+- Persisting azimuth would exceed the request and change reload behavior. Keep it session-only.

@@ -23,20 +23,19 @@ on the playable canvas issues exactly one manual attack; there is no permanent A
 Enter/Space remains an accessible equivalent when the battlefield is focused. Manual input still
 bypasses and never resets the automatic cooldown.
 
-During boss encounters only, primary-pointer or touch drag rotates the battlefield camera around the
-arena-center azimuth. ArrowLeft/ArrowRight while the battlefield is focused provide the keyboard
-equivalent. The orbit keeps the PerspectiveCamera field of view, arena-center target, responsive
-elevation, and responsive radius fixed for the current viewport; zoom and pan are unavailable. Drag or
-pointer cancel never attacks, while stationary activation still attacks exactly once. Ordinary and
-Golden Bug encounters retain azimuth-zero framing and ignore rotation requests.
+Primary-pointer or touch drag rotates the battlefield camera around the arena-center azimuth for every
+currently displayed enemy, including ordinary enemies, bosses, and Golden Bug encounters.
+ArrowLeft/ArrowRight while the battlefield is focused provide the keyboard equivalent. The orbit keeps
+the PerspectiveCamera field of view, arena-center target, responsive elevation, and enemy-specific
+responsive framing fixed for the current viewport; zoom and pan are unavailable. Drag or pointer cancel
+never attacks, while stationary activation still attacks exactly once.
 
-Orbit azimuth belongs to the currently displayed boss encounter. It persists through hits, the delayed
-lethal presentation, and resize while that boss remains displayed. The battlefield replacement seam
-resets azimuth before any ordinary enemy, Golden Bug, escaped/replaced boss, or different boss is
-presented, so a later boss always starts from canonical front framing. Reload also resets orbit because
-camera and gesture state are session-only presentation state and never enter CombatState, snapshots,
-save codecs, or localStorage. The battlefield interaction surface uses `touch-action: none` so native
-pan/pinch cannot cancel the bounded touch orbit.
+Orbit azimuth is battlefield-session presentation state. It persists through ordinary, boss, and Golden
+Bug replacements, hits, automatic attacks, the delayed lethal presentation, and resize. Explicit game
+Reset returns the camera to canonical front framing before presenting reset progress; full page reload
+also resets orbit because camera and gesture state never enter CombatState, snapshots, save codecs, or
+localStorage. The battlefield interaction surface uses `touch-action: none` so native pan/pinch cannot
+cancel the bounded touch orbit.
 
 The HUD is a fixed overlay that does not participate in page layout. Enemy name is centered at the top;
 a nearly viewport-width current/max health bar sits directly below it; the automatic-attack bar follows

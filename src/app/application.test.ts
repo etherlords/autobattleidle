@@ -57,6 +57,7 @@ describe("startApplication", () => {
       game: {
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -155,6 +156,7 @@ describe("startApplication", () => {
       game: {
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -208,6 +210,7 @@ describe("startApplication", () => {
       game: {
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => undefined,
         rotateCamera: (delta) => {
           rotatedBy += delta;
         },
@@ -277,6 +280,7 @@ describe("startApplication", () => {
         render: () => {
           gameRenders += 1;
         },
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -387,6 +391,7 @@ describe("startApplication", () => {
       game: {
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -439,6 +444,7 @@ describe("startApplication", () => {
     let restore: (() => void) | undefined;
     let confirmed = false;
     let resets = 0;
+    let cameraResets = 0;
     let disposals = 0;
     const initialState = createCombatState({
       criticalChance: 0,
@@ -464,6 +470,9 @@ describe("startApplication", () => {
       game: {
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => {
+          cameraResets += 1;
+        },
         rotateCamera: () => undefined,
         resize: () => undefined,
       },
@@ -513,6 +522,7 @@ describe("startApplication", () => {
     const beforeCancelledReset = snapshots.length;
     reset();
     expect(resets).toBe(0);
+    expect(cameraResets).toBe(0);
     expect(snapshots).toHaveLength(beforeCancelledReset);
 
     const beforeFailedRestore = snapshots.length;
@@ -531,6 +541,7 @@ describe("startApplication", () => {
     confirmed = true;
     reset();
     expect(resets).toBe(1);
+    expect(cameraResets).toBe(1);
     expect(snapshots.at(-1)?.coins).toBe(0);
     expect(snapshots.at(-1)?.events).toEqual([]);
     app.dispose();
@@ -554,6 +565,7 @@ describe("startApplication", () => {
       createGame: () => ({
         dispose: () => undefined,
         render: () => undefined,
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => undefined,
       }),
@@ -650,6 +662,7 @@ describe("startApplication", () => {
         render: () => {
           calls.render += 1;
         },
+        resetCamera: () => undefined,
         rotateCamera: () => undefined,
         resize: () => {
           calls.resize += 1;

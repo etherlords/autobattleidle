@@ -22,20 +22,21 @@ requiredGates:
 
 ## Frozen scope
 
-- Own one optional current-boss encounter identity beside `azimuth` in `BattlefieldLifecycle`.
-- Reset azimuth only at the existing `replaceEnemy` visual lifecycle seam when the next boss identity differs or the replacement is not a boss.
-- Preserve HUD gestures, camera constants, attack arbitration, modal isolation, effects/death sequencing, save schema, and dependencies.
+- Orbit ordinary, boss, and Golden enemies through the existing `BattlefieldLifecycle` camera owner.
+- Preserve one session-level azimuth across every enemy replacement; reset only on battlefield/session initialization or explicit reset.
+- Preserve enemy-specific radius/elevation/framing, HUD gestures, attack arbitration, modal isolation, effects/death sequencing, save schema, and dependencies.
 
 ## Implementation sequence
 
-1. Add the smallest boss-owner field and replacement-time comparison in `src/game/battlefield/lifecycle.ts`.
-2. Extend the existing orbit lifecycle test; do not create a second camera controller or input gate.
-3. Prove same-boss hits and resize preserve rotation, defeated-boss animation does not snap, ordinary/Golden Bug are locked, and a later boss starts at azimuth zero.
-4. Run focused Vitest and `pnpm check`.
+1. Remove the boss-only rotation guard and use the existing finite-delta validation for every displayed enemy.
+2. Apply the stored azimuth to ordinary, boss, and Golden camera positions while retaining current distance/elevation selection.
+3. Remove boss encounter ownership and replacement-time azimuth reset; keep initialization/disposal boundaries unchanged.
+4. Replace old boss-only assertions with transition continuity tests for ordinary -> ordinary -> boss -> ordinary -> Golden -> boss, including lethal handoff and resize.
+5. Run focused Vitest and `pnpm check`, then fresh independent review, independent browser QA, verification, and Manager closure.
 
 ## Verification matrix
 
-- Unit/integration: pointer/touch/keyboard intents remain unchanged; non-finite and non-boss rotation ignored; boss rotation persists through hit/resize; replacement and next boss reset; disposal remains idempotent.
+- Unit/integration: pointer/touch/keyboard intents remain unchanged; non-finite rotation ignored; all enemy types rotate; azimuth persists through hits, resize, lethal animation, and every replacement pair; disposal remains idempotent.
 - Persistence: valid historical V1/V2/V3 load/reload remains green and no azimuth/owner field appears in serialized saves.
-- Deployed: desktop pointer + keyboard and 390px touch prove ordinary -> boss -> ordinary -> next boss, stationary attack, drag suppression, modal isolation, responsive framing, reload reset, clean console/network.
+- Deployed: desktop pointer + keyboard and 390px touch prove ordinary -> ordinary -> boss -> ordinary -> Golden -> boss continuity, stationary attack, drag suppression, modal isolation, responsive framing, reload reset, clean console/network.
 - Gates: implementation self-check, independent review, independent QA, exact-SHA CI/Pages verification, and Manager closure.

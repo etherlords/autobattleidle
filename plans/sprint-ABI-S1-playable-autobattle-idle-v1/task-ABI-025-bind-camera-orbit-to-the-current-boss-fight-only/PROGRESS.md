@@ -4,8 +4,8 @@ id: ABI-025
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 51
-status: Done
+revision: 106
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -22,9 +22,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Done
-- Revision: 51
-- Last update: Released task claim: Release completed ABI-025 after all gates
+- Status: In QA
+- Revision: 106
+- Last update: Publish the reviewed SHA and verify universal orbit in isolated deployed desktop, touch, keyboard, transition, Reset, and reload scenarios.
 
 ## Execution plan
 
@@ -36,8 +36,38 @@ requiredGates:
 - [x] orbit-close: Manager syncs accepted Vault behavior, closes Planner, commits, pushes, and proves exact-SHA CI/Pages
 - [x] orbit-fixture-repair: Implementation owner replaces synthetic orbit test encounters with production boss and Golden Bug cadence, then reruns checks
 - [x] orbit-fresh-gates: Fresh independent Reviewer and browser QA rerun after the bounded production-fixture repair
+- [x] orbit-reopen-preflight-v2: Manager refreshes the corrected universal-orbit contract, current lifecycle code, transition matrix, persistence class, and deployed QA cases
+- [x] orbit-universal-eligibility-v2: Implementation owner removes boss-only input and camera-angle gating so ordinary, boss, and Golden enemies all use the existing azimuth
+- [x] orbit-continuity-v2: Implementation owner removes boss encounter ownership and replacement-time azimuth reset while retaining enemy-specific framing and session initialization reset
+- [x] orbit-transition-regressions-v2: Implementation owner proves continuous azimuth across ordinary, boss, and Golden replacement pairs, lethal handoff, hit, high APS, resize, and reduced motion
+- [x] orbit-input-regressions-v2: Implementation owner preserves pointer/touch/keyboard orbit, stationary attack, drag suppression, modal isolation, finite-input guards, disposal, and no-save behavior
+- [x] orbit-self-check-v2: Implementation owner runs focused battlefield/application tests, persistence regressions, pnpm check, and diff check
+- [x] orbit-independent-review-v2: Fresh independent Reviewer verifies the corrected product contract, root-cause removal, transition continuity, input behavior, and regression coverage
+- [~] orbit-independent-qa-v2: Fresh independent QA verifies ordinary/boss/Golden orbit and continuous angle on desktop, 390px touch, keyboard, reload boundary, and exact-SHA Pages
+- [ ] orbit-manager-closure-v2: Manager records verification, updates Vault behavior, commits and publishes the coherent fix, proves exact-SHA deployment, and closes the reopened task
+- [x] orbit-review-repair-v2: Implementation owner adds explicit Reset camera reset, updates universal-orbit accessibility text, and reconciles the Vault contract
+- [x] orbit-vault-readback-repair-v2: Manager forces a fresh Vault index and records the corrected hash-bound HUD/input readback
+- [x] orbit-golden-exit-repair-v2: Implementation owner proves Golden Bug exit preserves a nonzero azimuth before separately testing boss rotation and Reset
 
 ## Events
+
+### evt-96d4af98-8ce2-4ca3-b40c-86ddc0b09025
+
+- Timestamp: 2026-08-31T23:46:29.352Z
+- Actor: root-abi025-reopen
+- Operation: task.reopen.fallback
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: Reopened ABI-025 after correcting the product contract from boss-only reset behavior to universal orbit with continuous azimuth across all enemy replacements
+- Idempotency key: abi-025-reopen-universal-orbit-fallback-20260901
+- Evidence:
+  - Explicit user correction: ordinary enemies, bosses, and Golden Bugs must all be orbitable
+  - Explicit user correction: camera angle must not reset between enemies
+  - planner_task_advance rejected Done -> Ready because high-assurance declares Done terminal
+  - planner_workflow_get confirmed no outgoing Done transition and allows direct canonical Markdown fallback
+  - planner_doctor healthy with no recovery required before fallback
+  - BRIEF.md revision 14
+  - SPRINT-BOARD.md revision 469
 
 ### evt-104e1bad-ba39-43cf-9111-a767a5fa1151
 
@@ -932,3 +962,909 @@ requiredGates:
 - Branch: continue-abis1-after-visual-families
 - Evidence:
   - None
+
+### evt-0cada5be-e193-4019-8877-3813a62b081a
+
+- Timestamp: 2026-08-31T23:48:41.945Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Add corrected ABI-025 reopen step: orbit-reopen-preflight-v2.
+- Idempotency key: abi-025-add-orbit-reopen-preflight-v2-20260901
+- Request fingerprint: 8c54213a3a65a9f8ea179e27db1c814aa89f603fbc1818f3960f0a4534e27f5e
+- Action: add
+- Step ID: orbit-reopen-preflight-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-5bebf5ae-68b7-44d0-99ce-bd9636a38cc4
+
+- Timestamp: 2026-08-31T23:48:43.403Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Add corrected ABI-025 reopen step: orbit-universal-eligibility-v2.
+- Idempotency key: abi-025-add-orbit-universal-eligibility-v2-20260901
+- Request fingerprint: 9b4ff3f285253e2680ee1f35f586e94318497bd5e93ba043ec48f303a6a2ca7f
+- Action: add
+- Step ID: orbit-universal-eligibility-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-94d4c9a2-9582-4b14-b427-8e86d1983d3b
+
+- Timestamp: 2026-08-31T23:48:44.839Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Add corrected ABI-025 reopen step: orbit-continuity-v2.
+- Idempotency key: abi-025-add-orbit-continuity-v2-20260901
+- Request fingerprint: 3a0e9f523bbd84da6b2265e9e5f3f2d940728892defa091a894a5ddbc91b08cd
+- Action: add
+- Step ID: orbit-continuity-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-ba46b7b9-437f-4309-b602-f9ae3b3d5a75
+
+- Timestamp: 2026-08-31T23:48:46.210Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Add corrected ABI-025 reopen step: orbit-transition-regressions-v2.
+- Idempotency key: abi-025-add-orbit-transition-regressions-v2-20260901
+- Request fingerprint: a058933d1d7cfbacef268a72bda354eea0b3591185fc659701964ea7ac7f32db
+- Action: add
+- Step ID: orbit-transition-regressions-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-b1eb1b8f-9579-4a5a-a8f6-0534dbd7cc28
+
+- Timestamp: 2026-08-31T23:48:47.740Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: Add corrected ABI-025 reopen step: orbit-input-regressions-v2.
+- Idempotency key: abi-025-add-orbit-input-regressions-v2-20260901
+- Request fingerprint: 097ea7bc70a5147bb095d4865f2f9222ab5565d9b0659174336fb4b66235df7a
+- Action: add
+- Step ID: orbit-input-regressions-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-9c3caa40-2f93-46bd-a74d-83187bdc599f
+
+- Timestamp: 2026-08-31T23:48:49.197Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Add corrected ABI-025 reopen step: orbit-self-check-v2.
+- Idempotency key: abi-025-add-orbit-self-check-v2-20260901
+- Request fingerprint: abf6c704a8dcb8c1e98c232238e3393b7cff054e9e096dbb2a7fb886bde29e7f
+- Action: add
+- Step ID: orbit-self-check-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-9737abe2-5942-4ed2-934d-04676ab49df7
+
+- Timestamp: 2026-08-31T23:48:50.671Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Add corrected ABI-025 reopen step: orbit-independent-review-v2.
+- Idempotency key: abi-025-add-orbit-independent-review-v2-20260901
+- Request fingerprint: d500aabfa64389be9e24b71ba315f02ee01a0daf332634c308a3f406414c75cb
+- Action: add
+- Step ID: orbit-independent-review-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-3edd76da-9dbf-46f4-981b-a4809349b02a
+
+- Timestamp: 2026-08-31T23:48:52.158Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: Add corrected ABI-025 reopen step: orbit-independent-qa-v2.
+- Idempotency key: abi-025-add-orbit-independent-qa-v2-20260901
+- Request fingerprint: a621d5bd6e5412a3b164d53571f8095b1c1d20813c212a207a3cecbd94455a09
+- Action: add
+- Step ID: orbit-independent-qa-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-cfae0eac-d414-4b23-81ad-7b57802db4fb
+
+- Timestamp: 2026-08-31T23:48:53.643Z
+- Actor: root-abi025-reopen
+- Operation: execution_plan.update
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Add corrected ABI-025 reopen step: orbit-manager-closure-v2.
+- Idempotency key: abi-025-add-orbit-manager-closure-v2-20260901
+- Request fingerprint: 8f7124b6536bdbeb594a90de8830bfc8d1fb4ddbf289357f12b2699da3cfaa5c
+- Action: add
+- Step ID: orbit-manager-closure-v2
+- Evidence:
+  - BRIEF revision 14 universal-orbit acceptance.
+  - User correction: preserve azimuth across every enemy replacement.
+
+### evt-d179353e-b876-4982-bc36-b32aeecf6082
+
+- Timestamp: 2026-08-31T23:49:02.629Z
+- Actor: root-abi025-reopen
+- Operation: progress.append
+- Prior revision: 61
+- Resulting revision: 62
+- Summary: EVENT checkpoint — root-abi025-reopen — terminal-task reopen used the documented direct Markdown fallback after Planner rejected Done -> Ready; corrected BRIEF, board, analysis, guide, and added a fresh managed implementation/review/QA cycle.
+- Idempotency key: abi-025-record-reopen-fallback-20260901
+- Evidence:
+  - planner_task_advance CONFLICT: Done -> Ready not allowed
+  - planner_workflow_get: Done has no outgoing transitions; fallback allowed
+  - planner_doctor healthy; no recovery required
+  - BRIEF revision 14 and board revision 469
+  - src/game/battlefield/lifecycle.ts bossOrbitEnabled, bossEncounterKey, and replacement reset root cause
+
+### evt-688c0029-2560-4a78-b75d-8e2fe5deeaf2
+
+- Timestamp: 2026-09-01T02:15:31.158Z
+- Actor: codex-root
+- Operation: claim.acquire
+- Prior revision: 62
+- Resulting revision: 63
+- Summary: Claimed task lease: Implement and verify camera orbit availability and azimuth persistence across enemy replacements.
+- Idempotency key: abi025-claim-root-20260901-r1
+- Request fingerprint: 27cccfdf2b2796ba4450408ef6b5ce56fb2e5636ac7350a6f9f73926d60ec099
+- Agent ID: codex-root
+- Session ID: abi-s1-continuation-20260901
+- Intent: Implement and verify camera orbit availability and azimuth persistence across enemy replacements.
+- Branch: continue-abis1-after-visual-families
+- Expires at: 2026-09-01T03:15:31.158Z
+- Evidence:
+  - None
+
+### evt-9119ae76-d157-4ee9-ad3d-5065a3c06cef
+
+- Timestamp: 2026-09-01T02:15:55.782Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 63
+- Resulting revision: 64
+- Summary: Begin corrected universal camera-orbit fix after fresh Planner and Vault preflight.
+- Idempotency key: abi025-ready-to-in-progress-v2
+- Request fingerprint: e917a8e03cf4d48918b3782f84d8b5c56ec76197316bda732cadf626aaab7382
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - planner://work-item/ABI-025/artifact/BRIEF.md
+  - planner://work-item/ABI-025/artifact/ANALYSIS.md
+  - planner://work-item/ABI-025/artifact/IMPLEMENTATION-GUIDE.md
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+  - vault:AUTOBATTLEIDLE-DOC-20260827-A7FD1F#Presentation@e555fc785f095eb9ff37cb66abe2870552b8353040015ab12165b648f8bc9277
+
+### evt-05c67b7e-4570-41f8-bf92-7b1fb9c95049
+
+- Timestamp: 2026-09-01T02:16:04.800Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 64
+- Resulting revision: 65
+- Summary: Trace the live camera owner, replacement reset, input path, transition matrix, and session-only persistence boundary.
+- Idempotency key: abi025-preflight-v2-start
+- Request fingerprint: 66c4a52d28b6e003c0c153053097f1f8e2c97fce60d9279b31dc7a8643362ec8
+- Action: set_state
+- Step ID: orbit-reopen-preflight-v2
+- State: in_progress
+- Evidence:
+  - planner://work-item/ABI-025/artifact/ANALYSIS.md
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+
+### evt-9c7b57da-4819-4db0-a56a-ab3d6ca8f2ca
+
+- Timestamp: 2026-09-01T02:16:33.601Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 65
+- Resulting revision: 66
+- Summary: Fresh preflight confirms three root causes in BattlefieldLifecycle: boss-only rotation guard, ordinary/Golden azimuth zero substitution, and replacement-time boss-key reset. HUD/application routing and save schema remain unchanged.
+- Idempotency key: abi025-preflight-v2-root-cause
+- Evidence:
+  - src/game/battlefield/lifecycle.ts:103-105
+  - src/game/battlefield/lifecycle.ts:162-164
+  - src/game/battlefield/lifecycle.ts:214-234
+  - src/game/battlefield/lifecycle.ts:291-303
+  - src/app/application.ts:205
+  - src/game/battlefield.test.ts:595-769
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+
+### evt-4ed0b2a0-83c3-41ff-8ff8-4a247dc2726f
+
+- Timestamp: 2026-09-01T02:16:43.816Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 66
+- Resulting revision: 67
+- Summary: Corrected universal-orbit contract, code ownership, transition matrix, and no-schema boundary are frozen.
+- Idempotency key: abi025-preflight-v2-complete
+- Request fingerprint: a5f71827ef8988ae42ae789fc17dcac5a551bfc551e43577b070ba8110be594b
+- Action: set_state
+- Step ID: orbit-reopen-preflight-v2
+- State: complete
+- Evidence:
+  - planner-event:evt-9c7b57da-4819-4db0-a56a-ab3d6ca8f2ca
+
+### evt-0cee2d7c-33d7-45d5-9327-970540cddbfe
+
+- Timestamp: 2026-09-01T02:16:45.250Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 67
+- Resulting revision: 68
+- Summary: Remove boss-only eligibility while preserving existing camera framing and input routing.
+- Idempotency key: abi025-universal-eligibility-v2-start
+- Request fingerprint: 511a64d08d783420dfcca888fe88ceecda67b7e3d7de6f2002a5c9320650f716
+- Action: set_state
+- Step ID: orbit-universal-eligibility-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+
+### evt-88dbcff4-e46d-4c16-bbfd-0ee8b6496962
+
+- Timestamp: 2026-09-01T02:18:20.429Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 68
+- Resulting revision: 69
+- Summary: Ordinary, boss, and Golden enemies now share the existing finite-delta azimuth while retaining grade-specific framing.
+- Idempotency key: abi025-eligibility-v2-complete
+- Request fingerprint: 9e1645f7709a37d5db416dfec252de9411cf52170dffed7962db05f81e188f9f
+- Action: set_state
+- Step ID: orbit-universal-eligibility-v2
+- State: complete
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+  - src/game/battlefield.test.ts
+  - vitest:src/game/battlefield.test.ts=13/13
+
+### evt-ed4b45b7-ef66-4ebf-8bf5-9666acddb369
+
+- Timestamp: 2026-09-01T02:18:21.795Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 69
+- Resulting revision: 70
+- Summary: Remove replacement-owned azimuth reset and keep azimuth as battlefield-session presentation state.
+- Idempotency key: abi025-continuity-v2-start
+- Request fingerprint: 374da4f48ac292886caf0e20d6f301a669c21cb722af7a6061c7da09af5ee289
+- Action: set_state
+- Step ID: orbit-continuity-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/lifecycle.ts:292-303
+
+### evt-cbca1a29-6162-4d10-9285-5388b25df34e
+
+- Timestamp: 2026-09-01T02:18:23.182Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 70
+- Resulting revision: 71
+- Summary: Enemy replacement no longer owns or resets azimuth; new battlefield construction remains the only implemented reset boundary.
+- Idempotency key: abi025-continuity-v2-complete
+- Request fingerprint: c4b0ef7964c4ee955e85b9c8e820c548c91a68aa764114c1d5270e2f89935d35
+- Action: set_state
+- Step ID: orbit-continuity-v2
+- State: complete
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+  - vitest:src/game/battlefield.test.ts=13/13
+
+### evt-58f0f26d-9592-452d-a298-3d06f11b3b0b
+
+- Timestamp: 2026-09-01T02:18:24.624Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: Strengthen transition regression coverage for ordinary, boss, Golden, lethal handoff, hit, and resize continuity.
+- Idempotency key: abi025-transition-tests-v2-start
+- Request fingerprint: 97c6bcf07e8e51e60d907eb212b8784649b5576f17df1d76b5b5ff714f8a8c6e
+- Action: set_state
+- Step ID: orbit-transition-regressions-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield.test.ts:595-780
+
+### evt-716223bb-e9cd-410f-83ce-4c2cacf07d97
+
+- Timestamp: 2026-09-01T02:19:27.106Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: Transition tests prove continuous azimuth across ordinary, boss, Golden, same-grade, hit, lethal handoff, and resize paths.
+- Idempotency key: abi025-orbit-transition-regressions-v2-complete-72
+- Request fingerprint: 6f0ed0c013d91167f7b24d38eefbd4a05c025c8db61ca56c032edbda11c7d248
+- Action: set_state
+- Step ID: orbit-transition-regressions-v2
+- State: complete
+- Evidence:
+  - src/game/battlefield.test.ts
+  - vitest:src/game/battlefield.test.ts=13/13
+
+### evt-f9762316-bc44-4995-ab0d-e264147b44f3
+
+- Timestamp: 2026-09-01T02:19:28.444Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: Verify unchanged pointer, touch, keyboard, finite-input, modal, persistence, and disposal contracts.
+- Idempotency key: abi025-orbit-input-regressions-v2-in_progress-73
+- Request fingerprint: 23c31300765ec016f695fc2fdaed110b07b239e9fbef842a20689df29d036485
+- Action: set_state
+- Step ID: orbit-input-regressions-v2
+- State: in_progress
+- Evidence:
+  - src/app/application.ts:205
+  - src/ui/hud.ts
+
+### evt-f32dcddf-6232-443f-b7c1-5bf81d1a524f
+
+- Timestamp: 2026-09-01T02:19:30.090Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 74
+- Resulting revision: 75
+- Summary: Existing application/HUD suites and focused battlefield checks preserve input arbitration, finite guards, disposal, and no-save behavior.
+- Idempotency key: abi025-orbit-input-regressions-v2-complete-74
+- Request fingerprint: 3e597f2a2afbcc013ec4008142e9532b92e7136eb177f2979789c04205a93117
+- Action: set_state
+- Step ID: orbit-input-regressions-v2
+- State: complete
+- Evidence:
+  - pnpm-check:20-files-185-tests-pass
+  - src/app/application.test.ts
+  - src/ui/hud.test.ts
+
+### evt-efe0e8d7-ed25-45c2-a328-9978e3a387b1
+
+- Timestamp: 2026-09-01T02:19:31.459Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 75
+- Resulting revision: 76
+- Summary: Run the canonical repository gate and inspect the bounded diff.
+- Idempotency key: abi025-orbit-self-check-v2-in_progress-75
+- Request fingerprint: 9cb4a9d464b4d9f7f7720c54fe10f7cfcbfa7c623a742eeab61d4e58864aabe5
+- Action: set_state
+- Step ID: orbit-self-check-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+  - src/game/battlefield.test.ts
+
+### evt-c98de321-7714-4c80-a76b-b16a9b4eab19
+
+- Timestamp: 2026-09-01T02:19:32.866Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 76
+- Resulting revision: 77
+- Summary: Focused battlefield tests and full pnpm check pass; diff is limited to camera lifecycle root cause and regression coverage.
+- Idempotency key: abi025-orbit-self-check-v2-complete-76
+- Request fingerprint: bb9af3b381a293ea5162b54fd42560aecc853cf0bc9c441e2a68efe21ac25554
+- Action: set_state
+- Step ID: orbit-self-check-v2
+- State: complete
+- Evidence:
+  - vitest:src/game/battlefield.test.ts=13/13
+  - pnpm-check:20-files-185-tests-pass
+  - git-diff-check=pass
+
+### evt-7092e05d-9f16-4e55-8929-8913a3aa661a
+
+- Timestamp: 2026-09-01T02:19:33.896Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 77
+- Resulting revision: 78
+- Summary: Implementation owner confirms the universal orbit root-cause fix and complete local regression gate.
+- Idempotency key: abi025-implementation-self-check-v2
+- Request fingerprint: 41898f6577936cd33991bd01683f1a56358eabb6a7fabdf1ce6f8b4eed07d3c5
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - vitest:src/game/battlefield.test.ts=13/13
+  - pnpm-check:20-files-185-tests-pass
+  - git-diff-check=pass
+
+### evt-e7dbe93c-7f44-4421-aee9-8b891643540c
+
+- Timestamp: 2026-09-01T02:19:40.156Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 78
+- Resulting revision: 79
+- Summary: Hand the bounded universal camera-orbit fix to a fresh independent reviewer.
+- Idempotency key: abi025-in-progress-to-review-v2
+- Request fingerprint: 39460c69c78995940ebbefe7a8c84631588c25ddc440d6b6e2ac174c57a715a4
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - planner-gate:implementation-self-check=pass
+  - pnpm-check:20-files-185-tests-pass
+
+### evt-70c1f277-c7f5-401d-bead-bda813dbdff8
+
+- Timestamp: 2026-09-01T02:25:53.237Z
+- Actor: abi025-independent-review-v2
+- Operation: gate.record
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: Independent review requires explicit game Reset camera reset, corrected accessible orbit wording, and canonical Vault contract update.
+- Idempotency key: abi025-independent-review-v2-fail
+- Request fingerprint: 77d3d5492c145b555b6d24551e39c4985053e33d4f0c44c1d4d07921e8e3b4e3
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - src/game/battlefield/lifecycle.ts:17
+  - src/app/application.ts:220
+  - src/ui/hud.ts:45
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@8ec342fd63e5680cd713b1cbfde5ae40e508b3ea51281e2a3a585707ac6d937b
+  - review:focused-battlefield=13/13
+  - review:pnpm-check=185/185
+
+### evt-5b4e9429-799e-4e72-b115-c78a0199c97b
+
+- Timestamp: 2026-09-01T02:25:54.360Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Return ABI-025 to the implementation owner for the bounded Reset, accessibility, and Vault repair.
+- Idempotency key: abi025-review-to-in-progress-repair-v2
+- Request fingerprint: af6a94fcbbcc4bc35a7ba6d9181b5aa346db302a56f2f618958d0c93c0035bc0
+- From status: In Review
+- To status: In Progress
+- Evidence:
+  - planner-gate:independent-review=fail
+  - review-findings:reset-aria-vault
+
+### evt-6549c983-5c53-4ed5-bca7-0cca5fc764d6
+
+- Timestamp: 2026-09-01T02:26:14.380Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: Add the bounded repair required by independent review.
+- Idempotency key: abi025-add-review-repair-v2
+- Request fingerprint: 101321eacd34eee1b4fe735ae90983aaf772d5ce80f3c2b78542fd84fa5e5724
+- Action: add
+- Step ID: orbit-review-repair-v2
+- Evidence:
+  - planner-gate:independent-review=fail
+
+### evt-fd6485e5-b311-4180-bc50-74a7717637ee
+
+- Timestamp: 2026-09-01T02:26:16.001Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 82
+- Resulting revision: 83
+- Summary: Apply the three review findings at their existing owners.
+- Idempotency key: abi025-review-repair-v2-start
+- Request fingerprint: c182c961c10337e7bbd2c067d36212e0958559afe2fd55f8cc37ca2565c00c74
+- Action: set_state
+- Step ID: orbit-review-repair-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield/lifecycle.ts
+  - src/app/application.ts
+  - src/ui/hud.ts
+
+### evt-b2de808a-8d55-4382-a1dc-954a8f65250f
+
+- Timestamp: 2026-09-01T02:26:17.511Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 83
+- Resulting revision: 84
+- Summary: Explicit reset, accurate accessible text, focused regressions, and canonical Vault readback now satisfy all review findings.
+- Idempotency key: abi025-review-repair-v2-complete
+- Request fingerprint: 30816600f96c23f1c7923fd17f0f697dfea064ef48984b90dbb4d2a0971e4c05
+- Action: set_state
+- Step ID: orbit-review-repair-v2
+- State: complete
+- Evidence:
+  - src/game/battlefield/lifecycle.ts:resetCamera
+  - src/app/application.ts:confirmed-reset
+  - src/ui/hud.ts:battlefield-aria-label
+  - tests:focused-3-files-29/29
+  - pnpm-check:20-files-185-tests-pass
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b
+  - vault-doctor:0-errors-0-warnings
+
+### evt-beed11d5-8131-4aa5-ac2b-2cd779c7bcdd
+
+- Timestamp: 2026-09-01T02:26:18.555Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 84
+- Resulting revision: 85
+- Summary: Implementation owner verifies the review repair with focused tests, full check, Vault readback, and Vault doctor.
+- Idempotency key: abi025-implementation-self-check-v2-repair
+- Request fingerprint: ce060c554a98d732cec4ecca8b938425ef92710739c82c233d33c2be2d35cf82
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - tests:focused-3-files-29/29
+  - pnpm-check:20-files-185-tests-pass
+  - vault-doctor:0-errors-0-warnings
+
+### evt-dc11b0bd-e9de-427d-8c79-14fa72c47867
+
+- Timestamp: 2026-09-01T02:26:19.850Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 85
+- Resulting revision: 86
+- Summary: Return the corrected universal-orbit implementation to a fresh independent review.
+- Idempotency key: abi025-in-progress-to-review-v2-repair
+- Request fingerprint: 40b875074e5e703751b94ed3a80c6e8659f8a2fdbcf50cfcda472344a4fa0faf
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - planner-gate:implementation-self-check=pass
+  - review-repair:reset-aria-vault-complete
+
+### evt-43df7ded-0a1e-4139-b214-ec1df82612fc
+
+- Timestamp: 2026-09-01T02:32:07.667Z
+- Actor: abi025-independent-review-v2
+- Operation: gate.record
+- Prior revision: 86
+- Resulting revision: 87
+- Summary: Independent review requests an explicit fresh Vault index and hash-bound readback for the corrected HUD contract.
+- Idempotency key: abi025-independent-review-v2-stale-hash-fail
+- Request fingerprint: dff5b77a103e45e07255fbdfa7c392fb5e17fab1ec08e3b3f392d45a8e88b79d
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - review:finding=stale-hash-bound-vault-readback
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input
+
+### evt-ea33e8fa-0648-4dd4-bcb1-2d66f1015e81
+
+- Timestamp: 2026-09-01T02:32:08.725Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 87
+- Resulting revision: 88
+- Summary: Return ABI-025 for one bounded Vault index/readback repair.
+- Idempotency key: abi025-review-to-in-progress-vault-readback
+- Request fingerprint: 00cec0d1c647fa87a28dc299bfe31507f7b2bb8fddb47ce8af3d081ca6283fb6
+- From status: In Review
+- To status: In Progress
+- Evidence:
+  - planner-gate:independent-review=fail
+  - review-finding:vault-hash-readback
+
+### evt-5b6cdf04-ad71-4f1c-b42b-b7dac4276d43
+
+- Timestamp: 2026-09-01T02:32:11.263Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 88
+- Resulting revision: 89
+- Summary: Add the bounded documentation verification repair.
+- Idempotency key: abi025-add-vault-readback-repair
+- Request fingerprint: 93df8f16375513b3f10b6de9a6d7dcbebafd87c069436c2b1c50e537a8f401c4
+- Action: add
+- Step ID: orbit-vault-readback-repair-v2
+- Evidence:
+  - review-finding:vault-hash-readback
+
+### evt-d76ef0b9-cb40-41a7-95e7-056a2a9722e8
+
+- Timestamp: 2026-09-01T02:32:13.069Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: Force strict Vault freshness before final independent review.
+- Idempotency key: abi025-vault-readback-repair-start
+- Request fingerprint: e0bfb5476e5e0030e3503770fd595af4ec74908cfe0109cf0ef7e338472d4e6b
+- Action: set_state
+- Step ID: orbit-vault-readback-repair-v2
+- State: in_progress
+- Evidence:
+  - vault-index:embed=true
+
+### evt-b7f4d644-614c-491c-8940-57c68aacb275
+
+- Timestamp: 2026-09-01T02:32:15.056Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 90
+- Resulting revision: 91
+- Summary: Strict Vault index and bounded MCP readback now return the corrected content at hash 5eecd7c9 with zero doctor findings.
+- Idempotency key: abi025-vault-readback-repair-complete
+- Request fingerprint: fbb371551c8a945d366d91b3b531b368b94504563735dd402935c727293a6d06
+- Action: set_state
+- Step ID: orbit-vault-readback-repair-v2
+- State: complete
+- Evidence:
+  - vault-index:indexFresh=true,lexicalFresh=true,pendingEmbeddings=0
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b
+  - vault-doctor:0-errors-0-warnings
+
+### evt-90841d94-bcb2-4f92-937e-a599cd6167dd
+
+- Timestamp: 2026-09-01T02:32:16.357Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 91
+- Resulting revision: 92
+- Summary: Implementation owner confirms code gates and fresh hash-bound Vault readback after the bounded documentation repair.
+- Idempotency key: abi025-self-check-after-vault-readback
+- Request fingerprint: 02cd3c1dea1249a21b775ed500add0023bd9bdcddf999773d1c8b32c641b2398
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - pnpm-check:20-files-185-tests-pass
+  - vault-index:indexFresh=true
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b
+
+### evt-4fe1167f-2564-4412-8054-17fff0a61094
+
+- Timestamp: 2026-09-01T02:32:17.398Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 92
+- Resulting revision: 93
+- Summary: Return ABI-025 for final independent review with a strict fresh Vault receipt.
+- Idempotency key: abi025-in-progress-to-final-review-vault-fresh
+- Request fingerprint: 372c00fcee511e966d15697dafe47ccb71ae37d92e0d45304e6e341ff27638af
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - planner-gate:implementation-self-check=pass
+  - vault-index:indexFresh=true
+
+### evt-04d06728-f2a3-4c78-857f-bd2827db0350
+
+- Timestamp: 2026-09-01T02:38:40.563Z
+- Actor: abi025-independent-review-v3
+- Operation: gate.record
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: Fresh review requires Golden-to-boss continuity to retain a nonzero azimuth; cross-agent Vault stale hash is tracked separately as a confirmed tooling defect.
+- Idempotency key: abi025-independent-review-v3-golden-exit-fail
+- Request fingerprint: 700499ce8e7df6dd3752855435e208c868d82a86d7b660b62e5a84d5af80f0a4
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - review-finding:golden-to-boss-nonzero-azimuth-gap
+  - src/game/battlefield.test.ts:769-776
+  - review:focused-tests=185/185
+  - vault-tooling-gap:cross-agent-stale-catalog-confirmed
+
+### evt-f02a65a5-51ae-4559-aec0-c51783c60e64
+
+- Timestamp: 2026-09-01T02:38:41.718Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Return ABI-025 for the final bounded Golden-exit regression repair.
+- Idempotency key: abi025-review-to-in-progress-golden-exit
+- Request fingerprint: 431f7a1bfc5f0fe459d985a8485b74f6ab2bd919bec24c083330fef321bb9214
+- From status: In Review
+- To status: In Progress
+- Evidence:
+  - planner-gate:independent-review=fail
+  - review-finding:golden-to-boss-nonzero-azimuth
+
+### evt-fae35e11-5a26-4d1a-aa72-856b5de643ac
+
+- Timestamp: 2026-09-01T02:38:43.794Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: Add the final bounded transition regression repair.
+- Idempotency key: abi025-add-golden-exit-repair
+- Request fingerprint: 3dbbb4a56e7e66f02bfe8f918dbb8add11f22cd9dcda16bf98090ba9cccb632b
+- Action: add
+- Step ID: orbit-golden-exit-repair-v2
+- Evidence:
+  - review-finding:golden-to-boss-nonzero-azimuth
+
+### evt-0f8fd8b5-6d16-4c79-8102-96159daf5c02
+
+- Timestamp: 2026-09-01T02:38:45.175Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: Retain a nonzero Golden azimuth across the boss replacement in the focused lifecycle test.
+- Idempotency key: abi025-golden-exit-repair-start
+- Request fingerprint: c0140ff9c1f9b8c8cae5a158fd9b5dc6c19d17b65e60e02b4808f5510d1f651f
+- Action: set_state
+- Step ID: orbit-golden-exit-repair-v2
+- State: in_progress
+- Evidence:
+  - src/game/battlefield.test.ts
+
+### evt-31f4c2f9-ab02-4e5c-a274-80ea50d37013
+
+- Timestamp: 2026-09-01T02:38:47.054Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Golden-to-boss now proves 45-degree continuity, followed by independent boss rotation and explicit Reset assertions.
+- Idempotency key: abi025-golden-exit-repair-complete
+- Request fingerprint: febc67dc838365e1033b38ab6c7be084a6472abf4a0f6ff65828a148a92bec6a
+- Action: set_state
+- Step ID: orbit-golden-exit-repair-v2
+- State: complete
+- Evidence:
+  - src/game/battlefield.test.ts:golden-to-boss-45-degree-continuity
+  - tests:focused-3-files-29/29
+  - pnpm-check:20-files-185-tests-pass
+  - git-diff-check=pass
+
+### evt-9b045f1d-be6d-4068-b8f5-7816bac76aac
+
+- Timestamp: 2026-09-01T02:38:48.400Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 98
+- Resulting revision: 99
+- Summary: Implementation owner verifies the final Golden-exit regression repair and complete canonical gate.
+- Idempotency key: abi025-self-check-after-golden-exit
+- Request fingerprint: d23b880d9688a2051c8c0d28dfd8f921cbcfa518b219c13cb56ffc137b720cca
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - tests:focused-3-files-29/29
+  - pnpm-check:20-files-185-tests-pass
+  - git-diff-check=pass
+
+### evt-053dd9ac-0b92-4539-baca-fa6a4accf24e
+
+- Timestamp: 2026-09-01T02:38:49.865Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 99
+- Resulting revision: 100
+- Summary: Return the final bounded ABI-025 diff to fresh independent review.
+- Idempotency key: abi025-in-progress-to-final-review-golden-exit
+- Request fingerprint: e9921e6744d2f44776d480a4a403465a3757c869fc263c0d5306b1ed2c066ef6
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - planner-gate:implementation-self-check=pass
+  - review-repair:golden-exit-complete
+
+### evt-0d98939c-ff69-43e9-993a-bf33c4b1d0ba
+
+- Timestamp: 2026-09-01T02:40:37.807Z
+- Actor: abi025-independent-review-v3
+- Operation: gate.record
+- Prior revision: 100
+- Resulting revision: 101
+- Summary: Fresh independent review approves universal orbit, nonzero Golden exit continuity, explicit Reset, accessibility, no-save boundary, and fresh Vault readback.
+- Idempotency key: abi025-independent-review-v3-pass
+- Request fingerprint: 3b698998885a3e52987a07ace5e605b2fd6efd6ba63b57ad726044cedb2ac521
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - review:APPROVE-no-P0-P3
+  - tests:focused-3-files-29/29
+  - pnpm-check:20-files-185-tests-pass
+  - vault:AUTOBATTLEIDLE-DOC-20260827-85CBFC#HUD-and-input@5eecd7c9076ae074c6bfacd1c045158f412dad6d5f608b17bb7ab44c8c46409b
+  - vault-reviewer-freshness-trigger=success
+
+### evt-3773d20c-c6b2-441f-a2c9-1758b1e45a7d
+
+- Timestamp: 2026-09-01T02:40:40.066Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 101
+- Resulting revision: 102
+- Summary: Advance the approved universal-orbit fix to independent deployed browser QA.
+- Idempotency key: abi025-review-to-qa-v2
+- Request fingerprint: d72236ad580b8c1f96a0e07316079d10fecd999f62ac9abd43c0557f56a9b48c
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - planner-gate:independent-review=pass
+  - pnpm-check:20-files-185-tests-pass
+
+### evt-2780b5d4-e696-4f6d-b95e-f1cf09b001fe
+
+- Timestamp: 2026-09-01T02:41:37.133Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 102
+- Resulting revision: 103
+- Summary: Recorded detailed append-only independent review evidence in REVIEW.md through the healthy-Planner Markdown fallback because Planner exposes no review-body writer.
+- Idempotency key: abi025-review-artifact-fallback-record
+- Evidence:
+  - planner-doctor:healthy-no-recovery
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-025-bind-camera-orbit-to-the-current-boss-fight-only/REVIEW.md
+  - review:APPROVE-no-P0-P3
+  - vault-tooling-gap:reported-to-orchestrator-thread-019ffcee-63d1-7c22-b35d-69f46be426dc
+
+### evt-aa63cda3-3f43-4995-afcb-3de499b15487
+
+- Timestamp: 2026-09-01T02:42:06.195Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 103
+- Resulting revision: 104
+- Summary: Represent the final fresh independent review run in the managed plan.
+- Idempotency key: abi025-review-step-final-start
+- Request fingerprint: d4354334f4645341709c8bf06baf2c46d7574167a8c31d8a49b9ef1ee5f55946
+- Action: set_state
+- Step ID: orbit-independent-review-v2
+- State: in_progress
+- Evidence:
+  - review:final-fresh-run
+
+### evt-05a4190f-1068-4dee-90c2-c1eada53baff
+
+- Timestamp: 2026-09-01T02:42:07.884Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 104
+- Resulting revision: 105
+- Summary: Final fresh independent review passes after bounded code, test, and Vault freshness repairs.
+- Idempotency key: abi025-review-step-final-complete-v3
+- Request fingerprint: 40f63da5365713584257613646900868b37499e11dff32d35d96f76b3b820093
+- Action: set_state
+- Step ID: orbit-independent-review-v2
+- State: complete
+- Evidence:
+  - planner-gate:independent-review=pass
+  - review:APPROVE-no-P0-P3
+
+### evt-5c81fbde-0efc-47be-8cbf-81ed038d55ff
+
+- Timestamp: 2026-09-01T02:42:09.579Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 105
+- Resulting revision: 106
+- Summary: Publish the reviewed SHA and verify universal orbit in isolated deployed desktop, touch, keyboard, transition, Reset, and reload scenarios.
+- Idempotency key: abi025-independent-qa-v2-start-v2
+- Request fingerprint: c0acd9e70561921c7a7e823d5af31915b624c0504c1502a00c9ca35947e7ab39
+- Action: set_state
+- Step ID: orbit-independent-qa-v2
+- State: in_progress
+- Evidence:
+  - task-status:In-QA
+  - review:APPROVE-no-P0-P3

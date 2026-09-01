@@ -220,6 +220,7 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     if (intent.type === "reset") {
       if (dependencies.window.confirm?.("Reset all saved progress?") !== true) return;
       dependencies.persistence.reset();
+      dependencies.game.resetCamera();
       controller.dispatch(battleCommands.reset());
       return;
     }

@@ -4,8 +4,8 @@ id: ABI-025
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 12
-status: Done
+revision: 23
+status: In QA
 sprintId: ABI-S1
 dependencies:
   - ABI-016
@@ -18,25 +18,28 @@ requiredGates:
   - manager-closure
 ---
 
-# ABI-025: Bind camera orbit to the current boss fight only
+# ABI-025: Allow camera orbit around every enemy and preserve azimuth across replacements
 
 ## Goal
 
-Bind camera orbit to the current boss fight only
+Allow camera orbit around every enemy and preserve the current viewing angle across enemy replacements
 
 ## Work item
 
 - Type: bug
-- Priority: normal
-- Status: Done
+- Priority: high
+- Status: In QA
 
 ## Acceptance criteria
 
-- [ ] Pointer, touch, and ArrowLeft/ArrowRight camera orbit are accepted only while the current enemy is a boss; ordinary enemies and Golden Bug encounters remain locked to canonical framing
-- [ ] Orbit azimuth belongs to the current boss fight identity: it persists through hits and resize during that fight, then resets when the boss is defeated, replaced, escaped from, or a different boss fight begins
-- [ ] A later boss always starts from canonical front framing and never inherits rotation from an earlier boss
-- [ ] Stationary attack, drag-versus-click suppression, modal input isolation, responsive radius/elevation, disposal, and session-only no-save behavior remain unchanged
-- [ ] Focused boss-identity lifecycle tests plus desktop, touch, keyboard, ordinary-to-boss-to-ordinary-to-next-boss browser QA, pnpm check, independent review, CI/Pages, and deployed proof pass
+- [ ] Pointer drag, touch drag, and ArrowLeft/ArrowRight orbit the camera around every currently displayed enemy, including ordinary enemies, bosses, and Golden Bug encounters; no enemy type is locked to canonical front framing.
+- [ ] The current camera azimuth is session-level battlefield presentation state and survives every visual enemy replacement: ordinary-to-ordinary, ordinary-to-boss, boss-to-ordinary, boss-to-boss, and Golden Bug entry or exit.
+- [ ] Enemy defeat, spawn, profile or grade change, lethal hit/death animation, encounter-level change, and replacement never reset or snap azimuth; the next enemy appears from the same viewing angle after the existing visual handoff.
+- [ ] Hits, automatic attacks, high-APS packets, resize, responsive radius/elevation changes, pause/resume, and reduced-motion mode preserve the current azimuth while continuing to frame the displayed enemy correctly.
+- [ ] Azimuth resets only at an explicit battlefield/session initialization or explicit user reset; it remains presentation-only and is not added to the save schema or persisted across a full page reload.
+- [ ] Stationary attack, drag-versus-click suppression, modal input isolation, keyboard accessibility, touch behavior, camera bounds, effect/death sequencing, and idempotent disposal remain unchanged.
+- [ ] Focused lifecycle tests cover orbit eligibility for ordinary, boss, and Golden enemies plus continuous azimuth across every transition pair, resize, reload boundary, explicit reset, non-finite input, and disposal.
+- [ ] Independent review, independent desktop/touch/keyboard browser QA, pnpm check, exact-SHA CI/Pages, and deployed ordinary-to-boss-to-ordinary-to-Golden transition proof pass before Manager closure.
 
 ## Dependencies
 

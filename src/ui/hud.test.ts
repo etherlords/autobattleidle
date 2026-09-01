@@ -357,6 +357,9 @@ describe("createHud", () => {
     battlefield.dispatch("keydown", { key: "ArrowRight", repeat: false });
     expect(attacks).toBe(3);
     expect(battlefield.tabIndex).toBe(0);
+    expect(battlefield.attributes.get("aria-label")).toBe(
+      "Battlefield. Press Enter or Space to attack; use Left and Right arrows to rotate the camera.",
+    );
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
     expect(element(host, "hud-status").children[3]?.textContent).toBe(
