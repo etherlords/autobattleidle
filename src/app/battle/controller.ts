@@ -74,7 +74,7 @@ export class BattleController {
           previousEnemy: expiredEnemy,
           type: "frame",
         },
-        "Golden Bug escaped.",
+        { message: "Golden Bug escaped." },
       );
     const previousEnemy = this.state.enemy;
     const goldenBugBefore = this.state.goldenBug !== null;
@@ -96,7 +96,7 @@ export class BattleController {
         source,
         type: "attack",
       },
-      battleEventMessages.attack(source, result.event, goldenBugBefore),
+      { message: battleEventMessages.attack(result.event, goldenBugBefore), source },
     );
   }
 
@@ -112,7 +112,7 @@ export class BattleController {
           previousEnemy: expiredEnemy,
           type: "frame",
         },
-        "Golden Bug escaped.",
+        { message: "Golden Bug escaped." },
       );
     if (
       this.automaticPaused ||
@@ -124,6 +124,8 @@ export class BattleController {
     const goldenBugBefore = this.state.goldenBug !== null;
     const { outcome: automaticOutcome, receipt: automaticReceipt } = this.automaticAttack();
     if (automaticOutcome.type === "ignored") return false;
+    const message = battleEventMessages.frame(automaticOutcome, automaticReceipt, goldenBugBefore);
+    if (message === undefined) return false;
     return this.publishMessage(
       {
         ...this.update(true),
@@ -133,7 +135,7 @@ export class BattleController {
         previousEnemy,
         type: "frame",
       },
-      battleEventMessages.frame(automaticOutcome, goldenBugBefore),
+      { message, packets: automaticReceipt, source: "automatic" },
     );
   }
 
@@ -212,7 +214,7 @@ export class BattleController {
       }
       this.state = result.state;
       successfulPurchases += 1;
-      this.addEvent(battleEventMessages.purchase(id, null));
+      this.addEvent({ message: battleEventMessages.purchase(id, null) });
     }
     if (successfulPurchases === 0) return false;
     return this.publish({
@@ -230,7 +232,7 @@ export class BattleController {
     this.automaticPaused = false;
     this.pausedAutomaticRemainingMs = 0;
     this.syncGoldenBugDeadline();
-    return this.publishMessage({ ...this.update(), type: "reset" }, battleEventMessages.reset());
+    return this.publishMessage({ ...this.update(), type: "reset" }, undefined);
   }
 
   private performRestore(state: CombatState): boolean {
@@ -239,10 +241,7 @@ export class BattleController {
     this.automaticPaused = false;
     this.pausedAutomaticRemainingMs = 0;
     this.syncGoldenBugDeadline();
-    return this.publishMessage(
-      { ...this.update(), type: "restore" },
-      battleEventMessages.restore(),
-    );
+    return this.publishMessage({ ...this.update(), type: "restore" }, undefined);
   }
 
   private update(persistenceChanged = false): BattleUpdate {
@@ -288,7 +287,10 @@ export class BattleController {
     this.goldenBugDeadlineMs = this.nowMs + COMBAT_BALANCE.goldenBugWindowMs;
   }
 
-  private publishMessage(event: BattleControllerEvent, message: string | undefined): boolean {
+  private publishMessage(
+    event: BattleControllerEvent,
+    message: Omit<BattleEvent, "id"> | undefined,
+  ): boolean {
     if (message !== undefined) this.addEvent(message);
     return this.publish({ ...event, events: this.events });
   }
@@ -298,8 +300,8 @@ export class BattleController {
     return true;
   }
 
-  private addEvent(message: string): void {
-    this.events = [...this.events, { id: this.nextEventId, message }].slice(-EVENT_HISTORY_LIMIT);
+  private addEvent(event: Omit<BattleEvent, "id">): void {
+    this.events = [...this.events, { id: this.nextEventId, ...event }].slice(-EVENT_HISTORY_LIMIT);
     this.nextEventId += 1;
   }
 

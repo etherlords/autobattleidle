@@ -338,8 +338,8 @@ describe("startApplication", () => {
       "coin",
     ]);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
-      "Manual hit: 40 damage",
-      "Manual kill: +1 coins",
+      "Hit: 40 damage",
+      "Kill: +1 coins",
     ]);
     expect(savedCoins).toEqual([100, 101]);
 
@@ -356,8 +356,8 @@ describe("startApplication", () => {
     upgrade("automatic-unlock");
     upgrade("automatic-unlock");
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
-      "Manual hit: 40 damage",
-      "Manual kill: +1 coins",
+      "Hit: 40 damage",
+      "Kill: +1 coins",
       "Purchased Unlock automatic attack",
     ]);
     expect(savedCoins).toEqual([100, 101, 100]);
@@ -434,8 +434,8 @@ describe("startApplication", () => {
     frames.delete(1);
     secondFrame(10_000);
     expect(snapshots.at(-1)?.events.map((event) => event.message)).toEqual([
-      "Automatic hit: 40 damage",
-      "Automatic kill: +1 coins",
+      "Hit: 40 damage",
+      "Kill: +1 coins",
     ]);
     expect(savedCoins).toEqual([0, 1]);
     app.dispose();
@@ -742,7 +742,7 @@ describe("startApplication", () => {
     attack();
     expect(lastSnapshot().enemy.health).toBe(200);
     expect(lastSnapshot().coins).toBe(2);
-    expect(lastSnapshot().events.at(-1)?.message).toBe("Manual kill: +1 coins");
+    expect(lastSnapshot().events.at(-1)?.message).toBe("Kill: +1 coins");
     expect(lastSnapshot().upgrades).toHaveLength(6);
     expect(savedCoins).toEqual([2]);
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([

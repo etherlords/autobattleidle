@@ -15,24 +15,44 @@ import {
 import { formatNumber } from "../../ui/number-format";
 import type { BattleControllerEvent, BattleUpdate } from "./contracts";
 
+type ResolvedAttackEvent = Exclude<AttackEvent, { readonly type: "ignored" }>;
+
+const formatMultiplier = (units: number): string => {
+  const rounded = Math.round(units * 100) / 100;
+  return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(2).replace(/0+$/, "");
+};
+
 const attackMessage = (
-  source: "manual" | "automatic",
-  outcome: AttackEvent,
+  outcome: ResolvedAttackEvent,
+  packets: { readonly count: number; readonly units: number } | undefined,
   goldenBugBefore = false,
-): string | undefined => {
-  if (outcome.type === "ignored") return undefined;
-  const label = source === "manual" ? "Manual" : "Automatic";
-  if (!outcome.defeated) return `${label} hit: ${formatNumber(outcome.damage).text} damage`;
+): string => {
+  if (!outcome.defeated) {
+    const damage = formatNumber(outcome.damage).text;
+    if (packets === undefined || packets.count <= 1) return `Hit: ${damage} damage`;
+    const baseDamage = outcome.damage / packets.units;
+    const base = Number.isInteger(baseDamage)
+      ? formatNumber(baseDamage).text
+      : formatMultiplier(baseDamage);
+    return `Hit: ${base} × ${formatMultiplier(packets.units)} = ${damage}`;
+  }
   const reward = formatNumber(outcome.reward);
   if (goldenBugBefore)
     return `Golden Bug reward: +${reward.text} coins${reward.text === reward.exact ? "" : ` (${reward.exact})`}`;
-  return `${label} kill: +${reward.text} coins`;
+  return `Kill: +${reward.text} coins`;
 };
 
 export const battleEventMessages = {
-  attack: attackMessage,
-  frame: (outcome: AttackEvent | null, goldenBugBefore = false): string | undefined =>
-    outcome === null ? undefined : attackMessage("automatic", outcome, goldenBugBefore),
+  attack: (outcome: ResolvedAttackEvent, goldenBugBefore = false): string =>
+    attackMessage(outcome, undefined, goldenBugBefore),
+  frame: (
+    outcome: AttackEvent | null,
+    packets: { readonly count: number; readonly units: number } | undefined,
+    goldenBugBefore = false,
+  ): string | undefined =>
+    outcome === null || outcome.type === "ignored"
+      ? undefined
+      : attackMessage(outcome, packets, goldenBugBefore),
   purchase: (id: string, reason: string | null): string =>
     reason ?? `Purchased ${UPGRADES.find((upgrade) => upgrade.id === id)?.label ?? id}`,
   reset: (): undefined => undefined,

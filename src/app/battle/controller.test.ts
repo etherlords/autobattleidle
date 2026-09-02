@@ -211,7 +211,7 @@ describe("BattleController", () => {
       enemy: { encounter: 51 },
     });
   });
-  it("publishes one explicit Golden Bug payout without changing the event shape", () => {
+  it("publishes one explicit Golden Bug payout with its manual source", () => {
     const player = createCombatState({ damage: 10, doubleRewardChance: 0 }).player;
     const initial = {
       ...createCombatState(player),
@@ -231,6 +231,7 @@ describe("BattleController", () => {
     expect(events[0]?.events.at(-1)).toEqual({
       id: 1,
       message: expect.any(String),
+      source: "manual",
     });
   });
   it("publishes complete synchronous commands with exact history and persistence flags", () => {
@@ -261,12 +262,16 @@ describe("BattleController", () => {
 
     expect(updates.map((event) => event.type)).toEqual(["attack", "purchase", "frame"]);
     expect(updates.map((event) => event.persistenceChanged)).toEqual([true, true, true]);
-    expect(updates.at(0)?.events.map((event) => event.message)).toEqual(["Manual kill: +1 coins"]);
+    expect(updates.at(0)?.events.map((event) => event.message)).toEqual(["Kill: +1 coins"]);
     expect(updates.at(-1)?.events.map((event) => event.message)).toEqual([
-      "Manual kill: +1 coins",
+      "Kill: +1 coins",
       "Purchased Unlock automatic attack",
-      "Automatic hit: 40 damage",
+      "Hit: 40 damage",
     ]);
+    expect(updates.at(-1)?.events.at(-1)).toMatchObject({
+      packets: { count: 1, units: 1 },
+      source: "automatic",
+    });
     expect(updates.at(-1)?.events.map((event) => event.id)).toEqual([1, 2, 3]);
     const lastUpdate = updates.at(-1);
     if (lastUpdate === undefined) throw new Error("Expected controller update");

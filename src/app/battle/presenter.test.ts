@@ -36,9 +36,9 @@ const attackEvent = (
   }) satisfies BattleControllerEvent;
 
 describe("battleEventMessages", () => {
-  it("formats numeric combat logs before the event log receives them", () => {
+  it("formats unified combat logs with grouped automatic attack math", () => {
     expect(
-      battleEventMessages.attack("manual", {
+      battleEventMessages.attack({
         armorPreventedDamage: 0,
         critical: false,
         damage: 900_000,
@@ -47,9 +47,37 @@ describe("battleEventMessages", () => {
         reward: 0,
         type: "hit",
       }),
-    ).toBe("Manual hit: 900K damage");
+    ).toBe("Hit: 900K damage");
     expect(
-      battleEventMessages.attack("automatic", {
+      battleEventMessages.frame(
+        {
+          armorPreventedDamage: 0,
+          critical: false,
+          damage: 340,
+          defeated: false,
+          penetration: 0,
+          reward: 0,
+          type: "hit",
+        },
+        { count: 4, units: 3.4 },
+      ),
+    ).toBe("Hit: 100 × 3.4 = 340");
+    expect(
+      battleEventMessages.frame(
+        {
+          armorPreventedDamage: 0,
+          critical: false,
+          damage: 40,
+          defeated: false,
+          penetration: 0,
+          reward: 0,
+          type: "hit",
+        },
+        { count: 1, units: 1 },
+      ),
+    ).toBe("Hit: 40 damage");
+    expect(
+      battleEventMessages.attack({
         armorPreventedDamage: 0,
         critical: false,
         damage: 0,
@@ -58,10 +86,9 @@ describe("battleEventMessages", () => {
         reward: 1_000_000,
         type: "hit",
       }),
-    ).toBe("Automatic kill: +1M coins");
+    ).toBe("Kill: +1M coins");
     expect(
       battleEventMessages.attack(
-        "manual",
         {
           armorPreventedDamage: 0,
           critical: false,

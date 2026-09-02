@@ -15,6 +15,18 @@ export class EventLog {
     const eventIds = events.map((event) => event.id).join(",");
     if (eventIds === this.renderedEventIds) return;
     this.renderedEventIds = eventIds;
-    this.element.replaceChildren(...events.map((event) => makeText("li", event.message)));
+    this.element.replaceChildren(
+      ...events.map((event) => {
+        const item = makeText("li", event.message);
+        if (event.source !== undefined) {
+          item.className = `${event.source}-hit`;
+          item.setAttribute(
+            "aria-label",
+            `${event.source === "manual" ? "Manual" : "Automatic"} hit: ${event.message}`,
+          );
+        }
+        return item;
+      }),
+    );
   }
 }

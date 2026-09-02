@@ -101,6 +101,19 @@ const clickUpgrade = (button: FakeElement | undefined, detail: Record<string, un
   button.dispatch("click", detail);
 };
 
+const expectSourceEvent = (
+  event: FakeElement | undefined,
+  message: string,
+  source: "automatic" | "manual",
+): void => {
+  if (event === undefined) throw new Error("Expected combat log event");
+  expect(event.textContent).toBe(message);
+  expect(event.className).toBe(`${source}-hit`);
+  expect(event.attributes.get("aria-label")).toBe(
+    `${source === "manual" ? "Manual" : "Automatic"} hit: ${message}`,
+  );
+};
+
 const snapshot: BattleSnapshot = {
   automatic: { intervalMs: 1_000, remainingMs: 500, unlocked: true },
   coins: 2,
@@ -114,7 +127,10 @@ const snapshot: BattleSnapshot = {
     modifier: null,
     name: "Ash Wisp",
   },
-  events: [{ id: 1, message: "Manual hit: 1 damage" }],
+  events: [
+    { id: 1, message: "Hit: 1 damage", source: "manual" },
+    { id: 2, message: "Hit: 2 damage", source: "automatic" },
+  ],
   playerStats: {
     armorPenetration: 0.375,
     automaticAttacksPerSecond: 1,
@@ -505,7 +521,9 @@ describe("createHud", () => {
     expect(restores).toBe(1);
     expect(restore.hidden).toBe(false);
     expect(element(host, "persistence-status").textContent).toBe("Restored");
-    expect(element(host, "event-log").children[0]?.textContent).toBe("Manual hit: 1 damage");
+    const eventLog = element(host, "event-log");
+    expectSourceEvent(eventLog.children[0], "Hit: 1 damage", "manual");
+    expectSourceEvent(eventLog.children[1], "Hit: 2 damage", "automatic");
     expect(intents).toEqual([
       { type: "attack" },
       { type: "attack" },

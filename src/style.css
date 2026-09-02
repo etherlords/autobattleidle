@@ -309,6 +309,14 @@ body {
   margin: 0.2rem 0;
 }
 
+.manual-hit {
+  color: rgb(129 212 250);
+}
+
+.automatic-hit {
+  color: rgb(255 213 128);
+}
+
 @media (max-width: 600px) {
   .event-log {
     bottom: 4.25rem;
