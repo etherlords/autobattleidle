@@ -7,7 +7,12 @@ export type {
 } from "./combat/automatic-packets";
 export { COMBAT_BALANCE } from "./combat/balance";
 export { ENEMY_MODIFIERS } from "./combat/enemy-modifiers/enemy-modifier-registry";
-export { selectEnemyFamilyIdentity, stableEnemySeed } from "./combat/family-identity";
+export { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS } from "./combat/enemy-affinities";
+export {
+  selectEnemyFamilyIdentity,
+  stableAffinitySeed,
+  stableEnemySeed,
+} from "./combat/family-identity";
 export type {
   AttackCommand,
   AttackEvent,
@@ -26,7 +31,9 @@ export type {
   UpgradeId,
   UpgradePurchase,
 } from "./combat/contracts";
+export type { EnemyAffinityProfile } from "./combat/enemy-affinities";
 export type {
+  EnemyAffinity,
   EnemyFamily,
   EnemyFamilyIdentity,
   EnemyFamilyInput,

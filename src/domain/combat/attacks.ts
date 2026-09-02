@@ -8,6 +8,8 @@ import {
   normalizeLevel,
 } from "./player-stats";
 import { spawnEnemy, spawnGoldenBug } from "./progression";
+import { ENEMY_AFFINITIES } from "./enemy-affinities";
+import { selectEnemyFamilyIdentity } from "./family-identity";
 import { COMBAT_BALANCE } from "./balance";
 import { ENEMY_MODIFIERS } from "./enemy-modifiers";
 
@@ -93,13 +95,24 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       },
       state: { ...state, enemy: { ...state.enemy, health }, nextAutomaticAttackAtMs },
     };
+  const identity = selectEnemyFamilyIdentity({
+    goldenBug: state.goldenBug !== null,
+    grade: state.enemy.grade,
+    level: state.enemy.encounter,
+    modifier: state.enemy.modifier,
+  });
   const requestedReward =
     state.enemy.reward *
     (command.rolls.doubleReward <
     doubleRewardChanceForLevel(normalizeLevel(doubleRewardLevelFor(state.player)))
       ? COMBAT_FORMULAS.doubleRewardMultiplier
-      : 1);
-  const reward = Math.min(requestedReward, Number.MAX_SAFE_INTEGER - state.coins);
+      : 1) *
+    // Golden Bug keeps its legacy 50x payout path; affinity scales every other defeat.
+    (state.goldenBug !== null ? 1 : ENEMY_AFFINITIES[identity.affinity].rewardMultiplier);
+  const reward = Math.min(
+    Math.max(COMBAT_FORMULAS.minimumDamage, Math.round(requestedReward)),
+    Number.MAX_SAFE_INTEGER - state.coins,
+  );
   const nextEncounter = state.enemy.encounter === MAX_ENCOUNTER ? 1 : state.enemy.encounter + 1;
   const resumeEncounter = state.goldenBug?.resumeEncounter;
   const goldenBugDefeats =

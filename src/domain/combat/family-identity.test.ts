@@ -25,14 +25,14 @@ describe("enemy family identity", () => {
       "wisp",
     ]);
     expect(families.map(({ label }) => label).sort()).toEqual([
-      "Ash Drake",
+      "Ash Beetle",
       "Ash Wisp",
-      "Cinder Beetle",
-      "Cinder Hydra",
-      "Ember Brute",
-      "Ember Colossus",
-      "Prism Sentinel",
-      "Thorn Mantis",
+      "Cinder Colossus",
+      "Ice Mantis",
+      "Magma Brute",
+      "Tide Sentinel",
+      "Volt Drake",
+      "Volt Hydra",
     ]);
     expect(
       selectEnemyFamilyIdentity({ goldenBug: true, grade: "elite", level: 51, modifier: null }),

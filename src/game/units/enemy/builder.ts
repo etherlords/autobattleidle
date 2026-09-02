@@ -3,6 +3,8 @@ import * as THREE from "three";
 import { enemyBodyFactories } from "../../enemy-visual/bodies";
 import { EnemyViewBuilder } from "../../enemy-visual/builder";
 import {
+  decorateAffinityCue,
+  decorateBossGeometry,
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
@@ -37,10 +39,19 @@ export class EnemyUnitBuilder {
 
   static composeView(snapshot: EnemyVisualInput): EnemyViewComposition {
     const spec = enemyVisualSpec(snapshot);
+    const reducedMotion =
+      snapshot.reducedMotion ??
+      (typeof window !== "undefined" &&
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true);
     const builder = new EnemyViewBuilder();
-    builder.add(enemyBodyFactories[spec.body](spec.profile, snapshot.reducedMotion));
+    builder.add(enemyBodyFactories[spec.body](spec.profile, reducedMotion));
     builder.add(fitCue(decorateGrade(spec.gradeCue), spec.profile));
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
+    builder.add(decorateAffinityCue(spec.affinity.cue, spec.affinity.palette, reducedMotion));
+    if (spec.body.startsWith("boss-"))
+      decorateBossGeometry(spec.body as "boss-colossus" | "boss-hydra", reducedMotion).forEach(
+        (geometry) => builder.add(geometry),
+      );
     spec.decorations.forEach((decoration, index) =>
       builder.add(fitCue(decorateSeededDecoration(decoration, index, spec.profile), spec.profile)),
     );

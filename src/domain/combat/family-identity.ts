@@ -1,9 +1,14 @@
 import type { EliteModifier, EnemyGrade } from "./contracts";
 
+import { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS, type EnemyAffinity } from "./enemy-affinities";
+
+export type { EnemyAffinity };
+
 export type EnemyFamily =
   "beetle" | "brute" | "wisp" | "mantis" | "sentinel" | "drake" | "boss-colossus" | "boss-hydra";
 export type EnemyPresentationModifier = EliteModifier | "wealth" | null;
 export type EnemyFamilyIdentity = {
+  readonly affinity: EnemyAffinity;
   readonly family: EnemyFamily;
   readonly label: string;
   readonly seed: number;
@@ -18,14 +23,14 @@ export type EnemyFamilyInput = {
 
 const ordinaryFamilies = ["beetle", "brute", "wisp"] as const;
 const labels: Readonly<Record<EnemyFamily, string>> = {
-  beetle: "Cinder Beetle",
-  brute: "Ember Brute",
-  wisp: "Ash Wisp",
-  mantis: "Thorn Mantis",
-  sentinel: "Prism Sentinel",
-  drake: "Ash Drake",
-  "boss-colossus": "Ember Colossus",
-  "boss-hydra": "Cinder Hydra",
+  beetle: "Beetle",
+  brute: "Brute",
+  wisp: "Wisp",
+  mantis: "Mantis",
+  sentinel: "Sentinel",
+  drake: "Drake",
+  "boss-colossus": "Colossus",
+  "boss-hydra": "Hydra",
 };
 const modifierFamilies: Readonly<
   Partial<Record<Exclude<EnemyPresentationModifier, null>, EnemyFamily>>
@@ -33,6 +38,27 @@ const modifierFamilies: Readonly<
   hardened: "mantis",
   "critical-guard": "sentinel",
   "manual-guard": "drake",
+};
+/** Golden Bug keeps its legacy 50x payout path, so its affinity never touches rewards. */
+const goldenBugAffinity: EnemyAffinity = "cinder";
+
+const identityLabel = (affinity: EnemyAffinity, family: EnemyFamily, goldenBug: boolean): string =>
+  goldenBug ? "Golden Bug" : `${ENEMY_AFFINITIES[affinity].label} ${labels[family]}`;
+
+/**
+ * The affinity channel is mixed independently of the family channel: bosses derive their
+ * family from level parity alone, so a shared seed would make half the affinities
+ * unreachable for each boss family. A second mix of the same canonical inputs keeps
+ * same-input-same-affinity determinism while decorrelating the two selections.
+ */
+export const stableAffinitySeed = (enemy: EnemyFamilyInput): number => {
+  if (!Number.isFinite(enemy.level)) throw new RangeError("Enemy visual level must be finite");
+  let mix = 2166136261;
+  for (const character of `${enemy.level}:${enemy.grade}:${enemy.modifier ?? "none"}:affinity`)
+    mix = (Math.imul(mix, 131071) + character.charCodeAt(0)) >>> 0;
+  let level = Math.abs(Math.trunc(enemy.level)) || 1;
+  level = Math.imul(level, 2246822519) >>> 0;
+  return (mix ^ level) >>> 0;
 };
 
 export const stableEnemySeed = (enemy: EnemyFamilyInput): number => {
@@ -57,9 +83,15 @@ const selectFamily = (enemy: EnemyFamilyInput): EnemyFamily => {
 export const selectEnemyFamilyIdentity = (enemy: EnemyFamilyInput): EnemyFamilyIdentity => {
   const family = selectFamily(enemy);
   const seed = stableEnemySeed(enemy);
+  const affinitySeed = stableAffinitySeed(enemy);
+  const affinityId = ENEMY_AFFINITY_IDS[affinitySeed % ENEMY_AFFINITY_IDS.length];
+  if (affinityId === undefined)
+    throw new RangeError("Enemy visual affinity seed did not select an affinity");
+  const affinity = enemy.goldenBug ? goldenBugAffinity : affinityId;
   return {
+    affinity,
     family,
-    label: enemy.goldenBug ? "Golden Bug" : labels[family],
+    label: identityLabel(affinity, family, enemy.goldenBug === true),
     seed,
     variant: enemy.goldenBug ? 0 : ((seed % 3) as 0 | 1 | 2),
   };

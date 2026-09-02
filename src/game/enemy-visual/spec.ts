@@ -1,5 +1,7 @@
 import {
+  ENEMY_AFFINITIES,
   selectEnemyFamilyIdentity,
+  type EnemyAffinityProfile,
   type EnemyFamily,
   type EnemyPresentationModifier,
 } from "../../domain/combat";
@@ -43,6 +45,7 @@ export type EnemyVisualProfile = {
 export const profileCueScale = (profile: EnemyVisualProfile): number =>
   Math.min(1.2, Math.max(0.8, profile.attachment[0] / 0.7));
 export type EnemyVisualSpec = {
+  readonly affinity: EnemyAffinityProfile;
   readonly body: BodyFamily;
   readonly decorations: readonly Decoration[];
   readonly gradeCue: GradeCue;
@@ -254,6 +257,7 @@ export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
   const identity = selectEnemyFamilyIdentity(enemy);
   const body = identity.family;
   const seed = identity.seed;
+  const affinity = ENEMY_AFFINITIES[identity.affinity];
   const profile = enemy.goldenBug
     ? {
         attachment: [0.6, 0.2, 0] as const,
@@ -265,11 +269,12 @@ export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
     : FAMILY_PROFILES[body][identity.variant];
   if (profile === undefined) throw new RangeError("Enemy visual seed did not select a profile");
   return {
+    affinity,
     body,
     decorations: profile.decorations,
     gradeCue: enemy.goldenBug ? "crown" : ENEMY_VISUAL_GRADE_CUES[enemy.grade],
     modifierCue: visualModifierCue(enemy),
-    profile,
+    profile: enemy.goldenBug ? profile : { ...profile, palette: affinity.palette },
     scale: visualScaleRegistry[enemy.grade],
     seed,
   };

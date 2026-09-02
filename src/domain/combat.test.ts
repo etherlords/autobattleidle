@@ -891,7 +891,7 @@ describe("endless combat progression", () => {
       goldenBug: false,
     });
     expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
-    expect(automaticReport.encounters).toBe(37_135);
+    expect(automaticReport.encounters).toBe(37_065);
     expect(automaticOnly.endgame.count).toBeGreaterThan(0);
     for (const stage of Object.values(automaticOnly)) {
       expect(stage.count).toBeGreaterThan(0);
@@ -977,10 +977,10 @@ describe("endless combat progression", () => {
     }
   });
 
-  it("matches the committed measured report JSON", () => {
+  it("matches the committed ABI-029 affinity measured report JSON", () => {
     const raw = readFileSync(
       new URL(
-        "../../plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-020-balance-ordinary-enemy-health-with-a-deterministic-headless-/MEASURED-REPORT.json",
+        "../../plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-029-compose-deterministic-elemental-enemy-variants-from-reusable/MEASURED-REPORT-AFFINITY.json",
         import.meta.url,
       ),
       "utf8",

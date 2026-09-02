@@ -46,6 +46,7 @@ export const enemyVisualLayout = {
     scarY: 0.1,
     scarZ: 0.7,
   },
+  affinity: { cueY: 0.1, cueZ: 0.55, beadOrbitRadius: 0.3 },
 } as const;
 
 export const enemyVisualGeometry = {
@@ -80,6 +81,14 @@ export const enemyVisualGeometry = {
     satellite: [0.12, 8, 6],
     scar: [0.035, 0.16, 0.015],
   },
+  affinity: {
+    shard: [0.14],
+    shardSmall: [0.09],
+    mote: [0.16, 0],
+    ring: [0.3, 0.04, 6, 16],
+    spore: [0.1, 0],
+    bead: [0.11, 8, 6],
+  },
 } as const;
 
 export const enemyVisualAnimation = {
@@ -91,6 +100,9 @@ export const enemyVisualAnimation = {
   shieldOrbitRadians: 0.045,
   shieldLift: 0.08,
   decorationOrbitRadians: 0.03,
+  affinitySpinRadians: 0.02,
+  affinityBeadRadians: 0.03,
+  orbitalRuneRadians: 0.055,
 } as const;
 export const enemyVisualTransforms = {
   beetleShellZScale: 1.15,

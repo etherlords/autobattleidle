@@ -9,8 +9,9 @@ describe("battle snapshots", () => {
   it("shares the family identity used by rendered enemies, including Golden Bug", () => {
     const ordinary = createBattleSnapshot(createCombatState(), 0, [], []);
     expect(ordinary.enemy).toMatchObject({
+      affinity: "magma",
       family: "brute",
-      name: "Ember Brute",
+      name: "Magma Brute",
       variant: expect.any(Number),
       seed: expect.any(Number),
     });
@@ -37,13 +38,13 @@ describe("battle snapshots", () => {
       goldenBug: { id: 50, resumeEncounter: 51 },
     };
     const states = [
-      { expectedName: "Ember Brute", state: initial },
+      { expectedName: "Magma Brute", state: initial },
       {
-        expectedName: "Thorn Mantis",
+        expectedName: "Ice Mantis",
         state: { ...initial, enemy: spawnEnemy(3, 0.76, undefined, initial.player) },
       },
       {
-        expectedName: "Cinder Hydra",
+        expectedName: "Ice Hydra",
         state: { ...initial, enemy: spawnEnemy(35, 0, undefined, initial.player) },
       },
       { expectedName: "Golden Bug", state: goldenBug },

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   createEnemyVisual,
@@ -7,6 +7,7 @@ import {
   enemyBodyFactories,
   enemyVisualSpec,
   stableEnemySeed,
+  type EnemyVisual,
   type EnemyVisualInput,
 } from "./enemy-visual";
 import { component } from "./enemy-visual/components";
@@ -17,6 +18,7 @@ import {
   decorateModifier,
   decorateSeededDecoration,
 } from "./enemy-visual/decorators";
+import { observeResourceDisposal, resourceCounts } from "../debug/visual-lab/resource-ledger";
 import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enemy";
 
 const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
@@ -443,6 +445,11 @@ describe("enemy visual factory", () => {
       gradeCue: "crown",
       modifierCue: "wealth-orbitals",
     });
+    expect(visual.spec.profile.palette).toEqual({
+      core: "#d4af37",
+      emissive: "#5c4300",
+      accent: "#fff1a3",
+    });
     const body = visual.group.getObjectByName("enemy-body-beetle");
     if (!(body instanceof THREE.Mesh) || Array.isArray(body.material))
       throw new Error("Expected Golden Bug body");
@@ -597,7 +604,7 @@ describe("enemy visual factory", () => {
         expect(profileCueScale(visual.spec.profile)).toBeGreaterThanOrEqual(0.8);
         expect(profileCueScale(visual.spec.profile)).toBeLessThanOrEqual(1.2);
         expect(visual.group.getObjectByName(`enemy-body-${family}`)).toBeDefined();
-        expect(meshCount(visual)).toBeLessThanOrEqual(24);
+        expect(meshCount(visual)).toBeLessThanOrEqual(family.startsWith("boss-") ? 51 : 30);
         const markers: Readonly<Record<string, readonly string[]>> = {
           beetle: [
             "enemy-part-beetle-shell",
@@ -700,13 +707,13 @@ describe("enemy visual factory", () => {
     expect(decorations).toEqual(new Set(["fins", "horns", "orbitals", "satellites", "scar"]));
     expect(
       meshCount(createEnemyVisual({ grade: "normal", level: 1, modifier: null })),
-    ).toBeLessThanOrEqual(24);
+    ).toBeLessThanOrEqual(30);
     expect(
       meshCount(createEnemyVisual({ grade: "elite", level: 3, modifier: "manual-guard" })),
-    ).toBeLessThanOrEqual(24);
+    ).toBeLessThanOrEqual(30);
     expect(
       meshCount(createEnemyVisual({ grade: "boss", level: 35, modifier: null })),
-    ).toBeLessThanOrEqual(24);
+    ).toBeLessThanOrEqual(51);
   });
 
   it("owns a bounded visual tree and keeps the slow ring animated", () => {
@@ -1421,6 +1428,112 @@ describe("enemy visual factory", () => {
     expect(reloaded.spec).toEqual(enemyVisualSpec(input));
     expect(reloadedNames).toEqual(firstNames);
     reloaded.dispose();
+  });
+
+  it("applies the affinity palette to every family body and bounds the affinity cue", () => {
+    const families: Readonly<Record<string, EnemyVisualInput>> = {
+      beetle: { grade: "normal", level: 45, modifier: null },
+      brute: { grade: "normal", level: 43, modifier: null },
+      hydra: { grade: "boss", level: 35, modifier: null },
+      colossus: { grade: "boss", level: 70, modifier: null },
+    };
+    for (const input of Object.values(families)) {
+      const visual = createEnemyVisual(input);
+      const body = visual.group.getObjectByName(`enemy-body-${visual.spec.body}`);
+      if (!(body instanceof THREE.Mesh) || Array.isArray(body.material))
+        throw new Error(`Expected ${visual.spec.body} body mesh`);
+      expect(body.material.color.getHexString()).toBe(visual.spec.affinity.palette.core.slice(1));
+      expect(body.material.emissive.getHexString()).toBe(
+        visual.spec.affinity.palette.emissive.slice(1),
+      );
+      const cue = visual.group.getObjectByName("affinity-cue");
+      expect(cue).toBeDefined();
+      let cueMeshes = 0;
+      cue?.traverse((node) => {
+        if (node instanceof THREE.Mesh) cueMeshes += 1;
+      });
+      expect(cueMeshes).toBeLessThanOrEqual(6);
+      visual.dispose();
+    }
+  });
+
+  it("keeps boss-only geometry on bosses and off ordinary families", () => {
+    for (let level = 1; level <= 120; level += 1) {
+      const ordinary = createEnemyVisual({ grade: "normal", level, modifier: null });
+      expect(ordinary.group.getObjectByName("boss-geometry-crystal-crown")).toBeUndefined();
+      expect(ordinary.group.getObjectByName("boss-geometry-orbital-runes")).toBeUndefined();
+      expect(ordinary.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
+      ordinary.dispose();
+    }
+    const hydra = createEnemyVisual({ grade: "boss", level: 35, modifier: null });
+    const crown = hydra.group.getObjectByName("boss-geometry-crystal-crown");
+    expect(crown).toBeDefined();
+    expect(crown?.children).toHaveLength(3);
+    const spines = hydra.group.getObjectByName("boss-geometry-elemental-spines");
+    expect(spines).toBeDefined();
+    expect(spines?.children).toHaveLength(18);
+    const centerHead = hydra.group.getObjectByName("enemy-part-hydra-head-1");
+    if (!(centerHead instanceof THREE.Mesh)) throw new Error("Expected Hydra center head");
+    hydra.group.updateMatrixWorld(true);
+    const headBox = new THREE.Box3().setFromObject(centerHead);
+    let spinesNearHead = 0;
+    spines?.children.forEach((spine) => {
+      if (!(spine instanceof THREE.Mesh)) return;
+      if (headBox.distanceToPoint(spine.getWorldPosition(new THREE.Vector3())) < 0.05)
+        spinesNearHead += 1;
+    });
+    expect(spinesNearHead).toBe(0);
+    hydra.dispose();
+    const colossus = createEnemyVisual({ grade: "boss", level: 70, modifier: null });
+    const runes = colossus.group.getObjectByName("boss-geometry-orbital-runes");
+    expect(runes).toBeDefined();
+    expect(runes?.children).toHaveLength(3);
+    colossus.dispose();
+  });
+
+  it("disposes affinity cues and boss geometry back to baseline resource counts", () => {
+    const parent = new THREE.Group();
+    const baseline = resourceCounts(parent);
+    const visual = createEnemyVisual({ grade: "boss", level: 35, modifier: "armor" });
+    parent.add(visual.group);
+    const receipt = observeResourceDisposal(visual.group);
+    visual.dispose();
+    expect(receipt()).toMatchObject({ disposed: receipt().expectedDisposals });
+    expect(resourceCounts(parent)).toEqual(baseline);
+  });
+
+  it("keeps reduced-motion affinity cues static instead of displacing", () => {
+    const visual = createEnemyVisual({
+      grade: "normal",
+      level: 1,
+      modifier: null,
+      reducedMotion: true,
+    });
+    const cue = visual.group.getObjectByName("affinity-cue");
+    expect(cue).toBeDefined();
+    const position = cue?.position.clone();
+    const rotation = cue?.rotation.clone();
+    for (let frame = 0; frame < 10; frame += 1) visual.tick();
+    expect(cue?.position).toEqual(position);
+    expect(cue?.rotation.toArray()).toEqual(rotation?.toArray());
+    visual.dispose();
+  });
+  it("honors native reduced motion for production boss orbital runes", () => {
+    vi.stubGlobal("window", {
+      matchMedia: () => ({ matches: true }),
+    });
+    let visual: EnemyVisual | undefined;
+    try {
+      visual = createEnemyVisual({ grade: "boss", level: 70, modifier: null });
+      const runes = visual.group.getObjectByName("boss-geometry-orbital-runes");
+      if (runes === undefined) throw new Error("Expected orbital runes");
+      const rotations = runes.children.map((rune) => rune.rotation.toArray());
+      for (let frame = 0; frame < 10; frame += 1) visual.tick();
+      expect(runes.children.map((rune) => rune.rotation.toArray())).toEqual(rotations);
+    } finally {
+      visual?.dispose();
+      vi.unstubAllGlobals();
+    }
   });
 
   it("requires and seals a complete enemy model-view-controller composition", () => {

@@ -7,6 +7,7 @@ import {
   doubleRewardChanceForLevel,
   effectiveArmor,
   selectEnemyFamilyIdentity,
+  type EnemyAffinity,
   type EnemyFamily,
 } from "./combat";
 import { COMBAT_BALANCE } from "./combat/balance";
@@ -43,6 +44,7 @@ export type UpgradeSnapshot = {
 export type BattleEnemySnapshot = {
   readonly armor: { readonly effective: number; readonly raw: number };
   readonly family?: EnemyFamily;
+  readonly affinity?: EnemyAffinity;
   readonly grade: EnemyGrade;
   readonly health: number;
   readonly level: number;
@@ -123,6 +125,7 @@ export const createBattleSnapshot = (
       name: identity.label,
       seed: identity.seed,
       variant: identity.variant,
+      affinity: identity.affinity,
     },
     goldenBug:
       state.goldenBug === null
