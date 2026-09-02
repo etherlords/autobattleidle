@@ -4,7 +4,7 @@ id: ABI-029
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 93
+revision: 94
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 93
-- Last update: All implementation, self-check, independent review, and comprehensive QA gates pass; preparing closure evidence and repository checkpoint
+- Revision: 94
+- Last update: ABI-029 closure complete: Vault Presentation section updated and indexed; scoped code checkpoint 80803ad plus Vault evidence checkpoint 3e9c32a pushed to main; exact SHA CI 33692207018 success; Pages 33692207017 success; public desktop interaction rendered Battlefield and keyboard guidance with no console/page errors; public narrow 390x844 has zero horizontal overflow; deployed resources are expected JS/CSS/favicon assets; URL HTTP 200
 
 ## Execution plan
 
@@ -55,7 +55,7 @@ requiredGates:
 - [x] affinity-self-check: Implementation owner runs focused domain, balance, visual, and save tests plus pnpm check; records implementation-self-check evidence
 - [x] affinity-independent-review: Independent Reviewer audits registry architecture, ABI-028 balance reuse, deterministic identity, visual ownership, licensing, and migration classification
 - [x] affinity-independent-qa: Independent QA verifies the representative matrix, historical reload, distribution receipts, desktop/narrow/reduced-motion behavior, and clean resources
-- [~] affinity-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, and deployed variant behavior
+- [x] affinity-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, and deployed variant behavior
 - [x] affinity-boss-recipe-rework: Rework boss-only Crown, Spines, and Orbital Rune lab recipes for Hydra and Colossus, then obtain fresh visual approval
 
 ## Events
@@ -1545,3 +1545,23 @@ requiredGates:
 - State: in_progress
 - Evidence:
   - None
+
+### evt-4fc8a230-faee-4154-834c-dc875b7e98d4
+
+- Timestamp: 2026-09-02T22:52:24.005Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: ABI-029 closure complete: Vault Presentation section updated and indexed; scoped code checkpoint 80803ad plus Vault evidence checkpoint 3e9c32a pushed to main; exact SHA CI 33692207018 success; Pages 33692207017 success; public desktop interaction rendered Battlefield and keyboard guidance with no console/page errors; public narrow 390x844 has zero horizontal overflow; deployed resources are expected JS/CSS/favicon assets; URL HTTP 200
+- Idempotency key: abi029-manager-closure-complete-final-20260903-1
+- Request fingerprint: 22fc01eb7cacc444ec916fff00bc5b2477de3008afd1696115164fbc5451afdd
+- Action: set_state
+- Step ID: affinity-manager-closure
+- State: complete
+- Evidence:
+  - Vault AUTOBATTLEIDLE-DOC-20260827-A7FD1F new hash 9a789051add9f8a3ac6f38558b59bb0079dcdd523fec0f7d4af24092e3dd536c
+  - git commits 80803ad and 3e9c32a
+  - CI https://github.com/etherlords/autobattleidle/actions/runs/33692207018
+  - Pages https://github.com/etherlords/autobattleidle/actions/runs/33692207017
+  - deployed https://etherlords.github.io/autobattleidle/ HTTP 200; browser console/pageerror arrays empty; desktop and 390x844 observations
