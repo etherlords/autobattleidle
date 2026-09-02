@@ -4,8 +4,8 @@ id: ABI-029
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 94
-status: In Progress
+revision: 105
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-020
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 94
-- Last update: ABI-029 closure complete: Vault Presentation section updated and indexed; scoped code checkpoint 80803ad plus Vault evidence checkpoint 3e9c32a pushed to main; exact SHA CI 33692207018 success; Pages 33692207017 success; public desktop interaction rendered Battlefield and keyboard guidance with no console/page errors; public narrow 390x844 has zero horizontal overflow; deployed resources are expected JS/CSS/favicon assets; URL HTTP 200
+- Status: Done
+- Revision: 105
+- Last update: Manager closure approved after final b015e0d receipts, Vault readback, and independent closure audit
 
 ## Execution plan
 
@@ -1565,3 +1565,189 @@ requiredGates:
   - CI https://github.com/etherlords/autobattleidle/actions/runs/33692207018
   - Pages https://github.com/etherlords/autobattleidle/actions/runs/33692207017
   - deployed https://etherlords.github.io/autobattleidle/ HTTP 200; browser console/pageerror arrays empty; desktop and 390x844 observations
+
+### evt-80073dda-5f8b-40da-9383-dee2c79a9bb0
+
+- Timestamp: 2026-09-02T22:56:46.576Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Final receipts corrected for b015e0d: CI 33692615514 success; Pages 33692615458 success; public root desktop click rendered Battlefield with keyboard guidance and no console/page errors; public visual-lab Hydra narrow reduced-motion rendered with selected boss-hydra, boss grade, reduced motion checked, zero console/page errors, scrollWidth 390; focused current QA 72/72 plus visual 37/37; Vault Presentation bounded readback hash 9a789051...
+- Idempotency key: abi029-final-receipts-b015e0d-20260903-1
+- Evidence:
+  - b015e0d
+  - https://github.com/etherlords/autobattleidle/actions/runs/33692615514
+  - https://github.com/etherlords/autobattleidle/actions/runs/33692615458
+  - https://etherlords.github.io/autobattleidle/
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-hydra&grade=boss&variant=1&motion=1&viewport=narrow&recipe=production
+  - Vault Presentation lines 86-95
+
+### evt-ae569a48-edd7-4d92-95b8-6378e02baf54
+
+- Timestamp: 2026-09-02T22:58:02.978Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: Public Pages Colossus proof: visual-lab URL selected boss-colossus/boss/variant-2/enemy/production with Reduced motion checked; status receipt reports live objects 62, meshes 38, geometries 38, materials 38, effects 0/12, matrix 211; three Frame step actions completed; screenshot captured; no console/page errors; narrow scrollWidth 390 equals viewport.
+- Idempotency key: abi029-colossus-receipt-final-20260903-1
+- Evidence:
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-colossus&grade=boss&variant=2&motion=1&viewport=narrow&recipe=production&subject=enemy
+  - screenshot C:\Users\Asfel\AppData\Local\Temp\omp-sshots-157063461ff121f0.webp
+  - ARIA status case with live objects 62 / meshes 38 / effects 0/12
+  - Reduced motion checkbox checked
+  - console=[] pageerrors=[]
+
+### evt-048abb09-8331-4c21-afb6-87e2641c7f5a
+
+- Timestamp: 2026-09-02T22:58:46.698Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: pnpm check passed after final test edits
+- Idempotency key: abi029-gate-self-20260903-1
+- Request fingerprint: 548beffc0b85dda23a9ed0159b019dca335b29eccacbe6591f2972d7337c7e99
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - pnpm check success
+
+### evt-2bbe1688-eedf-4733-8f97-f4ee2523be06
+
+- Timestamp: 2026-09-02T22:59:05.743Z
+- Actor: Abi029FinalReview
+- Operation: gate.record
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Independent reviewer approved after Golden palette and reduced-motion fixes
+- Idempotency key: abi029-gate-review-independent-20260903-1
+- Request fingerprint: 472362f1141311c4db71acfd44de751666c8d1a436a684c13ad08f5f830fdc70
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - Abi029FinalReview APPROVE
+
+### evt-37598627-5c2b-4b2e-bcb9-0605a959d6f8
+
+- Timestamp: 2026-09-02T22:59:13.547Z
+- Actor: Abi029QAComplete
+- Operation: gate.record
+- Prior revision: 98
+- Resulting revision: 99
+- Summary: Independent QA passed distribution, browser, persistence, reduced motion, and disposal acceptance
+- Idempotency key: abi029-gate-qa-20260903-1
+- Request fingerprint: de9b46ef10d20a5b5136bfa22d88c9de45c2dde152e5a1074af34f945becba90
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Abi029QAComplete PASS
+  - 72/72 focused tests
+  - public Hydra and Colossus lab receipts
+
+### evt-cb5d13eb-a285-4265-8830-d48531775db2
+
+- Timestamp: 2026-09-02T22:59:22.695Z
+- Actor: codex-root
+- Operation: gate.record
+- Prior revision: 99
+- Resulting revision: 100
+- Summary: Vault readback, final exact-SHA CI Pages, and public browser verification passed
+- Idempotency key: abi029-gate-verification-20260903-1
+- Request fingerprint: 4e509b774572cf084834784c64a0b028c2d339c64363b6f19f178f620a662301
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Vault Presentation readback hash 9a789051
+  - CI 33692615514 success for b015e0d
+  - Pages 33692615458 success for b015e0d
+  - public browser receipts
+
+### evt-291b80ae-84d0-40f0-a83e-63f1a039de87
+
+- Timestamp: 2026-09-02T22:59:39.536Z
+- Actor: root-manager
+- Operation: gate.record
+- Prior revision: 100
+- Resulting revision: 101
+- Summary: Scoped commits and Vault documentation published; closure evidence complete
+- Idempotency key: abi029-gate-manager-root-20260903-1
+- Request fingerprint: cca2a1d755d75408a9616ff0e4892b65301c600c16901afee50e1b432ca79e5f
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - b015e0d pushed main
+  - Vault updated and read back
+  - all prior gates pass
+
+### evt-7cda54b4-3081-41de-ad4e-7a7033cb8dc8
+
+- Timestamp: 2026-09-02T22:59:47.748Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 101
+- Resulting revision: 102
+- Summary: Required implementation, review, QA, verification, and manager gates all pass
+- Idempotency key: abi029-advance-review-final-20260903-1
+- Request fingerprint: 77688f1034a80a3f6120d988d1b8fd682595d5f1c3fbdabda14c78b751b787a5
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - progressRevision 101
+  - five typed gates pass
+
+### evt-7240281e-127f-4d13-a4bd-cb3c0e8a3a03
+
+- Timestamp: 2026-09-02T23:05:52.282Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 102
+- Resulting revision: 103
+- Summary: Independent closure audit passed final SHA, Vault, CI, Pages, and public Hydra/Colossus receipts
+- Idempotency key: abi029-advance-qa-final-20260903-2
+- Request fingerprint: a86c3c073f0758662fc803add1dddc385738e88fe228602931f82aa340366a98
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - Abi029ClosureAudit PASS
+  - HEAD=origin/main=b015e0d
+  - CI and Pages success
+  - public root/Hydra/Colossus fresh browser checks
+
+### evt-b108ca0d-e386-4894-8da6-be79b8b7a58a
+
+- Timestamp: 2026-09-02T23:06:03.280Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 103
+- Resulting revision: 104
+- Summary: QA and independent closure audit passed; manager evidence is complete
+- Idempotency key: abi029-ready-manager-final-20260903-1
+- Request fingerprint: 4c0b4028059f45689f649c313e9febb87627896af2771d9d18cccd93d48c215d
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - Abi029ClosureAudit PASS
+  - progressRevision 103
+  - all typed gates pass
+
+### evt-47920f79-9100-4393-bb56-3782b87463f8
+
+- Timestamp: 2026-09-02T23:06:15.341Z
+- Actor: root-manager
+- Operation: task.advance
+- Prior revision: 104
+- Resulting revision: 105
+- Summary: Manager closure approved after final b015e0d receipts, Vault readback, and independent closure audit
+- Idempotency key: abi029-done-final-root-manager-20260903-1
+- Request fingerprint: ddaa60a7e3a39905d32e36972f40f7eb58d96e630bc7723c96de9b69b74be365
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - Abi029ClosureAudit PASS
+  - b015e0d equals origin/main
+  - CI 33692615514 success
+  - Pages 33692615458 success
+  - Vault Presentation readback hash 9a789051
+  - public root Hydra and Colossus browser receipts
