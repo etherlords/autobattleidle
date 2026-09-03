@@ -1,6 +1,7 @@
 /* eslint-disable complexity -- lifecycle wires the bounded scheduler to controller events. */
 import type { AudioPreferencesStorage } from "./audio/audio-preferences";
 import { AudioService, type AudioServiceManifest } from "./audio/audio-service";
+import musicManifest from "../../public/audio/manifest.json";
 import { createCombatState, type AttackRolls, type CombatState } from "../domain/combat";
 import { createBattlefield, type Battlefield } from "../game/battlefield";
 import {
@@ -141,12 +142,14 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   const audioService =
     dependencies.createAudioService?.(audioWindow) ??
     new AudioService({
-      manifest: dependencies.audioManifest ?? { music: [] },
+      manifest: dependencies.audioManifest ?? {
+        music: musicManifest.music.map((entry) => ({ file: entry.file })),
+      },
       ...(dependencies.audioStorage !== undefined || audioWindow.localStorage !== undefined
         ? { storage: dependencies.audioStorage ?? audioWindow.localStorage }
         : {}),
     });
-  let audioSettingsAttached = false;
+  dependencies.hud.attachAudioSettings?.(audioService);
   let syncLeaderboard: LeaderboardProgressSync | undefined;
   if (dependencies.hud.onLeaderboardLoad !== undefined) {
     const leaderboard = dependencies.createLeaderboard?.() ?? new LeaderboardClient();
@@ -224,10 +227,6 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     if (event.type === "purchase")
       audioService.playUiCue(event.reason === null ? "click" : "error");
     if (event.type === "reset" || event.type === "restore") audioService.playUiCue("back");
-    if (dependencies.hud.attachAudioSettings !== undefined && audioSettingsAttached === false) {
-      dependencies.hud.attachAudioSettings(audioService);
-      audioSettingsAttached = true;
-    }
     render(event);
   });
   const resize = (): void => {
@@ -276,9 +275,14 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   render();
   const gestureUnlock = (): void => {
     void audioService.unlock().then((unlocked) => {
-      if (unlocked) audioService.startMusic();
+      if (!unlocked || disposed) return;
+      audioWindow.removeEventListener("click", gestureUnlock);
+      audioWindow.removeEventListener("keydown", gestureUnlock);
+      audioService.startMusic();
     });
   };
+  audioWindow.addEventListener("click", gestureUnlock);
+  audioWindow.addEventListener("keydown", gestureUnlock);
   dependencies.window.addEventListener("resize", resize);
   frame = dependencies.window.requestAnimationFrame(draw);
   return {
@@ -287,8 +291,8 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       disposed = true;
       if (frame !== undefined) dependencies.window.cancelAnimationFrame(frame);
       dependencies.window.removeEventListener("resize", resize);
-      audioWindow.removeEventListener("click", gestureUnlock, { once: true });
-      audioWindow.removeEventListener("keydown", gestureUnlock, { once: true });
+      audioWindow.removeEventListener("click", gestureUnlock);
+      audioWindow.removeEventListener("keydown", gestureUnlock);
       unsubscribeHud();
       unsubscribe();
       controller.dispose();

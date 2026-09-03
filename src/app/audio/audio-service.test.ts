@@ -266,6 +266,23 @@ describe("audio service", () => {
     expect(context.resume).toHaveBeenCalledOnce();
     expect(service.currentState).toBe("ready");
   });
+  it("notifies settings subscribers when the audio state changes", async () => {
+    stubFetch();
+    const context = new FakeAudioContext();
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+    });
+    const states: string[] = [];
+    const unsubscribe = service.subscribeState((state) => states.push(state));
+
+    await service.unlock();
+
+    expect(states).toEqual(["ready"]);
+    unsubscribe();
+    service.dispose();
+    expect(states).toEqual(["ready"]);
+  });
 
   it("reports error state non-fatally when resume rejects, then recovers", async () => {
     stubFetch();
@@ -407,6 +424,20 @@ describe("audio service", () => {
     elements[0]?.dispatch("error");
     expect(service.currentTrackIndex).toBe(1);
     expect(elements).toHaveLength(2);
+  });
+  it("stops a playlist run after every track fails once", async () => {
+    const elements: FakeMediaElement[] = [];
+    const { service } = await unlockedService({
+      mediaElementFactory: elementFactory(elements),
+    });
+    service.startMusic();
+
+    elements[0]?.dispatch("error");
+    elements[1]?.dispatch("error");
+    elements[2]?.dispatch("error");
+
+    expect(elements).toHaveLength(3);
+    expect(service.musicVoiceCount).toBe(0);
   });
 
   it("suspends on visibilitychange hidden and waits for a gesture to resume", async () => {

@@ -119,42 +119,36 @@ body {
   pointer-events: auto;
 }
 
+.hud-actions {
+  align-items: stretch;
+  bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  left: 1rem;
+  max-width: calc(100vw - 2rem);
+  pointer-events: none;
+  position: fixed;
+}
+
 .upgrades-launcher,
 .audio-settings-launcher,
 .upgrades-modal,
 .leaderboard-launcher,
-.leaderboard-modal {
+.leaderboard-modal,
+.audio-settings-modal {
   pointer-events: auto;
 }
 
-.upgrades-launcher {
-  bottom: 1rem;
+.hud-actions > .upgrades-launcher,
+.hud-actions > .leaderboard-launcher,
+.hud-actions > .audio-settings-launcher {
+  flex: 0 1 auto;
   font: inherit;
   font-weight: 700;
-  left: 1rem;
   min-height: 2.75rem;
   padding: 0.5rem 1.25rem;
-  position: fixed;
-}
-
-.leaderboard-launcher {
-  bottom: 1rem;
-  font: inherit;
-  font-weight: 700;
-  left: 9rem;
-  min-height: 2.75rem;
-  padding: 0.5rem 1.25rem;
-  position: fixed;
-}
-
-.audio-settings-launcher {
-  bottom: 1rem;
-  font: inherit;
-  font-weight: 700;
-  left: 17rem;
-  min-height: 2.75rem;
-  padding: 0.5rem 1.25rem;
-  position: fixed;
+  position: static;
 }
 
 .upgrades-modal {
@@ -341,26 +335,22 @@ body {
 
 @media (max-width: 600px) {
   .event-log {
-    bottom: 4.25rem;
+    bottom: 8.5rem;
     max-height: 22vh;
     right: 0.75rem;
   }
 
-  .upgrades-launcher {
+  .hud-actions {
     bottom: 0.75rem;
     left: 0.75rem;
-  }
-  .leaderboard-launcher {
-    bottom: 0.75rem;
-    left: 8.75rem;
+    max-width: calc(100vw - 1.5rem);
   }
 
-  .leaderboard-dialog {
-    padding: 0.75rem;
-  }
-
-  .leaderboard-tabs {
-    gap: 0.35rem;
+  .hud-actions > button {
+    flex: 1 1 8rem;
+    min-width: 0;
+    padding-inline: 0.75rem;
+    white-space: nowrap;
   }
 
   .leaderboard-tabs button {

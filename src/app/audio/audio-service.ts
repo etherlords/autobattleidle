@@ -74,7 +74,8 @@ export class AudioService {
   private readonly storage: AudioPreferencesStorage | undefined;
   private readonly manifest: AudioServiceManifest;
   private readonly mediaElementFactory: (src: string) => HTMLAudioElement;
-  readonly onStateChange: ((state: AudioServiceState) => void) | undefined;
+  private readonly onStateChange: ((state: AudioServiceState) => void) | undefined;
+  private readonly stateListeners = new Set<(state: string) => void>();
 
   private masterGain: GainNode | null = null;
   private uiGain: GainNode | null = null;
@@ -84,6 +85,7 @@ export class AudioService {
   private readonly bufferCache = new Map<string, Promise<AudioBuffer | null>>();
   private readonly voiceHandles: ActiveVoiceHandle[] = [];
   private readonly musicVoices: MusicVoice[] = [];
+  private readonly retiringMusicVoices = new Set<MusicVoice>();
   private readonly crossfadeTimers = new Set<ReturnType<typeof setTimeout>>();
   private readonly visibilityHandler = (): void => this.handleVisibilityChange();
 
@@ -93,6 +95,7 @@ export class AudioService {
   private automaticAlternation = 0;
   private manualAlternation = 0;
   private resumeFailures = 0;
+  private failedTracksInRun = 0;
   private visibilityHooked = false;
 
   constructor(deps: AudioServiceDeps) {
@@ -115,6 +118,15 @@ export class AudioService {
 
   get activeVoices(): readonly ActiveVoiceHandle[] {
     return this.voiceHandles;
+  }
+
+  subscribeState(listener: (state: string) => void): () => void {
+    if (this.state === "disposed") {
+      listener(this.state);
+      return () => undefined;
+    }
+    this.stateListeners.add(listener);
+    return () => this.stateListeners.delete(listener);
   }
 
   get musicVoiceCount(): number {
@@ -201,6 +213,7 @@ export class AudioService {
     if (this.manifest.music.length === 0) return;
     this.playlistActive = true;
     this.trackIndex = 0;
+    this.failedTracksInRun = 0;
     const first = this.manifest.music[0];
     if (first === undefined) return;
     this.spawnMusicVoice(first.file, 1);
@@ -208,7 +221,8 @@ export class AudioService {
 
   stopMusic(): void {
     this.playlistActive = false;
-    for (const voice of [...this.musicVoices]) this.retireMusicVoice(voice, 0);
+    const voices = this.musicVoices.splice(0);
+    for (const voice of voices) this.retireMusicVoice(voice, 0);
   }
 
   dispose(): void {
@@ -220,6 +234,7 @@ export class AudioService {
     this.stopAllVoices();
     this.teardownAllMusic();
     this.disconnectGraph();
+    this.stateListeners.clear();
   }
 
   private detachVisibility(): void {
@@ -247,8 +262,10 @@ export class AudioService {
   }
 
   private teardownAllMusic(): void {
-    for (const voice of this.musicVoices) this.teardownMusicVoice(voice);
+    const voices = new Set([...this.musicVoices, ...this.retiringMusicVoices]);
+    for (const voice of voices) this.teardownMusicVoice(voice);
     this.musicVoices.length = 0;
+    this.retiringMusicVoices.clear();
   }
 
   private disconnectGraph(): void {
@@ -270,6 +287,7 @@ export class AudioService {
   private setState(state: AudioServiceState): void {
     this.state = state;
     this.onStateChange?.(state);
+    for (const listener of [...this.stateListeners]) listener(state);
   }
 
   private attachGraph(context: AudioContext): void {
@@ -295,7 +313,11 @@ export class AudioService {
 
   private alternationFor(cue: BattleVisualCue): number {
     if (typeof cue === "string") return 0;
-    if (cue.source === "manual") return this.manualAlternation;
+    if (cue.source === "manual") {
+      const alternation = this.manualAlternation;
+      this.manualAlternation += 1;
+      return alternation;
+    }
     return this.automaticAlternation;
   }
 
@@ -414,25 +436,32 @@ export class AudioService {
     gain.connect(bus);
 
     const voice: MusicVoice = { element, gain, sourceNode };
-    element.addEventListener("ended", () => this.onTrackEnded(voice));
-    element.addEventListener("error", () => this.onTrackEnded(voice));
+    element.addEventListener("ended", () => this.onTrackEnded(voice, false));
+    element.addEventListener("error", () => this.onTrackEnded(voice, true));
     this.musicVoices.push(voice);
     void element.play().catch(() => undefined);
   }
 
-  private onTrackEnded(voice: MusicVoice): void {
+  private onTrackEnded(voice: MusicVoice, failed: boolean): void {
     if (this.state === "disposed" || !this.playlistActive) return;
     const index = this.musicVoices.indexOf(voice);
-    if (index >= 0) this.musicVoices.splice(index, 1);
-    this.retireMusicVoice(voice, CROSSFADE_SECONDS);
+    if (index < 0) return;
+    this.musicVoices.splice(index, 1);
+    this.retireMusicVoice(voice, failed ? 0 : CROSSFADE_SECONDS);
+    if (failed) this.failedTracksInRun += 1;
+    else this.failedTracksInRun = 0;
+    if (failed && this.failedTracksInRun >= this.manifest.music.length) {
+      this.playlistActive = false;
+      return;
+    }
 
     this.trackIndex = (this.trackIndex + 1) % this.manifest.music.length;
     const file = this.manifest.music[this.trackIndex];
     if (file === undefined) return;
     this.spawnMusicVoice(file.file, 1);
   }
-
   private retireMusicVoice(voice: MusicVoice, fadeSeconds: number): void {
+    if (this.retiringMusicVoices.has(voice)) return;
     const context = this.context;
     if (context !== null) {
       const now = context.currentTime;
@@ -440,8 +469,10 @@ export class AudioService {
       voice.gain.gain.setValueAtTime(voice.gain.gain.value, now);
       voice.gain.gain.linearRampToValueAtTime(0, now + fadeSeconds);
     }
+    this.retiringMusicVoices.add(voice);
     const timer = setTimeout(() => {
       this.crossfadeTimers.delete(timer);
+      this.retiringMusicVoices.delete(voice);
       this.teardownMusicVoice(voice);
     }, fadeSeconds * 1000);
     this.crossfadeTimers.add(timer);

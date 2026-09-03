@@ -36,14 +36,10 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   let audioSettings: AudioSettingsDialog | undefined;
   const leaderboard = new LeaderboardDialog();
   const log = new EventLog();
-  panel.append(
-    status.element,
-    dialog.launcher,
-    leaderboard.launcher,
-    dialog.modal,
-    leaderboard.modal,
-    log.element,
-  );
+  const actions = document.createElement("div");
+  actions.className = "hud-actions";
+  actions.append(dialog.launcher, leaderboard.launcher);
+  panel.append(status.element, actions, dialog.modal, leaderboard.modal, log.element);
   host.append(panel);
 
   battlefield.tabIndex = 0;
@@ -152,7 +148,8 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
     attachAudioSettings: (service) => {
       audioSettings?.dispose();
       audioSettings = new AudioSettingsDialog(service);
-      panel.append(audioSettings.launcher, audioSettings.modal);
+      actions.append(audioSettings.launcher);
+      panel.append(audioSettings.modal);
     },
     reportPersistence: (message) => dialog.reportPersistence(message),
     onLeaderboardLoad: (listener) => leaderboard.onLoad(listener),

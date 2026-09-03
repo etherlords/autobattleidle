@@ -1,5 +1,8 @@
 export type AudioSliderName = "master" | "ui" | "combat" | "music";
 
+/** State names emitted by the application-owned audio service. */
+export type AudioServiceStateName = "blocked" | "ready" | "error" | "suspended" | "disposed";
+
 /** Port implemented by the application-owned audio service; UI never imports app. */
 export type AudioSettingsPort = {
   readonly preferences: {
@@ -18,6 +21,7 @@ export type AudioSettingsPort = {
     readonly muted: boolean;
   }): void;
   setMuted(muted: boolean): void;
+  subscribeState(listener: (state: string) => void): () => void;
 };
 
 import { button, makeText } from "./elements";
@@ -39,12 +43,13 @@ export class AudioSettingsDialog {
   readonly modal = document.createElement("section");
   private readonly dialog = document.createElement("section");
   private readonly close = button("audio-settings-close", "Close sound settings");
-  private readonly status = makeText("p", "");
   private readonly mute = document.createElement("input");
+  private readonly status = makeText("p", "");
   private readonly sliders = new Map<
     AudioSliderName,
     { readonly input: HTMLInputElement; readonly value: HTMLElement }
   >();
+  private unsubscribeState: (() => void) | undefined;
   constructor(service: AudioSettingsPort) {
     this.launcher.setAttribute("aria-haspopup", "dialog");
     this.modal.className = "audio-settings-modal";
@@ -96,16 +101,22 @@ export class AudioSettingsDialog {
     this.close.addEventListener("click", this.closeFromButton);
     this.modal.addEventListener("pointerup", this.closeFromBackdrop);
     this.reportState(service.currentState);
+    this.unsubscribeState = service.subscribeState((state) => this.reportState(state));
   }
 
   reportState(state: string): void {
     if (state === "blocked") this.status.textContent = "Audio blocked until first interaction.";
+    else if (state === "ready") this.status.textContent = "Audio ready.";
+    else if (state === "suspended")
+      this.status.textContent = "Audio paused until next interaction.";
     else if (state === "error") this.status.textContent = "Audio error.";
     else this.status.textContent = "";
   }
 
   dispose(): void {
     this.closeModal();
+    this.unsubscribeState?.();
+    this.unsubscribeState = undefined;
     this.launcher.removeEventListener("click", this.open);
     this.close.removeEventListener("click", this.closeFromButton);
     this.modal.removeEventListener("pointerup", this.closeFromBackdrop);

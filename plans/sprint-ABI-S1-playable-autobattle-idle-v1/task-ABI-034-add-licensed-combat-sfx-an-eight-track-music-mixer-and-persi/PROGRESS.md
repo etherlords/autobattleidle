@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 73
+revision: 82
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 73
-- Last update: EVENT checkpoint — Main — Implementation published as exact SHA 2ab295175d67f1ea815bbe8c4b56d5ac6cd20016 (checkpoint 235a7ce + manifest-test CI fix 2ab2951). CI run 33769071474 and Deploy GitHub Pages run 33769071536 both success. Deployed https://etherlords.github.io/autobattleidle/ verified: settings launcher present, dialog opens with 4 sliders (100/100/100/60 defaults) and blocked status; public assets manifest.json, click_001.ogg, pastoral-loop.mp3 all HTTP 200. First CI push (33768334515) failed because the manifest hash test fetched a hardcoded localhost origin — fixed by spinning an embedded Vite server inside the test. Browser smoke on local dev also passed earlier (slider persistence, mute preserving category, master-multiply semantics, focus restore).
+- Revision: 82
+- Last update: EVENT checkpoint — Main — QA addendum independently confirms 390px launcher rectangles are non-overlapping, document/body width has no horizontal overflow, and load produced zero console/page errors.
 
 ## Execution plan
 
@@ -54,7 +54,7 @@ requiredGates:
 - [x] audio-integration-regressions: Test event mapping, mixer math, unlock failures, crossfade retirement, caps, visibility, reload/reset, historical game saves, missing assets, and disposal
 - [ ] audio-deployed-asset-proof: Verify production base paths, MIME/range/cache behavior, manifest hashes, attribution, and public reachability for every shipped file
 - [x] audio-implementation-self-check-v2: Implementation owner runs focused tests, asset/license validation, browser smoke, and pnpm check; records implementation-self-check evidence
-- [ ] audio-independent-review: Independent Reviewer audits rights evidence, ownership, autoplay state machine, scheduling, persistence isolation, failure handling, and tests
+- [~] audio-independent-review: Independent Reviewer audits rights evidence, ownership, autoplay state machine, scheduling, persistence isolation, failure handling, and tests
 - [ ] audio-independent-qa: Independent QA records audible state-action-time-result evidence for categories, mute, high APS, crossfades, backgrounding, reload, failures, desktop, and narrow layouts
 - [ ] audio-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, assets, and deployed reload before closure
 
@@ -1253,3 +1253,160 @@ requiredGates:
   - https://github.com/etherlords/autobattleidle/actions/runs/33769071536
   - https://etherlords.github.io/autobattleidle/audio/manifest.json
   - deployed dialog DOM receipts
+
+### evt-b7cfdc1d-0521-4ea6-a71d-5a0793f9c112
+
+- Timestamp: 2026-09-03T14:53:23.577Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: Self-check passed: full pnpm check green (lint, format, 27 test files/267+ tests, worker typecheck, production build); local browser smoke verified gesture unlock, slider persistence, mute-preserves-category, master-multiply, focus restore; deployed Pages verified with reachable assets and working dialog.
+- Idempotency key: abi034-self-check-gate-pass-20260903-b
+- Request fingerprint: 81c04020c0f4f8ce09861a2573886e7980d3a95485b44f207ed517ab54a2b390
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/actions/runs/33769071474
+  - https://github.com/etherlords/autobattleidle/actions/runs/33769071536
+  - browser smoke receipts (local + deployed)
+  - 2ab295175d67f1ea815bbe8c4b56d5ac6cd20016
+
+### evt-cc289883-fe5c-4ff8-9f6e-af0ac44725c3
+
+- Timestamp: 2026-09-03T14:53:29.988Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 74
+- Resulting revision: 75
+- Summary: Independent review gate starting after green self-check.
+- Idempotency key: abi034-plan-review-start-20260903
+- Request fingerprint: 13966633bbb0e60d8c797d61fd2340c964bf98283b9c74ac92f8b4804108c95c
+- Action: set_state
+- Step ID: audio-independent-review
+- State: in_progress
+- Evidence:
+  - evt-b7cfdc1d self-check pass
+
+### evt-a3d4a984-2d6f-404a-9a46-989816e9f613
+
+- Timestamp: 2026-09-03T15:02:36.926Z
+- Actor: ABI034Reviewer
+- Operation: gate.record
+- Prior revision: 75
+- Resulting revision: 76
+- Summary: Review FAIL: (P0) gesture unlock click/keydown listeners are never registered — audio inert in shipped app; (P1) production composition root never supplies the music manifest — startMusic no-ops; (P2) dialog status rendered once, never updates via onStateChange; (P3) manual hit alternation never advances; (P3) dispose during crossfade leaks the retiring music voice. Audio modules themselves reviewed solid. Findings returned to implementation owner for bounded repair before a fresh independent gate.
+- Idempotency key: abi034-review-fail-20260903
+- Request fingerprint: 72b472796b8b56b76b5867292f0ec350815bd1d407aa73e5d7ddc79d52adbfe1
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - agent://ABI034Reviewer
+  - src/app/application.ts:277-291
+  - src/app/application.ts:141-149
+  - src/ui/hud/audio-settings.ts:98-105
+  - src/app/audio/audio-service.ts:302-310
+  - src/app/audio/audio-service.ts:435-447
+
+### evt-80d79d75-aa5c-44cd-b801-085a8d401d92
+
+- Timestamp: 2026-09-03T16:07:20.433Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 76
+- Resulting revision: 77
+- Summary: EVENT checkpoint — Main — repaired gesture unlock registration, live settings state subscription, manual alternation, and crossfade retirement ownership; centralized launchers into a responsive HUD action row.
+- Idempotency key: abi034-repair-checkpoint-20260903-2107
+- Evidence:
+  - pnpm check: lint, format, 31 test files / 302 tests, worker tsc, vite build passed
+  - Focused audio/HUD/application tests: 7 files / 67 tests passed
+  - src/app/application.ts
+  - src/app/audio/audio-service.ts
+  - src/ui/hud/audio-settings.ts
+  - src/ui/hud.ts
+  - src/style.css
+
+### evt-72762c9b-60eb-4a46-8d49-5cf8474e7b83
+
+- Timestamp: 2026-09-03T16:20:08.872Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 77
+- Resulting revision: 78
+- Summary: EVENT checkpoint — Main — made gesture unlock retryable until success, capped all-track media failure runs, guarded duplicate track events, and linked every Suno music entry to the dated Pro-plan evidence record.
+- Idempotency key: abi034-review-repair-20260903-2121
+- Evidence:
+  - pnpm exec vitest run src/app/audio/ src/ui src/app/application.test.ts: 7 files / 69 tests passed
+  - public/audio/music/SUNO-PRO-EVIDENCE.md
+  - public/audio/manifest.json
+  - src/app/application.ts
+  - src/app/audio/audio-service.ts
+  - src/app/audio/audio-service.test.ts
+
+### evt-5bf4a6cd-7ec2-49dc-a12d-eaad7b848da1
+
+- Timestamp: 2026-09-03T16:23:14.570Z
+- Actor: ABI034FreshReview2
+- Operation: gate.record
+- Prior revision: 78
+- Resulting revision: 79
+- Summary: Independent gate PASS: gesture retry, bounded media failures, rights evidence linkage, live settings state, mixer ownership, cue scheduling, persistence isolation, and responsive HUD row reviewed with no release-blocking findings.
+- Idempotency key: abi034-independent-review-pass-20260903-2132
+- Request fingerprint: 5d9fe569ea690a4d8dfdf5e022658c4072de28c12b7f98d484700f5145a0ed67
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - 15715285c27e05a5
+  - src/app/application.ts:275-282
+  - src/app/audio/audio-service.ts:447-458
+  - public/audio/music/SUNO-PRO-EVIDENCE.md
+  - public/audio/manifest.json
+  - pnpm check: 31 test files / 303 tests, worker tsc, vite build passed
+
+### evt-e33d7b1f-5f61-4737-b2a0-233effe84c9c
+
+- Timestamp: 2026-09-03T16:28:12.978Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: EVENT checkpoint — Main — repaired physical audio-settings pointer interaction by enabling the modal overlay and made ready/suspended states explicit for accessible status feedback.
+- Idempotency key: abi034-qa-pointer-status-repair-20260903-2128
+- Evidence:
+  - ABI034BrowserQA found modal pointer-events blocker and blank ready status
+  - src/style.css:134-140
+  - src/ui/hud/audio-settings.ts:107-114
+  - pnpm exec vitest run src/app/audio/ src/ui src/app/application.test.ts: 7 files / 69 tests passed
+
+### evt-7270b193-6c57-444c-929b-e1878e090e86
+
+- Timestamp: 2026-09-03T16:30:42.256Z
+- Actor: ABI034BrowserQA2
+- Operation: gate.record
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Independent browser QA PASS on local app: initial blocked and explicit ready states, first-gesture music request, physical mute and slider persistence/isolation, reload restoration, all launchers, close/reopen, and no release blocker observed.
+- Idempotency key: abi034-independent-qa-pass-20260903-2142
+- Request fingerprint: 781291b455f65e4425206b7e84c2686019116278072bbe6efaea5cb8591cf5f5
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - 1571543a757e05d4
+  - http://127.0.0.1:5178/
+  - Viewport 1280x900 plus manager 390px pointer/layout smoke
+  - Headless browser cannot verify audible output; music/SFX requests and runtime traces verified
+  - pnpm check: 31 test files / 303 tests, worker tsc, vite build passed
+
+### evt-c9c519b4-6897-402b-b40d-c0fd5b7446e4
+
+- Timestamp: 2026-09-03T16:31:52.170Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: EVENT checkpoint — Main — QA addendum independently confirms 390px launcher rectangles are non-overlapping, document/body width has no horizontal overflow, and load produced zero console/page errors.
+- Idempotency key: abi034-qa-narrow-addendum-20260903-2250
+- Evidence:
+  - ABI034BrowserQA2 addendum: http://127.0.0.1:5178/ at 390x844, overlap [], scrollWidth=clientWidth=390, consoleErrors=[] and pageErrors=[]
+  - Upgrades 12-127.98 x 736-780; Leaderboard 135.98-274.73 x 736-780; Sound settings 12-167.75 x 788-832
+  - pnpm check: 31 test files / 303 tests, worker tsc, vite build passed
