@@ -4,7 +4,7 @@ id: ABI-050
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 25
+revision: 29
 status: Ready for Manager
 sprintId: ABI-S1
 dependencies:
@@ -23,8 +23,8 @@ workspaceProject: autobattleidle
 ## Current state
 
 - Status: Ready for Manager
-- Revision: 25
-- Last update: Verification gate passes with full project check and independent browser QA; advance to manager closure status.
+- Revision: 29
+- Last update: Publication proof is now the only remaining ABI-050 plan step; source code and task evidence are already in the prior pushed checkpoint.
 
 ## Execution plan
 
@@ -35,7 +35,8 @@ workspaceProject: autobattleidle
 - [x] family-selector-self-check: Run focused tests, pnpm check, and local browser transition checks on desktop and narrow layouts
 - [x] family-selector-independent-review: Independent Reviewer audits reachability semantics, fallback behavior, registry ownership, and scope
 - [x] family-selector-independent-qa: Independent QA verifies all family transitions, invalid states, reload, responsive layout, and clean console
-- [~] family-selector-manager-closure: Manager records evidence, Vault update, exact-SHA CI/Pages proof, deployed behavior, and closure
+- [x] family-selector-manager-closure: Manager records evidence, Vault update, exact-SHA CI/Pages proof, deployed behavior, and closure
+- [~] publication-proof: Publish exact-SHA checkpoint and prove deployed Pages selector fixes before closure
 
 ## Events
 
@@ -466,3 +467,70 @@ workspaceProject: autobattleidle
   - evt-fff4d96c-39c8-49a1-871e-72baefd26d92
   - evt-e01174a0-d04e-4d54-81a7-24ad9930576d
   - pnpm check
+
+### evt-b93d3bd4-7410-4913-bfea-4e1ae0a54fb1
+
+- Timestamp: 2026-09-03T11:58:36.854Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: EVENT checkpoint — Main — Published exact SHA 6aa2a98585361483b3fc9543446f1b1b9057842c. CI run 33752293330 and Deploy GitHub Pages run 33752293394 both completed success. Public Visual Lab loaded and selected beetle from boss-hydra with canonical grade=normal URL; deployed browser transition proof is complete.
+- Idempotency key: abi050-pages-proof-20260903
+- Evidence:
+  - 6aa2a98585361483b3fc9543446f1b1b9057842c
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293330
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293394
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-hydra&grade=boss&modifier=none&variant=0&subject=enemy
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=cinder&family=beetle&grade=normal&modifier=none&variant=0&golden=0&motion=0&view=orbit&viewport=desktop&recipe=production&subject=enemy&stage=1&detail=1000&level=1
+
+### evt-6cf6f83a-3c5c-4a4f-89f2-b2f369c931bd
+
+- Timestamp: 2026-09-03T12:08:10.402Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Reconcile manager-closure evidence: local validation and QA passed, but exact-SHA deployment proof must be retained as the final closure step.
+- Idempotency key: abi050-plan-publication-proof-add-20260903
+- Request fingerprint: 2898643307eb0013bbd87737027f6686e0744fed79407e771494f842035238df
+- Action: add
+- Step ID: publication-proof
+- Evidence:
+  - None
+
+### evt-622ce278-cab7-4905-a518-18daec440007
+
+- Timestamp: 2026-09-03T12:08:20.647Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: Local manager evidence is complete; exact-SHA publication is separated into the new final publication-proof step before Done.
+- Idempotency key: abi050-plan-manager-closure-complete-local-20260903
+- Request fingerprint: 7918bea9263c26227b4be44be53d125c0685ef7826a3bac8896353f34c09540a
+- Action: set_state
+- Step ID: family-selector-manager-closure
+- State: complete
+- Evidence:
+  - pnpm check
+  - agent://ABI050Reviewer
+  - agent://ABI050QA
+
+### evt-1a8a3ed6-f61f-4061-88bb-6b5b9504bf9c
+
+- Timestamp: 2026-09-03T12:08:27.751Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: Publication proof is now the only remaining ABI-050 plan step; source code and task evidence are already in the prior pushed checkpoint.
+- Idempotency key: abi050-plan-publication-proof-start-20260903
+- Request fingerprint: 947d5522f79ca242d2c91161f2eb5215cdadf379bb32b3138708aee15f0c1499
+- Action: set_state
+- Step ID: publication-proof
+- State: in_progress
+- Evidence:
+  - pnpm check
+  - agent://ABI050Reviewer
+  - agent://ABI050QA
