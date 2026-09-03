@@ -17,6 +17,7 @@ export class BattleStatus {
   private readonly health = progress("enemy-health");
   private readonly healthFill = document.createElement("div");
   private readonly healthText = document.createElement("span");
+  readonly trackStatus = makeText("p", "");
   private readonly automatic = progress("automatic-progress");
   private readonly automaticFill = document.createElement("div");
   private readonly automaticRow = document.createElement("div");
@@ -37,10 +38,12 @@ export class BattleStatus {
     this.automaticRow.append(this.automatic, this.automaticPause);
     this.goldenBug.className = "golden-bug-countdown";
     this.armor.className = "armor-status";
+    this.trackStatus.className = "hud-track-status";
     this.automaticPause.addEventListener("click", this.togglePause);
     this.element.append(
       this.enemy,
       this.health,
+      this.trackStatus,
       this.automaticRow,
       this.automaticText,
       this.goldenBug,

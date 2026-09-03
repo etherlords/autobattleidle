@@ -421,7 +421,7 @@ describe("createHud", () => {
     );
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
-    expect(element(host, "hud-status").children[3]?.textContent).toBe(
+    expect(element(host, "hud-status").children[4]?.textContent).toBe(
       "Automatic attack: 1.00 APS · 0.500s",
     );
     expect(element(host, "armor-status").hidden).toBe(true);

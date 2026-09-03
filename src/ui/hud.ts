@@ -1,7 +1,7 @@
 import type { UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 import type { AudioSettingsPort } from "./hud/audio-settings";
-import { button, makeText } from "./hud/elements";
+import { button } from "./hud/elements";
 import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
 
@@ -33,8 +33,6 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   panel.className = "hud";
   panel.setAttribute("aria-label", "Battle status");
   const status = new BattleStatus();
-  const trackStatus = makeText("p", "");
-  trackStatus.className = "hud-track-status";
   const muteToggle = button("hud-mute-toggle", "Mute");
   const dialog = new UpgradeDialog();
   let audioSettings: AudioSettingsDialog | undefined;
@@ -45,21 +43,13 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const actions = document.createElement("div");
   actions.className = "hud-actions";
   actions.append(dialog.launcher, leaderboard.launcher);
-  panel.append(
-    status.element,
-    trackStatus,
-    actions,
-    muteToggle,
-    dialog.modal,
-    leaderboard.modal,
-    log.element,
-  );
+  panel.append(status.element, actions, muteToggle, dialog.modal, leaderboard.modal, log.element);
   host.append(panel);
   muteToggle.hidden = true;
   const renderAudioChrome = (): void => {
     const service = audioService;
     const playlist = service?.playlist;
-    trackStatus.textContent =
+    status.trackStatus.textContent =
       playlist === null || playlist === undefined
         ? ""
         : `♪ ${playlist.current} · Next: ${playlist.next}`;
