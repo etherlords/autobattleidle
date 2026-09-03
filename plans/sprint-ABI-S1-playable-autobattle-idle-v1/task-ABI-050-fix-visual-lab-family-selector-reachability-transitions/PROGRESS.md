@@ -4,8 +4,8 @@ id: ABI-050
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 29
-status: Ready for Manager
+revision: 33
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-048
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 29
-- Last update: Publication proof is now the only remaining ABI-050 plan step; source code and task evidence are already in the prior pushed checkpoint.
+- Status: Done
+- Revision: 33
+- Last update: Close ABI-050 after exact-SHA CI/Pages success and deployed canonical family-selector proof.
 
 ## Execution plan
 
@@ -36,7 +36,7 @@ workspaceProject: autobattleidle
 - [x] family-selector-independent-review: Independent Reviewer audits reachability semantics, fallback behavior, registry ownership, and scope
 - [x] family-selector-independent-qa: Independent QA verifies all family transitions, invalid states, reload, responsive layout, and clean console
 - [x] family-selector-manager-closure: Manager records evidence, Vault update, exact-SHA CI/Pages proof, deployed behavior, and closure
-- [~] publication-proof: Publish exact-SHA checkpoint and prove deployed Pages selector fixes before closure
+- [x] publication-proof: Publish exact-SHA checkpoint and prove deployed Pages selector fixes before closure
 
 ## Events
 
@@ -534,3 +534,73 @@ workspaceProject: autobattleidle
   - pnpm check
   - agent://ABI050Reviewer
   - agent://ABI050QA
+
+### evt-69dd5d0e-da6d-47fb-8946-7f5dbaa27336
+
+- Timestamp: 2026-09-03T12:11:52.245Z
+- Actor: ABI050Manager
+- Operation: progress.append
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: EVENT closed — ABI050Manager — Final selector evidence commit was published as exact SHA 21336e6759068935ff1f473b4b0d6f61985cc710; CI run 33753646655 and Deploy GitHub Pages run 33753646732 succeeded; earlier deployed browser transition proof at SHA 6aa2a98585361483b3fc9543446f1b1b9057842c remained reproducible.
+- Idempotency key: abi050-final-pages-proof-20260903
+- Evidence:
+  - 21336e6759068935ff1f473b4b0d6f61985cc710
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646655
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646732
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-hydra&grade=boss&modifier=none&variant=0&subject=enemy
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=cinder&family=beetle&grade=normal&modifier=none&variant=0&golden=0&motion=0&view=orbit&viewport=desktop&recipe=production&subject=enemy&stage=1&detail=1000&level=1
+
+### evt-2b279894-0dcf-464e-8a25-868aa55d3f3e
+
+- Timestamp: 2026-09-03T12:11:57.681Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Publication proof complete: exact SHA 21336e6759068935ff1f473b4b0d6f61985cc710 passed CI and Deploy GitHub Pages; deployed selector transition remains canonical.
+- Idempotency key: abi050-plan-publication-proof-complete-20260903
+- Request fingerprint: 83d4e74db1b8d99dc107cab0fdf60e37fda34c28b277d0ca1fc25173d9de1c23
+- Action: set_state
+- Step ID: publication-proof
+- State: complete
+- Evidence:
+  - 21336e6759068935ff1f473b4b0d6f61985cc710
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646655
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646732
+
+### evt-c90c1578-09e9-41d9-8f29-83a8d2c671a2
+
+- Timestamp: 2026-09-03T12:12:02.641Z
+- Actor: ABI050Manager
+- Operation: gate.record
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Manager closure passes with exact-SHA publication and deployed canonical selector proof after review/QA gates.
+- Idempotency key: abi050-manager-closure-pass-20260903
+- Request fingerprint: 32070b1bfb8f9d624ae94cf58aec650dc7894a76f13f2618a5b8cfe09a90f47b
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-2b279894-0dcf-464e-8a25-868aa55d3f3e
+  - 21336e6759068935ff1f473b4b0d6f61985cc710
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646655
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646732
+
+### evt-a248776a-462f-43f2-8e54-4ce2e79aa964
+
+- Timestamp: 2026-09-03T12:12:06.982Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Close ABI-050 after exact-SHA CI/Pages success and deployed canonical family-selector proof.
+- Idempotency key: abi050-close-done-20260903
+- Request fingerprint: b7cf1955a0d60420877f6980956afe4ed867cab4e22ad8d06b78f37f29be516c
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-c90c1578-09e9-41d9-8f29-83a8d2c671a2
+  - 21336e6759068935ff1f473b4b0d6f61985cc710
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646655
+  - https://github.com/etherlords/autobattleidle/actions/runs/33753646732
