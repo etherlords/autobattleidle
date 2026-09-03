@@ -203,6 +203,7 @@ export class AudioService {
     this.prefs = prefs;
     this.applyGains();
     saveAudioPreferences(this.storage, prefs);
+    for (const listener of [...this.stateListeners]) listener(this.state);
   }
 
   setMuted(muted: boolean): void {

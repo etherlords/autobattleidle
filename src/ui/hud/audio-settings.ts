@@ -53,8 +53,9 @@ export class AudioSettingsDialog {
     { readonly input: HTMLInputElement; readonly value: HTMLElement }
   >();
   private unsubscribeState: (() => void) | undefined;
+  private readonly muted: () => boolean;
   constructor(service: AudioSettingsPort) {
-    this.modal.className = "audio-settings-modal";
+    this.muted = () => service.preferences.muted;
     this.modal.hidden = true;
     this.dialog.className = "audio-settings-dialog";
     this.dialog.setAttribute("aria-label", "Sound settings");
@@ -108,6 +109,7 @@ export class AudioSettingsDialog {
   }
 
   reportState(state: string): void {
+    this.mute.checked = this.muted();
     this.startGate.hidden = state === "ready";
     if (state === "blocked") this.status.textContent = "Audio blocked until first interaction.";
     else if (state === "ready") this.status.textContent = "Audio ready.";
