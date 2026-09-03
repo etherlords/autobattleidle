@@ -4,8 +4,8 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 94
-status: In Review
+revision: 97
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-005
@@ -25,9 +25,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Review
-- Revision: 94
-- Last update: Implementation and self-check complete; independent review gate passed and current source is ready for review lifecycle projection.
+- Status: Done
+- Revision: 97
+- Last update: Close audio infrastructure and polish: softened cue mapping, calibrated hidden base gains with 100% sliders, live current/next track indicator, and exact deployed proof.
 
 ## Execution plan
 
@@ -1633,3 +1633,59 @@ requiredGates:
   - evt-5bf4a6cd-7ec2-49dc-a12d-eaad7b848da1
   - evt-cd61953c-a728-4ec4-ac37-1c9e97e00afd
   - 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+
+### evt-d9623f5e-3ebe-45b3-ba1f-9b2a55ee4e7b
+
+- Timestamp: 2026-09-03T21:01:23.625Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Audio polish follow-up passed focused tests, full pnpm check, local browser playlist/slider smoke, CI, Pages, and deployed reload proof.
+- Idempotency key: abi034-polish-advance-qa-20260904-0117
+- Request fingerprint: 0c494a87f0c76c87af955a0831dd712b33fef91b2f93c772fbe72011c08ba653
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - pnpm check: 31 files / 303 tests pass
+  - focused audio tests: 69 pass
+  - CI 33801195266 success
+  - Pages 33801195292 success
+  - deployed playlist and 100% slider proof
+
+### evt-2371c985-553c-4aff-984f-d17c211a3363
+
+- Timestamp: 2026-09-03T21:01:29.698Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: QA and verification evidence are complete for the polished audio behavior; ready for manager closure.
+- Idempotency key: abi034-polish-ready-manager-20260904-0120
+- Request fingerprint: b2259e99dc7c5940de30d260b0e8246a9358aaa199b45157f12b76d7e20bc9cb
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-d9623f5e-3ebe-45b3-ba1f-9b2a55ee4e7b
+  - CI 33801195266
+  - Pages 33801195292
+  - b56befaf579a20eeb58719ec7799f1cd70c63dda
+
+### evt-16a341c8-4d48-4922-9dd1-da532cba3d95
+
+- Timestamp: 2026-09-03T21:01:36.503Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: Close audio infrastructure and polish: softened cue mapping, calibrated hidden base gains with 100% sliders, live current/next track indicator, and exact deployed proof.
+- Idempotency key: abi034-polish-close-20260904-0123
+- Request fingerprint: 1c5e5191808c74196f537281fe6c73fd0d84ca02928b5a0ed3bbccedf7d45825
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - b56befaf579a20eeb58719ec7799f1cd70c63dda
+  - CI 33801195266 success
+  - Pages 33801195292 success
+  - Vault ABI-DOC-20260903-FA2A0A
+  - deployed https://etherlords.github.io/autobattleidle/
