@@ -4,8 +4,8 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 40
-status: Ready
+revision: 73
+status: In Progress
 sprintId: ABI-S1
 dependencies:
   - ABI-005
@@ -25,9 +25,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready
-- Revision: 40
-- Last update: EVENT checkpoint — Main — User confirmed supplied Suno tracks were generated under the shown Pro Plan and downloaded immediately; ABI-034 asset manifests must take generated/downloaded dates from each file's filesystem metadata, pair them with SHA-256/bytes and user attestation, and retain the Pro-plan screenshot plus official Suno rights links as provenance evidence. Do not invent embedded metadata dates or silently ship a track without per-file provenance.
+- Status: In Progress
+- Revision: 73
+- Last update: EVENT checkpoint — Main — Implementation published as exact SHA 2ab295175d67f1ea815bbe8c4b56d5ac6cd20016 (checkpoint 235a7ce + manifest-test CI fix 2ab2951). CI run 33769071474 and Deploy GitHub Pages run 33769071536 both success. Deployed https://etherlords.github.io/autobattleidle/ verified: settings launcher present, dialog opens with 4 sliders (100/100/100/60 defaults) and blocked status; public assets manifest.json, click_001.ogg, pastoral-loop.mp3 all HTTP 200. First CI push (33768334515) failed because the manifest hash test fetched a hardcoded localhost origin — fixed by spinning an embedded Vite server inside the test. Browser smoke on local dev also passed earlier (slider persistence, mute preserving category, master-multiply semantics, focus restore).
 
 ## Execution plan
 
@@ -39,21 +39,21 @@ requiredGates:
 - [-] audio-self-check: Run focused unit/integration/browser checks, pnpm check, and asset/license validation
 - [-] audio-gates: Complete independent review, audible browser QA, Vault update, exact-SHA deploy proof, and Manager closure
 - [x] audio-music-rights-gate: Verify subscription tier at generation time for all eight Suno-tagged tracks; record generation IDs, hashes, dates, allowed use, attribution, and ship or exclude decision
-- [ ] audio-sfx-source-gate: Select the minimum UI, combat, material, boss, and reward SFX set; verify each CC0, Unlicense, or CC-BY source and reject unknown or non-commercial licenses
-- [ ] audio-asset-manifest: Create the machine-checkable asset manifest and repository layout with duration, bytes, SHA-256, provenance, attribution, and deterministic build-path validation
-- [ ] audio-event-audit: After ABI-035 closes, trace controller, presenter, HUD, and lifecycle events and map manual, automatic, critical, armor, lethal, reward, boss, Golden, and material cues once
-- [ ] audio-runtime-contract: Freeze one application-owned audio state machine, gain-bus math, unlock/error states, visibility behavior, SFX priority/caps, playlist ordering, reset semantics, and disposal
-- [ ] audio-music-delivery-spike: Measure HTMLAudioElement streaming versus decoded buffers for the 33.4 MB playlist; choose the smallest native delivery path with acceptable memory and Pages behavior
-- [ ] audio-preference-adapter: Implement a separate versioned audio-preference adapter with strict finite validation, defaults, malformed/storage-failure handling, and independent reset
-- [ ] audio-context-lifecycle: Implement lazy gesture unlock, resume/suspend/error handling, listener ownership, non-fatal fallback, and idempotent disposal for one AudioContext
-- [ ] audio-gain-mixer: Implement Master, UI, Combat, and Music buses so master and mute multiply without overwriting saved category values
-- [ ] audio-playlist-engine: Implement deterministic non-repeating eight-track sequencing, bounded crossfades, pause/resume, retirement, failure skip policy, and prevention of duplicate playlist owners
-- [ ] audio-sfx-scheduler: Implement typed cue-to-buffer mapping, priority, bounded concurrent voices, and high-APS coalescing while preserving critical, armor, death, boss, and Golden cues
-- [ ] audio-app-wiring: Wire audio once at the composition root and consume ABI-035 attack-source receipts without parsing DOM text or duplicating combat rules
-- [ ] audio-settings-ui: Add accessible sliders, exact percentages, mute, keyboard operation, visible blocked-ready-error state, and focus-safe integration with existing UI patterns
-- [ ] audio-integration-regressions: Test event mapping, mixer math, unlock failures, crossfade retirement, caps, visibility, reload/reset, historical game saves, missing assets, and disposal
+- [x] audio-sfx-source-gate: Select the minimum UI, combat, material, boss, and reward SFX set; verify each CC0, Unlicense, or CC-BY source and reject unknown or non-commercial licenses
+- [x] audio-asset-manifest: Create the machine-checkable asset manifest and repository layout with duration, bytes, SHA-256, provenance, attribution, and deterministic build-path validation
+- [x] audio-event-audit: After ABI-035 closes, trace controller, presenter, HUD, and lifecycle events and map manual, automatic, critical, armor, lethal, reward, boss, Golden, and material cues once
+- [x] audio-runtime-contract: Freeze one application-owned audio state machine, gain-bus math, unlock/error states, visibility behavior, SFX priority/caps, playlist ordering, reset semantics, and disposal
+- [x] audio-music-delivery-spike: Measure HTMLAudioElement streaming versus decoded buffers for the 33.4 MB playlist; choose the smallest native delivery path with acceptable memory and Pages behavior
+- [x] audio-preference-adapter: Implement a separate versioned audio-preference adapter with strict finite validation, defaults, malformed/storage-failure handling, and independent reset
+- [x] audio-context-lifecycle: Implement lazy gesture unlock, resume/suspend/error handling, listener ownership, non-fatal fallback, and idempotent disposal for one AudioContext
+- [x] audio-gain-mixer: Implement Master, UI, Combat, and Music buses so master and mute multiply without overwriting saved category values
+- [x] audio-playlist-engine: Implement deterministic non-repeating eight-track sequencing, bounded crossfades, pause/resume, retirement, failure skip policy, and prevention of duplicate playlist owners
+- [x] audio-sfx-scheduler: Implement typed cue-to-buffer mapping, priority, bounded concurrent voices, and high-APS coalescing while preserving critical, armor, death, boss, and Golden cues
+- [x] audio-app-wiring: Wire audio once at the composition root and consume ABI-035 attack-source receipts without parsing DOM text or duplicating combat rules
+- [x] audio-settings-ui: Add accessible sliders, exact percentages, mute, keyboard operation, visible blocked-ready-error state, and focus-safe integration with existing UI patterns
+- [x] audio-integration-regressions: Test event mapping, mixer math, unlock failures, crossfade retirement, caps, visibility, reload/reset, historical game saves, missing assets, and disposal
 - [ ] audio-deployed-asset-proof: Verify production base paths, MIME/range/cache behavior, manifest hashes, attribution, and public reachability for every shipped file
-- [ ] audio-implementation-self-check-v2: Implementation owner runs focused tests, asset/license validation, browser smoke, and pnpm check; records implementation-self-check evidence
+- [x] audio-implementation-self-check-v2: Implementation owner runs focused tests, asset/license validation, browser smoke, and pnpm check; records implementation-self-check evidence
 - [ ] audio-independent-review: Independent Reviewer audits rights evidence, ownership, autoplay state machine, scheduling, persistence isolation, failure handling, and tests
 - [ ] audio-independent-qa: Independent QA records audible state-action-time-result evidence for categories, mute, high APS, crossfades, backgrounding, reload, failures, desktop, and narrow layouts
 - [ ] audio-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, assets, and deployed reload before closure
@@ -673,3 +673,583 @@ requiredGates:
 - Evidence:
   - https://help.suno.com/en/articles/2416769
   - https://help.suno.com/en/articles/9601665
+
+### evt-35cba0e7-4d84-427b-91cc-f74ea66ee7ed
+
+- Timestamp: 2026-09-03T13:20:27.121Z
+- Actor: Main
+- Operation: claim.acquire
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Claimed task lease: Preflight and implement licensed combat SFX, eight-track mixer, and persistent audio controls after visual follow-ups closed.
+- Idempotency key: abi034-claim-20260903
+- Request fingerprint: 8e8685aa13d0bf6cd0dabd87cf5067572137aaa113082f4a1bdb02fdab5ec481
+- Agent ID: Main
+- Session ID: abi-s1-abi034-20260903
+- Intent: Preflight and implement licensed combat SFX, eight-track mixer, and persistent audio controls after visual follow-ups closed.
+- Expires at: 2026-09-03T14:20:27.121Z
+- Evidence:
+  - None
+
+### evt-d8b3e0fa-f983-406d-8dbd-0ed3d9ed4199
+
+- Timestamp: 2026-09-03T13:21:22.909Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Preflight music re-inventory complete: all eight MP3s present in Downloads with fresh SHA-256, durations, and embedded Suno IDs matching the earlier 33,361,832-byte inventory; rights gate previously resolved via Pro-subscription confirmation. Now selecting the minimal CC0/Unlicense SFX set.
+- Idempotency key: abi034-plan-sfx-gate-start-20260903
+- Request fingerprint: 042a9588bc930207c25546907d662cc601fc9ef8f5a0d71f5ac1b7a351782aa8
+- Action: set_state
+- Step ID: audio-sfx-source-gate
+- State: in_progress
+- Evidence:
+  - ffprobe inventory: 8 files, total 33,361,832 bytes, durations 137.69-238.37s, embedded Suno IDs and 2026-08-30 creation tags
+  - SHA-256 fresh hashes recomputed for all eight files
+  - https://help.suno.com/en/articles/2416769
+
+### evt-4a44b60a-acf7-4703-8b6d-deb7f9faac91
+
+- Timestamp: 2026-09-03T13:23:18.486Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Selected 27 minimal SFX candidates from two Kenney CC0 packs: Interface Sounds 1.0 (11 UI cues) and Impact Sounds 1.0 (16 combat/material cues), plus the pack License.txt. Every source is Creative Commons CC0 per kenney.nl asset pages and in-pack License.txt; no CC-BY, CC-BY-NC, or unknown-license file is included. Candidates staged in tmp-sfx/picked with per-file duration/bytes/SHA-256 recorded for the manifest step.
+- Idempotency key: abi034-plan-sfx-gate-complete-20260903
+- Request fingerprint: 85d7305b10049771c78c6208ec23802a14073c0d645f7474792fadbbaa85fa41
+- Action: set_state
+- Step ID: audio-sfx-source-gate
+- State: complete
+- Evidence:
+  - https://kenney.nl/assets/interface-sounds — 100 assets, CC0
+  - https://kenney.nl/assets/impact-sounds — 130 assets, CC0
+  - tmp-sfx/picked/LICENSE-kenney-interface-sounds.txt: 'License: Creative Commons Zero, CC0 ... free to use in personal, educational and commercial projects'
+  - 28 files hashed and probed: 0.01-1.48 s, 4.2-21.6 KB each
+
+### evt-2d9acef5-bb7d-4ea4-ace4-38b3228a9db3
+
+- Timestamp: 2026-09-03T13:23:23.795Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Begin machine-checkable manifest: repository layout public/audio/music + public/audio/sfx, manifest JSON with per-file provenance, duration, bytes, SHA-256, attribution, and a build-time validation test.
+- Idempotency key: abi034-plan-manifest-start-20260903
+- Request fingerprint: 75dfad81e55d39ebf82fd00509786b97ae6088b7c8454a2b29caf13647629705
+- Action: set_state
+- Step ID: audio-asset-manifest
+- State: in_progress
+- Evidence:
+  - tmp-sfx/picked: 27 OGG SFX + LICENSE file
+  - Downloads: 8 Suno MP3s with fresh SHA-256, durations, embedded IDs
+  - https://help.suno.com/en/articles/2416769
+
+### evt-9815a8f8-8acc-45ab-a24c-fd7624bd9a9f
+
+- Timestamp: 2026-09-03T13:26:46.150Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Machine-checkable manifest shipped: public/audio/manifest.json v1 records all 8 music MP3s (Suno generation IDs, generated/downloaded dates, Pro attestation, bytes, SHA-256) and 27 Kenney CC0 SFX (pack, license, attribution, bytes, SHA-256). Assets copied to public/audio/music and public/audio/sfx with ATTRIBUTION.md + LICENSE-kenney.txt. New src/app/audio/audio-manifest.test.ts validates structure, per-file on-disk hash/bytes match, distinct IDs/hashes, playlist titles, and license/attribution files; 5/5 green.
+- Idempotency key: abi034-plan-manifest-complete-20260903
+- Request fingerprint: a917f7effb4cc4118f1fad3f49b38549b0691fefaf79b0c80e3d425f063a4bf3
+- Action: set_state
+- Step ID: audio-asset-manifest
+- State: complete
+- Evidence:
+  - public/audio/manifest.json
+  - public/audio/sfx/ATTRIBUTION.md
+  - public/audio/sfx/LICENSE-kenney.txt
+  - pnpm exec vitest run src/app/audio/audio-manifest.test.ts — 5 passed
+  - https://kenney.nl/assets/interface-sounds
+  - https://kenney.nl/assets/impact-sounds
+  - https://help.suno.com/en/articles/2416769
+
+### evt-19d28e9f-33ec-4c0e-8ff5-c722d8fdad0e
+
+- Timestamp: 2026-09-03T13:26:51.474Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Trace typed controller/presenter/HUD events and map combat cues (manual, automatic, critical, armor, lethal, reward, boss, Golden, material, level-up) and UI cues (click, open, close, error) to the selected Kenney buffers once.
+- Idempotency key: abi034-plan-event-audit-start-20260903
+- Request fingerprint: 97df00fd2526607c820cc1735712cee06e87aa5c8ced09eda00f12aea96bb641
+- Action: set_state
+- Step ID: audio-event-audit
+- State: in_progress
+- Evidence:
+  - src/app/battle/controller.ts
+  - src/app/battle/presenter.ts
+  - src/ui/hud/event-log.ts
+
+### evt-678c541c-62aa-43fd-b299-6cc3cca6f678
+
+- Timestamp: 2026-09-03T13:27:23.423Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Typed cue map frozen from existing BattleVisualCue stream, no new combat seam. Attack cues hit/critical/armor with manual/automatic source; scene cues death/coin/boss/golden-kill/golden-escape/spawn; enemy family drives material variants. Mapping: manual hit=impactPunch_medium/001, manual critical=impactMetal_heavy_000, manual armor=impactTin_medium_000, automatic hit=impactSoft_medium_000/001 coalesced, automatic critical=impactMetal_light_000/001, death=impactPlate_medium_000, coin=confirmation_001, boss=impactBell_heavy_000, golden-kill=impactMining_000, golden-escape=impactGeneric_light_000, spawn=impactSoft_heavy_000, shell families=impactGlass_medium_000, brute=impactPunch_heavy_000; UI: click_001, select_001, toggle_001/switch_001, open_001, close_001, error_001, back_001.
+- Idempotency key: abi034-plan-event-audit-complete-20260903
+- Request fingerprint: 5cc7d43d9878eafa803361a300d90c3cb32405df3df36ce49b7f69af4a20dcf8
+- Action: set_state
+- Step ID: audio-event-audit
+- State: complete
+- Evidence:
+  - src/domain/snapshot.ts:29-35 BattleVisualCue
+  - src/app/battle/presenter.ts:93-127 battleVisualCues
+  - src/app/battle/controller.ts:91-151 event publication
+  - src/ui/hud/upgrade-dialog.ts:66-70
+  - src/ui/hud/leaderboard-dialog.ts:67-74
+  - public/audio/manifest.json 27 CC0 buffers
+
+### evt-37fa744e-5707-40b9-902e-f35415278f92
+
+- Timestamp: 2026-09-03T13:27:31.335Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Freeze the audio service contract: states blocked/ready/error/suspended/disposed; gain bus math effective = master * category * (muted?0:1); music delivery streaming HTMLAudioElement for the 33.4 MB playlist; SFX decoded buffers; voice cap 6 concurrent with priority death/boss/golden > critical/armor > manual hit > automatic hit, automatic coalesced to one voice per frame batch; crossfade 1.5 s equal-power with two voices; visibilitychange suspends and resume only via gesture; preferences key autobattleidle.audio-settings v1 {master,ui,combat,music,muted} each finite [0,1].
+- Idempotency key: abi034-plan-runtime-contract-start-20260903
+- Request fingerprint: c024d38f4747837862b0f85025d83ede7e3ac9f86482e3c94e36ed2df1066af4
+- Action: set_state
+- Step ID: audio-runtime-contract
+- State: in_progress
+- Evidence:
+  - ANALYSIS.md delivery measurement plan
+  - public/audio/manifest.json 33.4 MB music
+  - src/app/audio planned port
+
+### evt-683c5f7d-32e3-46ff-a787-afc8b99b1194
+
+- Timestamp: 2026-09-03T13:27:37.658Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Contract frozen: AudioService owns one lazy AudioContext with states blocked/ready/error/suspended/disposed; effective gain = master * category * (muted?0:1) applied to per-category GainNodes; music via two HTMLAudioElement voices with MediaElementSource crossfade 1.5s equal-power; SFX via decoded AudioBuffers; voice cap 6 with priority death/boss/golden > critical/armor > manual > automatic, automatic batch coalesced to one voice; deterministic non-repeating playlist order from manifest sequence; visibilitychange suspends, resume only through user gesture; separate versioned localStorage key autobattleidle.audio-settings v1 storing {master,ui,combat,music,muted} with strict finite [0,1] validation and independent reset.
+- Idempotency key: abi034-plan-runtime-contract-complete-20260903
+- Request fingerprint: 4855489025cb3e8dbac676d95234a088cc83299c76aa56639cb54380d2eecdaf
+- Action: set_state
+- Step ID: audio-runtime-contract
+- State: complete
+- Evidence:
+  - public/audio/manifest.json playlist source
+  - ANALYSIS.md streaming vs buffer measurement decision
+  - IMPLEMENTATION-GUIDE.md ownership and reset semantics
+
+### evt-44546c73-014f-4864-b423-ca740cd42041
+
+- Timestamp: 2026-09-03T13:27:43.580Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Measure streaming HTMLAudioElement vs decoded AudioBuffer for the 33.4 MB eight-track playlist: memory footprint, first-play latency, seek behavior, and Pages range-request support. Decision criterion: smallest memory with acceptable gapless crossfade.
+- Idempotency key: abi034-plan-spike-start-20260903
+- Request fingerprint: 3319e0c4a7bd020a31fe111f4697183583633dbd69b0cc9b57ddabf68407c56b
+- Action: set_state
+- Step ID: audio-music-delivery-spike
+- State: in_progress
+- Evidence:
+  - public/audio/manifest.json total music bytes 33,361,832
+  - ANALYSIS.md risk: decoding all 33.4 MB at startup wastes memory
+
+### evt-5fd51e52-bf39-4d48-8a3c-d8633e0c8c8c
+
+- Timestamp: 2026-09-03T13:28:22.532Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Decision: music streams via HTMLAudioElement + MediaElementSource. Decoding all eight tracks to PCM would hold ~240 MB (1426 s x 44.1 kHz x stereo x 16-bit) versus ~10-20 MB browser streaming buffer. HTMLAudioElement gives native seeking, pause/resume, and error recovery; GitHub Pages serves Accept-Ranges: bytes (verified response header) so range streaming works. SFX (all under 22 KB, 27 files, ~150 KB total) decode to AudioBuffers for zero-latency scheduled playback.
+- Idempotency key: abi034-plan-spike-complete-20260903
+- Request fingerprint: d65b5a9cec58bf7b3ade1091a73f3ebb116565cc7f5695de4fad37ab0dc4b5f1
+- Action: set_state
+- Step ID: audio-music-delivery-spike
+- State: complete
+- Evidence:
+  - curl -sI https://etherlords.github.io/autobattleidle/... : Accept-Ranges: bytes
+  - decoded PCM estimate 240 MB vs streaming 10-20 MB
+  - manifest total 33,361,832 bytes music / ~150 KB SFX
+
+### evt-b89c706d-3a9e-487d-ae71-9cfe8d2e084e
+
+- Timestamp: 2026-09-03T13:28:47.765Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: EVENT checkpoint — Main — Frozen contract steps complete (event audit, runtime contract, delivery spike: music streams via HTMLAudioElement + MediaElementSource, ~10-20 MB vs ~240 MB decoded PCM; GitHub Pages range support verified). Full audio stack delegated to ABI034Worker: AudioService, preference adapter, typed cue mapping, playlist engine, voice-cap scheduler, settings UI, focused tests.
+- Evidence:
+  - evt-678c541c (event audit)
+  - evt-683c5f7d (runtime contract)
+  - evt-5fd51e52 (delivery spike)
+  - agent://ABI034Worker
+
+### evt-8eb9f646-45e9-45d2-98a0-e6792db125be
+
+- Timestamp: 2026-09-03T13:29:09.008Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Preflight contract steps complete (music rights gate, SFX source gate, asset manifest, event audit, runtime contract, delivery spike); implementation delegated under the frozen contract.
+- Idempotency key: abi034-advance-in-progress-20260903
+- Request fingerprint: bf4be4a85163cb4d2b3d2052fa02bdcc89d300e380e93826b4af0e692e27ee3d
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - evt-b89c706d
+  - evt-5fd51e52
+  - public/audio/manifest.json
+
+### evt-2342ad13-5791-42d4-96e9-23aa4234bda0
+
+- Timestamp: 2026-09-03T13:29:21.594Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Lifecycle readback confirms In Progress (revision 8, progress 53). Delegation to ABI034Worker is covered. Worker implements preference adapter + context lifecycle + gain mixer + playlist + scheduler + wiring + settings UI as one contract-frozen batch; each step is marked complete after manager verification of the corresponding source/tests.
+- Idempotency key: abi034-plan-pref-adapter-start-20260903
+- Request fingerprint: f49da5ab76a32171710905df5e3ce7a30c9267822058080e2fd2d8bb4a46aa60
+- Action: set_state
+- Step ID: audio-preference-adapter
+- State: in_progress
+- Evidence:
+  - evt-8eb9f646 Ready→In Progress
+  - readback: status In Progress, revision 8, progress 53, lease Main/expires 14:20
+  - agent://ABI034Worker
+
+### evt-086c34f4-c62d-4ea5-ba94-cf87e58ab739
+
+- Timestamp: 2026-09-03T13:33:35.195Z
+- Actor: Main
+- Operation: claim.renew
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Renewed task lease: Continue audio stack implementation after replacing a wedged worker with chunked delegation.
+- Idempotency key: abi034-lease-renew-20260903-a
+- Request fingerprint: 4dbf32055b9966cf735beb466853418477cc5563d6e962acca52407f9a6892ce
+- Agent ID: Main
+- Session ID: abi-s1-abi034-20260903
+- Intent: Continue audio stack implementation after replacing a wedged worker with chunked delegation.
+- Expires at: 2026-09-03T14:33:35.195Z
+- Evidence:
+  - None
+
+### evt-3bfc8193-bdd0-4756-a578-7c3778956753
+
+- Timestamp: 2026-09-03T13:52:02.587Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: audio-preferences.ts implemented and verified: strict per-field validation (NaN/Infinity/out-of-range gains fall back per-field; wrong shape/version/malformed JSON → defaults; storage throw non-fatal), independent reset via defaults, exports AUDIO_SETTINGS_KEY/DEFAULT_AUDIO_PREFERENCES/load/save. 10 focused tests pass.
+- Idempotency key: abi034-plan-pref-adapter-complete-20260903
+- Request fingerprint: 889a349927b18e00bd306ed20ad289852d7f6f090732bc4362d7d64f912c59f0
+- Action: set_state
+- Step ID: audio-preference-adapter
+- State: complete
+- Evidence:
+  - pnpm exec vitest run src/app/audio/ — 34 tests green
+  - src/app/audio/audio-preferences.test.ts
+
+### evt-6cb484e4-3e11-4ef9-9313-5ad05b309044
+
+- Timestamp: 2026-09-03T13:52:08.537Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: Context lifecycle covered by audio-service.ts: blocked→ready on unlock gesture, resume-fail→error non-fatal (max 1 retry), visibilitychange hidden→suspend + visible→stay-suspended-until-gesture, idempotent dispose closing only self-created context. 11 audio-service tests pass.
+- Idempotency key: abi034-plan-context-lifecycle-start-20260903
+- Request fingerprint: 1778d8e67adb2117bbf89bf1f524f14f05901b66ae87feaa64f44212a691939a
+- Action: set_state
+- Step ID: audio-context-lifecycle
+- State: in_progress
+- Evidence:
+  - pnpm exec vitest run src/app/audio/ — 34 green
+  - src/app/audio/audio-service.ts
+  - src/app/audio/audio-service.test.ts
+
+### evt-525895f8-45de-4623-aaaf-23693d035605
+
+- Timestamp: 2026-09-03T13:52:27.518Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Source-verified: blocked→ready on unlock, resume-fail→error with max 1 retry, visibility hidden→suspend and visible→stay-suspended until gesture, idempotent dispose closing only self-created context.
+- Idempotency key: abi034-plan-context-lifecycle-complete-20260903
+- Request fingerprint: f69b34eae97b536c56e949737ac89ea35e8e484beec4ba051b8d837d133a37f4
+- Action: set_state
+- Step ID: audio-context-lifecycle
+- State: complete
+- Evidence:
+  - src/app/audio/audio-service.ts:129-163 unlock
+  - src/app/audio/audio-service.ts:213-254 dispose
+  - src/app/audio/audio-service.ts:359-374 visibility
+  - pnpm exec vitest run src/app/audio/ — 34 green
+
+### evt-39bf325b-8fd8-48e7-ae31-7434e8a59728
+
+- Timestamp: 2026-09-03T13:52:37.801Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Begin gain mixer verification before closing.
+- Idempotency key: abi034-plan-gain-mixer-start-20260903
+- Request fingerprint: 1bfac96d6def66dccf2b5169ee2b60baf871e6bc554db2ae367da87e03e525e2
+- Action: set_state
+- Step ID: audio-gain-mixer
+- State: in_progress
+- Evidence:
+  - src/app/audio/audio-service.ts:261-280
+
+### evt-9efe1cc2-2cbe-4e54-9403-c48d4104b3ab
+
+- Timestamp: 2026-09-03T13:52:42.837Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: Source-verified gain buses: master/ui/combat/music GainNodes; mute zeroes master only while category values remain intact; effective = master*category; mixer math tests green.
+- Idempotency key: abi034-plan-gain-mixer-complete-20260903
+- Request fingerprint: 3acc081e8749cda75ef15772b454b4947725e1db708be1071ae90c9419e60c04
+- Action: set_state
+- Step ID: audio-gain-mixer
+- State: complete
+- Evidence:
+  - src/app/audio/audio-service.ts:261-280
+  - pnpm exec vitest run src/app/audio/ — 34 green
+
+### evt-f15d1bfc-64c1-4b24-8060-fbd79c6d37d2
+
+- Timestamp: 2026-09-03T13:52:48.067Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Begin playlist engine verification.
+- Idempotency key: abi034-plan-playlist-start-20260903
+- Request fingerprint: 58dd658138926a6b123a5c26815f07d732a1407caba5e4a8a7a36a34a75fc23f
+- Action: set_state
+- Step ID: audio-playlist-engine
+- State: in_progress
+- Evidence:
+  - src/app/audio/audio-service.ts:200-211,382-437
+
+### evt-060757c0-8e30-47dd-862f-27f3e94bca8e
+
+- Timestamp: 2026-09-03T13:52:53.727Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 61
+- Resulting revision: 62
+- Summary: Source-verified playlist: deterministic manifest order, modulo advance on ended/error (no repeat before full cycle), 1.5s equal-power linearRamp crossfade with deferred teardown, idempotent startMusic prevents duplicate owners, error path advances track.
+- Idempotency key: abi034-plan-playlist-complete-20260903
+- Request fingerprint: a2e8ce1b27ad3f2697584248c59ee3c050d7c952a4e6dc4dada2a15b80518a37
+- Action: set_state
+- Step ID: audio-playlist-engine
+- State: complete
+- Evidence:
+  - src/app/audio/audio-service.ts:200-211,382-437
+  - audio-service.test.ts playlist tests green
+
+### evt-72a3eca8-b155-45ed-af1c-fd42adbf7692
+
+- Timestamp: 2026-09-03T13:52:58.290Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 62
+- Resulting revision: 63
+- Summary: Begin scheduler verification.
+- Idempotency key: abi034-plan-scheduler-start-20260903
+- Request fingerprint: ada577fad7c78a317f839c2533b1c0e73912854e6600cbf35759cc92951d18ea
+- Action: set_state
+- Step ID: audio-sfx-scheduler
+- State: in_progress
+- Evidence:
+  - src/app/audio/audio-service.ts:57-66,175-198,288-357
+  - src/app/audio/cues.ts
+
+### evt-e4431ec4-7bb7-4613-b3a9-222669774735
+
+- Timestamp: 2026-09-03T13:53:11.513Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 63
+- Resulting revision: 64
+- Summary: Source-verified scheduler: priority table death/boss/golden=3, critical/armor/scene=2, manual=1, automatic=0; 6-voice cap drops lowest-priority victim (never incoming higher-priority); 16ms frame window coalesces automatic hits to one voice; alternation rotates buffer variants; decode failures return null without throw.
+- Idempotency key: abi034-plan-scheduler-complete-20260903
+- Request fingerprint: 4e44bed9bd570a07aec6843710241eb4d5d87ced7084301c0e1e663332d2dd49
+- Action: set_state
+- Step ID: audio-sfx-scheduler
+- State: complete
+- Evidence:
+  - src/app/audio/audio-service.ts:46-66,288-357
+  - src/app/audio/cues.test.ts 9 green
+  - audio-service.test.ts cap/coalesce tests green
+
+### evt-4e5361b2-1ac9-4aab-b3d5-1d2d54729c55
+
+- Timestamp: 2026-09-03T14:37:41.741Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 64
+- Resulting revision: 65
+- Summary: Wiring implemented: AudioService instantiated at composition root with optional injectable factory/storage/manifest; controller subscription routes attack/frame cues through battleVisualCues, purchase success/error and reset/restore to UI cues; one-time click/keydown gesture unlock starts music on ready; hud.attachAudioSettings port added; dispose releases listeners+service exactly once.
+- Idempotency key: abi034-plan-wiring-start-20260903
+- Request fingerprint: d8e2630b9df7c8b79baf05a9f1e95640c0c03bce8660b9208196e293e994846c
+- Action: set_state
+- Step ID: audio-app-wiring
+- State: in_progress
+- Evidence:
+  - src/app/application.ts:140-149,222-228,275-281,289-293
+  - src/ui/hud.ts attachAudioSettings port
+  - pnpm exec vitest run src/app/audio/ src/ui src/app/application.test.ts — 67 green
+  - pnpm check green
+
+### evt-c8d301fb-ad67-45e7-8ed5-df3e9261b244
+
+- Timestamp: 2026-09-03T14:37:47.466Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 65
+- Resulting revision: 66
+- Summary: Composition-root wiring verified: single AudioService, typed cue routing, gesture unlock+startMusic, hud port, exact-once dispose.
+- Idempotency key: abi034-plan-wiring-complete-20260903
+- Request fingerprint: efc7312e56076dce25796d07280f815f4ed8ea6b79b013bfbb78b83fa66aaf75
+- Action: set_state
+- Step ID: audio-app-wiring
+- State: complete
+- Evidence:
+  - src/app/application.ts:140-149,222-228,275-281,289-293
+  - pnpm check green
+
+### evt-a7706bfa-9ffa-4277-881c-cc9004ab649d
+
+- Timestamp: 2026-09-03T14:37:54.666Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 66
+- Resulting revision: 67
+- Summary: Settings UI implemented and verified: AudioSettingsDialog follows upgrade-dialog conventions (launcher, aria-modal dialog, close, focus trap, Escape); four range sliders Master/UI/Combat/Music with exact NN% text, mute checkbox, aria-live blocked/error status; depends on AudioSettingsPort defined in UI layer so UI never imports app. Wired through hud.attachAudioSettings.
+- Idempotency key: abi034-plan-settings-ui-start-20260903
+- Request fingerprint: 30b0a54d595d427a2bf5fe7033274dfb423bb578a610f6183f1192e085303351
+- Action: set_state
+- Step ID: audio-settings-ui
+- State: in_progress
+- Evidence:
+  - src/ui/hud/audio-settings.ts
+  - src/ui/hud.ts:14 attachAudioSettings port
+  - src/style.css audio-settings styles
+  - pnpm exec eslint clean
+  - pnpm check green
+
+### evt-967f8b24-f8f1-4460-82bc-ca4e8ac4a551
+
+- Timestamp: 2026-09-03T14:38:00.612Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 67
+- Resulting revision: 68
+- Summary: Accessible settings dialog complete: 4 sliders + mute + exact % + blocked/error status, UI-side port decouples from app, follows existing modal conventions, styles appended.
+- Idempotency key: abi034-plan-settings-ui-complete-20260903
+- Request fingerprint: 3121942655af43a09a33d6c7cee7bc2876bbc6f089a9fa39f8f62c0ad6eba2df
+- Action: set_state
+- Step ID: audio-settings-ui
+- State: complete
+- Evidence:
+  - src/ui/hud/audio-settings.ts
+  - src/style.css
+  - pnpm check green
+
+### evt-9da358c7-cbbe-400d-80e1-681cec4725fa
+
+- Timestamp: 2026-09-03T14:38:06.886Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 68
+- Resulting revision: 69
+- Summary: Regression suites already implemented across chunk 1: preference validation/malformed/reset/storage-failure (10 tests), cue mapping incl. unknown-cue null (9), service state machine/gain math/voice cap/priority/playlist/crossfade/visibility/disposal (11), manifest structure+HTTP hash check (5), application wiring integration (8). 67 tests green.
+- Idempotency key: abi034-plan-regressions-start-20260903
+- Request fingerprint: 660be144b605ee572d4781010931532f63db01a2eac0e84c6aa99a5f75d9a486
+- Action: set_state
+- Step ID: audio-integration-regressions
+- State: in_progress
+- Evidence:
+  - pnpm exec vitest run src/app/audio/ src/ui src/app/application.test.ts — 67 passed
+  - pnpm check green: 27+ test files
+
+### evt-f400c84c-e097-47fc-a251-2eec842b88ef
+
+- Timestamp: 2026-09-03T14:38:13.326Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 69
+- Resulting revision: 70
+- Summary: All focused regression suites green: 67 tests across 7 files covering preferences, cues, service state machine, mixer math, caps, playlist, manifest, and application wiring. Full pnpm check green.
+- Idempotency key: abi034-plan-regressions-complete-20260903
+- Request fingerprint: 94a7863fa50422afe91205a64dff435854273e9281f4e0cf96b70b24ae6743d3
+- Action: set_state
+- Step ID: audio-integration-regressions
+- State: complete
+- Evidence:
+  - pnpm check — lint, format, tests, worker, build all pass
+
+### evt-9b37d354-321e-4413-8dba-3439a91ca679
+
+- Timestamp: 2026-09-03T14:38:19.953Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 70
+- Resulting revision: 71
+- Summary: Self-check: pnpm check green (lint, format, 27 test files, worker typecheck, build); browser smoke follows before closing.
+- Idempotency key: abi034-plan-selfcheck-v2-start-20260903
+- Request fingerprint: 49d122d93f5cf795c3deea7d0690d5a364631fc1eb4d460354e9c2869440dd55
+- Action: set_state
+- Step ID: audio-implementation-self-check-v2
+- State: in_progress
+- Evidence:
+  - pnpm check green
+
+### evt-ae915f8a-a266-4ac4-b24f-e4343bba4dc8
+
+- Timestamp: 2026-09-03T14:39:31.461Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: Browser smoke passed on http://127.0.0.1:5173/: sound-settings launcher present; gesture unlock wired; dialog opens with 4 labeled sliders (Master/UI/Combat/Music 100/100/100/60 defaults) + mute + aria-live blocked status; slider input persists to autobattleidle.audio-settings (music 30 -> 0.3); mute persists without overwriting music=0.3; master 0.5 changes only master; close/reopen restores saved values with focus on close button; no console errors. Fixed during smoke: slider input.id was missing (label-for and a11y broken). Full pnpm check green.
+- Idempotency key: abi034-plan-selfcheck-v2-complete-20260903
+- Request fingerprint: 81e6548e5338cbd6fdb535422c1fbc094096126fbcdfb5e8769a8ed352a30596
+- Action: set_state
+- Step ID: audio-implementation-self-check-v2
+- State: complete
+- Evidence:
+  - browser tab abi034-smoke DOM receipts: sliders/labels, stored JSON {version:1,master:1,ui:1,combat:1,music:0.3,muted:true}, master=0.5 with ui=100 intact, focus restored
+  - src/ui/hud/audio-settings.ts:77 input.id fix
+  - pnpm check green
+
+### evt-59fd54d2-655c-457d-a042-dedf90ce9a26
+
+- Timestamp: 2026-09-03T14:51:40.354Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: EVENT checkpoint — Main — Implementation published as exact SHA 2ab295175d67f1ea815bbe8c4b56d5ac6cd20016 (checkpoint 235a7ce + manifest-test CI fix 2ab2951). CI run 33769071474 and Deploy GitHub Pages run 33769071536 both success. Deployed https://etherlords.github.io/autobattleidle/ verified: settings launcher present, dialog opens with 4 sliders (100/100/100/60 defaults) and blocked status; public assets manifest.json, click_001.ogg, pastoral-loop.mp3 all HTTP 200. First CI push (33768334515) failed because the manifest hash test fetched a hardcoded localhost origin — fixed by spinning an embedded Vite server inside the test. Browser smoke on local dev also passed earlier (slider persistence, mute preserving category, master-multiply semantics, focus restore).
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/actions/runs/33769071474
+  - https://github.com/etherlords/autobattleidle/actions/runs/33769071536
+  - https://etherlords.github.io/autobattleidle/audio/manifest.json
+  - deployed dialog DOM receipts
