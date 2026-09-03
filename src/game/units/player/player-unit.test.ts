@@ -49,27 +49,67 @@ describe("PlayerUnit", () => {
     expect(PLAYER_MILESTONE_LEVELS.length).toBeGreaterThan(40);
   });
 
-  it("gives adjacent milestones distinct bounded visual markers", () => {
+  it("gives adjacent milestones distinct authored badge signatures", () => {
     const signatures = PLAYER_MILESTONE_LEVELS.map((level) => {
       const evolution = new PlayerEvolution(playerEvolutionIdentity(level), true);
       const marker = evolution.group.getObjectByName("player-milestone-detail");
-      if (
-        !(marker instanceof THREE.Mesh) ||
-        !(marker.material instanceof THREE.MeshStandardMaterial)
-      )
-        throw new Error("Expected milestone marker");
+      const socket = evolution.group.getObjectByName("player-socket-milestone");
+      if (!(marker instanceof THREE.Group) || !(socket instanceof THREE.Object3D))
+        throw new Error("Expected milestone badge and socket");
+      expect(marker.parent).toBe(socket);
+      expect(marker.position.toArray()).toEqual([0, 0, 0]);
+      expect(socket.position.toArray()).toEqual([0, 1.55, 0]);
+      expect(marker.userData.milestoneLevel).toBe(level);
+      expect(marker.userData.milestoneIndex).toBe(PLAYER_MILESTONE_LEVELS.indexOf(level));
+      expect(["orb", "nested", "crest"]).toContain(marker.userData.milestoneTier);
+      if (marker.userData.milestoneTier === "nested") {
+        expect(
+          marker.getObjectByName("player-milestone-nested-ring")?.rotation.toArray().slice(0, 3),
+        ).toEqual([0, 0, 0]);
+        expect(
+          marker
+            .getObjectByName("player-milestone-nested-inner-ring")
+            ?.rotation.toArray()
+            .slice(0, 3),
+        ).toEqual([0, Math.PI / 2, 0]);
+        expect(
+          marker
+            .getObjectByName("player-milestone-nested-depth-ring")
+            ?.rotation.toArray()
+            .slice(0, 3),
+        ).toEqual([Math.PI / 2, 0, 0]);
+      }
+      const bounds = new THREE.Box3().setFromObject(marker);
+      expect(bounds.isEmpty()).toBe(false);
+      expect(bounds.max.x - bounds.min.x).toBeLessThan(0.7);
+      expect(bounds.max.y - bounds.min.y).toBeLessThan(0.7);
       const signature = [
-        marker.geometry.type,
-        marker.geometry.parameters?.radius,
-        marker.position.x,
-        marker.position.y,
-        marker.material.color.getHexString(),
-      ].join(":");
+        marker.userData.milestoneSignature,
+        ...marker.children.map((child) => {
+          if (!(child instanceof THREE.Mesh)) throw new Error("Expected badge child mesh");
+          return [
+            child.name,
+            child.geometry.type,
+            JSON.stringify(child.geometry.parameters),
+            child.material instanceof THREE.MeshStandardMaterial
+              ? child.material.color.getHexString()
+              : "",
+          ].join(":");
+        }),
+      ].join("|");
       evolution.dispose();
       return signature;
     });
     for (let index = 1; index < signatures.length; index += 1)
       expect(signatures[index]).not.toBe(signatures[index - 1]);
+
+    const first = new PlayerEvolution(playerEvolutionIdentity(10_000), true);
+    const second = new PlayerEvolution(playerEvolutionIdentity(10_000), true);
+    expect(first.group.getObjectByName("player-milestone-detail")?.userData).toEqual(
+      second.group.getObjectByName("player-milestone-detail")?.userData,
+    );
+    first.dispose();
+    second.dispose();
   });
 
   it("derives bounded forms from level while owning sockets and replaced resources", () => {

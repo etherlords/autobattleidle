@@ -39,12 +39,27 @@ describe("player evolution lab prototypes", () => {
     expect(endpointReceipt()).toMatchObject({ disposed: endpointReceipt().expectedDisposals });
   });
 
-  it("reopens every exact milestone through the shared player selector", () => {
-    for (const level of PLAYER_LAB_LEVELS) {
+  it("reopens every exact milestone through the shared authored badge selector", () => {
+    for (const [index, level] of PLAYER_LAB_LEVELS.entries()) {
       const player = new LabPlayerEvolution(1, true, 1_000, level);
+      const receipt = observeResourceDisposal(player.group);
       expect(player.identity).toEqual(playerEvolutionIdentity(level));
-      expect(player.group.getObjectByName("player-milestone-detail")).toBeDefined();
+      const marker = player.group.getObjectByName("player-milestone-detail");
+      const socket = player.group.getObjectByName("player-socket-milestone");
+      if (!(marker instanceof THREE.Group) || !(socket instanceof THREE.Object3D))
+        throw new Error("Missing authored milestone badge");
+      expect(marker.parent).toBe(socket);
+      expect(marker.position.toArray()).toEqual([0, 0, 0]);
+      expect(socket.position.toArray()).toEqual([0, 1.55, 0]);
+      expect(marker.userData.milestoneIndex).toBe(index);
+      expect(marker.userData.milestoneLevel).toBe(level);
+      let expectedTier = "crest";
+      if (index < 10) expectedTier = "orb";
+      else if (index < 40) expectedTier = "nested";
+      expect(marker.userData.milestoneTier).toBe(expectedTier);
       player.dispose();
+      player.dispose();
+      expect(receipt()).toMatchObject({ disposed: receipt().expectedDisposals });
     }
   });
   it("keeps every named progression form reachable, distinct, finite, socketed, and disposable", () => {

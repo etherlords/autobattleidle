@@ -126,6 +126,120 @@ const MILESTONE_COLORS = [
   "#f8cc71",
   "#ff9d66",
 ] as const;
+type PlayerMilestoneBadgeTier = "orb" | "nested" | "crest";
+
+const milestoneBadgeTier = (milestoneIndex: number): PlayerMilestoneBadgeTier => {
+  if (milestoneIndex < 10) return "orb";
+  if (milestoneIndex < 40) return "nested";
+  return "crest";
+};
+
+const milestoneBadgeColor = (milestoneIndex: number): string =>
+  MILESTONE_COLORS[milestoneIndex % MILESTONE_COLORS.length] ?? MILESTONE_COLORS[0];
+
+const buildMilestoneBadge = (milestoneLevel: PlayerMilestoneLevel): THREE.Group => {
+  const milestoneIndex = Math.max(0, PLAYER_MILESTONE_LEVELS.indexOf(milestoneLevel));
+  const tier = milestoneBadgeTier(milestoneIndex);
+  const badge = new THREE.Group();
+  badge.name = "player-milestone-detail";
+  badge.userData.milestoneLevel = milestoneLevel;
+  badge.userData.milestoneIndex = milestoneIndex;
+  badge.userData.milestoneTier = tier;
+  badge.userData.milestoneSignature = `${tier}:${milestoneIndex}:${milestoneLevel}`;
+
+  const color = milestoneBadgeColor(milestoneIndex);
+  if (tier === "orb") {
+    const radius = 0.09 + milestoneIndex * 0.006;
+    const segments = 8 + (milestoneIndex % 3) * 2;
+    badge.add(
+      mesh(
+        "player-milestone-orb-core",
+        new THREE.SphereGeometry(radius, segments, 6 + (milestoneIndex % 3) * 2),
+        color,
+        "#176b65",
+      ),
+    );
+    return badge;
+  }
+
+  if (tier === "nested") {
+    const variant = milestoneIndex - 10;
+    const innerRadius = 0.075 + variant * 0.0015;
+    const outerRadius = 0.16 + variant * 0.002;
+    const thickness = 0.016 + (variant % 4) * 0.002;
+    const inner = mesh(
+      "player-milestone-nested-core",
+      new THREE.SphereGeometry(innerRadius, 8 + (variant % 3) * 2, 6 + (variant % 2) * 2),
+      color,
+      "#176b65",
+    );
+    const middle = mesh(
+      "player-milestone-nested-ring",
+      new THREE.TorusGeometry(
+        outerRadius,
+        thickness,
+        6 + (variant % 3) * 2,
+        12 + (variant % 5) * 2,
+      ),
+      MILESTONE_COLORS[(milestoneIndex + 1) % MILESTONE_COLORS.length] ?? color,
+      "#2873aa",
+    );
+    const innerRing = mesh(
+      "player-milestone-nested-inner-ring",
+      new THREE.TorusGeometry(
+        innerRadius + 0.035 + (variant % 4) * 0.003,
+        0.009 + (variant % 3) * 0.002,
+        5 + (variant % 2),
+        10 + (variant % 4) * 2,
+      ),
+      color,
+      "#176b65",
+    );
+    const depthRing = mesh(
+      "player-milestone-nested-depth-ring",
+      new THREE.TorusGeometry(innerRadius + 0.02, 0.008, 5, 10 + (variant % 3) * 2),
+      color,
+      "#176b65",
+    );
+    innerRing.rotation.y = Math.PI / 2;
+    depthRing.rotation.x = Math.PI / 2;
+    badge.add(inner, middle, innerRing, depthRing);
+    return badge;
+  }
+
+  const variant = milestoneIndex - 40;
+  const crestRadius = 0.17 + variant * 0.004;
+  const crestHeight = 0.27 + variant * 0.006;
+  const core = mesh(
+    "player-milestone-crest-core",
+    new THREE.ConeGeometry(crestRadius, crestHeight, variant % 2 === 0 ? 4 : 5),
+    color,
+    "#8b5820",
+  );
+  core.rotation.y = (variant % 4) * (Math.PI / 4);
+  const crestSpan = 0.12 + variant * 0.003;
+  const crestBar = 0.038 + (variant % 3) * 0.004;
+  const left = mesh(
+    "player-milestone-crest-left",
+    new THREE.BoxGeometry(crestBar, 0.2 + variant * 0.004, crestBar),
+    MILESTONE_COLORS[(milestoneIndex + 2) % MILESTONE_COLORS.length] ?? color,
+    "#8b5820",
+  );
+  const right = mesh(
+    "player-milestone-crest-right",
+    new THREE.BoxGeometry(crestBar, 0.2 + variant * 0.004, crestBar),
+    MILESTONE_COLORS[(milestoneIndex + 2) % MILESTONE_COLORS.length] ?? color,
+    "#8b5820",
+  );
+  left.position.x = -crestSpan;
+  right.position.x = crestSpan;
+  left.rotation.z = -0.55 - variant * 0.012;
+  right.rotation.z = 0.55 + variant * 0.012;
+  badge.add(core, left, right);
+  return badge;
+};
+
+const MILESTONE_SOCKET_Y = 1.55;
 
 const buildForm = (start: PlayerFormStart, milestoneLevel: PlayerMilestoneLevel): THREE.Group => {
   const group = new THREE.Group();
@@ -190,22 +304,11 @@ const buildForm = (start: PlayerFormStart, milestoneLevel: PlayerMilestoneLevel)
   aura.name = "player-socket-aura";
   aura.position.y = 0.1;
   pose.add(aura);
-  const milestoneIndex = PLAYER_MILESTONE_LEVELS.indexOf(milestoneLevel);
-  const milestoneColor =
-    MILESTONE_COLORS[milestoneIndex % MILESTONE_COLORS.length] ?? MILESTONE_COLORS[0];
-  const milestoneDetail = mesh(
-    "player-milestone-detail",
-    new THREE.TorusGeometry(0.12 + (milestoneIndex % 4) * 0.02, 0.025, 4, 8),
-    milestoneColor,
-    "#176b65",
-  );
-  milestoneDetail.position.set(
-    ((milestoneIndex % 5) - 2) * 0.1,
-    0.28 + (milestoneIndex % 4) * 0.12,
-    0.56,
-  );
-  milestoneDetail.rotation.x = Math.PI / 2;
-  pose.add(milestoneDetail);
+  const milestoneSocket = new THREE.Object3D();
+  milestoneSocket.name = "player-socket-milestone";
+  milestoneSocket.position.set(0, MILESTONE_SOCKET_Y, 0);
+  milestoneSocket.add(buildMilestoneBadge(milestoneLevel));
+  pose.add(milestoneSocket);
   return group;
 };
 
@@ -223,6 +326,7 @@ export class PlayerEvolution {
   private frame = 0;
   private hitFrames = 0;
   private attackFrames = 0;
+  private disposed = false;
 
   constructor(
     readonly identity: PlayerEvolutionIdentity,
@@ -266,6 +370,8 @@ export class PlayerEvolution {
   }
 
   dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
     disposeObject(this.group);
     this.group.removeFromParent();
   }
