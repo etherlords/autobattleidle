@@ -276,16 +276,6 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   const unsubscribeHud = dependencies.hud.subscribe(handleIntent);
   dependencies.hud.setRestoreAvailable(dependencies.persistence.hasPreviousVersionSave());
   render();
-  const gestureUnlock = (): void => {
-    void audioService.unlock().then((unlocked) => {
-      if (!unlocked || disposed) return;
-      audioWindow.removeEventListener("click", gestureUnlock);
-      audioWindow.removeEventListener("keydown", gestureUnlock);
-      audioService.startMusic();
-    });
-  };
-  audioWindow.addEventListener("click", gestureUnlock);
-  audioWindow.addEventListener("keydown", gestureUnlock);
   dependencies.window.addEventListener("resize", resize);
   frame = dependencies.window.requestAnimationFrame(draw);
   return {
@@ -294,8 +284,6 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       disposed = true;
       if (frame !== undefined) dependencies.window.cancelAnimationFrame(frame);
       dependencies.window.removeEventListener("resize", resize);
-      audioWindow.removeEventListener("click", gestureUnlock);
-      audioWindow.removeEventListener("keydown", gestureUnlock);
       unsubscribeHud();
       unsubscribe();
       controller.dispose();

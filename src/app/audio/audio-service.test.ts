@@ -215,43 +215,6 @@ const stubFetch = (): void => {
   })) as unknown as typeof fetch;
 };
 
-type DocumentStub = {
-  readonly removeCalls: string[];
-  setVisibility: (state: "visible" | "hidden") => void;
-  dispatch: (type: string) => void;
-};
-
-const stubDocument = (): DocumentStub => {
-  const removeCalls: string[] = [];
-  const listeners = new Map<string, Array<() => void>>();
-  const documentLike = {
-    visibilityState: "visible",
-    addEventListener: (type: string, handler: () => void): void => {
-      const list = listeners.get(type) ?? [];
-      list.push(handler);
-      listeners.set(type, list);
-    },
-    removeEventListener: (type: string): void => {
-      removeCalls.push(type);
-      listeners.delete(type);
-    },
-    dispatchEvent: (event: { type: string }): boolean => {
-      for (const handler of listeners.get(event.type) ?? []) handler();
-      return true;
-    },
-  };
-  globalThis.document = documentLike as unknown as Document;
-  return {
-    removeCalls,
-    setVisibility: (state: "visible" | "hidden"): void => {
-      (documentLike as { visibilityState: string }).visibilityState = state;
-    },
-    dispatch: (type: string): void => {
-      documentLike.dispatchEvent({ type });
-    },
-  };
-};
-
 describe("audio service", () => {
   it("starts blocked and becomes ready after unlock", async () => {
     stubFetch();
@@ -453,9 +416,8 @@ describe("audio service", () => {
     expect(service.musicVoiceCount).toBe(0);
   });
 
-  it("suspends on visibilitychange hidden and waits for a gesture to resume", async () => {
+  it("keeps audio running when the document is hidden", async () => {
     stubFetch();
-    const documentStub = stubDocument();
     const context = new FakeAudioContext();
     const service = new AudioService({
       ...makeDeps(),
@@ -463,24 +425,11 @@ describe("audio service", () => {
     });
     await service.unlock();
     expect(service.currentState).toBe("ready");
-
-    documentStub.setVisibility("hidden");
-    documentStub.dispatch("visibilitychange");
-    expect(service.currentState).toBe("suspended");
-    expect(context.suspend).toHaveBeenCalledOnce();
-
-    documentStub.setVisibility("visible");
-    documentStub.dispatch("visibilitychange");
-    expect(service.currentState).toBe("suspended");
-    expect(context.resume).toHaveBeenCalledOnce();
-
-    await service.unlock();
-    expect(service.currentState).toBe("ready");
+    expect(context.suspend).not.toHaveBeenCalled();
   });
 
   it("dispose is idempotent and releases resources exactly once", async () => {
     stubFetch();
-    const documentStub = stubDocument();
     const context = new FakeAudioContext();
     const elements: FakeMediaElement[] = [];
     const service = new AudioService({
@@ -496,7 +445,6 @@ describe("audio service", () => {
     service.dispose();
     expect(service.currentState).toBe("disposed");
     expect(context.close).not.toHaveBeenCalled();
-    expect(documentStub.removeCalls).toContain("visibilitychange");
     expect(elements[0]?.paused).toBe(true);
 
     service.dispose();

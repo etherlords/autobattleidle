@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 97
+revision: 98
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 97
-- Last update: Close audio infrastructure and polish: softened cue mapping, calibrated hidden base gains with 100% sliders, live current/next track indicator, and exact deployed proof.
+- Revision: 98
+- Last update: Post-deploy user report: upgrade-menu click used a long scratch-like scroll cue and repeated clicks could overlap. Fix replaces it with short click_001 and serializes click playback; deployed SFX responses are 200 audio/ogg. Fresh review and QA are required for this post-close repair.
 
 ## Execution plan
 
@@ -1689,3 +1689,19 @@ requiredGates:
   - Pages 33801195292 success
   - Vault ABI-DOC-20260903-FA2A0A
   - deployed https://etherlords.github.io/autobattleidle/
+
+### evt-a4d00b00-0b9b-404e-942a-ed38946ecb8c
+
+- Timestamp: 2026-09-03T21:14:07.177Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Post-deploy user report: upgrade-menu click used a long scratch-like scroll cue and repeated clicks could overlap. Fix replaces it with short click_001 and serializes click playback; deployed SFX responses are 200 audio/ogg. Fresh review and QA are required for this post-close repair.
+- Idempotency key: abi034-click-regression-record-20260904-0219
+- Evidence:
+  - User report in current task conversation
+  - 8f9524e
+  - https://etherlords.github.io/autobattleidle/audio/sfx/click_001.ogg status 200 content-type audio/ogg
+  - https://etherlords.github.io/autobattleidle/audio/sfx/impactPunch_heavy_000.ogg status 200 content-type audio/ogg
+  - https://etherlords.github.io/autobattleidle/audio/sfx/impactGlass_medium_000.ogg status 200 content-type audio/ogg

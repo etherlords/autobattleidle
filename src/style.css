@@ -47,6 +47,52 @@ body {
   transform: translateX(-50%);
   width: min(94vw, 72rem);
 }
+.hud-track-status {
+  color: #9fd8ff;
+  font-size: 0.8rem;
+  left: 50%;
+  margin: 0.25rem 0 0;
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  position: fixed;
+  text-align: center;
+  text-overflow: ellipsis;
+  top: 8.2rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  width: max-content;
+}
+.hud-mute-toggle {
+  font: inherit;
+  min-height: 2.25rem;
+  min-width: 4.5rem;
+  pointer-events: auto;
+  position: fixed;
+  right: 0.75rem;
+  top: 0.75rem;
+  z-index: 3;
+}
+.audio-start-gate {
+  align-items: center;
+  background: rgb(3 9 15 / 94%);
+  border: 0;
+  color: inherit;
+  display: grid;
+  font: inherit;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  font-weight: 700;
+  inset: 0;
+  justify-content: center;
+  padding: 2rem;
+  pointer-events: auto;
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  z-index: 4;
+}
+.audio-start-gate[hidden] {
+  display: none;
+}
 
 .hud-status h1 {
   font-size: clamp(1rem, 3vw, 1.5rem);

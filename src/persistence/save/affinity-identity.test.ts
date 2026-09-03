@@ -160,16 +160,14 @@ describe("affinity identity across the persistence boundary", () => {
     expect(decodeSave("invalid", fallback(), 0)).toEqual(fallback());
     expect(decodeSave(null, fallback(), 0)).toEqual(fallback());
     expect(decodeSave({}, fallback(), 0)).toEqual(fallback());
-    expect(
-      decodeSave(
-        {
-          ...v4GoldenDefeatsFixture,
-          enemy: { ...v4GoldenDefeatsFixture.enemy, reward: 67_534_741 },
-        },
-        fallback(),
-        0,
-      ),
-    ).toEqual(fallback());
+    const changedV4 = {
+      ...v4GoldenDefeatsFixture,
+      enemy: { ...v4GoldenDefeatsFixture.enemy, reward: 67_534_741 },
+    };
+    expect(decodeSave(changedV4, fallback(), 0)).toMatchObject({
+      coins: v4GoldenDefeatsFixture.coins,
+      enemy: { encounter: 2170, reward: 67_534_741 },
+    });
     // Even the recovery path derives a deterministic affinity identity.
     const recovered = decodeSave({ version: SAVE_VERSION + 1 }, fallback(), 0);
     expect(snapshotEnemy(recovered).affinity).toBe(snapshotEnemy(fallback()).affinity);

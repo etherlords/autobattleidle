@@ -34,6 +34,7 @@ import {
   SAVE_V2_KEY,
   SAVE_V3_KEY,
   SAVE_V4_KEY,
+  SAVE_V4_RECOVERY_KEY,
   SAVE_VERSION,
 } from "./persistence-boundary";
 
@@ -566,6 +567,51 @@ describe("persistence boundary", () => {
       nextAutomaticAttackAtMs: 200 + automaticInterval(loaded.enemy, loaded.player),
     });
   });
+  it("accepts structurally valid V4 progress after a formula change", () => {
+    const historicalV4 = {
+      ...v4GoldenDefeatsFixture,
+      enemy: { ...v4GoldenDefeatsFixture.enemy, reward: 123_456 },
+    };
+    const loaded = decodeSave(historicalV4, fallback(), 100);
+    expect(loaded).toMatchObject({
+      coins: historicalV4.coins,
+      enemy: { encounter: historicalV4.enemy.encounter, reward: historicalV4.enemy.reward },
+      player: historicalV4.player,
+      goldenBugDefeats: historicalV4.goldenBugDefeats,
+    });
+  });
+
+  it("backs up a rejected current payload before historical repair", () => {
+    const rejectedV4 = "not json";
+    const values = new Map<string, string>([
+      [SAVE_V4_KEY, rejectedV4],
+      [SAVE_V3_KEY, JSON.stringify(v3Encounter2170Fixture)],
+    ]);
+    const boundary = createFixtureBoundary(values);
+
+    const loaded = boundary.load(fallback(), 100);
+
+    expect(loaded.enemy.encounter).toBe(v3Encounter2170Fixture.enemy.encounter);
+    expect(values.get(SAVE_V4_RECOVERY_KEY)).toBe(rejectedV4);
+    expect(values.get(SAVE_V4_KEY)).toBe(encodeSave(loaded));
+  });
+
+  it("selects a valid V4 ahead of an older V3 checkpoint", () => {
+    const v4 = JSON.stringify(v4GoldenDefeatsFixture);
+    const v3 = JSON.stringify({ ...v3Encounter2170Fixture, coins: 1 });
+    const values = new Map<string, string>([
+      [SAVE_V4_KEY, v4],
+      [SAVE_V3_KEY, v3],
+    ]);
+    const boundary = createFixtureBoundary(values);
+
+    const loaded = boundary.load(fallback(), 100);
+
+    expect(loaded.coins).toBe(v4GoldenDefeatsFixture.coins);
+    expect(values.get(SAVE_V4_KEY)).toBe(v4);
+    expect(values.get(SAVE_V3_KEY)).toBe(v3);
+    expect(values.has(SAVE_V4_RECOVERY_KEY)).toBe(false);
+  });
 
   it("does not let a stale failed autosave overwrite a successful V3 Restore", () => {
     const v3 = JSON.stringify(v3Encounter2170Fixture);
@@ -928,21 +974,18 @@ describe("persistence boundary", () => {
     ).toEqual(fallback());
   });
 
-  it("uses current recognition first and rejects a non-matching cadence interpretation", () => {
+  it("keeps a structurally valid V4 save when current mob semantics changed", () => {
     const base = fallback();
     const current = { ...base, enemy: spawnEnemy(35, 0, undefined, base.player) };
     const currentRaw = JSON.parse(encodeSave(current)) as Record<string, unknown>;
     expect(decodeSave(currentRaw, fallback(), 0)).toEqual(current);
-    expect(
-      decodeSave(
-        {
-          ...currentRaw,
-          enemy: { ...current.enemy, grade: "normal", maxHealth: 150, health: 150 },
-        },
-        fallback(),
-        0,
-      ),
-    ).toEqual(fallback());
+    const changed = {
+      ...currentRaw,
+      enemy: { ...current.enemy, grade: "normal", maxHealth: 150, health: 150 },
+    };
+    expect(decodeSave(changed, fallback(), 0)).toMatchObject({
+      enemy: { encounter: 35, grade: "normal", maxHealth: 150, health: 150 },
+    });
   });
 
   it("round-trips the new starter save and accepts the historical encounter-1 fixture", () => {

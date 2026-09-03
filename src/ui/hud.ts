@@ -1,6 +1,7 @@
 import type { UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 import type { AudioSettingsPort } from "./hud/audio-settings";
+import { button, makeText } from "./hud/elements";
 import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
 
@@ -32,15 +33,49 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   panel.className = "hud";
   panel.setAttribute("aria-label", "Battle status");
   const status = new BattleStatus();
+  const trackStatus = makeText("p", "");
+  trackStatus.className = "hud-track-status";
+  const muteToggle = button("hud-mute-toggle", "Mute");
   const dialog = new UpgradeDialog();
   let audioSettings: AudioSettingsDialog | undefined;
+  let audioService: AudioSettingsPort | undefined;
+  let unsubscribeAudioState: (() => void) | undefined;
   const leaderboard = new LeaderboardDialog();
   const log = new EventLog();
   const actions = document.createElement("div");
   actions.className = "hud-actions";
   actions.append(dialog.launcher, leaderboard.launcher);
-  panel.append(status.element, actions, dialog.modal, leaderboard.modal, log.element);
+  panel.append(
+    status.element,
+    trackStatus,
+    actions,
+    muteToggle,
+    dialog.modal,
+    leaderboard.modal,
+    log.element,
+  );
   host.append(panel);
+  muteToggle.hidden = true;
+  const renderAudioChrome = (): void => {
+    const service = audioService;
+    const playlist = service?.playlist;
+    trackStatus.textContent =
+      playlist === null || playlist === undefined
+        ? ""
+        : `♪ ${playlist.current} · Next: ${playlist.next}`;
+    if (service !== undefined) {
+      const muted = service.preferences.muted;
+      muteToggle.textContent = muted ? "Unmute" : "Mute";
+      muteToggle.setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound");
+      muteToggle.title = muted ? "Unmute sound" : "Mute sound";
+    }
+  };
+  const toggleMute = (): void => {
+    if (audioService === undefined) return;
+    audioService.setMuted(!audioService.preferences.muted);
+    renderAudioChrome();
+  };
+  muteToggle.addEventListener("click", toggleMute);
 
   battlefield.tabIndex = 0;
   battlefield.setAttribute(
@@ -147,9 +182,14 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
     setRestoreAvailable: (available) => dialog.setRestoreAvailable(available),
     attachAudioSettings: (service) => {
       audioSettings?.dispose();
+      unsubscribeAudioState?.();
+      audioService = service;
       audioSettings = new AudioSettingsDialog(service);
       actions.append(audioSettings.launcher);
-      panel.append(audioSettings.modal);
+      panel.append(audioSettings.modal, audioSettings.startGate);
+      muteToggle.hidden = false;
+      renderAudioChrome();
+      unsubscribeAudioState = service.subscribeState(renderAudioChrome);
     },
     reportPersistence: (message) => dialog.reportPersistence(message),
     onLeaderboardLoad: (listener) => leaderboard.onLoad(listener),
@@ -165,8 +205,11 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       battlefield.removeEventListener("pointermove", pointerMove);
       battlefield.removeEventListener("pointerup", pointerUp);
       battlefield.removeEventListener("pointercancel", pointerCancel);
-      audioSettings?.dispose();
       battlefield.removeEventListener("keydown", keyboardAttack);
+      audioSettings?.dispose();
+      unsubscribeAudioState?.();
+      unsubscribeAudioState = undefined;
+      muteToggle.removeEventListener("click", toggleMute);
       dialog.launcher.removeEventListener("click", closeLeaderboard);
       leaderboard.launcher.removeEventListener("click", closeUpgrades);
       document.removeEventListener("keydown", toggleUpgradeShortcut);

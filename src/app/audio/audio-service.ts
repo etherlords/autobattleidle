@@ -96,7 +96,6 @@ export class AudioService {
   private readonly musicVoices: MusicVoice[] = [];
   private readonly retiringMusicVoices = new Set<MusicVoice>();
   private readonly crossfadeTimers = new Set<ReturnType<typeof setTimeout>>();
-  private readonly visibilityHandler = (): void => this.handleVisibilityChange();
   private trackIndex = 0;
   private playlistActive = false;
   private lastAutomaticFrame = -1;
@@ -105,7 +104,6 @@ export class AudioService {
   private manualAlternation = 0;
   private resumeFailures = 0;
   private failedTracksInRun = 0;
-  private visibilityHooked = false;
 
   constructor(deps: AudioServiceDeps) {
     this.context = deps.context ?? null;
@@ -182,7 +180,6 @@ export class AudioService {
     const context = this.context;
     if (context === null) return false;
     this.attachGraph(context);
-    this.hookVisibility();
 
     try {
       if (context.state !== "running") await context.resume();
@@ -195,6 +192,11 @@ export class AudioService {
     this.setState("ready");
     if (this.playlistActive) this.resumeMusicVoices();
     return true;
+  }
+  async startAudio(): Promise<boolean> {
+    const unlocked = await this.unlock();
+    if (unlocked) this.startMusic();
+    return unlocked;
   }
 
   setPreferences(prefs: AudioPreferences): void {
@@ -255,18 +257,11 @@ export class AudioService {
     if (this.state === "disposed") return;
     this.state = "disposed";
     this.playlistActive = false;
-    this.detachVisibility();
     this.clearCrossfadeTimers();
     this.stopAllVoices();
     this.teardownAllMusic();
     this.disconnectGraph();
     this.stateListeners.clear();
-  }
-
-  private detachVisibility(): void {
-    if (!this.visibilityHooked || typeof document === "undefined") return;
-    document.removeEventListener("visibilitychange", this.visibilityHandler);
-    this.visibilityHooked = false;
   }
 
   private clearCrossfadeTimers(): void {
@@ -452,23 +447,6 @@ export class AudioService {
       source.disconnect();
     }
     this.uiClickSources.clear();
-  }
-
-  private hookVisibility(): void {
-    if (this.visibilityHooked || typeof document === "undefined") return;
-    document.addEventListener("visibilitychange", this.visibilityHandler);
-    this.visibilityHooked = true;
-  }
-
-  private handleVisibilityChange(): void {
-    if (typeof document === "undefined") return;
-    if (document.visibilityState === "hidden") {
-      if (this.state !== "ready") return;
-      this.setState("suspended");
-      void this.context?.suspend().catch(() => undefined);
-      for (const voice of this.musicVoices) voice.element.pause();
-    }
-    // visible: stay suspended until the next user gesture calls unlock().
   }
 
   private resumeMusicVoices(): void {

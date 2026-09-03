@@ -14,6 +14,7 @@ export type AudioSettingsPort = {
   };
   readonly currentState: string;
   readonly playlist: { readonly current: string; readonly next: string } | null;
+  startAudio(): Promise<boolean>;
   setPreferences(preferences: {
     readonly master: number;
     readonly ui: number;
@@ -41,11 +42,10 @@ const toPercent = (gain: number): string => `${Math.round(gain * 100)}%`;
 
 export class AudioSettingsDialog {
   readonly launcher = button("audio-settings-launcher", "Sound settings");
+  readonly startGate = button("audio-start-gate", "Continue with sound");
   readonly modal = document.createElement("section");
   private readonly dialog = document.createElement("section");
   private readonly close = button("audio-settings-close", "Close sound settings");
-  private readonly playlistStatus = makeText("p", "");
-  private readonly service: AudioSettingsPort;
   private readonly mute = document.createElement("input");
   private readonly status = makeText("p", "");
   private readonly sliders = new Map<
@@ -54,7 +54,6 @@ export class AudioSettingsDialog {
   >();
   private unsubscribeState: (() => void) | undefined;
   constructor(service: AudioSettingsPort) {
-    this.service = service;
     this.modal.className = "audio-settings-modal";
     this.modal.hidden = true;
     this.dialog.className = "audio-settings-dialog";
@@ -63,15 +62,15 @@ export class AudioSettingsDialog {
     this.dialog.setAttribute("role", "dialog");
     this.status.className = "audio-settings-status";
     this.status.setAttribute("aria-live", "polite");
-    this.playlistStatus.className = "audio-settings-playlist";
     this.mute.type = "checkbox";
     this.mute.id = "audio-settings-mute";
     const muteLabel = document.createElement("label");
     muteLabel.className = "audio-settings-mute-label";
     muteLabel.setAttribute("for", this.mute.id);
-    muteLabel.textContent = "Mute all sound";
+    muteLabel.append(this.mute, document.createTextNode("Mute all sound"));
     this.mute.checked = service.preferences.muted;
     this.mute.addEventListener("change", () => service.setMuted(this.mute.checked));
+    this.startGate.addEventListener("click", () => void service.startAudio());
     this.dialog.append(this.close);
     for (const slider of SLIDERS) {
       const row = document.createElement("div");
@@ -99,7 +98,7 @@ export class AudioSettingsDialog {
       row.append(label, input, value);
       this.dialog.append(row);
     }
-    this.dialog.append(this.mute, muteLabel, this.playlistStatus, this.status);
+    this.dialog.append(muteLabel, this.status);
     this.modal.append(this.dialog);
     this.launcher.addEventListener("click", this.open);
     this.close.addEventListener("click", this.closeFromButton);
@@ -109,18 +108,13 @@ export class AudioSettingsDialog {
   }
 
   reportState(state: string): void {
+    this.startGate.hidden = state === "ready";
     if (state === "blocked") this.status.textContent = "Audio blocked until first interaction.";
     else if (state === "ready") this.status.textContent = "Audio ready.";
     else if (state === "suspended")
       this.status.textContent = "Audio paused until next interaction.";
     else if (state === "error") this.status.textContent = "Audio error.";
     else this.status.textContent = "";
-    this.renderPlaylist(this.service.playlist);
-  }
-
-  renderPlaylist(playlist: { readonly current: string; readonly next: string } | null): void {
-    this.playlistStatus.textContent =
-      playlist === null ? "" : `Now playing: ${playlist.current} · Next: ${playlist.next}`;
   }
 
   dispose(): void {

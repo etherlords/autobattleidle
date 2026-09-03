@@ -1,5 +1,12 @@
 import type { CombatState } from "../../domain/combat";
-import { LEGACY_SAVE_KEY, SAVE_V1_KEY, SAVE_V2_KEY, SAVE_V3_KEY, SAVE_V4_KEY } from "./contracts";
+import {
+  LEGACY_SAVE_KEY,
+  SAVE_V1_KEY,
+  SAVE_V2_KEY,
+  SAVE_V3_KEY,
+  SAVE_V4_KEY,
+  SAVE_V4_RECOVERY_KEY,
+} from "./contracts";
 import type { PersistenceBoundary, PersistenceOptions, RestoreResult, SaveV1 } from "./contracts";
 import { encodeSave } from "./codecs";
 import { decodeLegacySave, isPublicationValid, migrateV1 } from "./migrations";
@@ -103,13 +110,26 @@ export const createStorageLifecycle = (options: PersistenceOptions = {}): Persis
   page.addEventListener("pagehide", onPageHide);
   return {
     load: (fallback, nowMs) => {
+      let currentRaw: string | null = null;
       try {
-        const raw = storage.getItem(SAVE_V4_KEY);
-        if (raw !== null && raw !== "") {
-          const current = decodeV4(JSON.parse(raw) as unknown, nowMs);
+        currentRaw = storage.getItem(SAVE_V4_KEY);
+        if (currentRaw !== null && currentRaw !== "") {
+          const current = decodeV4(JSON.parse(currentRaw) as unknown, nowMs);
           if (current !== undefined) return current;
+          try {
+            storage.setItem(SAVE_V4_RECOVERY_KEY, currentRaw);
+          } catch {
+            /* The historical source remains available if recovery storage is unavailable. */
+          }
         }
       } catch {
+        if (currentRaw !== null && currentRaw !== "") {
+          try {
+            storage.setItem(SAVE_V4_RECOVERY_KEY, currentRaw);
+          } catch {
+            /* The historical source remains available if recovery storage is unavailable. */
+          }
+        }
         /* An unusable current slot may still have a recoverable historical source. */
       }
       return repairAndPublish(nowMs).state ?? fallback;

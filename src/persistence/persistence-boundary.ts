@@ -5,6 +5,7 @@ export {
   SAVE_V2_KEY,
   SAVE_V3_KEY,
   SAVE_V4_KEY,
+  SAVE_V4_RECOVERY_KEY,
   SAVE_VERSION,
 } from "./save/contracts";
 export type { PersistenceBoundary, PersistenceOptions, RestoreResult } from "./save/contracts";

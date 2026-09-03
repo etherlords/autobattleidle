@@ -6,6 +6,8 @@ export const SAVE_V1_KEY = "etherlords.autobattleidle.save.v1";
 export const SAVE_V2_KEY = "etherlords.autobattleidle.save.v2";
 export const SAVE_V3_KEY = "etherlords.autobattleidle.save.v3";
 export const SAVE_V4_KEY = "etherlords.autobattleidle.save.v4";
+/** Recovery copy for a V4 payload rejected by a newer decoder. */
+export const SAVE_V4_RECOVERY_KEY = "etherlords.autobattleidle.save.v4.recovery";
 export const SAVE_KEY = SAVE_V4_KEY;
 
 export type StorageLike = {
