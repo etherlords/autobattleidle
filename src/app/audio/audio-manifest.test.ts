@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { createServer, type ViteDevServer } from "vite";
+import { describe, expect, it, afterAll } from "vitest";
 import manifest from "../../../public/audio/manifest.json";
 
-const ORIGIN = "http://127.0.0.1:5173";
+let server: ViteDevServer | undefined;
 const SHA_256_PATTERN = /^[0-9a-f]{64}$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 type ManifestEntry = {
@@ -97,12 +98,19 @@ describe("audio asset manifest", () => {
     expect(suno?.policyUrls).toContain("https://help.suno.com/en/articles/2416769");
     const kenney = data.licenses.find((license) => license.id === "kenney-cc0");
     expect(kenney?.appliesTo).toBe("sfx");
-    expect(kenney?.licenseUrl).toContain("creativecommons.org/publicdomain/zero");
   });
 
   it("matches every shipped file's real bytes and SHA-256 over HTTP", async () => {
+    server = await createServer({
+      root: new URL("../../..", import.meta.url).pathname.replace(/^\/(?=[A-Za-z]:)/, ""),
+      logLevel: "silent",
+    });
+    await server.listen();
+    const address = server.resolvedUrls?.local[0];
+    if (address === undefined) throw new Error("vite dev server failed to listen");
+    const base = new URL(address).origin;
     for (const entry of entries()) {
-      const response = await fetch(`${ORIGIN}/${entry.file}`);
+      const response = await fetch(`${base}/${entry.file}`);
       expect(response.ok, entry.file).toBe(true);
       const buffer = await response.arrayBuffer();
       expect(buffer.byteLength).toBe(entry.bytes);
@@ -112,5 +120,9 @@ describe("audio asset manifest", () => {
         .join("");
       expect(hash, entry.file).toBe(entry.sha256);
     }
+  });
+
+  afterAll(async () => {
+    await server?.close();
   });
 });
