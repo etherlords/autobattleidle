@@ -71,8 +71,8 @@ describe("cue buffer map", () => {
     expect(familyCueBuffer("boss-colossus")).toBeNull();
   });
 
-  it("maps UI cues to their one-shot buffers", () => {
-    expect(uiCueBuffer("click")).toBe("scroll_001");
+  it("maps UI cues to their short one-shot buffers", () => {
+    expect(uiCueBuffer("click")).toBe("click_001");
     expect(uiCueBuffer("select")).toBe("select_001");
     expect(uiCueBuffer("toggle")).toBe("toggle_001");
     expect(uiCueBuffer("switch")).toBe("switch_001");

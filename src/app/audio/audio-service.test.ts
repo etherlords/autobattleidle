@@ -319,6 +319,15 @@ describe("audio service", () => {
     expect(master.gain.value).toBeCloseTo(0.5 * 0.75);
   });
 
+  it("keeps repeated UI clicks short and non-overlapping", async () => {
+    stubFetch();
+    const { service, context } = await unlockedService();
+    service.playUiCue("click");
+    service.playUiCue("click");
+    service.playUiCue("click");
+    await vi.waitFor(() => expect(service.activeVoices).toHaveLength(1));
+    expect(context.createdSources).toHaveLength(1);
+  });
   it("caps concurrent voices at 6 and drops the lowest priority pending voice", async () => {
     stubFetch();
     const { service, context } = await unlockedService();

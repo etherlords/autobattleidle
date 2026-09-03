@@ -92,14 +92,15 @@ export class AudioService {
 
   private readonly bufferCache = new Map<string, Promise<AudioBuffer | null>>();
   private readonly voiceHandles: ActiveVoiceHandle[] = [];
+  private readonly uiClickSources = new Set<AudioBufferSourceNode>();
   private readonly musicVoices: MusicVoice[] = [];
   private readonly retiringMusicVoices = new Set<MusicVoice>();
   private readonly crossfadeTimers = new Set<ReturnType<typeof setTimeout>>();
   private readonly visibilityHandler = (): void => this.handleVisibilityChange();
-
   private trackIndex = 0;
   private playlistActive = false;
   private lastAutomaticFrame = -1;
+  private uiClickRequest = 0;
   private automaticAlternation = 0;
   private manualAlternation = 0;
   private resumeFailures = 0;
@@ -222,7 +223,8 @@ export class AudioService {
   playUiCue(name: UiCueName): void {
     const bufferName = uiCueBuffer(name);
     if (bufferName === null) return;
-    void this.playSfx(bufferName, PRIORITY_HIGH, "ui");
+    const latestRequest = name === "click" ? ++this.uiClickRequest : undefined;
+    void this.playSfx(bufferName, PRIORITY_HIGH, "ui", latestRequest);
   }
 
   playCue(cue: AudioCue, batchIndex = 0): void {
@@ -359,11 +361,18 @@ export class AudioService {
     bufferName: string,
     priority: number,
     category: SfxCategory,
+    latestRequest?: number,
   ): Promise<void> {
     if (this.state !== "ready" || this.context === null) return;
     const buffer = await this.loadBuffer(bufferName);
-    if (buffer === null || this.state !== "ready" || this.context === null) return;
-    this.startVoice(buffer, priority, category);
+    if (
+      buffer === null ||
+      this.state !== "ready" ||
+      this.context === null ||
+      (latestRequest !== undefined && latestRequest !== this.uiClickRequest)
+    )
+      return;
+    this.startVoice(buffer, priority, category, latestRequest !== undefined);
   }
 
   private async loadBuffer(bufferName: string): Promise<AudioBuffer | null> {
@@ -381,10 +390,17 @@ export class AudioService {
     return pending;
   }
 
-  private startVoice(buffer: AudioBuffer, priority: number, category: SfxCategory): void {
+  private startVoice(
+    buffer: AudioBuffer,
+    priority: number,
+    category: SfxCategory,
+    exclusive = false,
+  ): void {
     const context = this.context;
     const bus = category === "ui" ? this.uiGain : this.combatGain;
     if (context === null || bus === null) return;
+
+    if (exclusive) this.stopExclusiveUiClicks();
 
     if (this.voiceHandles.length >= VOICE_CAP) {
       let victimIndex = -1;
@@ -412,13 +428,30 @@ export class AudioService {
     source.buffer = buffer;
     source.connect(bus);
     const voice: ActiveVoiceHandle = { priority, source };
+    if (exclusive) this.uiClickSources.add(source);
     source.onended = () => {
       const index = this.voiceHandles.indexOf(voice);
       if (index >= 0) this.voiceHandles.splice(index, 1);
+      this.uiClickSources.delete(source);
       source.disconnect();
     };
     this.voiceHandles.push(voice);
     source.start();
+  }
+
+  private stopExclusiveUiClicks(): void {
+    for (const source of this.uiClickSources) {
+      const index = this.voiceHandles.findIndex((voice) => voice.source === source);
+      if (index >= 0) this.voiceHandles.splice(index, 1);
+      source.onended = null;
+      try {
+        source.stop();
+      } catch {
+        // already stopped
+      }
+      source.disconnect();
+    }
+    this.uiClickSources.clear();
   }
 
   private hookVisibility(): void {

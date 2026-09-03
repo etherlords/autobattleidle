@@ -27,7 +27,7 @@ const SCENE_CUE_BUFFERS: Record<SceneCueName, string> = {
 };
 
 const UI_CUE_BUFFERS: Record<UiCueName, string> = {
-  click: "scroll_001",
+  click: "click_001",
   select: "select_001",
   toggle: "toggle_001",
   switch: "switch_001",
