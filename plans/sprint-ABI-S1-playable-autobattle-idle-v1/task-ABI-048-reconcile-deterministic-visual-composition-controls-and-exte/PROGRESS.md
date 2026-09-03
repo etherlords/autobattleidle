@@ -4,7 +4,7 @@ id: ABI-048
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 66
+revision: 70
 status: In Progress
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: In Progress
-- Revision: 66
-- Last update: Begin manager closure: commit scoped changes, publish main, verify CI/Pages and deployed behavior, then close Planner task.
+- Revision: 70
+- Last update: Closure evidence is complete: scoped commit published, CI/Pages green, deployed root and Visual Lab verified, all required Planner gates pass.
 
 ## Execution plan
 
@@ -39,7 +39,7 @@ requiredGates:
 - [-] visual-regression-proof: Add deterministic boundary, full-registry, historical-save, resource, browser, and production/lab parity tests; run focused checks and pnpm check.
 - [x] visual-independent-review: Independent reviewer audits correctness, shared ownership, boundedness, compatibility, documentation, and absence of hidden fallback or random visual state.
 - [x] visual-independent-qa: Independent QA verifies every affinity, both bosses and recipes, all player cadence boundaries, desktop/narrow/reduced-motion behavior, persistence, clean resources, and deployed URLs.
-- [~] visual-manager-close: Manager maps every acceptance criterion, updates Vault additively, synchronizes all Planner gate artifacts, publishes the exact SHA, verifies CI/Pages and public behavior, then closes the task.
+- [x] visual-manager-close: Manager maps every acceptance criterion, updates Vault additively, synchronizes all Planner gate artifacts, publishes the exact SHA, verifies CI/Pages and public behavior, then closes the task.
 - [x] enemy-receipt-audit: Разложить текущую production visual composition по family, body variant, affinity, grade, modifier и boss geometry; зафиксировать расхождения с ABI-029.
 - [x] enemy-receipt-implementation: Ввести единый детерминированный receipt/registry и проверить, что snapshot, production builder и lab используют один источник.
 - [x] enemy-lab-affinity-controls: Добавить выбор всех affinity, exact seed/input, palette/cue preview, URL codec и readable receipt в Visual Lab.
@@ -1114,3 +1114,77 @@ requiredGates:
 - Evidence:
   - agent://ABI048IndependentQA
   - artifact://1000
+
+### evt-dc3f9585-6e74-42ed-b87d-ea0fdebfe082
+
+- Timestamp: 2026-09-03T04:26:35.534Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 66
+- Resulting revision: 67
+- Summary: EVENT closed — Main — committed a16705fad4d372ea4873aa7e1d1056bda52abafa, pushed main, CI and Pages succeeded, and deployed root/Visual Lab browser proof passed with clean telemetry.
+- Idempotency key: ABI-048-deployment-verification-v1
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/a16705fad4d372ea4873aa7e1d1056bda52abafa
+  - https://github.com/etherlords/autobattleidle/actions/runs/33714797512
+  - https://github.com/etherlords/autobattleidle/actions/runs/33714797479
+  - https://etherlords.github.io/autobattleidle/
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=enemy&family=boss-hydra&grade=boss&affinity=prism&recipe=crystal-crown&viewport=narrow&motion=1
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=50000&viewport=narrow&motion=1
+  - artifact://1021
+  - artifact://1023
+
+### evt-df9302fa-65e3-4a48-902a-1aa17e6b4db2
+
+- Timestamp: 2026-09-03T04:26:45.030Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 67
+- Resulting revision: 68
+- Summary: Verification passes: scoped commit a16705f pushed to main; CI and GitHub Pages deployment succeeded; deployed application root and Visual Lab player/enemy URLs rendered expected receipts and clean browser telemetry.
+- Idempotency key: ABI-048-verification-pass-v1
+- Request fingerprint: 85d40e226691ae6965ca6d63a54c52fdf4b9889f70b9ba5001777c272ffc5e67
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/a16705fad4d372ea4873aa7e1d1056bda52abafa
+  - https://github.com/etherlords/autobattleidle/actions/runs/33714797512
+  - https://github.com/etherlords/autobattleidle/actions/runs/33714797479
+  - https://etherlords.github.io/autobattleidle/
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=50000&viewport=narrow&motion=1
+
+### evt-734186f0-e99c-4b9e-aec8-16b4087a03ff
+
+- Timestamp: 2026-09-03T04:27:08.574Z
+- Actor: ABI048FinalReview
+- Operation: gate.record
+- Prior revision: 68
+- Resulting revision: 69
+- Summary: Independent closure witness confirms scoped commit, Planner/Vault synchronization, review/QA gates, CI/Pages deployment, and deployed behavior evidence; unrelated ABI-047 dirty files remain uncommitted.
+- Idempotency key: ABI-048-manager-closure-pass-v2
+- Request fingerprint: 5be359a7a5fa664a7865720a9bfd180ce1a3c3cbd4c16bbd25d2ceb985b5bce9
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/a16705fad4d372ea4873aa7e1d1056bda52abafa
+  - agent://ABI048FinalReview
+  - agent://ABI048IndependentQA
+  - https://github.com/etherlords/autobattleidle/actions/runs/33714797479
+
+### evt-87a94090-f4c7-4eb4-b30d-ddb64cf27dae
+
+- Timestamp: 2026-09-03T04:27:27.585Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 69
+- Resulting revision: 70
+- Summary: Closure evidence is complete: scoped commit published, CI/Pages green, deployed root and Visual Lab verified, all required Planner gates pass.
+- Idempotency key: ABI-048-manager-close-plan-v1
+- Request fingerprint: e04129595688bec850e0fb43abf0a9665fd6b40ff68425f71a018ac6498aec65
+- Action: set_state
+- Step ID: visual-manager-close
+- State: complete
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/a16705fad4d372ea4873aa7e1d1056bda52abafa
+  - https://github.com/etherlords/autobattle-idle/actions/runs/33714797479
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=50000&viewport=narrow&motion=1
