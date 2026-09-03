@@ -16,7 +16,7 @@ import {
 
 export type AudioServiceState = "blocked" | "ready" | "error" | "suspended" | "disposed";
 
-export type AudioManifestEntry = { readonly file: string };
+export type AudioManifestEntry = { readonly file: string; readonly title?: string };
 
 export type AudioServiceManifest = {
   readonly music: readonly AudioManifestEntry[];
@@ -46,6 +46,14 @@ type MusicVoice = {
 const VOICE_CAP = 6;
 const CROSSFADE_SECONDS = 1.5;
 const FRAME_MS = 16;
+
+// Invisible loudness calibration: persisted slider positions multiply these
+// base gains, keeping first-run audio soft while the UI always shows the real
+// user-facing percentage.
+const BASE_MASTER_GAIN = 0.75;
+const BASE_UI_GAIN = 0.2;
+const BASE_COMBAT_GAIN = 0.05;
+const BASE_MUSIC_GAIN = 0.1;
 
 const PRIORITY_TOP = 3;
 const PRIORITY_HIGH = 2;
@@ -127,6 +135,21 @@ export class AudioService {
     }
     this.stateListeners.add(listener);
     return () => this.stateListeners.delete(listener);
+  }
+
+  get playlist(): { readonly current: string; readonly next: string } | null {
+    if (this.manifest.music.length === 0 || !this.playlistActive) return null;
+    const current = this.manifest.music[this.trackIndex];
+    const next = this.manifest.music[(this.trackIndex + 1) % this.manifest.music.length];
+    if (current === undefined || next === undefined) return null;
+    const label = (entry: AudioManifestEntry, file: string): string =>
+      entry.title ??
+      file
+        .split("/")
+        .at(-1)
+        ?.replace(/\.[a-z0-9]+$/i, "") ??
+      file;
+    return { current: label(current, current.file), next: label(next, next.file) };
   }
 
   get musicVoiceCount(): number {
@@ -217,6 +240,7 @@ export class AudioService {
     const first = this.manifest.music[0];
     if (first === undefined) return;
     this.spawnMusicVoice(first.file, 1);
+    for (const listener of [...this.stateListeners]) listener(this.state);
   }
 
   stopMusic(): void {
@@ -305,10 +329,10 @@ export class AudioService {
 
   private applyGains(): void {
     if (this.masterGain === null) return;
-    this.masterGain.gain.value = this.prefs.muted ? 0 : this.prefs.master;
-    if (this.uiGain !== null) this.uiGain.gain.value = this.prefs.ui;
-    if (this.combatGain !== null) this.combatGain.gain.value = this.prefs.combat;
-    if (this.musicGain !== null) this.musicGain.gain.value = this.prefs.music;
+    this.masterGain.gain.value = this.prefs.muted ? 0 : this.prefs.master * BASE_MASTER_GAIN;
+    if (this.uiGain !== null) this.uiGain.gain.value = this.prefs.ui * BASE_UI_GAIN;
+    if (this.combatGain !== null) this.combatGain.gain.value = this.prefs.combat * BASE_COMBAT_GAIN;
+    if (this.musicGain !== null) this.musicGain.gain.value = this.prefs.music * BASE_MUSIC_GAIN;
   }
 
   private alternationFor(cue: BattleVisualCue): number {

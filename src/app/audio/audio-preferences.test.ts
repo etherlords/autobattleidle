@@ -38,7 +38,7 @@ describe("audio preferences", () => {
       master: 1,
       ui: 1,
       combat: 1,
-      music: 0.6,
+      music: 1,
       muted: false,
     });
   });

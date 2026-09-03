@@ -10,12 +10,15 @@ export type AudioPreferences = {
   readonly muted: boolean;
 };
 
+// Persisted values are slider positions in 0..1. Every fresh slider starts at
+// 100%; the mixer multiplies each position by invisible calibration constants
+// so first-run audio is soft without lying in the UI.
 export const DEFAULT_AUDIO_PREFERENCES: AudioPreferences = {
   version: AUDIO_SETTINGS_VERSION,
   master: 1,
   ui: 1,
   combat: 1,
-  music: 0.6,
+  music: 1,
   muted: false,
 };
 

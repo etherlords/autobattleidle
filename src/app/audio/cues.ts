@@ -15,17 +15,19 @@ const ALTERNATION_CYCLE = 2;
 
 export type SceneCueName = "boss" | "coin" | "death" | "golden-escape" | "golden-kill" | "spawn";
 
+// Dull, muted Kenney CC0 picks only. Avoid glassy/bright metallic rings for
+// repeated combat feedback; reserve brighter metals for rare scene cues.
 const SCENE_CUE_BUFFERS: Record<SceneCueName, string> = {
-  boss: "impactBell_heavy_000",
+  boss: "impactSoft_heavy_000",
   coin: "confirmation_001",
-  death: "impactPlate_medium_000",
+  death: "impactWood_heavy_000",
   "golden-escape": "impactGeneric_light_000",
-  "golden-kill": "impactMining_000",
+  "golden-kill": "confirmation_001",
   spawn: "impactSoft_heavy_000",
 };
 
 const UI_CUE_BUFFERS: Record<UiCueName, string> = {
-  click: "click_001",
+  click: "scroll_001",
   select: "select_001",
   toggle: "toggle_001",
   switch: "switch_001",
@@ -35,20 +37,20 @@ const UI_CUE_BUFFERS: Record<UiCueName, string> = {
   back: "back_001",
 };
 const MANUAL_ATTACK_BUFFERS: Record<"critical" | "hit", readonly string[]> = {
-  critical: ["impactMetal_heavy_000"],
+  critical: ["impactBell_heavy_000"],
   hit: ["impactPunch_medium_000", "impactPunch_medium_001"],
 };
 
 const AUTOMATIC_ATTACK_BUFFERS: Record<"critical" | "hit", readonly string[]> = {
-  critical: ["impactMetal_light_000", "impactMetal_light_001"],
-  hit: ["impactSoft_medium_000", "impactSoft_medium_001"],
+  critical: ["impactPunch_heavy_000", "impactPunch_heavy_000"],
+  hit: ["impactWood_heavy_000", "impactWood_heavy_000"],
 };
 
 export const resolveCueBuffer = (cue: AudioCue, batchIndex = 0): string | null => {
   if (cue.type === "ui") return UI_CUE_BUFFERS[cue.name] ?? null;
   if (cue.type === "scene") return SCENE_CUE_BUFFERS[cue.name] ?? null;
   if (cue.type !== "attack") return null;
-  if (cue.kind === "armor") return "impactTin_medium_000";
+  if (cue.kind === "armor") return "impactGlass_medium_000";
   const table = cue.source === "manual" ? MANUAL_ATTACK_BUFFERS : AUTOMATIC_ATTACK_BUFFERS;
   const variant = ALTERNATION_CYCLE > 0 ? batchIndex % ALTERNATION_CYCLE : 0;
   return table[cue.kind]?.[variant] ?? null;

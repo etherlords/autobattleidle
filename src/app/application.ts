@@ -143,7 +143,10 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     dependencies.createAudioService?.(audioWindow) ??
     new AudioService({
       manifest: dependencies.audioManifest ?? {
-        music: musicManifest.music.map((entry) => ({ file: entry.file })),
+        music: musicManifest.music.map((entry) => ({
+          file: entry.file,
+          ...(entry.title === undefined ? {} : { title: entry.title }),
+        })),
       },
       ...(dependencies.audioStorage !== undefined || audioWindow.localStorage !== undefined
         ? { storage: dependencies.audioStorage ?? audioWindow.localStorage }

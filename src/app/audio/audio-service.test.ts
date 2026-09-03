@@ -299,24 +299,24 @@ describe("audio service", () => {
     expect(service.currentState).toBe("ready");
   });
 
-  it("applies gain math master * category and zeroes on mute without overwriting category values", async () => {
+  it("applies gain math slider position * category base and zeroes on mute", async () => {
     stubFetch();
     const { service, context } = await unlockedService();
     service.setPreferences(combatPrefs({ master: 0.5, ui: 0.8, combat: 0.4, music: 0.25 }));
     const [master, uiBus, combatBus] = context.createdGains;
     if (master === undefined || uiBus === undefined || combatBus === undefined)
       throw new Error("Expected mixer buses");
-    expect(master.gain.value).toBeCloseTo(0.5);
-    expect(uiBus.gain.value).toBeCloseTo(0.8);
-    expect(combatBus.gain.value).toBeCloseTo(0.4);
+    expect(master.gain.value).toBeCloseTo(0.5 * 0.75);
+    expect(uiBus.gain.value).toBeCloseTo(0.8 * 0.2);
+    expect(combatBus.gain.value).toBeCloseTo(0.4 * 0.05);
 
     service.setMuted(true);
     expect(master.gain.value).toBe(0);
-    expect(uiBus.gain.value).toBeCloseTo(0.8);
-    expect(combatBus.gain.value).toBeCloseTo(0.4);
+    expect(uiBus.gain.value).toBeCloseTo(0.8 * 0.2);
+    expect(combatBus.gain.value).toBeCloseTo(0.4 * 0.05);
 
     service.setMuted(false);
-    expect(master.gain.value).toBeCloseTo(0.5);
+    expect(master.gain.value).toBeCloseTo(0.5 * 0.75);
   });
 
   it("caps concurrent voices at 6 and drops the lowest priority pending voice", async () => {
