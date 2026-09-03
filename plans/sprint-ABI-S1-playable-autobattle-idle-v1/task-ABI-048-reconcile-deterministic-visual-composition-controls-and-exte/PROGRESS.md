@@ -4,8 +4,8 @@ id: ABI-048
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 70
-status: In Progress
+revision: 74
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-029
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 70
-- Last update: Closure evidence is complete: scoped commit published, CI/Pages green, deployed root and Visual Lab verified, all required Planner gates pass.
+- Status: Done
+- Revision: 74
+- Last update: ABI-048 closed after all required gates, scoped checkpoints, CI/Pages success, and deployed browser verification.
 
 ## Execution plan
 
@@ -1188,3 +1188,71 @@ requiredGates:
   - https://github.com/etherlords/autobattleidle/commit/a16705fad4d372ea4873aa7e1d1056bda52abafa
   - https://github.com/etherlords/autobattle-idle/actions/runs/33714797479
   - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=50000&viewport=narrow&motion=1
+
+### evt-593447fa-31ad-4885-965c-be18c3cf03f0
+
+- Timestamp: 2026-09-03T04:32:19.637Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 70
+- Resulting revision: 71
+- Summary: Implementation self-check is green and the task enters its recorded independent review gate.
+- Idempotency key: ABI-048-in-review-v1
+- Request fingerprint: c8a29f5faba253b0128bb6e5e27d54ccadf352609df2f005dcf3ae1fd5859ed6
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/6516cffd689cee4bf8cc85fec137b85a93e66c77
+  - agent://ABI048FinalReview-2
+
+### evt-b055fd82-7738-4cb8-92f0-3998cd0bef4e
+
+- Timestamp: 2026-09-03T04:32:27.077Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: Independent review passed; task enters its recorded independent QA gate.
+- Idempotency key: ABI-048-in-qa-v1
+- Request fingerprint: 03a3c33ec71c06ff439e7c7c8261a0507f93ee3f107e6567637481dfa130bcf5
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - agent://ABI048FinalReview-2
+  - agent://ABI048IndependentQA
+  - https://github.com/etherlords/autobattleidle/commit/6516cffd689cee4bf8cc85fec137b85a93e66c77
+
+### evt-00460b9d-6e5d-412f-84b1-a80a28f00424
+
+- Timestamp: 2026-09-03T04:32:34.876Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: Independent QA passed; deployed CI/Pages and browser verification are complete, task is ready for manager closure.
+- Idempotency key: ABI-048-ready-for-manager-v2
+- Request fingerprint: 25ae6df88ff2bcb73bf22cbd6fa181bdc47df5baecf292a5982cc008ea6058ab
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - agent://ABI048IndependentQA
+  - https://github.com/etherlords/autobattleidle/actions/runs/33715188103
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=enemy&family=boss-hydra&grade=boss&affinity=prism&recipe=crystal-crown&viewport=narrow&motion=1
+
+### evt-75395e6e-5423-4f44-8f94-5606936b1349
+
+- Timestamp: 2026-09-03T04:32:43.914Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: ABI-048 closed after all required gates, scoped checkpoints, CI/Pages success, and deployed browser verification.
+- Idempotency key: ABI-048-close-v2
+- Request fingerprint: 0431dc9a164c0feec81832ba66130c68cb492a94696976cd68b6b7e7fe2eb9d4
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - https://github.com/etherlords/autobattleidle/commit/6516cffd689cee4bf8cc85fec137b85a93e66c77
+  - https://github.com/etherlords/autobattleidle/actions/runs/33715187974
+  - https://github.com/etherlords/autobattleidle/actions/runs/33715188103
+  - https://etherlords.github.io/autobattleidle/

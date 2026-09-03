@@ -4,8 +4,8 @@ id: ABI-048
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-029
@@ -30,7 +30,7 @@ Reconcile deterministic visual composition controls and extend player evolution 
 
 - Type: task
 - Priority: high
-- Status: In Progress
+- Status: Done
 
 ## Acceptance criteria
 
