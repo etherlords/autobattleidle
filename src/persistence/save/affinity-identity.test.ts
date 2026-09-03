@@ -168,6 +168,9 @@ describe("affinity identity across the persistence boundary", () => {
       coins: v4GoldenDefeatsFixture.coins,
       enemy: { encounter: 2170, reward: 67_534_741 },
     });
+    expect(decodeSave({ ...v4GoldenDefeatsFixture, goldenBugDefeats: "3" }, fallback(), 0)).toEqual(
+      fallback(),
+    );
     // Even the recovery path derives a deterministic affinity identity.
     const recovered = decodeSave({ version: SAVE_VERSION + 1 }, fallback(), 0);
     expect(snapshotEnemy(recovered).affinity).toBe(snapshotEnemy(fallback()).affinity);

@@ -71,7 +71,8 @@ const decodeHistoricalV4 = (
 /* eslint-enable complexity */
 
 export const decodeV4 = (value: unknown, nowMs: number): CombatState | undefined => {
-  if (!isRecord(value) || value.version !== 4) return undefined;
+  if (!isRecord(value) || value.version !== 4 || !integer(value.goldenBugDefeats, 0))
+    return undefined;
   const { goldenBugDefeats: ignoredGoldenBugDefeats, ...v3 } = value;
   void ignoredGoldenBugDefeats;
   const migrated = decodeV3({ ...v3, version: 3 }, nowMs);
