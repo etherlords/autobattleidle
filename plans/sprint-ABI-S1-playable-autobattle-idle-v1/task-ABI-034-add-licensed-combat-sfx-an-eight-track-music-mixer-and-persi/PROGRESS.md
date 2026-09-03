@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 98
+revision: 101
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 98
-- Last update: Post-deploy user report: upgrade-menu click used a long scratch-like scroll cue and repeated clicks could overlap. Fix replaces it with short click_001 and serializes click playback; deployed SFX responses are 200 audio/ogg. Fresh review and QA are required for this post-close repair.
+- Revision: 101
+- Last update: EVENT checkpoint — Main — gates complete: independent review verdict pass (no P0-P2; one P3 mute-sync finding fixed in commit e005d17 series), independent deployed QA verdict pass (V4-over-V3 precedence with byte-stable reloads, audio gate/mute/dialog/console clean, 6 screenshots). Post-review fixes: track label relocated into BattleStatus directly under the enemy health bar (no longer overlaps stats — user-reported), mute state synchronized between HUD toggle and settings checkbox. Deployed proof at commit e005d17: HUD shows '♪ Pastoral Loop · Next: Idle Fantasy' inside .hud-status between enemy-health and automatic rows, healthRect.bottom 82 == trackRect.top 82, no overlap.
 
 ## Execution plan
 
@@ -1705,3 +1705,52 @@ requiredGates:
   - https://etherlords.github.io/autobattleidle/audio/sfx/click_001.ogg status 200 content-type audio/ogg
   - https://etherlords.github.io/autobattleidle/audio/sfx/impactPunch_heavy_000.ogg status 200 content-type audio/ogg
   - https://etherlords.github.io/autobattleidle/audio/sfx/impactGlass_medium_000.ogg status 200 content-type audio/ogg
+
+### evt-dae88007-6630-4cfd-ab7f-aba96492041c
+
+- Timestamp: 2026-09-03T21:48:43.090Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 98
+- Resulting revision: 99
+- Summary: EVENT closed — Main — deployed audio UX and V4 save-preservation follow-up; V4 is selected ahead of V3, rejected current payloads are copied before repair, and no intentional visibility suspension remains.
+- Evidence:
+  - commit:7782bc6
+  - commit:1ad10d8
+  - CI:33809715668
+  - Pages:33809715722
+  - deployed:https://etherlords.github.io/autobattleidle/
+  - local:pnpm check — 31 files, 307 tests, worker tsc, production build
+  - deployed browser: high-encounter V4 remained authoritative over lower V3 after reload
+
+### evt-0951939d-0cee-4f63-bc77-ddd3dd5b28fb
+
+- Timestamp: 2026-09-03T21:50:05.305Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 99
+- Resulting revision: 100
+- Summary: EVENT checkpoint — Main — corrective follow-up record: prior summary said 'closed' but post-closure commits 1ad10d8/7782bc6 (V4 save preservation) and audio UX fixes still require fresh independent review and QA gates per evt-a4d00b00; deployed threshold proof recorded (encounter-10001 V4 loaded through the application UI over lower V3, no recovery key, bytes stable across second reload).
+- Evidence:
+  - commit:1ad10d8
+  - commit:7782bc6
+  - commit:8f9524e
+  - commit:b56befa
+  - CI:33809715668
+  - Pages:33809715722
+  - deployed probe: HUD 'Frost Hydra · Level 10K', coins 427622176, v3Coins stayed 1, recovery null, second reload bytes stable
+
+### evt-fea01f78-8363-4c9b-8e4e-62e32c6105e8
+
+- Timestamp: 2026-09-03T22:02:37.685Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 100
+- Resulting revision: 101
+- Summary: EVENT checkpoint — Main — gates complete: independent review verdict pass (no P0-P2; one P3 mute-sync finding fixed in commit e005d17 series), independent deployed QA verdict pass (V4-over-V3 precedence with byte-stable reloads, audio gate/mute/dialog/console clean, 6 screenshots). Post-review fixes: track label relocated into BattleStatus directly under the enemy health bar (no longer overlaps stats — user-reported), mute state synchronized between HUD toggle and settings checkbox. Deployed proof at commit e005d17: HUD shows '♪ Pastoral Loop · Next: Idle Fantasy' inside .hud-status between enemy-health and automatic rows, healthRect.bottom 82 == trackRect.top 82, no overlap.
+- Evidence:
+  - commit:e005d17
+  - review:MigrationReviewer pass
+  - qa:DeployedQA pass
+  - Pages:33810940600
+  - deployed screenshot:omp-sshots-1571a02f155e1661
