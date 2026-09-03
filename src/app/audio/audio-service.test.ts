@@ -323,10 +323,14 @@ describe("audio service", () => {
     stubFetch();
     const { service, context } = await unlockedService();
     service.playUiCue("click");
-    service.playUiCue("click");
-    service.playUiCue("click");
     await vi.waitFor(() => expect(service.activeVoices).toHaveLength(1));
-    expect(context.createdSources).toHaveLength(1);
+    const firstSource = context.createdSources[0];
+    if (firstSource === undefined) throw new Error("Expected the first click source");
+
+    service.playUiCue("click");
+    await vi.waitFor(() => expect(context.createdSources).toHaveLength(2));
+    expect(service.activeVoices).toHaveLength(1);
+    expect(firstSource.stopped).toBe(1);
   });
   it("caps concurrent voices at 6 and drops the lowest priority pending voice", async () => {
     stubFetch();
