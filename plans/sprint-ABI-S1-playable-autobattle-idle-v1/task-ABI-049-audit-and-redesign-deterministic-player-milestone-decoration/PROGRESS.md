@@ -4,8 +4,8 @@ id: ABI-049
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 34
-status: Ready for Manager
+revision: 38
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-048
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 34
-- Last update: Publication proof is now the only remaining ABI-049 plan step; keep ABI-050 closure similarly blocked until its exact-SHA Pages proof is recorded.
+- Status: Done
+- Revision: 38
+- Last update: Close ABI-049 after exact-SHA CI/Pages success and deployed all-angle player badge proof.
 
 ## Execution plan
 
@@ -37,7 +37,7 @@ workspaceProject: autobattleidle
 - [x] decoration-independent-review: Independent Reviewer audits readability, determinism, ownership, bounds, persistence, lifecycle, and scope
 - [x] decoration-independent-qa: Independent QA verifies milestone readability, all-angle animation, desktop/narrow behavior, clean resources, and deployed cases
 - [x] decoration-manager-closure: Manager records Vault/evidence updates, exact-SHA CI/Pages proof, deployed visual results, and coherent closure
-- [~] publication-proof: Publish exact-SHA checkpoint and prove deployed Pages visual fixes before closure
+- [x] publication-proof: Publish exact-SHA checkpoint and prove deployed Pages visual fixes before closure
 
 ## Events
 
@@ -628,3 +628,75 @@ workspaceProject: autobattleidle
   - pnpm check
   - agent://ABI049QA
   - agent://ABI049Reviewer2
+
+### evt-59416ab9-cd52-4bdc-afef-49a62b29a7a2
+
+- Timestamp: 2026-09-03T11:58:25.686Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: EVENT checkpoint — Main — Published exact SHA 6aa2a98585361483b3fc9543446f1b1b9057842c. CI run 33752293330 and Deploy GitHub Pages run 33752293394 both completed success. Public Visual Lab loaded at https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=1000&view=side and rendered the repaired badge with finite receipt; deployed selector smoke also passed on boss-hydra→beetle with canonical grade=normal URL.
+- Idempotency key: abi049-pages-proof-20260903
+- Evidence:
+  - 6aa2a98585361483b3fc9543446f1b1b9057842c
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293330
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293394
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=1000&view=side
+  - C:\Users\Asfel\AppData\Local\Temp\omp-sshots-157115d23995eecc.webp
+
+### evt-0ee81515-e68b-41bf-b5e9-28f2690a2a5d
+
+- Timestamp: 2026-09-03T11:58:47.646Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Exact-SHA publication proof complete: CI and Pages runs succeeded, deployed Visual Lab rendered the repaired player badge, and deployed family-selector transition produced canonical beetle/normal state.
+- Idempotency key: abi049-plan-publication-proof-complete-20260903
+- Request fingerprint: 4458103014e3d228f7e67f690edfaf6885cedf982e40ef2c5efaab64f9d9bec4
+- Action: set_state
+- Step ID: publication-proof
+- State: complete
+- Evidence:
+  - 6aa2a98585361483b3fc9543446f1b1b9057842c
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293330
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293394
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=1000&view=side
+
+### evt-f00d3fa9-a55b-4984-9352-e33604dd90fb
+
+- Timestamp: 2026-09-03T11:58:56.115Z
+- Actor: ABI049Manager
+- Operation: gate.record
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: Final manager closure passes with exact-SHA CI/Pages publication and deployed visual proof recorded after all review/QA gates.
+- Idempotency key: abi049-manager-closure-pass-published-20260903
+- Request fingerprint: 4c8abc85bbc1605ea583b1833d269c80030507780f9c64ec1a078faa32c0f8fa
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - 6aa2a98585361483b3fc9543446f1b1b9057842c
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293330
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293394
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=1000&view=side
+
+### evt-b5fb8566-4501-40aa-acf1-7eaa0fdc7081
+
+- Timestamp: 2026-09-03T11:59:04.836Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Close ABI-049 after exact-SHA CI/Pages success and deployed all-angle player badge proof.
+- Idempotency key: abi049-close-done-20260903
+- Request fingerprint: 84c29839a6015834f859ecdaa9e49a58857aeffd914c0fc85bba913a535cc6aa
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-f00d3fa9-a55b-4984-9352-e33604dd90fb
+  - 6aa2a98585361483b3fc9543446f1b1b9057842c
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293330
+  - https://github.com/etherlords/autobattleidle/actions/runs/33752293394
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?subject=player&level=1000&view=side

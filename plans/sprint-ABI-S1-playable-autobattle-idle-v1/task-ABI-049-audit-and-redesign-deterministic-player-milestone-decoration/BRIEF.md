@@ -4,8 +4,8 @@ id: ABI-049
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 5
-status: Ready for Manager
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-048
@@ -28,7 +28,7 @@ Audit and redesign deterministic player milestone decorations
 
 - Type: task
 - Priority: critical
-- Status: Ready for Manager
+- Status: Done
 
 ## Acceptance criteria
 
