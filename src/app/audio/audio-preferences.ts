@@ -1,4 +1,5 @@
 export const AUDIO_SETTINGS_KEY = "autobattleidle.audio-settings";
+export const AUDIO_TRACK_INDEX_KEY = "autobattleidle.audio-track-index";
 export const AUDIO_SETTINGS_VERSION = 1;
 
 export type AudioPreferences = {
@@ -68,4 +69,32 @@ export const saveAudioPreferences = (
 ): void => {
   if (storage === null || storage === undefined) return;
   storage.setItem(AUDIO_SETTINGS_KEY, JSON.stringify(prefs));
+};
+
+export const loadAudioTrackIndex = (
+  storage: AudioPreferencesStorage | null | undefined,
+): number | undefined => {
+  if (storage === null || storage === undefined) return undefined;
+  try {
+    const raw = storage.getItem(AUDIO_TRACK_INDEX_KEY);
+    if (raw === null) return undefined;
+    const parsed = JSON.parse(raw) as unknown;
+    if (typeof parsed !== "number" || !Number.isSafeInteger(parsed) || parsed < 0) return undefined;
+    return parsed;
+  } catch {
+    return undefined;
+  }
+};
+
+export const saveAudioTrackIndex = (
+  storage: AudioPreferencesStorage | null | undefined,
+  trackIndex: number,
+): void => {
+  if (storage === null || storage === undefined) return;
+  if (!Number.isSafeInteger(trackIndex) || trackIndex < 0) return;
+  try {
+    storage.setItem(AUDIO_TRACK_INDEX_KEY, JSON.stringify(trackIndex));
+  } catch {
+    /* live playback continues when the index cannot be persisted */
+  }
 };

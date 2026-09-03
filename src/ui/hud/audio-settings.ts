@@ -56,6 +56,7 @@ export class AudioSettingsDialog {
   private readonly muted: () => boolean;
   constructor(service: AudioSettingsPort) {
     this.muted = () => service.preferences.muted;
+    this.modal.className = "audio-settings-modal";
     this.modal.hidden = true;
     this.dialog.className = "audio-settings-dialog";
     this.dialog.setAttribute("aria-label", "Sound settings");

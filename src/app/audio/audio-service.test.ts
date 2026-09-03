@@ -178,6 +178,7 @@ const makeDeps = (overrides: Partial<AudioServiceDeps> = {}): AudioServiceDeps =
   ];
   return {
     manifest: { music },
+    random: () => 0,
     ...overrides,
   };
 };

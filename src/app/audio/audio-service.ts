@@ -2,7 +2,9 @@ import type { BattleVisualCue } from "../../domain/snapshot";
 import {
   DEFAULT_AUDIO_PREFERENCES,
   loadAudioPreferences,
+  loadAudioTrackIndex,
   saveAudioPreferences,
+  saveAudioTrackIndex,
   type AudioPreferences,
   type AudioPreferencesStorage,
 } from "./audio-preferences";
@@ -28,6 +30,8 @@ export type AudioServiceDeps = {
   readonly manifest: AudioServiceManifest;
   readonly mediaElementFactory?: (src: string) => HTMLAudioElement;
   readonly onStateChange?: (state: AudioServiceState) => void;
+  /** Deterministic tests inject a fixed roll; production defaults to Math.random. */
+  readonly random?: () => number;
 };
 
 type SfxCategory = "ui" | "combat";
@@ -104,7 +108,7 @@ export class AudioService {
   private manualAlternation = 0;
   private resumeFailures = 0;
   private failedTracksInRun = 0;
-
+  private readonly random: () => number;
   constructor(deps: AudioServiceDeps) {
     this.context = deps.context ?? null;
     this.ownsContext = deps.context === undefined;
@@ -113,6 +117,7 @@ export class AudioService {
     this.mediaElementFactory = deps.mediaElementFactory ?? ((src) => new Audio(src));
     this.onStateChange = deps.onStateChange;
     this.prefs = deps.storage ? loadAudioPreferences(deps.storage) : DEFAULT_AUDIO_PREFERENCES;
+    this.random = deps.random ?? Math.random;
   }
 
   get currentState(): AudioServiceState {
@@ -240,11 +245,16 @@ export class AudioService {
     if (this.playlistActive || this.state !== "ready") return;
     if (this.manifest.music.length === 0) return;
     this.playlistActive = true;
-    this.trackIndex = 0;
+    const savedIndex = loadAudioTrackIndex(this.storage);
+    this.trackIndex =
+      savedIndex !== undefined && savedIndex < this.manifest.music.length
+        ? savedIndex
+        : Math.floor(this.random() * this.manifest.music.length) % this.manifest.music.length;
     this.failedTracksInRun = 0;
-    const first = this.manifest.music[0];
+    const first = this.manifest.music[this.trackIndex];
     if (first === undefined) return;
     this.spawnMusicVoice(first.file, 1);
+    saveAudioTrackIndex(this.storage, this.trackIndex);
     for (const listener of [...this.stateListeners]) listener(this.state);
   }
 
@@ -492,6 +502,7 @@ export class AudioService {
     }
 
     this.trackIndex = (this.trackIndex + 1) % this.manifest.music.length;
+    saveAudioTrackIndex(this.storage, this.trackIndex);
     const file = this.manifest.music[this.trackIndex];
     if (file === undefined) return;
     this.spawnMusicVoice(file.file, 1);
