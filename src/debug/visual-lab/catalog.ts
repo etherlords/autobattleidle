@@ -186,6 +186,15 @@ export const reachableLabCases = (candidate: Partial<LabCase>): readonly LabCase
     }
   });
 };
+/** Reconcile a family change without carrying incompatible dependent selections forward. */
+export const reconcileLabFamily = (current: LabCase, family: EnemyFamily): LabCase => {
+  if (current.goldenBug) return current;
+  return (
+    reachableLabCases({ family, affinity: current.affinity, goldenBug: false })[0] ??
+    reachableLabCases({ family, goldenBug: false })[0] ??
+    current
+  );
+};
 
 export const firstReachableLabCase = (candidate: Partial<LabCase>): LabCase => {
   const matches = reachableLabCases(candidate);

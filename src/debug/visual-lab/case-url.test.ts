@@ -22,6 +22,7 @@ import {
   LAB_MODIFIERS,
   reachableLabCases,
   toggleGoldenLabCase,
+  reconcileLabFamily,
 } from "./catalog";
 import { DEFAULT_LAB_CASE, parseLabCase, serializeLabCase } from "./case-url";
 import {
@@ -305,6 +306,27 @@ describe("visual lab cases", () => {
       goldenBug: false,
     });
     expect(serializeLabCase({ ...DEFAULT_LAB_CASE, ...returned })).toContain("golden=0");
+  });
+
+  it("reconciles family transitions from the requested family in catalog order", () => {
+    const hydra = firstReachableLabCase({ family: "boss-hydra", grade: "boss" });
+    const colossus = reconcileLabFamily(hydra, "boss-colossus");
+    expect(colossus.family).toBe("boss-colossus");
+    expect(colossus.affinity).toBe(hydra.affinity);
+    expect(reachableLabCases(colossus)).toEqual([colossus]);
+    expect(reconcileLabFamily(hydra, "boss-colossus")).toEqual(colossus);
+
+    const ordinary = firstReachableLabCase({
+      family: "beetle",
+      grade: "normal",
+      modifier: null,
+      variant: 0,
+    });
+    const mantis = reconcileLabFamily(ordinary, "mantis");
+    expect(mantis.family).toBe("mantis");
+    expect(mantis.affinity).toBe(ordinary.affinity);
+    expect(mantis.modifier).toBe("hardened");
+    expect(reachableLabCases(mantis)).toEqual([mantis]);
   });
 
   it("reopens every affinity through the production resolver", () => {

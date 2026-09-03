@@ -24,6 +24,7 @@ import {
   LAB_GRADES,
   LAB_MODIFIERS,
   reachableLabCases,
+  reconcileLabFamily,
   toggleGoldenLabCase,
   type LabCase,
 } from "./catalog";
@@ -281,7 +282,8 @@ class VisualLab {
         entry.disabled = !reachable({ ...match, affinity: entry.value as EnemyAffinity });
       }
       for (const entry of family.options) {
-        entry.disabled = !reachable({ ...match, family: entry.value as EnemyFamily });
+        entry.disabled =
+          reachableLabCases({ family: entry.value as EnemyFamily, goldenBug: false }).length === 0;
       }
       for (const entry of grade.options) {
         entry.disabled = !reachable({ ...match, grade: entry.value as EnemyGrade });
@@ -315,7 +317,10 @@ class VisualLab {
         readonly goldenBug: boolean;
       }>,
     ): void => {
-      const match = reachableLabCases(candidate)[0] ?? this.current;
+      const match =
+        candidate.family !== undefined && candidate.family !== this.current.family
+          ? reconcileLabFamily(this.current, candidate.family)
+          : (reachableLabCases(candidate)[0] ?? this.current);
       selectCase(match);
     };
     affinity.value = this.current.affinity;
