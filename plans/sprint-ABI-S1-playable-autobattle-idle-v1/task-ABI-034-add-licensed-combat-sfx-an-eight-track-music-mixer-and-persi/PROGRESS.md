@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 101
+revision: 102
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 101
-- Last update: EVENT checkpoint — Main — gates complete: independent review verdict pass (no P0-P2; one P3 mute-sync finding fixed in commit e005d17 series), independent deployed QA verdict pass (V4-over-V3 precedence with byte-stable reloads, audio gate/mute/dialog/console clean, 6 screenshots). Post-review fixes: track label relocated into BattleStatus directly under the enemy health bar (no longer overlaps stats — user-reported), mute state synchronized between HUD toggle and settings checkbox. Deployed proof at commit e005d17: HUD shows '♪ Pastoral Loop · Next: Idle Fantasy' inside .hud-status between enemy-health and automatic rows, healthRect.bottom 82 == trackRect.top 82, no overlap.
+- Revision: 102
+- Last update: EVENT checkpoint — Main — user-reported follow-ups fixed in commit 93295c2: (1) music playlist now starts at the persisted last track index (new separate localStorage key autobattleidle.audio-track-index, written on start and every track advance; random fallback for first run via injectable deps.random); (2) audio-settings-modal class restored after mute-sync patch eroded it — dialog is again centered, clickable, closes on backdrop click and Escape. Deployed proof at Pages run for 93295c2: modal opens with zIndex 2, dialog hit-test returns audio-settings-dialog, backdrop click and Escape both hide it; seeded track index 3 resumes 'Tran exploration' as first track and persists.
 
 ## Execution plan
 
@@ -1754,3 +1754,19 @@ requiredGates:
   - qa:DeployedQA pass
   - Pages:33810940600
   - deployed screenshot:omp-sshots-1571a02f155e1661
+
+### evt-942d17d9-ef7d-4bd6-bffc-49ab7caa658c
+
+- Timestamp: 2026-09-03T22:13:26.168Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 101
+- Resulting revision: 102
+- Summary: EVENT checkpoint — Main — user-reported follow-ups fixed in commit 93295c2: (1) music playlist now starts at the persisted last track index (new separate localStorage key autobattleidle.audio-track-index, written on start and every track advance; random fallback for first run via injectable deps.random); (2) audio-settings-modal class restored after mute-sync patch eroded it — dialog is again centered, clickable, closes on backdrop click and Escape. Deployed proof at Pages run for 93295c2: modal opens with zIndex 2, dialog hit-test returns audio-settings-dialog, backdrop click and Escape both hide it; seeded track index 3 resumes 'Tran exploration' as first track and persists.
+- Evidence:
+  - commit:93295c2
+  - CI:33811797277
+  - Pages:33811797256
+  - deployed:modal z=2, backdrop+Escape close verified
+  - deployed:track resume from saved index verified
+  - screenshot:omp-sshots-1571a2abd99e1662
