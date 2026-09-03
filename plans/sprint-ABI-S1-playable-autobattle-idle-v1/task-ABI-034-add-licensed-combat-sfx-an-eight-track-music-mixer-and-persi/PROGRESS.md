@@ -4,8 +4,8 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 82
-status: In Progress
+revision: 94
+status: In Review
 sprintId: ABI-S1
 dependencies:
   - ABI-005
@@ -25,9 +25,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 82
-- Last update: EVENT checkpoint — Main — QA addendum independently confirms 390px launcher rectangles are non-overlapping, document/body width has no horizontal overflow, and load produced zero console/page errors.
+- Status: In Review
+- Revision: 94
+- Last update: Implementation and self-check complete; independent review gate passed and current source is ready for review lifecycle projection.
 
 ## Execution plan
 
@@ -52,11 +52,11 @@ requiredGates:
 - [x] audio-app-wiring: Wire audio once at the composition root and consume ABI-035 attack-source receipts without parsing DOM text or duplicating combat rules
 - [x] audio-settings-ui: Add accessible sliders, exact percentages, mute, keyboard operation, visible blocked-ready-error state, and focus-safe integration with existing UI patterns
 - [x] audio-integration-regressions: Test event mapping, mixer math, unlock failures, crossfade retirement, caps, visibility, reload/reset, historical game saves, missing assets, and disposal
-- [ ] audio-deployed-asset-proof: Verify production base paths, MIME/range/cache behavior, manifest hashes, attribution, and public reachability for every shipped file
+- [x] audio-deployed-asset-proof: Verify production base paths, MIME/range/cache behavior, manifest hashes, attribution, and public reachability for every shipped file
 - [x] audio-implementation-self-check-v2: Implementation owner runs focused tests, asset/license validation, browser smoke, and pnpm check; records implementation-self-check evidence
-- [~] audio-independent-review: Independent Reviewer audits rights evidence, ownership, autoplay state machine, scheduling, persistence isolation, failure handling, and tests
-- [ ] audio-independent-qa: Independent QA records audible state-action-time-result evidence for categories, mute, high APS, crossfades, backgrounding, reload, failures, desktop, and narrow layouts
-- [ ] audio-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, assets, and deployed reload before closure
+- [x] audio-independent-review: Independent Reviewer audits rights evidence, ownership, autoplay state machine, scheduling, persistence isolation, failure handling, and tests
+- [x] audio-independent-qa: Independent QA records audible state-action-time-result evidence for categories, mute, high APS, crossfades, backgrounding, reload, failures, desktop, and narrow layouts
+- [x] audio-manager-closure: Manager updates Vault, records verification, publishes the coherent checkpoint, and proves exact-SHA CI, Pages, assets, and deployed reload before closure
 
 ## Events
 
@@ -1410,3 +1410,226 @@ requiredGates:
   - ABI034BrowserQA2 addendum: http://127.0.0.1:5178/ at 390x844, overlap [], scrollWidth=clientWidth=390, consoleErrors=[] and pageErrors=[]
   - Upgrades 12-127.98 x 736-780; Leaderboard 135.98-274.73 x 736-780; Sound settings 12-167.75 x 788-832
   - pnpm check: 31 test files / 303 tests, worker tsc, vite build passed
+
+### evt-cd61953c-a728-4ec4-ac37-1c9e97e00afd
+
+- Timestamp: 2026-09-03T16:36:13.090Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 82
+- Resulting revision: 83
+- Summary: Independent review passed after retry, failure-cap, rights-evidence, and layout repairs.
+- Idempotency key: abi034-independent-review-step-complete-20260903-2305
+- Request fingerprint: 558df1004cb58b8cadda801ee405f80b92fac6e553d834d0856c52d1e1b3c981
+- Action: set_state
+- Step ID: audio-independent-review
+- State: complete
+- Evidence:
+  - evt-5bf4a6cd-7ec2-49dc-a12d-eaad7b848da1
+  - 15715285c27e05a5
+
+### evt-d409f224-14d7-4d49-ac76-a07b90794b25
+
+- Timestamp: 2026-09-03T16:36:36.197Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 83
+- Resulting revision: 84
+- Summary: Reconciling passed independent QA gate with managed execution plan before closure.
+- Idempotency key: abi034-independent-qa-step-start-20260903-2310
+- Request fingerprint: b67f14d1de9a235912f0130d46cda339c1e87da9fa85a08293f88b754ce7f8c4
+- Action: set_state
+- Step ID: audio-independent-qa
+- State: in_progress
+- Evidence:
+  - evt-7270b193-6c57-444c-929b-e1878e090e86
+
+### evt-1cfe3475-cac9-4f59-9334-cabae4539726
+
+- Timestamp: 2026-09-03T16:36:43.498Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 84
+- Resulting revision: 85
+- Summary: Independent browser QA and 390px addendum passed physical controls, explicit ready state, music/SFX requests, persistence, launcher interactions, no-overlap/no-overflow, and zero console/page errors.
+- Idempotency key: abi034-independent-qa-step-complete-20260903-2312
+- Request fingerprint: f618d06c7a8abae6d5dd86264d654b9d643ad21373c693e46536d9da5ef71d07
+- Action: set_state
+- Step ID: audio-independent-qa
+- State: complete
+- Evidence:
+  - 1571543a757e05d4
+  - ABI034NarrowQA
+  - http://127.0.0.1:5178/ at 390x844
+
+### evt-0ba33fb0-477f-4884-80c2-175fa353b952
+
+- Timestamp: 2026-09-03T16:37:17.992Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 85
+- Resulting revision: 86
+- Summary: Reconciling published exact-SHA deployment and public asset evidence before managed completion.
+- Idempotency key: abi034-deployed-assets-proof-start-20260903-2322
+- Request fingerprint: 43c968a459c01fab5bf9cf3bce6b42fcc1c08ae6458cd59f45fb05537d0b9abb
+- Action: set_state
+- Step ID: audio-deployed-asset-proof
+- State: in_progress
+- Evidence:
+  - git commit 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+  - CI run 33779376141 in progress/expected final success
+  - Deploy GitHub Pages run 33779376114 success
+
+### evt-d1bdedc7-b2d7-4f4e-a111-069b411b83bb
+
+- Timestamp: 2026-09-03T16:37:54.259Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 86
+- Resulting revision: 87
+- Summary: Published 5e791a0 and verified exact-SHA CI/Pages, all 35 public audio paths, MIME/cache/range behavior, deployed settings readiness, first-gesture music/SFX requests, and narrow layout.
+- Idempotency key: abi034-deployed-assets-proof-20260903-2328
+- Request fingerprint: bc9b38e6a16ee65217fa3506e390e52e6464f8ac2b01be23a0391d922b143273
+- Action: set_state
+- Step ID: audio-deployed-asset-proof
+- State: complete
+- Evidence:
+  - git commit 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+  - CI 33779376141 success
+  - Deploy GitHub Pages 33779376114 success
+  - https://etherlords.github.io/autobattleidle/
+  - 35/35 HEAD requests HTTP 200; audio/mp3 and audio/ogg; max-age=600
+  - Representative MP3/OGG Range bytes=0-0 HTTP 206, accept-ranges bytes
+  - Deployed first gesture Audio ready with pastoral-loop.mp3 and combat OGG requests
+  - Deployed 390x844 no overlap/overflow and zero console/page errors
+
+### evt-27567c87-baab-46ad-ad32-eaaca002b2a0
+
+- Timestamp: 2026-09-03T16:49:02.841Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 87
+- Resulting revision: 88
+- Summary: EVENT checkpoint — Main — Playwright resilience addendum proves 8.34 APS bounded 2s automatic combat and exactly one attempt per each of 8 routed-failed music tracks with app still interactive; real hidden-tab control unavailable, so visibility transition remains explicitly unverified and covered by unit lifecycle tests.
+- Idempotency key: abi034-resilience-qa-addendum-20260903-2348
+- Evidence:
+  - 15715786887e0604: independent high-APS browser evidence, 8.34 APS, 2s, 18 damage, no request storm
+  - Playwright run-code: routed music failure produced failedCount=8, uniqueCount=8 after 3000ms; launcher visible and settings modal remained interactive
+  - Playwright controlled visibility handler test: hidden state yielded Audio paused until next interaction (synthetic handler test, not hidden-tab proof)
+  - src/app/audio/audio-service.test.ts: visibility suspend/resume and failed-playlist unit coverage
+  - Headless limitation: actual audible output and real tab background lifecycle unavailable in this environment
+
+### evt-ace6e3f8-5db0-41ab-8517-e36351f1acff
+
+- Timestamp: 2026-09-03T16:49:51.828Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 88
+- Resulting revision: 89
+- Summary: EVENT checkpoint — Main — durable Vault article created; Playwright proved high-APS bounded activity and routed eight-track failure fallback, while actual hidden-tab lifecycle remains explicitly unverified because available browser surfaces cannot background a page.
+- Idempotency key: abi034-vault-resilience-record-20260903-2355
+- Evidence:
+  - Vault ABI-DOC-20260903-60F3BF, contentHash ac78abfe17b5bde54d959694f049989a24d9ba1784d2b14c796ced6c32e0ece1
+  - 15715786887e0604: 8.34 APS / 2s bounded browser evidence
+  - Playwright routed music fallback: 8 failed unique tracks after 3000ms; app remained interactive
+  - src/app/audio/audio-service.test.ts: visibility suspend/resume and failure-cap coverage
+  - Headless limitation recorded in Vault and Planner; no audible-output claim
+
+### evt-2e593ac0-3350-404f-aedf-488aaf9c360a
+
+- Timestamp: 2026-09-03T16:50:01.966Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: Exact-SHA deployment verification passed: CI and Pages succeeded, deployed settings/audio behavior loaded, all 35 audio assets are reachable with correct MIME/cache/range behavior, and 390px controls have no overlap or overflow.
+- Idempotency key: abi034-verification-pass-20260903-2358
+- Request fingerprint: b9820d2dea4905b295c881ef99551e5b844c70ca790cf6e4d7874e7c79a5f0a5
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+  - CI 33779376141 success
+  - Deploy Pages 33779376114 success
+  - https://etherlords.github.io/autobattleidle/
+  - 35/35 HEAD HTTP 200; audio/mp3 and audio/ogg; max-age=600
+  - Representative MP3 and OGG range requests HTTP 206 with accept-ranges bytes
+  - Deployed first gesture Audio ready and music/SFX request evidence
+  - Deployed 390x844 no overlap/no overflow and zero console/page errors
+
+### evt-a5ca1dd2-a032-401b-8d85-9f0420409b90
+
+- Timestamp: 2026-09-03T16:50:11.402Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 90
+- Resulting revision: 91
+- Summary: All implementation, review, QA, verification, and Vault evidence are recorded; preparing the final manager checkpoint.
+- Idempotency key: abi034-manager-closure-start-20260904-0002
+- Request fingerprint: 9cd61390171b5053525d49d75f35395679d6992f7ececcd20193b2e3516b193d
+- Action: set_state
+- Step ID: audio-manager-closure
+- State: in_progress
+- Evidence:
+  - independent-review pass evt-5bf4a6cd-7ec2-49dc-a12d-eaad7b848da1
+  - independent-QA pass evt-7270b193-6c57-444c-929b-e1878e090e86
+  - verification pass evt-2e593ac0-3350-404f-aedf-488aaf9c360a
+  - Vault ABI-DOC-20260903-60F3BF
+
+### evt-46d0e794-c9a9-4fc5-8a2b-f8a282d70322
+
+- Timestamp: 2026-09-03T16:53:22.819Z
+- Actor: Main
+- Operation: execution_plan.update
+- Prior revision: 91
+- Resulting revision: 92
+- Summary: Manager reviewed the coherent checkpoint, Vault article, independent gates, exact-SHA CI/Pages, deployed assets, and browser evidence; explicit headless lifecycle/audio limitations are documented.
+- Idempotency key: abi034-manager-closure-step-complete-20260904-0018
+- Request fingerprint: d982e3f640e93992c1459abf1f2907db6a6e20aab11b400c807a4cff3088df83
+- Action: set_state
+- Step ID: audio-manager-closure
+- State: complete
+- Evidence:
+  - Vault ABI-DOC-20260903-60F3BF contentHash ac78abfe17b5bde54d959694f049989a24d9ba1784d2b14c796ced6c32e0ece1
+  - 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+  - CI 33779376141 success
+  - Pages 33779376114 success
+  - Deployed URL https://etherlords.github.io/autobattleidle/
+  - 390px and resilience QA receipts
+
+### evt-c569f924-f11f-4e0f-aae1-737d7c560c89
+
+- Timestamp: 2026-09-03T16:55:57.266Z
+- Actor: ABI034ClosureReview2
+- Operation: gate.record
+- Prior revision: 92
+- Resulting revision: 93
+- Summary: Independent final closure review PASS: current Planner state is coherent at revision 92, all execution steps complete, Vault and exact-SHA deployment evidence are present, and explicit headless limitations are documented without release blockers.
+- Idempotency key: abi034-manager-closure-final-pass-20260904-0028
+- Request fingerprint: 5e316a9b13366511126a8df1878a1f86f5369b9a6f0a26fc0cd1cb403c11df3e
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - 15715a00593e060d
+  - Vault ABI-DOC-20260903-60F3BF contentHash ac78abfe17b5bde54d959694f049989a24d9ba1784d2b14c796ced6c32e0ece1
+  - 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
+  - CI 33779376141 success
+  - Pages 33779376114 success
+  - https://etherlords.github.io/autobattleidle/
+
+### evt-ecf5ed83-39f0-4b7e-9770-143e63940762
+
+- Timestamp: 2026-09-03T16:56:47.594Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: Implementation and self-check complete; independent review gate passed and current source is ready for review lifecycle projection.
+- Idempotency key: abi034-advance-in-review-20260904-0042
+- Request fingerprint: e4fd16808e0035869a7f5cd11e37a6282e73cf3619f0b140cfb54094155904a6
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-5bf4a6cd-7ec2-49dc-a12d-eaad7b848da1
+  - evt-cd61953c-a728-4ec4-ac37-1c9e97e00afd
+  - 5e791a0c94a95d60263cfeb6af8ecb1b3844a652
