@@ -4,8 +4,8 @@ id: ABI-034
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 5
-status: Blocked
+revision: 7
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-005
@@ -14,6 +14,8 @@ dependencies:
   - ABI-013
   - ABI-023
   - ABI-035
+  - ABI-049
+  - ABI-050
 requiredGates:
   - implementation-self-check
   - independent-review
@@ -32,7 +34,7 @@ Add licensed combat SFX, an eight-track music mixer, and persistent audio contro
 
 - Type: task
 - Priority: high
-- Status: Blocked
+- Status: Ready
 
 ## Acceptance criteria
 
@@ -57,6 +59,8 @@ Add licensed combat SFX, an eight-track music mixer, and persistent audio contro
 - ABI-013
 - ABI-023
 - ABI-035
+- ABI-049
+- ABI-050
 
 ## Related knowledge
 

@@ -4,8 +4,8 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 36
-status: Blocked
+revision: 40
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-005
@@ -25,9 +25,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 36
-- Last update: Released task claim: Await subscription-at-generation evidence or replacement-music decision
+- Status: Ready
+- Revision: 40
+- Last update: EVENT checkpoint — Main — User confirmed supplied Suno tracks were generated under the shown Pro Plan and downloaded immediately; ABI-034 asset manifests must take generated/downloaded dates from each file's filesystem metadata, pair them with SHA-256/bytes and user attestation, and retain the Pro-plan screenshot plus official Suno rights links as provenance evidence. Do not invent embedded metadata dates or silently ship a track without per-file provenance.
 
 ## Execution plan
 
@@ -38,7 +38,7 @@ requiredGates:
 - [-] audio-ui-persistence: Add accessible Master/UI/Combat/Music controls, mute, and separate versioned preference storage
 - [-] audio-self-check: Run focused unit/integration/browser checks, pnpm check, and asset/license validation
 - [-] audio-gates: Complete independent review, audible browser QA, Vault update, exact-SHA deploy proof, and Manager closure
-- [~] audio-music-rights-gate: Verify subscription tier at generation time for all eight Suno-tagged tracks; record generation IDs, hashes, dates, allowed use, attribution, and ship or exclude decision
+- [x] audio-music-rights-gate: Verify subscription tier at generation time for all eight Suno-tagged tracks; record generation IDs, hashes, dates, allowed use, attribution, and ship or exclude decision
 - [ ] audio-sfx-source-gate: Select the minimum UI, combat, material, boss, and reward SFX set; verify each CC0, Unlicense, or CC-BY source and reject unknown or non-commercial licenses
 - [ ] audio-asset-manifest: Create the machine-checkable asset manifest and repository layout with duration, bytes, SHA-256, provenance, attribution, and deterministic build-path validation
 - [ ] audio-event-audit: After ABI-035 closes, trace controller, presenter, HUD, and lifecycle events and map manual, automatic, critical, armor, lethal, reward, boss, Golden, and material cues once
@@ -610,3 +610,66 @@ requiredGates:
 - Branch: continue-abis1-after-visual-families
 - Evidence:
   - None
+
+### evt-9ff84ca0-16a2-4642-866a-d634bc0b0b6f
+
+- Timestamp: 2026-09-03T10:55:51.216Z
+- Actor: codex-root
+- Operation: progress.append
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: EVENT checkpoint — codex-root — User confirms all eight supplied Suno tracks were generated while the Pro subscription was active; the rights gate is resolved for commercial game use, with asset manifest/provenance recording still required before implementation.
+- Idempotency key: abi034-rights-resolved-20260903
+- Evidence:
+  - User confirmation in current request: all tracks were generated with an active Pro subscription; without Pro the latest model could not have generated them.
+  - Official Suno Help: https://help.suno.com/en/articles/2416769 — Pro/Premier subscribers own songs created while subscribed and retain commercial-use rights.
+  - Official Suno Help: https://help.suno.com/en/articles/9601665 — paid subscribers may download and use songs in video games.
+  - Prior ABI-034 inventory recorded eight MP3s with distinct Suno IDs, creation dates, hashes, and total size 33,361,832 bytes.
+
+### evt-df604bda-8af9-4d3e-8b55-a08b756a43da
+
+- Timestamp: 2026-09-03T10:56:00.108Z
+- Actor: codex-root
+- Operation: task.advance
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Rights blocker resolved from user-provided Pro-subscription confirmation and official Suno policy; leave manifest and SFX source verification as implementation gates.
+- Idempotency key: abi034-unblock-ready-20260903
+- Request fingerprint: a8c7289fd71c538586392dab48947315ad86615a8d5d52d44b576f19d503a6d8
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - ABI-034 progress revision 37 records the rights decision and links official Suno ownership/commercial-use guidance.
+  - All eight supplied tracks were previously inventoried with Suno IDs, dates, hashes, and byte totals.
+  - No dependency remains open; task is ready for mandated preflight and implementation flow.
+
+### evt-f8ca10c5-7950-4d46-a563-c6c2da73f326
+
+- Timestamp: 2026-09-03T10:56:22.263Z
+- Actor: codex-root
+- Operation: execution_plan.update
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Rights evidence accepted: user confirms all eight tracks were generated under active Suno Pro; official Suno policy grants ownership and commercial game use for songs created while subscribed. Preserve IDs, hashes, dates, and provenance in the required manifest.
+- Idempotency key: abi034-music-rights-gate-complete-20260903
+- Request fingerprint: bfaa8331f6f9b93570ffa463960c67b35bcfe00b325da731c01be0f28a813c58
+- Action: set_state
+- Step ID: audio-music-rights-gate
+- State: complete
+- Evidence:
+  - User confirmation in current request.
+  - https://help.suno.com/en/articles/2416769
+  - https://help.suno.com/en/articles/9601665
+
+### evt-ce17c467-e2b3-42f9-82d7-b14245dd2a6d
+
+- Timestamp: 2026-09-03T11:47:06.582Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: EVENT checkpoint — Main — User confirmed supplied Suno tracks were generated under the shown Pro Plan and downloaded immediately; ABI-034 asset manifests must take generated/downloaded dates from each file's filesystem metadata, pair them with SHA-256/bytes and user attestation, and retain the Pro-plan screenshot plus official Suno rights links as provenance evidence. Do not invent embedded metadata dates or silently ship a track without per-file provenance.
+- Idempotency key: abi034-file-metadata-date-policy-20260903
+- Evidence:
+  - https://help.suno.com/en/articles/2416769
+  - https://help.suno.com/en/articles/9601665

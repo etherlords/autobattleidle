@@ -58,6 +58,8 @@
     "ABI-045": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-045-research-bounded-player-detail-growth-at-each-100-level-mile",
     "ABI-046": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-046-port-bounded-200-level-player-detail-evolution-into-the-prod",
     "ABI-047": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-047-show-grouped-attack-math-and-source-colors-in-the-combat-log",
-    "ABI-048": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-048-reconcile-deterministic-visual-composition-controls-and-exte"
+    "ABI-048": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-048-reconcile-deterministic-visual-composition-controls-and-exte",
+    "ABI-049": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-049-audit-and-redesign-deterministic-player-milestone-decoration",
+    "ABI-050": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-050-fix-visual-lab-family-selector-reachability-transitions"
   }
 }
