@@ -120,6 +120,7 @@ body {
 }
 
 .upgrades-launcher,
+.audio-settings-launcher,
 .upgrades-modal,
 .leaderboard-launcher,
 .leaderboard-modal {
@@ -141,6 +142,16 @@ body {
   font: inherit;
   font-weight: 700;
   left: 9rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  position: fixed;
+}
+
+.audio-settings-launcher {
+  bottom: 1rem;
+  font: inherit;
+  font-weight: 700;
+  left: 17rem;
   min-height: 2.75rem;
   padding: 0.5rem 1.25rem;
   position: fixed;
@@ -374,4 +385,53 @@ body {
     grid-auto-rows: 5.25rem;
     grid-template-columns: 1fr;
   }
+}
+
+.audio-settings-modal {
+  background: rgb(3 9 15 / 72%);
+  border: 0;
+  box-sizing: border-box;
+  display: grid;
+  inset: 0;
+  padding: 1rem;
+  place-items: center;
+  position: fixed;
+  z-index: 2;
+}
+.audio-settings-modal[hidden] {
+  display: none;
+}
+.audio-settings-dialog {
+  background: #07121f;
+  border: 1px solid #75c7ff;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.75rem;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 1rem;
+  width: min(24rem, 100%);
+}
+.audio-settings-row {
+  align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 9rem 1fr 3.5rem;
+}
+.audio-settings-label {
+  font-weight: 600;
+}
+.audio-settings-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.audio-settings-mute-label {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+.audio-settings-status {
+  margin: 0;
+  min-height: 1.25rem;
 }

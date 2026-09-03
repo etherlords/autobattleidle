@@ -1,17 +1,21 @@
 import type { UpgradeId } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
+import type { AudioSettingsPort } from "./hud/audio-settings";
 import { BattleStatus } from "./hud/battle-status";
 import { EventLog } from "./hud/event-log";
+
 import { UpgradeDialog } from "./hud/upgrade-dialog";
 import { LeaderboardDialog } from "./hud/leaderboard-dialog";
+import { AudioSettingsDialog } from "./hud/audio-settings";
 import type { LeaderboardView, RankingMode } from "../leaderboard/contracts";
 import type { HudIntent, HudIntentListener, HudUnsubscribe } from "./hud/intents";
 
 export type Hud = {
   render(snapshot: BattleSnapshot): void;
+  onUpgrade(listener: (id: UpgradeId, quantity?: 1 | 10 | 100) => void): void;
+  attachAudioSettings?(service: AudioSettingsPort): void;
   subscribe(listener: HudIntentListener): HudUnsubscribe;
   onAttack(listener: () => void): void;
-  onUpgrade(listener: (id: UpgradeId, quantity?: 1 | 10 | 100) => void): void;
   onReset(listener: () => void): void;
   onRestore(listener: () => void): void;
   setRestoreAvailable(available: boolean): void;
@@ -23,13 +27,13 @@ export type Hud = {
   reportLeaderboard?(message: string): void;
   dispose(): void;
 };
-
 export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const panel = document.createElement("section");
   panel.className = "hud";
   panel.setAttribute("aria-label", "Battle status");
   const status = new BattleStatus();
   const dialog = new UpgradeDialog();
+  let audioSettings: AudioSettingsDialog | undefined;
   const leaderboard = new LeaderboardDialog();
   const log = new EventLog();
   panel.append(
@@ -145,6 +149,11 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
         if (intent.type === "restore") listener();
       }),
     setRestoreAvailable: (available) => dialog.setRestoreAvailable(available),
+    attachAudioSettings: (service) => {
+      audioSettings?.dispose();
+      audioSettings = new AudioSettingsDialog(service);
+      panel.append(audioSettings.launcher, audioSettings.modal);
+    },
     reportPersistence: (message) => dialog.reportPersistence(message),
     onLeaderboardLoad: (listener) => leaderboard.onLoad(listener),
     onLeaderboardRename: (listener) => leaderboard.onRename(listener),
@@ -159,6 +168,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       battlefield.removeEventListener("pointermove", pointerMove);
       battlefield.removeEventListener("pointerup", pointerUp);
       battlefield.removeEventListener("pointercancel", pointerCancel);
+      audioSettings?.dispose();
       battlefield.removeEventListener("keydown", keyboardAttack);
       dialog.launcher.removeEventListener("click", closeLeaderboard);
       leaderboard.launcher.removeEventListener("click", closeUpgrades);

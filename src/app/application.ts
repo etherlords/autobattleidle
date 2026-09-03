@@ -1,4 +1,6 @@
 /* eslint-disable complexity -- lifecycle wires the bounded scheduler to controller events. */
+import type { AudioPreferencesStorage } from "./audio/audio-preferences";
+import { AudioService, type AudioServiceManifest } from "./audio/audio-service";
 import { createCombatState, type AttackRolls, type CombatState } from "../domain/combat";
 import { createBattlefield, type Battlefield } from "../game/battlefield";
 import {
@@ -8,13 +10,28 @@ import {
 import { createHud, type Hud } from "../ui/hud";
 import { LeaderboardClient } from "../leaderboard/client";
 import type { LeaderboardView } from "../leaderboard/contracts";
+import { LeaderboardProgressSync } from "./leaderboard-progress-sync";
 import type { HudIntent } from "../ui/hud/intents";
 import { BattleController } from "./battle/controller";
 import { battleCommands } from "./battle/commands";
 import type { BattleControllerEvent } from "./battle/contracts";
-import { presentBattleUpdate } from "./battle/presenter";
-import { LeaderboardProgressSync } from "./leaderboard-progress-sync";
+import { battleVisualCues, presentBattleUpdate } from "./battle/presenter";
 
+type AudioWindow = AnimationFrameHost & {
+  AudioContext?: typeof AudioContext;
+  addEventListener(
+    type: "click" | "keydown",
+    listener: EventListenerOrEventListenerObject,
+    options?: { once: boolean },
+  ): void;
+  removeEventListener(
+    type: "click" | "keydown",
+    listener: EventListenerOrEventListenerObject,
+    options?: { once: boolean },
+  ): void;
+  localStorage?: AudioPreferencesStorage;
+  fetch?: typeof fetch;
+};
 type AnimationFrameHost = {
   addEventListener(type: "resize", listener: EventListenerOrEventListenerObject): void;
   cancelAnimationFrame(handle: number): void;
@@ -53,6 +70,9 @@ type LifecycleDependencies = Omit<
   readonly viewport: () => { readonly width: number; readonly height: number };
   readonly onDispose: () => void;
   readonly initialNowMs?: number;
+  readonly audioManifest?: AudioServiceManifest;
+  readonly audioStorage?: AudioPreferencesStorage;
+  readonly createAudioService?: (audioWindow: AudioWindow) => AudioService;
 };
 
 const browserDependencies = (): ApplicationDependencies => {
@@ -117,6 +137,16 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
     initialState: dependencies.initialState,
     rolls: dependencies.rolls,
   });
+  const audioWindow = dependencies.window as AudioWindow;
+  const audioService =
+    dependencies.createAudioService?.(audioWindow) ??
+    new AudioService({
+      manifest: dependencies.audioManifest ?? { music: [] },
+      ...(dependencies.audioStorage !== undefined || audioWindow.localStorage !== undefined
+        ? { storage: dependencies.audioStorage ?? audioWindow.localStorage }
+        : {}),
+    });
+  let audioSettingsAttached = false;
   let syncLeaderboard: LeaderboardProgressSync | undefined;
   if (dependencies.hud.onLeaderboardLoad !== undefined) {
     const leaderboard = dependencies.createLeaderboard?.() ?? new LeaderboardClient();
@@ -189,6 +219,15 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
         event.previousEnemy?.grade === "boss")
     )
       syncLeaderboard?.defeatedBoss();
+    if (event.type === "attack" || event.type === "frame")
+      audioService.playBattleCues(battleVisualCues(event));
+    if (event.type === "purchase")
+      audioService.playUiCue(event.reason === null ? "click" : "error");
+    if (event.type === "reset" || event.type === "restore") audioService.playUiCue("back");
+    if (dependencies.hud.attachAudioSettings !== undefined && audioSettingsAttached === false) {
+      dependencies.hud.attachAudioSettings(audioService);
+      audioSettingsAttached = true;
+    }
     render(event);
   });
   const resize = (): void => {
@@ -235,6 +274,11 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
   const unsubscribeHud = dependencies.hud.subscribe(handleIntent);
   dependencies.hud.setRestoreAvailable(dependencies.persistence.hasPreviousVersionSave());
   render();
+  const gestureUnlock = (): void => {
+    void audioService.unlock().then((unlocked) => {
+      if (unlocked) audioService.startMusic();
+    });
+  };
   dependencies.window.addEventListener("resize", resize);
   frame = dependencies.window.requestAnimationFrame(draw);
   return {
@@ -243,9 +287,12 @@ export const startApplication = (dependencies: LifecycleDependencies): Applicati
       disposed = true;
       if (frame !== undefined) dependencies.window.cancelAnimationFrame(frame);
       dependencies.window.removeEventListener("resize", resize);
+      audioWindow.removeEventListener("click", gestureUnlock, { once: true });
+      audioWindow.removeEventListener("keydown", gestureUnlock, { once: true });
       unsubscribeHud();
       unsubscribe();
       controller.dispose();
+      audioService.dispose();
       syncLeaderboard?.dispose();
       dependencies.persistence.dispose();
       dependencies.hud.dispose();
