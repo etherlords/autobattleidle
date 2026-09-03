@@ -5,8 +5,25 @@ import { component, type EnemyVisualComponent } from "../components";
 import { enemyVisualAnimation } from "../config";
 import type { BodyFamily } from "../spec";
 
-type BossFamily = Extract<BodyFamily, "boss-colossus" | "boss-hydra">;
-type BossRecipe = "crystal-crown" | "orbital-runes" | "elemental-spines";
+export type BossFamily = Extract<BodyFamily, "boss-colossus" | "boss-hydra">;
+export type BossGeometryProfile =
+  "legacy/no-overlay" | "crystal-crown" | "orbital-runes" | "elemental-spines";
+export type BossRecipe = Exclude<BossGeometryProfile, "legacy/no-overlay">;
+
+export const BOSS_GEOMETRY_PROFILES = [
+  "legacy/no-overlay",
+  "crystal-crown",
+  "elemental-spines",
+  "orbital-runes",
+] as const satisfies readonly BossGeometryProfile[];
+
+/** Authored boss geometry is explicit; ordinary families resolve to the legacy body only. */
+export const BOSS_GEOMETRY_RECIPES: Readonly<
+  Record<BossFamily, readonly [BossRecipe, BossRecipe]>
+> = {
+  "boss-hydra": ["crystal-crown", "elemental-spines"],
+  "boss-colossus": ["orbital-runes", "elemental-spines"],
+};
 
 type BossGeometryBuild = {
   readonly group: THREE.Group;
@@ -186,14 +203,34 @@ const fitSpines = (
 
 // Boss-only assignment: Hydra carries the crystal crown, Colossus the orbital
 // runes; both bosses also receive raycast elemental spines on their silhouette.
+export const bossGeometryProfilesForFamily = (
+  family: BodyFamily,
+): readonly BossGeometryProfile[] => {
+  if (family === "boss-hydra" || family === "boss-colossus") return BOSS_GEOMETRY_RECIPES[family];
+  return ["legacy/no-overlay"];
+};
+
 const recipesFor = (family: BossFamily): readonly [BossRecipe, BossRecipe] =>
-  family === "boss-hydra"
-    ? ["crystal-crown", "elemental-spines"]
-    : ["orbital-runes", "elemental-spines"];
+  BOSS_GEOMETRY_RECIPES[family];
 const builders: Readonly<Record<BossRecipe, () => BossGeometryBuild>> = {
   "crystal-crown": crystalCrown,
   "orbital-runes": orbitalRunes,
   "elemental-spines": elementalSpines,
+};
+
+export const buildBossGeometryRecipe = (
+  recipe: BossRecipe,
+  naming: "production" | "lab" = "production",
+): THREE.Group => {
+  const group = builders[recipe]().group;
+  if (naming === "production") return group;
+  group.name = `lab-recipe-${recipe}`;
+  group.children.forEach((node, index) => {
+    if (recipe === "crystal-crown") node.name = `lab-crystal-crown-${index}`;
+    else if (recipe === "orbital-runes") node.name = `lab-orbital-rune-${index}`;
+    else node.name = `lab-elemental-spine-${index}`;
+  });
+  return group;
 };
 
 const ANCHORS: Readonly<Record<BossRecipe, "overhead" | "orbit">> = {

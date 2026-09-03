@@ -2,7 +2,11 @@ import * as THREE from "three";
 
 import { BATTLEFIELD_CONFIG } from "../../battlefield/config";
 import { UnitView } from "../core";
-import { PlayerEvolution, playerEvolutionIdentity } from "./evolution";
+import {
+  PlayerEvolution,
+  playerEvolutionIdentity,
+  type PlayerEvolutionIdentity,
+} from "./evolution";
 import type { PlayerUnitSnapshot } from "./model";
 
 const material = (color: string, emissive = "#000000"): THREE.MeshStandardMaterial =>
@@ -37,7 +41,8 @@ export class PlayerUnitView extends UnitView<PlayerUnitSnapshot> {
     const identity = playerEvolutionIdentity(snapshot.level);
     if (
       this.evolution?.identity.formStart !== identity.formStart ||
-      this.evolution.identity.detailCount !== identity.detailCount
+      this.evolution.identity.detailCount !== identity.detailCount ||
+      this.evolution.identity.milestoneLevel !== identity.milestoneLevel
     ) {
       this.evolution?.dispose();
       this.evolution = new PlayerEvolution(
@@ -49,11 +54,10 @@ export class PlayerUnitView extends UnitView<PlayerUnitSnapshot> {
     }
   }
 
-  playerEvolutionReceipt(): { readonly detailCount: number; readonly formStart: number } {
+  playerEvolutionReceipt(): PlayerEvolutionIdentity {
     if (this.evolution === undefined) throw new Error("Player evolution is not initialized");
     return this.evolution.identity;
   }
-
   override dispose(): void {
     this.evolution?.dispose();
     this.evolution = undefined;

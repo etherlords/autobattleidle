@@ -1,9 +1,18 @@
-import { canonicalLabCase, LAB_FAMILIES, LAB_GRADES, LAB_MODIFIERS, type LabCase } from "./catalog";
+import { type EnemyAffinity, type EnemyPresentationModifier } from "../../domain/combat";
+import {
+  canonicalLabCase,
+  LAB_AFFINITIES,
+  LAB_FAMILIES,
+  LAB_GRADES,
+  LAB_MODIFIERS,
+  type LabCase,
+} from "./catalog";
 import { LAB_RECIPES, normalizeLabRecipe, type LabRecipe } from "./recipes";
-import type { EnemyPresentationModifier } from "../../domain/combat";
 import {
   PLAYER_DETAIL_LEVELS,
+  PLAYER_DETAIL_TRANSITION,
   PLAYER_FORM_STARTS,
+  PLAYER_MILESTONE_LEVELS,
   playerDetailLevelForStage,
   type PlayerDetailLevel,
   type PlayerFormStart,
@@ -20,10 +29,12 @@ export type LabUrlCase = LabCase & {
   readonly subject: LabSubject;
   readonly playerStage: PlayerFormStart;
   readonly playerDetailLevel: PlayerDetailLevel;
+  readonly playerLevel: number;
   readonly correction?: { readonly requested: string; readonly canonical: string };
 };
 
 export const DEFAULT_LAB_CASE: LabUrlCase = {
+  affinity: "cinder",
   family: "beetle",
   grade: "normal",
   modifier: null,
@@ -36,6 +47,7 @@ export const DEFAULT_LAB_CASE: LabUrlCase = {
   subject: "enemy",
   playerStage: 1,
   playerDetailLevel: 1_000,
+  playerLevel: 1,
 };
 
 const values = <T extends string>(input: string | null, allowed: readonly T[], fallback: T): T =>
@@ -70,6 +82,12 @@ const playerDetailLevel = (input: string | null): PlayerDetailLevel => {
       return PLAYER_DETAIL_LEVELS[0];
   }
 };
+const playerLevel = (input: string | null, fallback: number): number => {
+  if (input === null) return fallback;
+  const value = Number(input);
+  const maximum = PLAYER_MILESTONE_LEVELS[PLAYER_MILESTONE_LEVELS.length - 1] ?? 100_000;
+  return Number.isFinite(value) ? Math.min(maximum, Math.max(1, Math.floor(value))) : fallback;
+};
 const modifier = (input: string | null): EnemyPresentationModifier => {
   if (input === null || input === "none") return null;
   const allowed = LAB_MODIFIERS.filter(
@@ -83,6 +101,11 @@ const modifier = (input: string | null): EnemyPresentationModifier => {
 export const parseLabCase = (search: string): LabUrlCase => {
   const query = new URLSearchParams(search);
   const visual = canonicalLabCase({
+    affinity: values(
+      query.get("affinity"),
+      LAB_AFFINITIES,
+      DEFAULT_LAB_CASE.affinity,
+    ) as EnemyAffinity,
     family: values(query.get("family"), LAB_FAMILIES, DEFAULT_LAB_CASE.family),
     grade: values(query.get("grade"), LAB_GRADES, DEFAULT_LAB_CASE.grade),
     modifier: modifier(query.get("modifier")),
@@ -92,6 +115,11 @@ export const parseLabCase = (search: string): LabUrlCase => {
   const selectedPlayerStage = playerStage(query.get("stage"));
   const selectedSubject = values(query.get("subject"), ["enemy", "player"] as const, "enemy");
   const selectedRecipe = values(query.get("recipe"), LAB_RECIPES, DEFAULT_LAB_CASE.recipe);
+  const legacyPlayerLevel =
+    selectedPlayerStage === PLAYER_DETAIL_TRANSITION.source
+      ? playerDetailLevel(query.get("detail"))
+      : selectedPlayerStage;
+  const selectedPlayerLevel = playerLevel(query.get("level"), legacyPlayerLevel);
   const result: LabUrlCase = {
     ...visual,
     reducedMotion: bool(query.get("motion"), DEFAULT_LAB_CASE.reducedMotion),
@@ -107,8 +135,10 @@ export const parseLabCase = (search: string): LabUrlCase => {
       selectedPlayerStage,
       playerDetailLevel(query.get("detail")),
     ),
+    playerLevel: selectedPlayerLevel,
   };
   const fields = [
+    "affinity",
     "family",
     "grade",
     "modifier",
@@ -121,6 +151,7 @@ export const parseLabCase = (search: string): LabUrlCase => {
     "subject",
     "stage",
     "detail",
+    "level",
   ];
   const canonical = serializeLabCase(result);
   const requested = fields.some((field) => query.has(field)) ? `?${query.toString()}` : canonical;
@@ -129,6 +160,7 @@ export const parseLabCase = (search: string): LabUrlCase => {
 
 export const serializeLabCase = (labCase: LabUrlCase): string => {
   const query = new URLSearchParams({
+    affinity: labCase.affinity,
     family: labCase.family,
     grade: labCase.grade,
     modifier: labCase.modifier ?? "none",
@@ -141,6 +173,7 @@ export const serializeLabCase = (labCase: LabUrlCase): string => {
     subject: labCase.subject,
     stage: String(labCase.playerStage),
     detail: String(labCase.playerDetailLevel),
+    level: String(labCase.playerLevel),
   });
   return `?${query.toString()}`;
 };

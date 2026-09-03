@@ -16,12 +16,14 @@ tags:
 
 - Unit tests cover domain transitions, formulas, purchases, rewards, encounter progression, and save validation/migration.
 - Focused integration tests cover app orchestration, persistence triggers, and UI-to-command routing.
+- Enemy visual tests assert one deterministic composition receipt across family, body variant, affinity, grade, modifier, and boss geometry; production and Visual Lab use the same boss recipe builders, while an explicit legacy/no-overlay factory mode prevents lab candidates from inheriting production overlays.
+- Player visual tests assert exact milestone boundaries from 100–900, 1000–9000, 10000–48000, 50000–95000, and the 100000 clamp; adjacent milestones use distinct bounded marker geometry/material without per-milestone factories. Historical save reload asserts the derived milestone receipt remains stable and no visual field is persisted.
 - The developer-only visual lab reuses production enemy factories for deterministic URL-addressable all-angle, animation, socket, bounds, resource, reduced-motion, and disposal checks. The normal `pnpm build` excludes its entry point; `pnpm build:visual-lab` explicitly creates the multi-entry Pages artifact with the game at `/` and the lab at `/visual-lab.html`.
 - Browser QA covers click and keyboard input, accessible controls, responsive layout, reload recovery, malformed-save recovery, endless progression, and both deployed Pages routes when the lab ships.
 
 ## Gates
 
-Each behavior change adds the smallest focused test that would fail if it regressed. `pnpm check` runs lint, format check, Vitest, and production build. Independent review and QA remain separate lifecycle gates; their evidence belongs in Planner artifacts.
+Each behavior change adds the smallest focused test that would fail if it regressed. `pnpm check` runs lint, format check, Vitest, and production build. ABI-048 additionally runs `pnpm build:visual-lab` and a bounded browser pass over milestone level 50000→100000, reduced-motion narrow player, Hydra prism/crown desktop, and an ordinary boss-only invalid recipe. Independent review and QA remain separate lifecycle gates; their evidence belongs in Planner artifacts.
 
 ## Related
 

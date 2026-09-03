@@ -1,13 +1,15 @@
 import {
   PLAYER_FORM_STARTS,
+  PLAYER_MILESTONE_LEVELS,
   PlayerEvolution,
   playerEvolutionIdentity,
+  type PlayerMilestoneLevel,
   type PlayerFormStart,
 } from "../../game/units/player/evolution";
 
-export { PLAYER_FORM_STARTS };
-export type { PlayerFormStart };
-
+export { PLAYER_FORM_STARTS, PLAYER_MILESTONE_LEVELS };
+export type { PlayerFormStart, PlayerMilestoneLevel };
+export const PLAYER_LAB_LEVELS = PLAYER_MILESTONE_LEVELS;
 export const MINOR_DETAIL_CADENCES = [100, 200, 250] as const;
 export const SELECTED_MINOR_DETAIL_CADENCE = 200;
 export const PLAYER_DETAIL_LEVELS = [1_000, 1_200, 1_400, 1_600, 1_800, 2_000] as const;
@@ -51,11 +53,12 @@ export class LabPlayerEvolution extends PlayerEvolution {
     stage: PlayerFormStart,
     reducedMotion: boolean,
     detailLevel: PlayerDetailLevel = 1_000,
+    level?: number,
   ) {
     super(
-      stage === PLAYER_DETAIL_TRANSITION.source
-        ? playerEvolutionIdentity(detailLevel)
-        : { formStart: stage, detailCount: 0 },
+      playerEvolutionIdentity(
+        level ?? (stage === PLAYER_DETAIL_TRANSITION.source ? detailLevel : stage),
+      ),
       reducedMotion,
     );
   }

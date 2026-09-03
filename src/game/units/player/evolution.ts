@@ -2,10 +2,68 @@ import * as THREE from "three";
 
 export const PLAYER_FORM_STARTS = [1, 100, 500, 1_000, 10_000, 36_365] as const;
 export type PlayerFormStart = 1 | 100 | 500 | 1_000 | 10_000 | 36_365;
+export const PLAYER_MILESTONE_LEVELS = [
+  1, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1_000, 2_000, 3_000, 4_000, 5_000, 6_000, 7_000,
+  8_000, 9_000, 10_000, 12_000, 14_000, 16_000, 18_000, 20_000, 22_000, 24_000, 26_000, 28_000,
+  30_000, 32_000, 34_000, 36_000, 38_000, 40_000, 42_000, 44_000, 46_000, 48_000, 50_000, 55_000,
+  60_000, 65_000, 70_000, 75_000, 80_000, 85_000, 90_000, 95_000, 100_000,
+] as const;
+export type PlayerMilestoneLevel =
+  | 1
+  | 100
+  | 200
+  | 300
+  | 400
+  | 500
+  | 600
+  | 700
+  | 800
+  | 900
+  | 1_000
+  | 2_000
+  | 3_000
+  | 4_000
+  | 5_000
+  | 6_000
+  | 7_000
+  | 8_000
+  | 9_000
+  | 10_000
+  | 12_000
+  | 14_000
+  | 16_000
+  | 18_000
+  | 20_000
+  | 22_000
+  | 24_000
+  | 26_000
+  | 28_000
+  | 30_000
+  | 32_000
+  | 34_000
+  | 36_000
+  | 38_000
+  | 40_000
+  | 42_000
+  | 44_000
+  | 46_000
+  | 48_000
+  | 50_000
+  | 55_000
+  | 60_000
+  | 65_000
+  | 70_000
+  | 75_000
+  | 80_000
+  | 85_000
+  | 90_000
+  | 95_000
+  | 100_000;
 
 export type PlayerEvolutionIdentity = {
   readonly detailCount: number;
   readonly formStart: PlayerFormStart;
+  readonly milestoneLevel: PlayerMilestoneLevel;
 };
 
 const material = (color: string, emissive = "#000000"): THREE.MeshStandardMaterial =>
@@ -38,19 +96,38 @@ const formForLevel = (level: number): PlayerFormStart => {
   if (safeLevel >= 100) return 100;
   return 1;
 };
+const milestoneForLevel = (level: number): PlayerMilestoneLevel => {
+  let selected: PlayerMilestoneLevel = PLAYER_MILESTONE_LEVELS[0] as PlayerMilestoneLevel;
+  for (const candidate of PLAYER_MILESTONE_LEVELS) {
+    if (candidate > level) break;
+    selected = candidate;
+  }
+  return selected;
+};
 
 export const playerEvolutionIdentity = (level: number): PlayerEvolutionIdentity => {
-  const safeLevel = Math.max(1, Math.floor(level));
+  let safeLevel = 1;
+  if (Number.isFinite(level)) safeLevel = Math.min(100_000, Math.max(1, Math.floor(level)));
+  else if (level === Infinity) safeLevel = 100_000;
   return {
     formStart: formForLevel(safeLevel),
     detailCount:
       safeLevel >= 1_000 && safeLevel < 2_000
         ? Math.min(4, Math.floor((safeLevel - 1_000) / 200))
         : 0,
+    milestoneLevel: milestoneForLevel(safeLevel),
   };
 };
+const MILESTONE_COLORS = [
+  "#76d9ff",
+  "#8df5ff",
+  "#bc8cff",
+  "#63f4d4",
+  "#f8cc71",
+  "#ff9d66",
+] as const;
 
-const buildForm = (start: PlayerFormStart): THREE.Group => {
+const buildForm = (start: PlayerFormStart, milestoneLevel: PlayerMilestoneLevel): THREE.Group => {
   const group = new THREE.Group();
   group.name = `player-form-${start}`;
   const pose = new THREE.Group();
@@ -113,6 +190,22 @@ const buildForm = (start: PlayerFormStart): THREE.Group => {
   aura.name = "player-socket-aura";
   aura.position.y = 0.1;
   pose.add(aura);
+  const milestoneIndex = PLAYER_MILESTONE_LEVELS.indexOf(milestoneLevel);
+  const milestoneColor =
+    MILESTONE_COLORS[milestoneIndex % MILESTONE_COLORS.length] ?? MILESTONE_COLORS[0];
+  const milestoneDetail = mesh(
+    "player-milestone-detail",
+    new THREE.TorusGeometry(0.12 + (milestoneIndex % 4) * 0.02, 0.025, 4, 8),
+    milestoneColor,
+    "#176b65",
+  );
+  milestoneDetail.position.set(
+    ((milestoneIndex % 5) - 2) * 0.1,
+    0.28 + (milestoneIndex % 4) * 0.12,
+    0.56,
+  );
+  milestoneDetail.rotation.x = Math.PI / 2;
+  pose.add(milestoneDetail);
   return group;
 };
 
@@ -135,7 +228,7 @@ export class PlayerEvolution {
     readonly identity: PlayerEvolutionIdentity,
     private readonly reducedMotion: boolean,
   ) {
-    this.group = buildForm(identity.formStart);
+    this.group = buildForm(identity.formStart, identity.milestoneLevel);
     const pose = this.group.getObjectByName("player-pose");
     if (!(pose instanceof THREE.Group)) throw new Error("Player form pose is missing");
     this.pose = pose;

@@ -57,6 +57,7 @@
     "ABI-044": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-044-prevent-early-armored-enemies-from-becoming-harder-than-adja",
     "ABI-045": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-045-research-bounded-player-detail-growth-at-each-100-level-mile",
     "ABI-046": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-046-port-bounded-200-level-player-detail-evolution-into-the-prod",
-    "ABI-047": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-047-show-grouped-attack-math-and-source-colors-in-the-combat-log"
+    "ABI-047": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-047-show-grouped-attack-math-and-source-colors-in-the-combat-log",
+    "ABI-048": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-048-reconcile-deterministic-visual-composition-controls-and-exte"
   }
 }

@@ -31,13 +31,18 @@ const fitCue = (cue: EnemyVisualComponent, profile: EnemyVisualProfile): EnemyVi
   return cue;
 };
 
+export type EnemyVisualCompositionMode = "production" | "legacy/no-overlay";
+
 export class EnemyUnitBuilder {
   private model: EnemyUnitModel | undefined;
   private view: EnemyUnitView | undefined;
   private controller: UnitController<EnemyVisualInput> | undefined;
   private sealed = false;
 
-  static composeView(snapshot: EnemyVisualInput): EnemyViewComposition {
+  static composeView(
+    snapshot: EnemyVisualInput,
+    mode: EnemyVisualCompositionMode = "production",
+  ): EnemyViewComposition {
     const spec = enemyVisualSpec(snapshot);
     const reducedMotion =
       snapshot.reducedMotion ??
@@ -48,7 +53,7 @@ export class EnemyUnitBuilder {
     builder.add(fitCue(decorateGrade(spec.gradeCue), spec.profile));
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
     builder.add(decorateAffinityCue(spec.affinity.cue, spec.affinity.palette, reducedMotion));
-    if (spec.body.startsWith("boss-"))
+    if (mode === "production" && spec.body.startsWith("boss-"))
       decorateBossGeometry(spec.body as "boss-colossus" | "boss-hydra", reducedMotion).forEach(
         (geometry) => builder.add(geometry),
       );

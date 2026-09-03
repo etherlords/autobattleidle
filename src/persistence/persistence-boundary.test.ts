@@ -374,7 +374,7 @@ describe("persistence boundary", () => {
     }
   });
 
-  it("derives the same player form after every supported historical save reload without writing a visual field", () => {
+  it("derives the same player identity after every supported historical save reload without writing a visual field", () => {
     for (const fixture of playerEvolutionHistoricalFixtures) {
       const loaded = decodeSave(fixture, fallback(), 100);
       const raw = encodeSave(loaded);
@@ -399,6 +399,7 @@ describe("persistence boundary", () => {
         const receipt = {
           playerDetailCount: dataset.playerDetailCount ?? "",
           playerFormStart: dataset.playerFormStart ?? "",
+          playerMilestoneLevel: dataset.playerMilestoneLevel ?? "",
         };
         battlefield.dispose();
         return receipt;
@@ -406,6 +407,9 @@ describe("persistence boundary", () => {
       expect(renderReceipt(reloaded)).toEqual(renderReceipt(loaded));
       expect(Number(renderReceipt(loaded).playerFormStart)).toBe(
         playerEvolutionIdentity(loaded.enemy.encounter).formStart,
+      );
+      expect(Number(renderReceipt(loaded).playerMilestoneLevel)).toBe(
+        playerEvolutionIdentity(loaded.enemy.encounter).milestoneLevel,
       );
       expect(JSON.parse(raw)).not.toHaveProperty("playerEvolution");
     }

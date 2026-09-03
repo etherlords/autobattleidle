@@ -31,7 +31,7 @@ an account or backend and remain playable after a reload.
 - Automation reduces effort without disabling manual play. Its locked state and time to the next attack are visible through a countdown bar and seconds-plus-milliseconds readout.
 - Every enemy defeat advances either purchasing power or boss progress, and a small recent log makes the granted reward visible.
 - Progress is deterministic enough to test, while critical hits and rewards add readable variance.
-- Player visual evolution uses a finite authored major-form catalogue. A transition may add one level-derived detail every 200 levels, with at most four live details, then replace the whole form at the endpoint. The visual step is derived from canonical progress and adds no save field. A detail every 100 levels is rejected as noisy; every 250 levels is rejected as too sparse.
+- Player visual evolution uses a finite authored major-form catalogue plus bounded deterministic milestone identities: 100–900 uses 100-level cadence, 1000–9000 uses 1000-level cadence, 10000–48000 uses 2000-level cadence, 50000–95000 uses 5000-level cadence, and 100000 is the upper clamp. Every adjacent milestone has one distinct bounded visual marker; production replacement retains sockets, reduced-motion behavior, disposal, and the no-save-field rule. The Visual Lab can reopen each exact milestone through its URL level parameter.
 
 ## Technical boundaries
 

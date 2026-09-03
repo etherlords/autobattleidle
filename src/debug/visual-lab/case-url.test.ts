@@ -7,13 +7,16 @@ import {
   effectEvictions,
 } from "../../game/battlefield/effects";
 import { ENEMY_MODIFIERS } from "../../domain/combat";
-import { enemyBodyFactories } from "../../game/enemy-visual/bodies";
 import { ENEMY_VISUAL_GRADE_CUES } from "../../game/enemy-visual/spec";
+import { enemyVisualCompositionReceipt } from "../../game/enemy-visual/receipt";
+import { enemyBodyFactories } from "../../game/enemy-visual/bodies";
 import { UNIT_FACTORIES } from "../../game/units/factories";
 import {
   allLabCases,
+  compositionReceiptForCase,
   firstReachableLabCase,
   inputForCase,
+  LAB_AFFINITIES,
   LAB_FAMILIES,
   LAB_GRADES,
   LAB_MODIFIERS,
@@ -21,7 +24,13 @@ import {
   toggleGoldenLabCase,
 } from "./catalog";
 import { DEFAULT_LAB_CASE, parseLabCase, serializeLabCase } from "./case-url";
-import { advanceLabRecipe, attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
+import {
+  advanceLabRecipe,
+  attachLabRecipe,
+  LAB_RECIPES,
+  type LabRecipe,
+  validateLabRecipe,
+} from "./recipes";
 import { createEffectHarness, observeResourceDisposal, resourceCounts } from "./resource-ledger";
 
 const assertOrbitalBounds = (candidate: THREE.Object3D, bodyBounds: THREE.Box3): void => {
@@ -94,8 +103,16 @@ describe("visual lab cases", () => {
     expect(parseLabCase("?recipe=socket-probe").recipe).toBe("socket-probe");
     expect(parseLabCase("?recipe=unbounded").recipe).toBe("production");
     expect(parseLabCase("?recipe=crystal-crown")).toMatchObject({
-      recipe: "production",
+      recipe: "crystal-crown",
       correction: { requested: "?recipe=crystal-crown" },
+    });
+    expect(parseLabCase("?golden=1&affinity=ice")).toMatchObject({
+      goldenBug: true,
+      affinity: "cinder",
+      family: "beetle",
+      correction: {
+        canonical: expect.stringContaining("affinity=cinder"),
+      },
     });
     expect(parseLabCase("?family=boss-colossus&grade=boss&recipe=crystal-crown")).toMatchObject({
       family: "boss-colossus",
@@ -104,6 +121,14 @@ describe("visual lab cases", () => {
     expect(parseLabCase("?subject=player&stage=36365")).toMatchObject({
       subject: "player",
       playerStage: 36_365,
+      playerLevel: 36_365,
+    });
+    expect(parseLabCase("?subject=player&level=50000")).toMatchObject({
+      subject: "player",
+      playerLevel: 50_000,
+    });
+    expect(parseLabCase("?subject=player&level=100001")).toMatchObject({
+      playerLevel: 100_000,
     });
     expect(parseLabCase("?subject=player&stage=2")).toMatchObject({ playerStage: 1 });
     expect(parseLabCase("?subject=player&stage=1000&detail=1600")).toMatchObject({
@@ -118,6 +143,7 @@ describe("visual lab cases", () => {
     });
     expect(LAB_RECIPES).toEqual([
       "production",
+      "legacy/no-overlay",
       "socket-probe",
       "crystal-crown",
       "orbital-runes",
@@ -125,6 +151,14 @@ describe("visual lab cases", () => {
     ]);
   });
 
+  it("keeps every selectable composition reachable across all affinities", () => {
+    for (const known of allLabCases()) {
+      if (known.goldenBug) continue;
+      for (const affinity of LAB_AFFINITIES) {
+        expect(() => inputForCase({ ...known, affinity })).not.toThrow();
+      }
+    }
+  });
   it("rejects boss-only recipes for ordinary enemies without allocating geometry", () => {
     const ordinary = allLabCases().find((candidate) => candidate.grade === "normal");
     if (ordinary === undefined) throw new Error("Expected ordinary case");
@@ -143,6 +177,29 @@ describe("visual lab cases", () => {
       unit.dispose();
       expect(resourceCounts(parent)).toEqual(baseline);
     }
+    expect(validateLabRecipe("legacy/no-overlay", ordinary.family)).toEqual({ valid: true });
+    expect(validateLabRecipe("crystal-crown", ordinary.family)).toMatchObject({
+      valid: false,
+      reason: expect.stringContaining("boss-only"),
+    });
+  });
+
+  it("keeps legacy boss mode free of production geometry and resource leaks", () => {
+    const boss = allLabCases().find(
+      (candidate) => candidate.family === "boss-hydra" && candidate.grade === "boss",
+    );
+    if (boss === undefined) throw new Error("Expected Hydra case");
+    const parent = new THREE.Group();
+    const baseline = resourceCounts(parent);
+    const unit = UNIT_FACTORIES.enemy.create(inputForCase(boss), {
+      compositionMode: "legacy/no-overlay",
+    });
+    unit.dispatchEnemy({ type: "spawn", parent });
+    expect(unit.view.group.getObjectByName("boss-geometry-crystal-crown")).toBeUndefined();
+    const detach = attachLabRecipe("legacy/no-overlay", unit.view.group);
+    detach();
+    unit.dispose();
+    expect(resourceCounts(parent)).toEqual(baseline);
   });
 
   it("attaches bounded boss recipes across Hydra and Colossus motions and disposes them exactly", () => {
@@ -235,6 +292,7 @@ describe("visual lab cases", () => {
     const hydra = firstReachableLabCase({ family: "boss-hydra", grade: "boss" });
     const golden = toggleGoldenLabCase(hydra, true);
     expect(golden).toEqual({
+      affinity: "cinder",
       family: "beetle",
       grade: "normal",
       modifier: null,
@@ -247,6 +305,42 @@ describe("visual lab cases", () => {
       goldenBug: false,
     });
     expect(serializeLabCase({ ...DEFAULT_LAB_CASE, ...returned })).toContain("golden=0");
+  });
+
+  it("reopens every affinity through the production resolver", () => {
+    for (const affinity of LAB_AFFINITIES) {
+      const labCase = firstReachableLabCase({
+        affinity,
+        family: "beetle",
+        grade: "normal",
+        modifier: null,
+        variant: 0,
+      });
+      expect(
+        reachableLabCases({
+          affinity,
+          family: "beetle",
+          grade: "normal",
+          modifier: null,
+          variant: 0,
+        }),
+      ).not.toHaveLength(0);
+      const receipt = compositionReceiptForCase(labCase);
+      expect(receipt.affinity).toBe(affinity);
+      const reopened = parseLabCase(serializeLabCase({ ...DEFAULT_LAB_CASE, ...labCase }));
+      expect(reopened.affinity).toBe(affinity);
+    }
+  });
+  it("derives the same typed receipt as production for every reachable lab case", () => {
+    for (const labCase of allLabCases()) {
+      const labInput = inputForCase(labCase);
+      const production = enemyVisualCompositionReceipt(labInput);
+      const lab = compositionReceiptForCase(labCase);
+      expect(lab).toEqual(production);
+      expect(lab.input).toEqual(labInput);
+      if (lab.family.startsWith("boss-")) expect(lab.geometryProfile).not.toBe("legacy/no-overlay");
+      else expect(lab.geometryProfile).toBe("legacy/no-overlay");
+    }
   });
 
   it("replays the production spawn command through EnemyUnit until it completes", () => {

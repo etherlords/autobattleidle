@@ -1,7 +1,13 @@
 import * as THREE from "three";
 import "./visual-lab.css";
 
-import type { EnemyFamily, EnemyGrade, EnemyPresentationModifier } from "../../domain/combat";
+import {
+  ENEMY_AFFINITIES,
+  type EnemyAffinity,
+  type EnemyFamily,
+  type EnemyGrade,
+  type EnemyPresentationModifier,
+} from "../../domain/combat";
 import { BATTLEFIELD_CONFIG } from "../../game/battlefield/config";
 import { MAX_ACTIVE_EFFECTS, type EffectKind } from "../../game/battlefield/effects";
 import { UNIT_FACTORIES } from "../../game/units/factories";
@@ -9,29 +15,27 @@ import type { EnemyUnit } from "../../game/units/enemy";
 import {
   allLabCases,
   canonicalLabCase,
+  compositionReceiptForCase,
   effectForLabCue,
-  firstReachableLabCase,
   inputForCase,
+  LAB_AFFINITIES,
   LAB_CUES,
   LAB_FAMILIES,
   LAB_GRADES,
   LAB_MODIFIERS,
   reachableLabCases,
   toggleGoldenLabCase,
+  type LabCase,
 } from "./catalog";
 import { parseLabCase, serializeLabCase, type LabView, type LabViewport } from "./case-url";
-import { advanceLabRecipe, attachLabRecipe, LAB_RECIPES, type LabRecipe } from "./recipes";
 import {
-  LabPlayerEvolution,
-  PLAYER_DETAIL_LEVELS,
-  PLAYER_DETAIL_TRANSITION,
-  PLAYER_EVOLUTION_FORMS,
-  minorDetailStep,
-  playerDetailLevelForStage,
-  SELECTED_MINOR_DETAIL_CADENCE,
-  type PlayerDetailLevel,
-  type PlayerFormStart,
-} from "./player-evolution";
+  advanceLabRecipe,
+  attachLabRecipe,
+  LAB_RECIPES,
+  type LabRecipe,
+  validateLabRecipe,
+} from "./recipes";
+import { LabPlayerEvolution, PLAYER_LAB_LEVELS } from "./player-evolution";
 import {
   createEffectHarness,
   observeResourceDisposal,
@@ -126,6 +130,13 @@ class VisualLab {
       "Family",
       LAB_FAMILIES.map((value) => ({ label: value, value })),
     );
+    const affinity = select(
+      "Affinity",
+      LAB_AFFINITIES.map((value) => ({
+        label: `${ENEMY_AFFINITIES[value].label} — ${value}`,
+        value,
+      })),
+    );
     const grade = select(
       "Grade",
       LAB_GRADES.map((value) => ({ label: value, value })),
@@ -155,20 +166,13 @@ class VisualLab {
       "Subject",
       ["enemy", "player"].map((value) => ({ label: value, value })),
     );
-    const playerStage = select(
-      "Player stage",
-      PLAYER_EVOLUTION_FORMS.map((form) => ({
-        label: `${form.start} — ${form.name}`,
-        value: String(form.start),
-      })),
+    const playerLevels = [...new Set([...PLAYER_LAB_LEVELS, this.current.playerLevel])].sort(
+      (left, right) => left - right,
     );
-    const playerDetailLevel = select(
-      `Runeblade → Aether details (${SELECTED_MINOR_DETAIL_CADENCE}-level cadence)`,
-      PLAYER_DETAIL_LEVELS.map((level) => ({
-        label:
-          level === 2_000
-            ? "2000 — next major form"
-            : `${level} — detail step ${minorDetailStep(level)}`,
+    const playerLevel = select(
+      "Player milestone level",
+      playerLevels.map((level) => ({
+        label: `level ${level}`,
         value: String(level),
       })),
     );
@@ -181,17 +185,26 @@ class VisualLab {
     const speed = button("Speed ×1");
     const zoomIn = button("Zoom +");
     const zoomOut = button("Zoom −");
+    const selectedCase = (): {
+      readonly affinity: EnemyAffinity;
+      readonly family: EnemyFamily;
+      readonly grade: EnemyGrade;
+      readonly modifier: EnemyPresentationModifier;
+      readonly variant: LabVariant;
+      readonly goldenBug: boolean;
+    } => ({
+      affinity: affinity.value as EnemyAffinity,
+      family: family.value as EnemyFamily,
+      grade: grade.value as EnemyGrade,
+      modifier:
+        modifier.value === "none"
+          ? null
+          : (modifier.value as Exclude<EnemyPresentationModifier, null>),
+      variant: Number(variant.value) as LabVariant,
+      goldenBug: golden.checked,
+    });
     const apply = (): void => {
-      const visual = canonicalLabCase({
-        family: family.value as EnemyFamily,
-        grade: grade.value as EnemyGrade,
-        modifier:
-          modifier.value === "none"
-            ? null
-            : (modifier.value as Exclude<EnemyPresentationModifier, null>),
-        variant: Number(variant.value) as LabVariant,
-        goldenBug: golden.checked,
-      });
+      const visual = canonicalLabCase(selectedCase());
       this.current = parseLabCase(
         serializeLabCase({
           ...visual,
@@ -200,16 +213,13 @@ class VisualLab {
           viewport: viewport.value as LabViewport,
           recipe: recipe.value as LabRecipe,
           subject: subject.value as "enemy" | "player",
-          playerStage: Number(playerStage.value) as PlayerFormStart,
-          playerDetailLevel: playerDetailLevelForStage(
-            Number(playerStage.value) as PlayerFormStart,
-            Number(playerDetailLevel.value) as PlayerDetailLevel,
-          ),
+          playerStage: this.current.playerStage,
+          playerDetailLevel: this.current.playerDetailLevel,
+          playerLevel: Number(playerLevel.value),
         }),
       );
-      recipe.value = this.current.recipe;
-      playerDetailLevel.value = String(this.current.playerDetailLevel);
-      playerDetailLevel.disabled = this.current.playerStage !== PLAYER_DETAIL_TRANSITION.source;
+      selectCase(this.current);
+      syncCompositionControls();
       history.replaceState(null, "", serializeLabCase(this.current));
       this.replace();
       this.resize();
@@ -222,7 +232,8 @@ class VisualLab {
       control.replaceChildren(...values.map((value) => option(value)));
       control.value = values.includes(selected) ? selected : (values[0] ?? "");
     };
-    const selectCase = (match: ReturnType<typeof firstReachableLabCase>): void => {
+    const selectCase = (match: LabCase): void => {
+      affinity.value = match.affinity;
       family.value = match.family;
       grade.value = match.grade;
       modifier.value = match.modifier ?? "none";
@@ -262,9 +273,41 @@ class VisualLab {
         ],
         String(match.variant),
       );
+      syncCompositionOptions(match);
+    };
+    const syncCompositionOptions = (match: LabCase): void => {
+      const reachable = (candidate: LabCase): boolean => reachableLabCases(candidate).length > 0;
+      for (const entry of affinity.options) {
+        entry.disabled = !reachable({ ...match, affinity: entry.value as EnemyAffinity });
+      }
+      for (const entry of family.options) {
+        entry.disabled = !reachable({ ...match, family: entry.value as EnemyFamily });
+      }
+      for (const entry of grade.options) {
+        entry.disabled = !reachable({ ...match, grade: entry.value as EnemyGrade });
+      }
+      for (const entry of modifier.options) {
+        entry.disabled = !reachable({
+          ...match,
+          modifier:
+            entry.value === "none"
+              ? null
+              : (entry.value as Exclude<EnemyPresentationModifier, null>),
+        });
+      }
+      for (const entry of variant.options) {
+        entry.disabled = !reachable({ ...match, variant: Number(entry.value) as LabVariant });
+      }
+    };
+    const syncCompositionControls = (): void => {
+      const fixed = this.current.goldenBug;
+      for (const control of [affinity, family, grade, modifier, variant]) {
+        control.disabled = fixed;
+      }
     };
     const selectReachable = (
       candidate: Partial<{
+        readonly affinity: EnemyAffinity;
         readonly family: EnemyFamily;
         readonly grade: EnemyGrade;
         readonly modifier: EnemyPresentationModifier;
@@ -272,9 +315,10 @@ class VisualLab {
         readonly goldenBug: boolean;
       }>,
     ): void => {
-      const match = firstReachableLabCase(candidate);
+      const match = reachableLabCases(candidate)[0] ?? this.current;
       selectCase(match);
     };
+    affinity.value = this.current.affinity;
     family.value = this.current.family;
     grade.value = this.current.grade;
     modifier.value = this.current.modifier ?? "none";
@@ -283,24 +327,26 @@ class VisualLab {
     viewport.value = this.current.viewport;
     recipe.value = this.current.recipe;
     subject.value = this.current.subject;
-    playerStage.value = String(this.current.playerStage);
-    playerDetailLevel.value = String(this.current.playerDetailLevel);
-    playerDetailLevel.disabled = this.current.playerStage !== PLAYER_DETAIL_TRANSITION.source;
+    playerLevel.value = String(this.current.playerLevel);
     golden.checked = this.current.goldenBug;
     motion.checked = this.current.reducedMotion;
     selectReachable(this.current);
+    syncCompositionControls();
+    affinity.addEventListener("change", () => {
+      selectReachable({ ...selectedCase(), affinity: affinity.value as EnemyAffinity });
+      apply();
+    });
     family.addEventListener("change", () => {
-      selectReachable({ family: family.value as EnemyFamily });
+      selectReachable({ ...selectedCase(), family: family.value as EnemyFamily });
       apply();
     });
     grade.addEventListener("change", () => {
-      selectReachable({ family: family.value as EnemyFamily, grade: grade.value as EnemyGrade });
+      selectReachable({ ...selectedCase(), grade: grade.value as EnemyGrade });
       apply();
     });
     modifier.addEventListener("change", () => {
       selectReachable({
-        family: family.value as EnemyFamily,
-        grade: grade.value as EnemyGrade,
+        ...selectedCase(),
         modifier:
           modifier.value === "none"
             ? null
@@ -308,23 +354,17 @@ class VisualLab {
       });
       apply();
     });
-    variant.addEventListener("change", () => apply());
-    [view, viewport, recipe, subject, playerStage, playerDetailLevel].forEach((control) =>
+    variant.addEventListener("change", () => {
+      selectReachable({ ...selectedCase(), variant: Number(variant.value) as LabVariant });
+      apply();
+    });
+    [view, viewport, recipe, subject, playerLevel].forEach((control) =>
       control.addEventListener("change", apply),
     );
     golden.addEventListener("change", () => {
       selectCase(
         toggleGoldenLabCase(
-          canonicalLabCase({
-            family: family.value as EnemyFamily,
-            grade: grade.value as EnemyGrade,
-            modifier:
-              modifier.value === "none"
-                ? null
-                : (modifier.value as Exclude<EnemyPresentationModifier, null>),
-            variant: Number(variant.value) as LabVariant,
-            goldenBug: !golden.checked,
-          }),
+          canonicalLabCase({ ...selectedCase(), goldenBug: !golden.checked }),
           golden.checked,
         ),
       );
@@ -360,6 +400,7 @@ class VisualLab {
     });
     controls.append(
       family,
+      affinity,
       grade,
       modifier,
       variant,
@@ -369,8 +410,7 @@ class VisualLab {
       viewport,
       recipe,
       subject,
-      playerStage,
-      playerDetailLevel,
+      playerLevel,
       cue,
       replay,
       pause,
@@ -390,13 +430,20 @@ class VisualLab {
         this.current.playerStage,
         this.current.reducedMotion,
         this.current.playerDetailLevel,
+        this.current.playerLevel,
       );
       this.scene.add(this.unit.group);
     } else {
-      this.unit = UNIT_FACTORIES.enemy.create({
-        ...inputForCase(this.current),
-        reducedMotion: this.current.reducedMotion,
-      });
+      this.unit = UNIT_FACTORIES.enemy.create(
+        {
+          ...inputForCase(this.current),
+          reducedMotion: this.current.reducedMotion,
+        },
+        {
+          compositionMode:
+            this.current.recipe === "production" ? "production" : "legacy/no-overlay",
+        },
+      );
       this.unit.dispatchEnemy({ type: "spawn", parent: this.scene });
       this.disposeRecipe = attachLabRecipe(this.current.recipe, this.unit.view.group);
     }
@@ -557,15 +604,27 @@ class VisualLab {
     const last =
       this.lastReceipt === undefined ? "" : ` | last disposal ${resourceReceipt(this.lastReceipt)}`;
     const playerDetail =
-      this.current.subject === "player" &&
-      this.current.playerStage === PLAYER_DETAIL_TRANSITION.source
-        ? ` | Runeblade 1000 → Aether Warden 10000: detail ${this.current.playerDetailLevel}, step ${minorDetailStep(this.current.playerDetailLevel)}/4 at ${SELECTED_MINOR_DETAIL_CADENCE}-level cadence`
+      this.current.subject === "player"
+        ? ` | player level ${this.current.playerLevel} milestone ${this.unit instanceof LabPlayerEvolution ? this.unit.identity.milestoneLevel : this.current.playerLevel}`
         : "";
-    this.receipt.textContent = `case ${serializeLabCase(this.current)}${playerDetail} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
-    this.correction.textContent =
-      this.current.correction === undefined
+    const composition =
+      this.current.subject === "enemy" ? compositionReceiptForCase(this.current) : undefined;
+    const enemyReceipt =
+      composition === undefined
         ? ""
-        : `Corrected visual-lab case: requested ${this.current.correction.requested}; canonical ${this.current.correction.canonical}`;
+        : ` | input ${JSON.stringify(composition.input)} seed ${composition.seed} identity ${composition.family}/body-${composition.bodyVariant}/${composition.affinity} grade ${composition.grade} modifier ${composition.modifierCue ?? "none"} palette ${composition.spec.affinity.palette.core}/${composition.spec.affinity.palette.accent} cue ${composition.spec.affinity.cue} reward ×${composition.spec.affinity.rewardMultiplier} geometry ${composition.geometryProfiles.join(",")}`;
+    this.receipt.textContent = `case ${serializeLabCase(this.current)}${enemyReceipt}${playerDetail} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
+    const correction: string[] = [];
+    if (this.current.correction !== undefined)
+      correction.push(
+        `Corrected visual-lab case: requested ${this.current.correction.requested}; canonical ${this.current.correction.canonical}`,
+      );
+    if (composition !== undefined) {
+      const validation = validateLabRecipe(this.current.recipe, composition.family);
+      if (!validation.valid)
+        correction.push(`Invalid recipe: ${validation.reason ?? "unsupported"}`);
+    }
+    this.correction.textContent = correction.join(" | ");
   }
 
   private clearEffects(): void {

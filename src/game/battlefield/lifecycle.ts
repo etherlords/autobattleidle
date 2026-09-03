@@ -429,6 +429,7 @@ class ThreeBattlefield implements Battlefield {
     const player = this.player.playerView.playerEvolutionReceipt();
     dataset.playerFormStart = String(player.formStart);
     dataset.playerDetailCount = String(player.detailCount);
+    dataset.playerMilestoneLevel = String(player.milestoneLevel);
   }
 
   private displayedEnemy(snapshot: BattleSnapshot): BattleEnemySnapshot {
@@ -453,6 +454,7 @@ class ThreeBattlefield implements Battlefield {
     delete dataset.enemyTopPx;
     delete dataset.playerFormStart;
     delete dataset.playerDetailCount;
+    delete dataset.playerMilestoneLevel;
   }
 
   private setEffectOriginReceipt(dataset: DOMStringMap): void {

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 
+import { playerEvolutionIdentity } from "../../game/units/player/evolution";
 import { observeResourceDisposal, resourceCounts } from "./resource-ledger";
 import {
   LabPlayerEvolution,
@@ -10,6 +11,7 @@ import {
   PLAYER_EVOLUTION_FORMS,
   PLAYER_DETAIL_TRANSITION,
   PLAYER_FORM_STARTS,
+  PLAYER_LAB_LEVELS,
 } from "./player-evolution";
 
 describe("player evolution lab prototypes", () => {
@@ -35,6 +37,15 @@ describe("player evolution lab prototypes", () => {
     expect(endpoint.group.getObjectByName("player-transition-detail-0")).toBeUndefined();
     endpoint.dispose();
     expect(endpointReceipt()).toMatchObject({ disposed: endpointReceipt().expectedDisposals });
+  });
+
+  it("reopens every exact milestone through the shared player selector", () => {
+    for (const level of PLAYER_LAB_LEVELS) {
+      const player = new LabPlayerEvolution(1, true, 1_000, level);
+      expect(player.identity).toEqual(playerEvolutionIdentity(level));
+      expect(player.group.getObjectByName("player-milestone-detail")).toBeDefined();
+      player.dispose();
+    }
   });
   it("keeps every named progression form reachable, distinct, finite, socketed, and disposable", () => {
     expect(PLAYER_EVOLUTION_FORMS.map((form) => form.start)).toEqual(PLAYER_FORM_STARTS);

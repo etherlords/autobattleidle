@@ -1,21 +1,43 @@
 import * as THREE from "three";
 
+import type { EnemyFamily } from "../../domain/combat";
+import { buildBossGeometryRecipe } from "../../game/enemy-visual/decorators/boss-geometry-decorator";
+
 export const LAB_RECIPES = [
   "production",
+  "legacy/no-overlay",
   "socket-probe",
   "crystal-crown",
   "orbital-runes",
   "elemental-spines",
 ] as const;
 export type LabRecipe =
-  "production" | "socket-probe" | "crystal-crown" | "orbital-runes" | "elemental-spines";
+  | "production"
+  | "legacy/no-overlay"
+  | "socket-probe"
+  | "crystal-crown"
+  | "orbital-runes"
+  | "elemental-spines";
 export const BOSS_ONLY_LAB_RECIPES = [
   "crystal-crown",
   "orbital-runes",
   "elemental-spines",
 ] as const satisfies readonly LabRecipe[];
-export const normalizeLabRecipe = (recipe: LabRecipe, boss: boolean): LabRecipe =>
-  !boss && BOSS_ONLY_LAB_RECIPES.some((candidate) => candidate === recipe) ? "production" : recipe;
+export type LabRecipeValidation = {
+  readonly valid: boolean;
+  readonly reason?: string;
+};
+export const validateLabRecipe = (recipe: LabRecipe, family: EnemyFamily): LabRecipeValidation => {
+  if (recipe === "production" || recipe === "legacy/no-overlay" || recipe === "socket-probe")
+    return { valid: true };
+  if (family !== "boss-hydra" && family !== "boss-colossus")
+    return {
+      valid: false,
+      reason: `${recipe} is boss-only; select Hydra or Colossus before attaching it`,
+    };
+  return { valid: true };
+};
+export const normalizeLabRecipe = (recipe: LabRecipe, _boss: boolean): LabRecipe => recipe;
 
 type CandidateAnchor = "overhead" | "orbit" | "top";
 type CandidateRecipe = {
@@ -96,51 +118,6 @@ const fitOrbit = (group: THREE.Group, bounds: THREE.Box3, nativeBounds: THREE.Bo
   return true;
 };
 
-const crystalCrown = (): THREE.Group => {
-  const group = new THREE.Group();
-  group.name = "lab-recipe-crystal-crown";
-  [-0.2, 0, 0.2].forEach((x, index) => {
-    const crystal = new THREE.Mesh(
-      new THREE.OctahedronGeometry(index === 1 ? 0.3 : 0.21),
-      new THREE.MeshStandardMaterial({ color: "#8df5ff", emissive: "#115a7a", metalness: 0.55 }),
-    );
-    crystal.name = `lab-crystal-crown-${index}`;
-    crystal.position.set(x, 0.25 + (index === 1 ? 0.16 : 0), 0);
-    crystal.scale.y = index === 1 ? 2.1 : 1.6;
-    group.add(crystal);
-  });
-  return group;
-};
-
-const orbitalRunes = (): THREE.Group => {
-  const group = new THREE.Group();
-  group.name = "lab-recipe-orbital-runes";
-  [-0.7, 0, 0.7].forEach((rotation, index) => {
-    const rune = new THREE.Mesh(
-      new THREE.TorusGeometry(0.78, 0.035, 6, 16),
-      new THREE.MeshBasicMaterial({ color: "#b78cff", transparent: true, opacity: 0.82 }),
-    );
-    rune.name = `lab-orbital-rune-${index}`;
-    rune.rotation.set(rotation, rotation * 0.4, rotation * 0.65);
-    group.add(rune);
-  });
-  return group;
-};
-
-const elementalSpines = (): THREE.Group => {
-  const group = new THREE.Group();
-  group.name = "lab-recipe-elemental-spines";
-  for (let index = 0; index < 18; index += 1) {
-    const spine = new THREE.Mesh(
-      new THREE.ConeGeometry(0.1, 0.55, 5),
-      new THREE.MeshStandardMaterial({ color: "#ff9269", emissive: "#79220e", metalness: 0.3 }),
-    );
-    spine.name = `lab-elemental-spine-${index}`;
-    group.add(spine);
-  }
-  return group;
-};
-
 const spikeDirection = (index: number): THREE.Vector3 => {
   const y = 1 - ((index + 0.5) / 18) * 2;
   const radius = Math.sqrt(1 - y * y);
@@ -192,17 +169,21 @@ const fitSpines = (
 };
 
 const recipes: Readonly<
-  Record<Exclude<LabRecipe, "production" | "socket-probe">, CandidateRecipe>
+  Record<Exclude<LabRecipe, "production" | "legacy/no-overlay" | "socket-probe">, CandidateRecipe>
 > = {
   "crystal-crown": {
     anchor: "overhead",
-    build: crystalCrown,
+    build: () => buildBossGeometryRecipe("crystal-crown", "lab"),
     fit: (group, bounds, nativeBounds) => fitAbove(group, bounds, nativeBounds, 0.38),
   },
-  "orbital-runes": { anchor: "orbit", build: orbitalRunes, fit: fitOrbit },
+  "orbital-runes": {
+    anchor: "orbit",
+    build: () => buildBossGeometryRecipe("orbital-runes", "lab"),
+    fit: fitOrbit,
+  },
   "elemental-spines": {
     anchor: "orbit",
-    build: elementalSpines,
+    build: () => buildBossGeometryRecipe("elemental-spines", "lab"),
     fit: (group, bounds, _nativeBounds, anchor, bossBody) =>
       fitSpines(group, bounds, anchor, bossBody),
   },
@@ -222,7 +203,7 @@ const bossBody = (unit: THREE.Object3D): THREE.Mesh | undefined => {
 };
 
 export const attachLabRecipe = (recipe: LabRecipe, unit: THREE.Object3D): (() => void) => {
-  if (recipe === "production") return () => undefined;
+  if (recipe === "production" || recipe === "legacy/no-overlay") return () => undefined;
   if (recipe === "socket-probe") {
     const marker = new THREE.Mesh(
       new THREE.OctahedronGeometry(0.12),

@@ -2,20 +2,74 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 
 import { BATTLEFIELD_CONFIG } from "../../battlefield/config";
-import { playerEvolutionIdentity } from "./evolution";
+import { PLAYER_MILESTONE_LEVELS, PlayerEvolution, playerEvolutionIdentity } from "./evolution";
 import { createPlayerUnit } from "./player-unit";
 
 describe("PlayerUnit", () => {
   it("has one finite deterministic identity at every transition boundary", () => {
     expect([1_000, 1_200, 1_400, 1_600, 1_800, 2_000].map(playerEvolutionIdentity)).toEqual([
-      { formStart: 1_000, detailCount: 0 },
-      { formStart: 1_000, detailCount: 1 },
-      { formStart: 1_000, detailCount: 2 },
-      { formStart: 1_000, detailCount: 3 },
-      { formStart: 1_000, detailCount: 4 },
-      { formStart: 10_000, detailCount: 0 },
+      { formStart: 1_000, detailCount: 0, milestoneLevel: 1_000 },
+      { formStart: 1_000, detailCount: 1, milestoneLevel: 1_000 },
+      { formStart: 1_000, detailCount: 2, milestoneLevel: 1_000 },
+      { formStart: 1_000, detailCount: 3, milestoneLevel: 1_000 },
+      { formStart: 1_000, detailCount: 4, milestoneLevel: 1_000 },
+      { formStart: 10_000, detailCount: 0, milestoneLevel: 2_000 },
     ]);
-    expect(playerEvolutionIdentity(1_000_000)).toEqual({ formStart: 36_365, detailCount: 0 });
+    expect(playerEvolutionIdentity(1_000_000)).toEqual({
+      formStart: 36_365,
+      detailCount: 0,
+      milestoneLevel: 100_000,
+    });
+  });
+
+  it("maps every bounded cadence boundary to its nearest milestone", () => {
+    const samples = new Map([
+      [99, 1],
+      [100, 100],
+      [999, 900],
+      [1_000, 1_000],
+      [1_999, 1_000],
+      [2_000, 2_000],
+      [9_999, 9_000],
+      [10_000, 10_000],
+      [11_999, 10_000],
+      [12_000, 12_000],
+      [49_999, 48_000],
+      [50_000, 50_000],
+      [99_999, 95_000],
+      [100_000, 100_000],
+      [100_001, 100_000],
+      [Infinity, 100_000],
+      [Number.NaN, 1],
+      [-Infinity, 1],
+    ]);
+    for (const [level, milestoneLevel] of samples) {
+      expect(playerEvolutionIdentity(level).milestoneLevel).toBe(milestoneLevel);
+    }
+    expect(PLAYER_MILESTONE_LEVELS.length).toBeGreaterThan(40);
+  });
+
+  it("gives adjacent milestones distinct bounded visual markers", () => {
+    const signatures = PLAYER_MILESTONE_LEVELS.map((level) => {
+      const evolution = new PlayerEvolution(playerEvolutionIdentity(level), true);
+      const marker = evolution.group.getObjectByName("player-milestone-detail");
+      if (
+        !(marker instanceof THREE.Mesh) ||
+        !(marker.material instanceof THREE.MeshStandardMaterial)
+      )
+        throw new Error("Expected milestone marker");
+      const signature = [
+        marker.geometry.type,
+        marker.geometry.parameters?.radius,
+        marker.position.x,
+        marker.position.y,
+        marker.material.color.getHexString(),
+      ].join(":");
+      evolution.dispose();
+      return signature;
+    });
+    for (let index = 1; index < signatures.length; index += 1)
+      expect(signatures[index]).not.toBe(signatures[index - 1]);
   });
 
   it("derives bounded forms from level while owning sockets and replaced resources", () => {
