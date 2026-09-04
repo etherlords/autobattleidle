@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 104
+revision: 105
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 104
-- Last update: Independent deployed QA pass: V4 encounter-10001 remained authoritative over lower V3 across two reloads with no recovery key; audio gate, HUD track, mute, settings modal, backdrop/Escape close, separate track-index persistence, and console flow verified.
+- Revision: 105
+- Last update: EVENT qa-pass — Main — final deployed smoke on cache-busted URL after e73c853: audio gate clicked programmatically, settings opened with class audio-settings-modal and hidden=false, track label visible, separate audio-settings and audio-track-index localStorage keys present; click inside dialog left modal open, MouseEvent click on modal backdrop set hidden=true. Fresh bundle hash app-3WgUhCOR.js confirmed.
 
 ## Execution plan
 
@@ -1806,3 +1806,17 @@ requiredGates:
   - Pages:33811797256
   - screenshot:omp-sshots-1571a2abd99e1662
   - deployed:encounter-10001 V4 precedence
+
+### evt-ca482ae5-163d-42e7-acb8-c9a46ab164ec
+
+- Timestamp: 2026-09-04T13:25:35.633Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 104
+- Resulting revision: 105
+- Summary: EVENT qa-pass — Main — final deployed smoke on cache-busted URL after e73c853: audio gate clicked programmatically, settings opened with class audio-settings-modal and hidden=false, track label visible, separate audio-settings and audio-track-index localStorage keys present; click inside dialog left modal open, MouseEvent click on modal backdrop set hidden=true. Fresh bundle hash app-3WgUhCOR.js confirmed.
+- Evidence:
+  - commit:e73c853
+  - Pages:33877850065
+  - deployed:https://etherlords.github.io/autobattleidle/?smoke=173
+  - browser:modal class/hidden, inside-click, backdrop-close, gate, track, storage keys
