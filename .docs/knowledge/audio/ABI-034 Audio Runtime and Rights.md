@@ -35,3 +35,11 @@ Music provenance is recorded in `public/audio/manifest.json` with Suno generatio
 ## Verification
 
 The application starts audio blocked and unlocks on a user gesture; failed unlocks remain retryable. Production proof for commit `5e791a0c94a95d60263cfeb6af8ecb1b3844a652`: CI `33779376141`, Pages `33779376114`, public URL `https://etherlords.github.io/autobattleidle/`. Browser QA verified explicit blocked/ready status, music/SFX requests, physical mute and sliders, persistence, 390px no-overlap/no-overflow, 8.34 APS bounded activity, and bounded routed music failures. Headless browsers cannot prove audible output; real hidden-tab lifecycle was not available and remains covered by the service visibility tests.
+
+## Related
+
+
+
+- [[design/UI, Persistence, and QA|UI, Persistence, and QA]]
+- [[audio/ABI-034 Audio Polish Follow-up|ABI-034 Audio Polish Follow-up]]
+- [[architecture/Technical Architecture|Technical Architecture]]
