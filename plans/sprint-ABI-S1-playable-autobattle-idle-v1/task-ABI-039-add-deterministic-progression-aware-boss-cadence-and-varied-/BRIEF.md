@@ -4,7 +4,7 @@ id: ABI-039
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 1
+revision: 10
 status: Blocked
 sprintId: ABI-S1
 dependencies:

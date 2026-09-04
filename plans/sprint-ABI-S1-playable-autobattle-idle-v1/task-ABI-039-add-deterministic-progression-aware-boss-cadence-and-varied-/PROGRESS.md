@@ -4,7 +4,7 @@ id: ABI-039
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 42
+revision: 49
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -25,8 +25,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 42
-- Last update: Released task claim: Release lease after roster blocker
+- Revision: 49
+- Last update: Released task claim: Release lease after refreshed roster failure
 
 ## Execution plan
 
@@ -707,5 +707,115 @@ requiredGates:
 - Agent ID: autobattle_worker
 - Session ID: autobattle-worker-abi039-20260904
 - Intent: Release lease after roster blocker
+- Evidence:
+  - None
+
+### evt-fc345336-8b42-436d-be3c-eb8bdfb5cd55
+
+- Timestamp: 2026-09-04T16:53:30.368Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Agent session restarted; autobattle_worker profile is now available for implementation preflight.
+- Idempotency key: abi039-unblock-worker-refresh-20260904
+- Request fingerprint: 50df1e5c6cf4fd7a8a545b4f2ac33d194b5e4c0d038c482ff686f40d11df2017
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - worker profile enabled=true
+  - fresh OMP session
+
+### evt-2c5624a3-b33e-4945-ac9c-dd37b7155b30
+
+- Timestamp: 2026-09-04T16:53:47.705Z
+- Actor: autobattle_worker
+- Operation: claim.acquire
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Claimed task lease: Implementation preflight after worker refresh
+- Idempotency key: abi039-claim-worker-refresh-20260904-r2
+- Request fingerprint: 31037336d1c595248f3afdcaef21fd978de5f2519eb8e18b21074b8052322bd7
+- Agent ID: autobattle_worker
+- Session ID: autobattle-worker-abi039-20260904-r2
+- Intent: Implementation preflight after worker refresh
+- Expires at: 2026-09-04T17:23:47.705Z
+- Evidence:
+  - None
+
+### evt-0cf58011-9939-474f-ae24-600c1ebeb8f9
+
+- Timestamp: 2026-09-04T16:54:00.149Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: EVENT preflight-ready — Main — ABI-039 dependencies rechecked, persistence classified no schema change pending stateless proof, research baseline retained, implementation owner autobattle_worker available after session restart.
+- Evidence:
+  - planner context revision 8
+  - openDependencies: []
+  - implementation-guide and analysis read
+  - worker claim revision 44
+
+### evt-cfcb432e-e542-470f-9721-2acf99014f46
+
+- Timestamp: 2026-09-04T16:54:06.241Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Begin implementation under refreshed autobattle_worker lease after preflight-ready evidence.
+- Idempotency key: abi039-start-implementation-worker-r2
+- Request fingerprint: aae247c076d75184ee291bbdfad80d25b4fe3bbc1b60ef2bf3c814e784c6bd73
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - progress:45 preflight-ready
+  - lease:autobattle_worker/autobattle-worker-abi039-20260904-r2
+  - dependencies: all resolved
+
+### evt-45fb87f7-38f9-46ba-8df0-cc441606c2b6
+
+- Timestamp: 2026-09-04T16:54:28.674Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: EVENT returned — Main — required autobattle_worker remains unavailable to the refreshed session; delegation probe still returns Unknown agent. No implementation started.
+- Evidence:
+  - delegation error: Unknown agent autobattle_worker
+  - available roster: scout, reviewer, security-reviewer, task, sonic
+  - config:.codex/agents/autobattle-worker.toml enabled=true
+
+### evt-f4aa573d-521c-4848-9f80-ec0c9287480c
+
+- Timestamp: 2026-09-04T16:54:35.106Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Required autobattle_worker is absent from refreshed runtime roster; implementation cannot proceed without substituting an unauthorized agent.
+- Idempotency key: abi039-block-worker-still-absent-20260904-r2
+- Request fingerprint: a5e7a008cd9dca677357b2f6fda66ceed867602d5d227651f797dec47391103f
+- From status: In Progress
+- To status: Blocked
+- Evidence:
+  - progress:47 exact delegation failure
+  - config: enabled=true
+  - runtime roster excludes autobattle_worker
+
+### evt-16d4e2e2-3683-4f9f-8b28-efd7b7803bc0
+
+- Timestamp: 2026-09-04T16:54:40.530Z
+- Actor: autobattle_worker
+- Operation: claim.release
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: Released task claim: Release lease after refreshed roster failure
+- Idempotency key: abi039-release-worker-still-absent-20260904-r2
+- Request fingerprint: da0a61f56433ddabbfd01e7627597a571f7efa3435839aed9251d89e1fabaca7
+- Agent ID: autobattle_worker
+- Session ID: autobattle-worker-abi039-20260904-r2
+- Intent: Release lease after refreshed roster failure
 - Evidence:
   - None
