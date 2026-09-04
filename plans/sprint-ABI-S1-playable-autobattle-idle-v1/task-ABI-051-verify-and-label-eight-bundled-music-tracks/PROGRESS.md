@@ -4,8 +4,8 @@ id: ABI-051
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 10
-status: In Progress
+revision: 15
+status: In QA
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In Progress
-- Revision: 10
-- Last update: Audio manifest metadata and playlist reachability checks pass; all eight files are present and distinct labels are wired.
+- Status: In QA
+- Revision: 15
+- Last update: Released task claim: Release lease while independent QA worker is unavailable
 
 ## Execution plan
 
@@ -194,3 +194,88 @@ requiredGates:
   - focused audio tests: 2 files/21 tests pass
   - manifest cycle reaches eight unique files
   - all eight source/bundle hashes match
+
+### evt-df2cf545-2914-424b-b149-391305bd4101
+
+- Timestamp: 2026-09-04T18:16:32.791Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 10
+- Resulting revision: 11
+- Summary: Audio audit implementation and full check pass; hand off manifest title change and eight-track evidence for independent review.
+- Idempotency key: abi051-enter-review-20260904
+- Request fingerprint: 095243f47781eb4c6d49badd4bc20f9aa70620c863a78f3327cb76b066da7e7c
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - progress:10 implementation-self-check pass
+  - checkpoint:8188025 pushed
+  - pnpm check green
+
+### evt-e8403157-aab8-446a-bb54-b1c02536e310
+
+- Timestamp: 2026-09-04T18:19:09.932Z
+- Actor: ABI051independentreview
+- Operation: gate.record
+- Prior revision: 11
+- Resulting revision: 12
+- Summary: Independent review found no correctness defects or blockers; eight hashes, byte counts, manifest entries, playlist modulo progression, titles, and task diff scope verified.
+- Idempotency key: abi051-independent-review-pass-20260904
+- Request fingerprint: 481037f9e7730935b3a49fca22463428562706dcd69d8f4c7237be67d5c5c11b
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - reviewer report: PASS
+  - all eight public assets match manifest hashes and byte counts
+  - node cycle count=8 unique=8
+  - AudioService modulo advancement reaches every index
+  - task commit scope reviewed
+
+### evt-f26d1bb7-9301-4a2d-a405-6b4b66394494
+
+- Timestamp: 2026-09-04T18:19:16.019Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 12
+- Resulting revision: 13
+- Summary: Independent review passed; begin acceptance QA for shipped eight-track audio behavior.
+- Idempotency key: abi051-enter-qa-20260904
+- Request fingerprint: d352dbfaead21e6313b42f684a0eba12f5036ee79269177fe951904e32e92034
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - progress:12 independent-review pass
+  - checkpoint:8188025 source/test changes published
+
+### evt-7864762b-9adb-45c3-be24-aad416777d94
+
+- Timestamp: 2026-09-04T18:19:41.050Z
+- Actor: autobattle_qa
+- Operation: gate.record
+- Prior revision: 13
+- Resulting revision: 14
+- Summary: Independent QA could not start because required autobattle_qa is absent from the current runtime roster.
+- Idempotency key: abi051-independent-qa-blocked-roster-20260904
+- Request fingerprint: 665d2e30781b449d8f6cc53c2575ddddaeb2f6b7c82d3d8f6433589c99543030
+- Gate: independent-qa
+- Verdict: blocked
+- Evidence:
+  - delegation error: Unknown agent autobattle_qa
+  - available roster: scout, reviewer, security-reviewer, task, sonic
+  - source/test self-check and independent review already passed
+
+### evt-062ee654-f7ab-4f03-bdcf-4e2ad87ba80c
+
+- Timestamp: 2026-09-04T18:19:55.358Z
+- Actor: Main
+- Operation: claim.release
+- Prior revision: 14
+- Resulting revision: 15
+- Summary: Released task claim: Release lease while independent QA worker is unavailable
+- Idempotency key: abi051-release-qa-blocker-20260904
+- Request fingerprint: cc05b06bac104b8585e9f3d0b0e7ea7ebedda6e471d75e2fc17e2d48a4c820a5
+- Agent ID: Main
+- Session ID: abi051-audit-20260904
+- Intent: Release lease while independent QA worker is unavailable
+- Evidence:
+  - None

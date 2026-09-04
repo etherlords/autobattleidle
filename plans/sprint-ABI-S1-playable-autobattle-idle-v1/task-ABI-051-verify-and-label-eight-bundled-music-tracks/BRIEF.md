@@ -4,8 +4,8 @@ id: ABI-051
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 4
+status: In QA
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -27,7 +27,7 @@ Verify and label eight bundled music tracks
 
 - Type: research
 - Priority: normal
-- Status: In Progress
+- Status: In QA
 - Parent: None
 
 ## Acceptance criteria
