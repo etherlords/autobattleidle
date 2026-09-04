@@ -48,10 +48,10 @@ describe("audio asset manifest", () => {
       "Idle Fantasy",
       "Idle Dawn",
       "Tran exploration",
-      "Guardian's Watch",
-      "Guardian's Watch",
-      "Guardian's Watch",
-      "Guardian's Watch",
+      "Guardian's Watch — Dawn Patrol",
+      "Guardian's Watch — Quiet Rampart",
+      "Guardian's Watch — Ember Sentinel",
+      "Guardian's Watch — Night Vigil",
     ]);
     expect(data.music).toHaveLength(8);
     expect(data.sfx.length).toBeGreaterThanOrEqual(16);
@@ -85,10 +85,10 @@ describe("audio asset manifest", () => {
     expect(new Set(hashes).size).toBe(hashes.length);
   });
 
-  it("keeps a deterministic non-repeating playlist order", () => {
+  it("keeps a deterministic non-repeating playlist order with distinct labels", () => {
     const titles = data.music.map((entry) => entry.title);
     expect(titles).toContain("Pastoral Loop");
-    expect(titles.filter((title) => title === "Guardian's Watch")).toHaveLength(4);
+    expect(new Set(titles).size).toBe(data.music.length);
   });
 
   it("records the Suno policy and Kenney CC0 license receipts", () => {
