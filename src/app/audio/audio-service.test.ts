@@ -369,6 +369,39 @@ describe("audio service", () => {
     expect(service.currentTrackIndex).toBe(0);
     expect(elements).toHaveLength(4);
   });
+  it("starts from a random track when no saved index exists", async () => {
+    const elements: FakeMediaElement[] = [];
+    const { service } = await unlockedService({
+      mediaElementFactory: elementFactory(elements),
+      random: () => 0.5,
+    });
+    service.startMusic();
+    expect(service.currentTrackIndex).toBe(1);
+  });
+
+  it("resumes and persists the playlist index through separate storage", async () => {
+    const values = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+    };
+    const firstElements: FakeMediaElement[] = [];
+    const first = await unlockedService({
+      mediaElementFactory: elementFactory(firstElements),
+      random: () => 0,
+      storage,
+    });
+    first.service.startMusic();
+    firstElements[0]?.dispatch("ended");
+    expect(values.get("autobattleidle.audio-track-index")).toBe("1");
+    const second = await unlockedService({
+      random: () => 0,
+      storage,
+      mediaElementFactory: elementFactory([]),
+    });
+    second.service.startMusic();
+    expect(second.service.currentTrackIndex).toBe(1);
+  });
 
   it("crossfades: retiring voice is disposed exactly once", async () => {
     stubFetch();

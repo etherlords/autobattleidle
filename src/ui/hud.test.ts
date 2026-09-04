@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { UPGRADES } from "../domain/combat";
+import type { AudioSettingsPort } from "./hud/audio-settings";
 import type { BattleSnapshot } from "../domain/snapshot";
 import stylesheet from "../style.css?raw";
 import { createHud } from "./hud";
@@ -95,6 +96,11 @@ class FakeDocument extends FakeElement {
     element.focusHandler = () => {
       this.activeElement = element;
     };
+    return element;
+  }
+  createTextNode(value: string): FakeElement {
+    const element = new FakeElement();
+    element.textContent = value;
     return element;
   }
 }
@@ -641,5 +647,45 @@ describe("createHud", () => {
     expect([...battlefield.listeners.values()].every((listeners) => listeners.size === 0)).toBe(
       true,
     );
+  });
+  it("keeps the audio modal interactive and closes on backdrop", async () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const listeners = new Set<(state: string) => void>();
+    let currentState = "blocked";
+    const audio: AudioSettingsPort = {
+      currentState,
+      playlist: null,
+      preferences: { master: 1, ui: 1, combat: 1, music: 1, muted: false },
+      startAudio: async () => {
+        currentState = "ready";
+        for (const listener of listeners) listener(currentState);
+        return true;
+      },
+      setMuted: () => undefined,
+      setPreferences: () => undefined,
+      subscribeState: (listener) => {
+        listeners.add(listener);
+        return () => listeners.delete(listener);
+      },
+    };
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    hud.attachAudioSettings?.(audio);
+
+    const modal = element(host, "audio-settings-modal");
+    const launcher = element(host, "audio-settings-launcher");
+    const gate = element(host, "audio-start-gate");
+    expect(modal.className).toBe("audio-settings-modal");
+    expect(gate.hidden).toBe(false);
+    launcher.dispatch("click");
+    expect(modal.hidden).toBe(false);
+    modal.dispatch("pointerup");
+    expect(modal.hidden).toBe(true);
+    gate.dispatch("click");
+    await Promise.resolve();
+    expect(gate.hidden).toBe(true);
+    hud.dispose();
   });
 });

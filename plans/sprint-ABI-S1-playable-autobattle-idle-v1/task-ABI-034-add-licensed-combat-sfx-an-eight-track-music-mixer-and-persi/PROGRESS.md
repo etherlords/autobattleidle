@@ -4,7 +4,7 @@ id: ABI-034
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 102
+revision: 104
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -26,8 +26,8 @@ requiredGates:
 ## Current state
 
 - Status: Done
-- Revision: 102
-- Last update: EVENT checkpoint — Main — user-reported follow-ups fixed in commit 93295c2: (1) music playlist now starts at the persisted last track index (new separate localStorage key autobattleidle.audio-track-index, written on start and every track advance; random fallback for first run via injectable deps.random); (2) audio-settings-modal class restored after mute-sync patch eroded it — dialog is again centered, clickable, closes on backdrop click and Escape. Deployed proof at Pages run for 93295c2: modal opens with zIndex 2, dialog hit-test returns audio-settings-dialog, backdrop click and Escape both hide it; seeded track index 3 resumes 'Tran exploration' as first track and persists.
+- Revision: 104
+- Last update: Independent deployed QA pass: V4 encounter-10001 remained authoritative over lower V3 across two reloads with no recovery key; audio gate, HUD track, mute, settings modal, backdrop/Escape close, separate track-index persistence, and console flow verified.
 
 ## Execution plan
 
@@ -1770,3 +1770,39 @@ requiredGates:
   - deployed:modal z=2, backdrop+Escape close verified
   - deployed:track resume from saved index verified
   - screenshot:omp-sshots-1571a2abd99e1662
+
+### evt-75371a59-4c67-4dab-be38-5aa09c9ad4f2
+
+- Timestamp: 2026-09-04T13:13:41.435Z
+- Actor: MigrationReviewer
+- Operation: gate.record
+- Prior revision: 102
+- Resulting revision: 103
+- Summary: Independent review pass: V4 precedence and goldenBugDefeats preservation verified; structural historical V4 accepted without current-formula matching; recovery copy precedes repair on parse/decode failures; audio listener/timer ownership reviewed with P3 mute sync fixed in e005d17.
+- Idempotency key: abi034-review-followup-20260903
+- Request fingerprint: 3ba4c7378c565468d7b96cbdb185263126ffb963dcb6eb682b0b2a0125ef9be9
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - reviewer:MigrationReviewer
+  - commit:e005d17
+  - commit:93295c2
+
+### evt-3f7fc5eb-48f1-4427-a37d-1ad0aa109ed0
+
+- Timestamp: 2026-09-04T13:13:47.821Z
+- Actor: DeployedQA
+- Operation: gate.record
+- Prior revision: 103
+- Resulting revision: 104
+- Summary: Independent deployed QA pass: V4 encounter-10001 remained authoritative over lower V3 across two reloads with no recovery key; audio gate, HUD track, mute, settings modal, backdrop/Escape close, separate track-index persistence, and console flow verified.
+- Idempotency key: abi034-qa-followup-20260903
+- Request fingerprint: 01d05a14473892d50c333588cc3641429b2f1045df670d853a176f4c62d44191
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - qa:DeployedQA
+  - Pages:33810940600
+  - Pages:33811797256
+  - screenshot:omp-sshots-1571a2abd99e1662
+  - deployed:encounter-10001 V4 precedence
