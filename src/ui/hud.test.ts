@@ -681,7 +681,10 @@ describe("createHud", () => {
     expect(gate.hidden).toBe(false);
     launcher.dispatch("click");
     expect(modal.hidden).toBe(false);
-    modal.dispatch("pointerup");
+    const dialog = element(host, "audio-settings-dialog");
+    dialog.dispatch("click");
+    expect(modal.hidden).toBe(false);
+    modal.dispatch("click");
     expect(modal.hidden).toBe(true);
     gate.dispatch("click");
     await Promise.resolve();

@@ -105,6 +105,7 @@ export class AudioSettingsDialog {
     this.launcher.addEventListener("click", this.open);
     this.close.addEventListener("click", this.closeFromButton);
     this.modal.addEventListener("pointerup", this.closeFromBackdrop);
+    this.modal.addEventListener("click", this.closeFromBackdrop);
     this.reportState(service.currentState);
     this.unsubscribeState = service.subscribeState((state) => this.reportState(state));
   }
@@ -127,6 +128,7 @@ export class AudioSettingsDialog {
     this.launcher.removeEventListener("click", this.open);
     this.close.removeEventListener("click", this.closeFromButton);
     this.modal.removeEventListener("pointerup", this.closeFromBackdrop);
+    this.modal.removeEventListener("click", this.closeFromBackdrop);
   }
 
   private readonly closeFromButton = (): void => this.closeModal();
