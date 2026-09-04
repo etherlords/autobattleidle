@@ -113,7 +113,5 @@ Each task records concise lifecycle events in `PROGRESS.md`; detailed review, QA
 ## Related
 
 
-
-- [[audio/ABI-034 Audio Runtime and Rights|ABI-034 Audio Runtime and Rights]]
 - [[quality/Testing Strategy|Testing Strategy]]
 - [[architecture/Persistence Contract|Persistence Contract]]

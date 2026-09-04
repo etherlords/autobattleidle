@@ -4,7 +4,7 @@ id: ABI-036
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 29
+revision: 23
 status: Blocked
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ requiredGates:
 ## Current state
 
 - Status: Blocked
-- Revision: 29
-- Last update: Released task claim: Release blocked task lease
+- Revision: 23
+- Last update: EVENT checkpoint — root-recovery-planner — replaced coarse execution steps with complexity-calibrated managed decomposition and recorded cross-task ownership/reuse boundaries; ANALYSIS/guide section edits used the documented narrow Markdown fallback because Planner has no section-write tool.
 
 ## Execution plan
 
@@ -34,7 +34,7 @@ requiredGates:
 - [-] surface-implementation: Implement scratches and two representative semantic surface treatments through existing visual owners
 - [-] surface-proof: Run deterministic/resource tests plus all-angle animated desktop/narrow visual QA
 - [-] surface-gates: Complete review, QA, Vault decision update, exact-SHA deployment proof, and Manager closure
-- [~] surface-dependency-refresh: Manager refreshes closed ABI-029 family-affinity geometry and ABI-037 lab contracts; freezes persistence, licensing, supported families, and non-goals
+- [ ] surface-dependency-refresh: Manager refreshes closed ABI-029 family-affinity geometry and ABI-037 lab contracts; freezes persistence, licensing, supported families, and non-goals
 - [ ] surface-use-case-matrix: Define semantic cases for scratches, cracks, runes, shell plates, scars, and affinity marks across rigid, segmented, deforming, mirrored, ordinary, and boss bodies
 - [ ] surface-spike-fixtures: Build lab-only reproducible cases for DecalGeometry, CanvasTexture, UV/material maps, and geometry overlays using identical representative bodies and camera presets
 - [ ] surface-visual-measurement: Capture all angles plus idle, hit, death, resize, and reduced-motion frames; record deformation attachment, z-fighting, normals, filtering, and readability
@@ -389,106 +389,3 @@ requiredGates:
 - Evidence:
   - Planner doctor healthy with no recovery required before fallback.
   - ABI-035 -> ABI-034 attack-source reuse; ABI-028 and ABI-037 -> ABI-029 balance/lab reuse; ABI-029 -> ABI-036/ABI-039 content reuse.
-
-### evt-468a3030-bca2-4045-8b10-2678ca7ff800
-
-- Timestamp: 2026-09-04T15:11:58.989Z
-- Actor: Main
-- Operation: task.advance
-- Prior revision: 23
-- Resulting revision: 24
-- Summary: Dependencies ABI-023, ABI-026, and ABI-029 are now Done; resume bounded semantic-surface research.
-- Idempotency key: abi036-unblock-main-20260904
-- Request fingerprint: 5a8c44590ffb748953782e3d317043fb3e65f3945cfeb58073352df0e437d0a8
-- From status: Blocked
-- To status: Ready
-- Evidence:
-  - planner:ABI-023 Done
-  - planner:ABI-026 Done
-  - planner:ABI-029 Done
-
-### evt-4d7b2b2b-4af8-4f76-9998-b5f2706de4d8
-
-- Timestamp: 2026-09-04T15:12:04.427Z
-- Actor: Main
-- Operation: claim.acquire
-- Prior revision: 24
-- Resulting revision: 25
-- Summary: Claimed task lease: JIT preflight and bounded semantic surface research
-- Idempotency key: abi036-claim-main-20260904
-- Request fingerprint: 56b125f53313df8b8eeeb840663da9c4b723f0c481479b9add2f57f5e8736de6
-- Agent ID: Main
-- Session ID: main-abi036-20260904
-- Intent: JIT preflight and bounded semantic surface research
-- Branch: main
-- Expires at: 2026-09-04T16:12:04.427Z
-- Evidence:
-  - None
-
-### evt-63eb2b44-2b09-476a-b346-5e8b2d850010
-
-- Timestamp: 2026-09-04T15:12:11.684Z
-- Actor: Main
-- Operation: execution_plan.update
-- Prior revision: 25
-- Resulting revision: 26
-- Summary: Refresh closed ABI-029 family-affinity geometry and ABI-037 lab contracts; preserve no-save/no-CDN scope and family-owned socket placement.
-- Idempotency key: abi036-plan-start-main-20260904
-- Request fingerprint: 2586b188ae9ef7f7311d83f0be6d81d0f20346c89bdc4e1adcd0f4153fdf5f66
-- Action: set_state
-- Step ID: surface-dependency-refresh
-- State: in_progress
-- Evidence:
-  - ABI-029 Done
-  - ABI-037 Done
-  - src/game/enemy-visual/components.ts anchors
-  - src/debug/visual-lab/main.ts production factory reuse
-
-### evt-ba8145cd-8521-4baa-b8f5-72409b3b9ecb
-
-- Timestamp: 2026-09-04T15:12:32.942Z
-- Actor: Main
-- Operation: progress.append
-- Prior revision: 26
-- Resulting revision: 27
-- Summary: EVENT checkpoint — Main — preflight research confirms production visual ownership is authored Three.js primitives/components with family-owned semantic sockets and ABI-037 lab overlays; no DecalGeometry, CanvasTexture, imported texture, or texture cache exists. Existing lab already supports deterministic cases, sockets, bounds, animation, and disposal. The comparison spike and production port cannot be delegated because the required autobattle_worker agent is disabled/unavailable; no code changed.
-- Evidence:
-  - source: src/game/enemy-visual/components.ts:4-55
-  - source: src/game/enemy-visual/bodies.ts:148-170
-  - source: src/debug/visual-lab/main.ts:540-559
-  - source: src/debug/visual-lab/case-url.test.ts:217-258
-  - config: .codex/agents/autobattle-worker.toml:14-15 enabled=false
-  - roster: autobattle_worker absent
-
-### evt-6149f17a-32f7-46ad-8766-6e6c2aa40339
-
-- Timestamp: 2026-09-04T15:12:39.502Z
-- Actor: Main
-- Operation: task.advance
-- Prior revision: 27
-- Resulting revision: 28
-- Summary: Preflight research is recorded; implementation is blocked because required autobattle_worker is disabled and unavailable in the mounted agent roster.
-- Idempotency key: abi036-block-worker-main-20260904
-- Request fingerprint: 6fe5db874ed3f77c4982707b6ff4e6db9f2b429a449bd5d00ba76728135116c2
-- From status: Ready
-- To status: Blocked
-- Evidence:
-  - progress:27 research checkpoint
-  - config:.codex/agents/autobattle-worker.toml enabled=false
-  - agent roster: autobattle_worker absent
-
-### evt-331eea63-9cce-44d5-8b7a-a18ce6c7bf70
-
-- Timestamp: 2026-09-04T15:12:48.323Z
-- Actor: Main
-- Operation: claim.release
-- Prior revision: 28
-- Resulting revision: 29
-- Summary: Released task claim: Release blocked task lease
-- Idempotency key: abi036-release-main-20260904
-- Request fingerprint: c9dad54162f2c2fd5b4a3fb0a45ec4da4a39c245e830dab04540c284a72dc13b
-- Agent ID: Main
-- Session ID: main-abi036-20260904
-- Intent: Release blocked task lease
-- Evidence:
-  - None

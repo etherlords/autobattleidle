@@ -38,7 +38,3 @@ Focused run: 7 files / 69 tests pass. Full `pnpm check`: 31 files / 303 tests, w
 ## Limitation
 
 Headless verification cannot prove audible loudness; base gains await user listening feedback.
-
-## Related
-
-- [[audio/ABI-034 Audio Runtime and Rights|ABI-034 Audio Runtime and Rights]]

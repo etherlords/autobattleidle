@@ -23,7 +23,3 @@ tags:
 ## Consequences
 
 The game works offline after its static assets load and has no server-side recovery. New capabilities must preserve deterministic domain behavior and add a new decision only when they cross a V1 boundary.
-
-## Related
-
-- [[audio/ABI-034 Audio Runtime and Rights|ABI-034 Audio Runtime and Rights]]

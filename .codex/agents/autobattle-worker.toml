@@ -12,4 +12,4 @@ Return status, changed files, verification, risks, tools used/not used with reas
 """
 
 [agents]
-enabled = true
+enabled = false

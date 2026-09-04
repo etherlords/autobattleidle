@@ -39,8 +39,6 @@ V1 is a static Vite browser application using TypeScript, Three.js, DOM controls
 
 
 
-
-- [[audio/ABI-034 Audio Runtime and Rights|ABI-034 Audio Runtime and Rights]]
 - [[decisions/V1 Scope Decisions|V1 Scope Decisions]]
 - [[quality/Testing Strategy|Testing Strategy]]
 - [[architecture/Persistence Contract|Persistence Contract]]
