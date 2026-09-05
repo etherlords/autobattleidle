@@ -194,13 +194,22 @@ export class AudioService {
       return false;
     }
 
-    this.setState("ready");
-    if (this.playlistActive) this.resumeMusicVoices();
-    return true;
+    return this.finishUnlock();
   }
   async startAudio(): Promise<boolean> {
-    const unlocked = await this.unlock();
-    if (unlocked) this.startMusic();
+    // Snapshot the gesture before unlock can synchronously notify ready-state subscribers.
+    const startedDuringGesture = this.state !== "ready" && this.state !== "disposed";
+    const needsContextCreation = this.context === null;
+    this.beginMusicForGesture(startedDuringGesture);
+    const unlocking = this.unlock();
+    if (needsContextCreation) this.beginMusicForGesture(startedDuringGesture);
+    const unlocked = await unlocking;
+    if (!unlocked) {
+      this.stopMusic();
+      for (const listener of [...this.stateListeners]) listener(this.state);
+    } else if (!startedDuringGesture && !this.playlistActive && this.state !== "disposed") {
+      this.beginMusic();
+    }
     return unlocked;
   }
 
@@ -240,9 +249,18 @@ export class AudioService {
     if (bufferName === null) return;
     void this.playSfx(bufferName, cuePriority(cue), cue.type === "ui" ? "ui" : "combat");
   }
-
   startMusic(): void {
-    if (this.playlistActive || this.state !== "ready") return;
+    if (this.state !== "ready") return;
+    this.beginMusic();
+  }
+
+  private beginMusicForGesture(startedDuringGesture: boolean): void {
+    if (!startedDuringGesture) return;
+    if (this.context !== null) this.attachGraph(this.context);
+    if (this.context !== null && this.musicGain !== null) this.beginMusic();
+  }
+  private beginMusic(): void {
+    if (this.state === "disposed" || this.playlistActive) return;
     if (this.manifest.music.length === 0) return;
     this.playlistActive = true;
     const savedIndex = loadAudioTrackIndex(this.storage);
@@ -320,6 +338,13 @@ export class AudioService {
     this.state = state;
     this.onStateChange?.(state);
     for (const listener of [...this.stateListeners]) listener(state);
+  }
+  private finishUnlock(): boolean {
+    if (this.state === "disposed") return false;
+    this.setState("ready");
+    if (this.currentState === "disposed") return false;
+    if (this.playlistActive) this.resumeMusicVoices();
+    return true;
   }
 
   private attachGraph(context: AudioContext): void {
@@ -498,11 +523,16 @@ export class AudioService {
     else this.failedTracksInRun = 0;
     if (failed && this.failedTracksInRun >= this.manifest.music.length) {
       this.playlistActive = false;
+      for (const listener of [...this.stateListeners]) listener(this.state);
       return;
     }
 
     this.trackIndex = (this.trackIndex + 1) % this.manifest.music.length;
     saveAudioTrackIndex(this.storage, this.trackIndex);
+    // Advance the observable playlist before starting the replacement voice so
+    // HUD subscribers always render the new current/Next pair immediately.
+    for (const listener of [...this.stateListeners]) listener(this.state);
+    if (!this.playlistActive) return;
     const file = this.manifest.music[this.trackIndex];
     if (file === undefined) return;
     this.spawnMusicVoice(file.file, 1);

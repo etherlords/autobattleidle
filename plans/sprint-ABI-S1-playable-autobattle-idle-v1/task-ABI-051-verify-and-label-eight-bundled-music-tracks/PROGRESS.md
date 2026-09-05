@@ -4,8 +4,8 @@ id: ABI-051
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 15
-status: In QA
+revision: 27
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -21,9 +21,9 @@ requiredGates:
 
 ## Current state
 
-- Status: In QA
-- Revision: 15
-- Last update: Released task claim: Release lease while independent QA worker is unavailable
+- Status: Done
+- Revision: 27
+- Last update: QA, verification, and independent manager closure all pass; real browser track transition is proven.
 
 ## Execution plan
 
@@ -279,3 +279,204 @@ requiredGates:
 - Intent: Release lease while independent QA worker is unavailable
 - Evidence:
   - None
+
+### evt-ab939db5-cf15-4bef-bd98-a91679ec3f5b
+
+- Timestamp: 2026-09-04T21:14:54.255Z
+- Actor: autobattle_reviewer
+- Operation: gate.record
+- Prior revision: 15
+- Resulting revision: 16
+- Summary: Review found callback reentrancy: playlist notification could stop or dispose music before unconditional replacement spawn.
+- Idempotency key: ABI-051-review-fail-reentrant-spawn-20260904
+- Request fingerprint: 65caa973a23c9c2aae6585b954fa9a0a80aa9dc36160b67ed779d8bf747ff864
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - artifact://1959
+  - src/app/audio/audio-service.ts:507-512
+  - src/app/audio/audio-service.test.ts:372-386
+
+### evt-e5d712b6-773b-4f81-9579-ed1b15c13338
+
+- Timestamp: 2026-09-04T21:18:01.587Z
+- Actor: autobattle_reviewer
+- Operation: gate.record
+- Prior revision: 16
+- Resulting revision: 17
+- Summary: Fresh review after repair is blocked: direct profile fell back to openai/gpt-5.5 and failed with credit_balance_exhausted; prior review FAIL remains preserved.
+- Idempotency key: ABI-051-review-blocked-provider-20260904
+- Request fingerprint: 9950b910100d236d797cf7f194fe33e68f88ca9081c88b255695e132d689e48e
+- Gate: independent-review
+- Verdict: blocked
+- Evidence:
+  - bg_1
+  - artifact://1959
+  - src/app/audio/audio-service.ts:509-512
+  - src/app/audio/audio-service.test.ts:387-402
+
+### evt-16c5a233-59a7-45f5-8241-8c2fff5d9690
+
+- Timestamp: 2026-09-04T21:18:15.351Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 17
+- Resulting revision: 18
+- Summary: Applied post-review guard and track-advance reentrancy regression; focused 29 tests and full pnpm check pass.
+- Idempotency key: ABI-051-repair-checkpoint-20260904
+- Evidence:
+  - src/app/audio/audio-service.ts:507-512
+  - src/app/audio/audio-service.test.ts:372-402
+  - src/ui/hud.test.ts:651-704
+  - artifact://1970
+
+### evt-ab44de8f-d47d-40d7-bf51-060bb953dd9a
+
+- Timestamp: 2026-09-04T23:32:27.331Z
+- Actor: ABI051FinalReview
+- Operation: gate.record
+- Prior revision: 18
+- Resulting revision: 19
+- Summary: Final bundled review approved activation-safe startup and retry, failure HUD notification, stop/dispose reentrancy, ended transition, and HUD current/Next update.
+- Idempotency key: ABI-051-final-review-pass-20260905
+- Request fingerprint: 5ab44d75d7404b51d6f8a1cb9bb8bf6b2aacb53173a44baf86c27f806293bde6
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - agent://ABI051FinalReview
+  - src/app/audio/audio-service.ts:199-214
+  - src/app/audio/audio-service.ts:335-340
+  - src/app/audio/audio-service.test.ts:233-318
+
+### evt-5fb74f93-be41-4500-b104-94f717bea92a
+
+- Timestamp: 2026-09-04T23:32:34.317Z
+- Actor: ABI051FinalQA
+- Operation: gate.record
+- Prior revision: 19
+- Resulting revision: 20
+- Summary: Focused tests and real browser gate startup pass with zero console/page/request errors; real ended-to-next transition remains blocked because shipped tracks are 137.7 seconds or longer and no synthetic ended event was accepted.
+- Idempotency key: ABI-051-final-qa-blocked-ended-transition-20260905
+- Request fingerprint: 469e047a307509bb10526da5996006e5d716c94b6f381a768a54127ea7713674
+- Gate: independent-qa
+- Verdict: blocked
+- Evidence:
+  - agent://ABI051FinalQA
+  - output/qa-evidence/abi051-audio-qa.json
+  - http://127.0.0.1:5173/
+  - artifact://2072
+
+### evt-d71a7c90-2e72-4f8e-8666-7d2858208b5b
+
+- Timestamp: 2026-09-04T23:33:58.502Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: Final activation, retry, HUD cleanup, stop/dispose guards pass focused 34 tests and full pnpm check; QA remains blocked only for real long-track ended-to-next browser criterion.
+- Idempotency key: ABI-051-final-audio-checkpoint-20260905
+- Evidence:
+  - src/app/audio/audio-service.ts:199-214
+  - src/app/audio/audio-service.ts:335-340
+  - src/app/audio/audio-service.test.ts:233-318
+  - artifact://2072
+  - artifact://2074
+
+### evt-82dbcf93-4d26-45f9-b3da-a79afe38af2f
+
+- Timestamp: 2026-09-04T23:42:35.832Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: Corrected running-context gesture reentrancy: music begins before synchronous unlock notifications; focused audio/HUD tests 35 pass and full pnpm check passes with 318 tests, lint, format, worker typecheck, app typecheck, and build. Real long-track ended-to-next browser proof remains blocked.
+- Evidence:
+  - src/app/audio/audio-service.ts
+  - src/app/audio/audio-service.test.ts
+  - src/ui/hud.test.ts
+  - artifact://2079
+
+### evt-c3e6f611-f514-47be-ab6d-b2e2494d3a78
+
+- Timestamp: 2026-09-04T23:49:17.868Z
+- Actor: ABI051RealBrowserQA
+- Operation: gate.record
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: Real browser progression passed: after Continue with sound, Pastoral Loop played; after waiting 145 seconds beyond its 137.7-second duration, HUD changed to Idle Fantasy with Next: Idle Dawn. No synthetic ended event used.
+- Idempotency key: abi051-real-browser-qa-pass-20260904
+- Request fingerprint: 5c12d766d004a93ec13c99848ea8b1cbc59afa9aec324972ce6336fe14b04cf2
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - http://127.0.0.1:5173/
+  - src/app/audio/audio-service.ts
+  - src/app/audio/audio-service.test.ts
+
+### evt-4f4e6fd1-8ea9-4ce5-a139-a9a86258f639
+
+- Timestamp: 2026-09-04T23:49:29.455Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Focused and full checks pass; real browser ended-to-next transition is now proven without synthetic events.
+- Idempotency key: abi051-verification-pass-20260904
+- Request fingerprint: 03254673480bd531f805a794f015d7710e1b6ef3cc8f75586cd3a6b55c0e0e1e
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - artifact://2079
+  - http://127.0.0.1:5173/
+
+### evt-a79d07c4-38bc-430d-a44f-b3d554fadf5d
+
+- Timestamp: 2026-09-04T23:49:35.652Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Independent QA and verification now pass, including real ended-to-next browser transition.
+- Idempotency key: abi051-ready-manager-20260904
+- Request fingerprint: d06b252656477f56f66382984ea3d66f1b93906f4f83055fea99c2cd8d35049f
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-c3e6f611-f514-47be-ab6d-b2e2494d3a78
+  - evt-4f4e6fd1-8ea9-4ce5-a139-a9a86258f639
+  - artifact://2079
+
+### evt-25af86fa-4ac8-4326-b83e-52996dd51a71
+
+- Timestamp: 2026-09-04T23:49:54.847Z
+- Actor: ABI051ManagerClosure
+- Operation: gate.record
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: All acceptance evidence is complete: source labels, playlist order, focused/full checks, and real browser ended-to-next progression.
+- Idempotency key: abi051-manager-closure-pass-20260904-v2
+- Request fingerprint: 852eb33b86a00990f367fd391514dae19366b69c166fb2ba4d61183edb4c640b
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-c3e6f611-f514-47be-ab6d-b2e2494d38bc430d-a44f-b3d554fadf5d
+  - evt-c3e6f611-f514-47be-ab6d-b2e2494d3a78
+  - evt-4f4e6fd1-8ea9-4ce5-a139-a9a86258f639
+  - artifact://2079
+
+### evt-c5ff0185-2627-40b2-bf9d-d93b59ca1702
+
+- Timestamp: 2026-09-04T23:50:01.006Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: QA, verification, and independent manager closure all pass; real browser track transition is proven.
+- Idempotency key: abi051-done-20260904
+- Request fingerprint: 3da843cfcb43857f8f354821a0de964e2b2f1133e09d2f98f01cbb766991e046
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-25af86fa-4ac8-4326-b83e-52996dd51a71
+  - evt-c3e6f611-f514-47be-ab6d-b2e2494d3a78
+  - artifact://2079

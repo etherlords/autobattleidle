@@ -230,6 +230,114 @@ describe("audio service", () => {
     expect(context.resume).toHaveBeenCalledOnce();
     expect(service.currentState).toBe("ready");
   });
+  it("starts the first music voice during the audio gate gesture", async () => {
+    const context = new FakeAudioContext();
+    const elements: FakeMediaElement[] = [];
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory(elements),
+    });
+
+    const unlocking = service.startAudio();
+
+    expect(elements).toHaveLength(1);
+    expect(elements[0]?.paused).toBe(false);
+    await expect(unlocking).resolves.toBe(true);
+    expect(service.playlist).toEqual({ current: "pastoral-loop", next: "idle-fantasy" });
+  });
+  it("starts music during the gate when the context is already running", async () => {
+    const context = new FakeAudioContext();
+    context.state = "running";
+    const elements: FakeMediaElement[] = [];
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory(elements),
+    });
+
+    const unlocking = service.startAudio();
+
+    expect(elements).toHaveLength(1);
+    expect(elements[0]?.paused).toBe(false);
+    await expect(unlocking).resolves.toBe(true);
+  });
+  it("keeps a running-context subscriber stop from restarting music", async () => {
+    const context = new FakeAudioContext();
+    context.state = "running";
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory([]),
+    });
+    let firstNotification = true;
+    service.subscribeState(() => {
+      if (firstNotification) {
+        firstNotification = false;
+        service.stopMusic();
+      }
+    });
+
+    await expect(service.startAudio()).resolves.toBe(true);
+
+    expect(service.musicVoiceCount).toBe(0);
+    expect(service.playlist).toBeNull();
+  });
+  it("retries music startup inside a later gate gesture after resume failure", async () => {
+    const context = new FakeAudioContext();
+    context.resume.mockRejectedValueOnce(new Error("autoplay blocked"));
+    context.resume.mockResolvedValueOnce(undefined);
+    const elements: FakeMediaElement[] = [];
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory(elements),
+    });
+
+    await expect(service.startAudio()).resolves.toBe(false);
+    await expect(service.startAudio()).resolves.toBe(true);
+
+    expect(elements).toHaveLength(2);
+    expect(elements[1]?.paused).toBe(false);
+    expect(service.playlist).toEqual({ current: "pastoral-loop", next: "idle-fantasy" });
+  });
+  it("does not restart after a startup subscriber stops the gesture-started playlist", async () => {
+    const context = new FakeAudioContext();
+    const elements: FakeMediaElement[] = [];
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory(elements),
+    });
+    let firstNotification = true;
+    service.subscribeState(() => {
+      if (firstNotification) {
+        firstNotification = false;
+        service.stopMusic();
+      }
+    });
+
+    await expect(service.startAudio()).resolves.toBe(true);
+
+    expect(service.musicVoiceCount).toBe(0);
+    expect(service.playlist).toBeNull();
+  });
+
+  it("does not revive a disposed service after resume settles", async () => {
+    const context = new FakeAudioContext();
+    const elements: FakeMediaElement[] = [];
+    const service = new AudioService({
+      ...makeDeps(),
+      context: context as unknown as AudioContext,
+      mediaElementFactory: elementFactory(elements),
+    });
+    service.subscribeState(() => service.dispose());
+
+    await expect(service.startAudio()).resolves.toBe(false);
+
+    expect(service.currentState).toBe("disposed");
+    expect(service.playlist).toBeNull();
+  });
   it("notifies settings subscribers when the audio state changes", async () => {
     stubFetch();
     const context = new FakeAudioContext();
@@ -368,6 +476,39 @@ describe("audio service", () => {
     elements[2]?.dispatch("ended");
     expect(service.currentTrackIndex).toBe(0);
     expect(elements).toHaveLength(4);
+  });
+  it("notifies playlist subscribers when the track advances", async () => {
+    stubFetch();
+    const elements: FakeMediaElement[] = [];
+    const { service } = await unlockedService({
+      mediaElementFactory: elementFactory(elements),
+    });
+    const states: string[] = [];
+    service.subscribeState((state) => states.push(state));
+    service.startMusic();
+
+    elements[0]?.dispatch("ended");
+
+    expect(service.playlist).toEqual({ current: "idle-fantasy", next: "idle-dawn" });
+    expect(states).toEqual(["ready", "ready"]);
+  });
+  it("does not respawn music when a playlist listener stops playback", async () => {
+    stubFetch();
+    const elements: FakeMediaElement[] = [];
+    const { service } = await unlockedService({
+      mediaElementFactory: elementFactory(elements),
+    });
+    let notifications = 0;
+    service.subscribeState(() => {
+      notifications += 1;
+      if (notifications === 2) service.stopMusic();
+    });
+    service.startMusic();
+
+    elements[0]?.dispatch("ended");
+
+    expect(service.musicVoiceCount).toBe(0);
+    expect(notifications).toBe(2);
   });
   it("starts from a random track when no saved index exists", async () => {
     const elements: FakeMediaElement[] = [];
