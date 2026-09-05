@@ -4,8 +4,8 @@ id: ABI-053
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 22
-status: In Progress
+revision: 27
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In Progress
-- Revision: 22
-- Last update: All required gates pass: implementation, review, QA, verification, manager closure; commit and Pages receipts recorded.
+- Status: Done
+- Revision: 27
+- Last update: ABI-053 closed: four boss identities restored/added, Catbug asset replaced and tuned, gates and Pages proof pass.
 
 ## Execution plan
 
@@ -386,3 +386,88 @@ workspaceProject: autobattleidle
   - CI 33937576972 success
   - Pages 33937576999 success
   - Public desktop/narrow routes verified
+
+### evt-16520bc8-eaa4-4052-8078-5ef9508276da
+
+- Timestamp: 2026-09-05T02:02:01.065Z
+- Actor: Manager
+- Operation: progress.append
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: EVENT closed — Manager — closure evidence persisted; final Planner-only commit 4862d2f pushed and its CI/Pages runs passed; public Catbug route reloaded successfully.
+- Idempotency key: abi053-closed-receipt-20260905
+- Evidence:
+  - Commit 4862d2f pushed origin/main
+  - CI run 33937789038 success
+  - Pages run 33937789010 success
+  - Public Catbug route rendered identity boss-catbug/body-0/cinder with live52, meshes29, textures3 and scrollWidth1440
+
+### evt-d4395a8f-d2b7-4a96-932f-330e84826706
+
+- Timestamp: 2026-09-05T02:02:13.971Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Move ABI-053 to review after implementation and all local/deployed evidence pass.
+- Idempotency key: abi053-advance-review-20260905
+- Request fingerprint: 59318c16d23b65481b2e55a11daea59d809e44101a3880fab0eaaf5496589d44
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - Progress revision 23 closed event
+  - Independent review and QA pass
+  - CI and Pages success
+
+### evt-e6eb47f5-e31a-43a2-8933-8215f7205b09
+
+- Timestamp: 2026-09-05T02:02:22.230Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Move ABI-053 to QA with independent review evidence and successful quality/deployment receipts.
+- Idempotency key: abi053-advance-qa-20260905
+- Request fingerprint: 5d88dc538bc16ccba4b1d627a66fe463db857f22a285cb0073989c4b3121a035
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - independent-review pass
+  - independent-qa pass
+  - CI 33937789038 success
+  - Pages 33937789010 success
+
+### evt-2c699b8f-c3da-477f-92ed-f25c0e6b3a3c
+
+- Timestamp: 2026-09-05T02:02:28.056Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: QA handoff complete; all required gates and public deployment evidence are ready for manager closure.
+- Idempotency key: abi053-advance-manager-20260905
+- Request fingerprint: b3182bb0885af175248619787857edda1fda8d965b3a0f7703f0f6acc6e8db87
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - All five required gates pass
+  - CI and Pages runs success
+  - Public desktop/narrow routes loaded imported assets
+
+### evt-b19fe9f2-7e37-4957-9e9c-c798a26ed9c1
+
+- Timestamp: 2026-09-05T02:02:34.211Z
+- Actor: Manager
+- Operation: task.advance
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: ABI-053 closed: four boss identities restored/added, Catbug asset replaced and tuned, gates and Pages proof pass.
+- Idempotency key: abi053-close-final-20260905
+- Request fingerprint: b38a5f5da6c5b6eca44621f1ccaf0f4d408ce6698e01584623762ee5fab917af
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - Progress revision 26
+  - CI 33937789038 success
+  - Pages 33937789010 success
+  - Public Catbug/Evil Catbug routes verified at desktop and 390px
