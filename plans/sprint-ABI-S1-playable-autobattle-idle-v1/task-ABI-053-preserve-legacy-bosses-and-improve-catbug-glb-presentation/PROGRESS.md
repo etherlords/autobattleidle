@@ -4,8 +4,8 @@ id: ABI-053
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 27
-status: Done
+revision: 63
+status: In QA
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: Done
-- Revision: 27
-- Last update: ABI-053 closed: four boss identities restored/added, Catbug asset replaced and tuned, gates and Pages proof pass.
+- Status: In QA
+- Revision: 63
+- Last update: Review handoff confirmed; independent QA pass is recorded, while deployment verification remains blocked/not-run.
 
 ## Execution plan
 
@@ -33,6 +33,11 @@ workspaceProject: autobattleidle
 - [x] catbug-asset-replacement: Validate and integrate improved supplied Catbug GLB material
 - [x] boss-visual-proof: Verify lab labels lighting overlays lifecycle and four-family framing
 - [x] boss-gates: Run checks independent review QA and deployed proof
+- [x] repair-glb-fallback: Owner boss-five-green-recovery: preserve same-family GLB rejection fallback or explicit hidden/error state; prove Colossus/Hydra labels never substitute
+- [x] repair-cadence-context: Owner boss-five-green-recovery: propagate custom bossInterval cadence and ordinal through balance/family selection; prove simulator context
+- [x] repair-level-zero-identity: Owner boss-five-green-recovery: normalize level=0 safely before identity selection; prove no invalid family or crash
+- [x] repair-behavior-regressions: Owner boss-five-green-recovery: add focused behavioral regressions for fallback cadence/ordinal context and level=0 normalization
+- [x] repair-independent-gates: Owner boss-five-green-recovery with independent reviewer/QA: run focused checks, review, QA, and verification before manager closure
 
 ## Events
 
@@ -471,3 +476,623 @@ workspaceProject: autobattleidle
   - CI 33937789038 success
   - Pages 33937789010 success
   - Public Catbug/Evil Catbug routes verified at desktop and 390px
+
+### evt-f47018eb-d11b-4c3c-bfa4-d5a737cffee6
+
+- Timestamp: 2026-09-05T03:39:20.067Z
+- Actor: boss-five-green-recovery
+- Operation: progress.append
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: EVENT review-fail — independent review found two blockers; repair owner boss-five-green-recovery: GLB rejection currently exposes renamed Colossus/Hydra fallback instead of a true same-family fallback or hidden/error state, and custom bossInterval simulator paths use hard-coded default cadence/ordinal for boss balance/family selection; level=0 selection also needs safe normalization.
+- Idempotency key: abi053-review-fail-goose-recovery-20260905
+- Evidence:
+  - src/game/enemy-visual/gltf-boss-body.ts
+  - src/domain/combat/family-identity.ts
+  - src/domain/combat/progression.ts
+  - src/domain/combat.test.ts
+
+### evt-4cbaeb90-6a1e-4c53-8c91-6b208e5ca7c8
+
+- Timestamp: 2026-09-05T22:32:32.927Z
+- Actor: abi053-blocker-repair
+- Operation: progress.append
+- Prior revision: 28
+- Resulting revision: 29
+- Summary: EVENT returned — reconciled existing canonical review-fail at rev28; implementation owner boss-five-green-recovery retains three blockers: same-family GLB rejection fallback or explicit hidden/error state, custom bossInterval cadence/ordinal propagation into boss balance/family selection, and safe level=0 identity normalization.
+- Idempotency key: abi053-review-fail-reconcile-20260906
+- Evidence:
+  - PROGRESS.md rev28 Current state records independent review-fail and repair owner boss-five-green-recovery
+  - REVIEW.md is pending and does not supersede the canonical PROGRESS.md finding
+
+### evt-e26a5114-77af-43b5-8097-b4f9cf4dfe00
+
+- Timestamp: 2026-09-05T22:32:40.474Z
+- Actor: abi053-blocker-repair
+- Operation: task.advance
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Reopen stale Done closure for canonical review-fail repairs; return implementation to owner boss-five-green-recovery before new gates.
+- Idempotency key: abi053-reopen-review-fail-20260906
+- Request fingerprint: 7875a2b76a2b99513a1ad9a314b334570fd26bcd04ae34dc382130cf02b99317
+- From status: Done
+- To status: Ready
+- Evidence:
+  - PROGRESS.md revision 29 reconciles the existing review-fail and names repair owner boss-five-green-recovery
+  - Required repairs are same-family GLB rejection handling, custom bossInterval cadence/ordinal propagation, and level=0 normalization
+
+### evt-b5fdc8af-7e9e-4dcc-90b7-598049cc1a51
+
+- Timestamp: 2026-09-05T22:32:52.758Z
+- Actor: boss-five-green-recovery
+- Operation: claim.acquire
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Claimed task lease: Repair canonical review-fail blockers and preserve owner continuity
+- Idempotency key: abi053-repair-owner-claim-20260906
+- Request fingerprint: a28fed16e94cd232d494d9a62dbb0392d34f087d51623d2548e9c769fc533cca
+- Agent ID: boss-five-green-recovery
+- Session ID: boss-five-green-recovery-abi053-repair-20260906
+- Intent: Repair canonical review-fail blockers and preserve owner continuity
+- Branch: main
+- Expires at: 2026-09-05T23:32:52.758Z
+- Evidence:
+  - None
+
+### evt-574d8c2f-56fc-40a4-83c1-c3360cabd009
+
+- Timestamp: 2026-09-05T22:33:06.906Z
+- Actor: abi053-blocker-repair
+- Operation: execution_plan.update
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Initialize review-fail repair plan with the GLB fallback blocker and its observable regression proof.
+- Idempotency key: abi053-plan-glb-repair-20260906
+- Request fingerprint: dd291ed46445b3721ed9cb4ed4d3beeb934fb0e2cddbd7e00a8384dc398560c8
+- Action: add
+- Step ID: repair-glb-fallback
+- Evidence:
+  - Canonical review-fail reconciled at PROGRESS revision 29
+  - Task reopened Done->Ready at task revision 7 / PROGRESS revision 30
+  - Lease acquired for boss-five-green-recovery at PROGRESS revision 31
+
+### evt-70a47713-d7f2-442b-bf81-481258e78c92
+
+- Timestamp: 2026-09-05T22:33:14.182Z
+- Actor: abi053-blocker-repair
+- Operation: execution_plan.update
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Add cadence/ordinal propagation repair with simulator balance and family-selection regression proof.
+- Idempotency key: abi053-plan-cadence-repair-20260906
+- Request fingerprint: 6478f14137080c687fe8ad046f20c9cf6aa85d37b0b6a85a901b31647013307c
+- Action: add
+- Step ID: repair-cadence-context
+- Evidence:
+  - Review-fail finding retained in PROGRESS revision 29
+  - Plan revision 32 contains repair-glb-fallback with explicit owner and proof target
+
+### evt-ea429833-f0b5-4e17-bff5-44412efb67ff
+
+- Timestamp: 2026-09-05T22:33:20.241Z
+- Actor: abi053-blocker-repair
+- Operation: execution_plan.update
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: Add level=0 identity normalization repair and boundary regression proof.
+- Idempotency key: abi053-plan-level-zero-20260906
+- Request fingerprint: 4d7807c094ce0a2ffde9800a4d1b5904f3cf881652e5a2b54529d6ce54be0921
+- Action: add
+- Step ID: repair-level-zero-identity
+- Evidence:
+  - Review-fail finding retained in PROGRESS revision 29
+  - Plan revision 33 contains GLB and cadence repair steps
+
+### evt-10006eec-fa96-4687-949b-7653a0b8b1b2
+
+- Timestamp: 2026-09-05T22:33:26.007Z
+- Actor: abi053-blocker-repair
+- Operation: execution_plan.update
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Add focused unit/regression proof step covering all three review-fail blockers without generated QA artifacts.
+- Idempotency key: abi053-plan-regressions-20260906
+- Request fingerprint: ee65906a313fdfae9cf5d7c77b3777ac64137c2b6b9ece4bfa6545321de7e63f
+- Action: add
+- Step ID: repair-behavior-regressions
+- Evidence:
+  - Plan revision 34 contains all three scoped repair blockers with owner boss-five-green-recovery
+
+### evt-5da27daa-ef50-41f6-b721-dcf5c161f165
+
+- Timestamp: 2026-09-05T22:33:38.081Z
+- Actor: abi053-blocker-repair
+- Operation: execution_plan.update
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Add fresh independent review/QA/verification proof after repairs; preserve failed-gate evidence and require new gate cycle.
+- Idempotency key: abi053-plan-gates-20260906
+- Request fingerprint: 6845097ffcb94b668a3d8e7f271d3db18365a6c4fcab2f0459f265d1b419f52b
+- Action: add
+- Step ID: repair-independent-gates
+- Evidence:
+  - Plan revision 35 includes focused behavioral regression proof and all blocker owners
+
+### evt-76478076-edfa-4328-8984-1bab6b16ed22
+
+- Timestamp: 2026-09-05T22:33:47.567Z
+- Actor: boss-five-green-recovery
+- Operation: task.advance
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: Begin narrow repair implementation under returned owner lease; preserve review-fail finding and require fresh self-check, independent review, QA, and verification gates.
+- Idempotency key: abi053-repair-inprogress-20260906
+- Request fingerprint: f1be5351822ab7a5e9054d81e66e544368dd0c27ff2df665e3c8b1fc85fa7f97
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - Managed repair plan initialized through PROGRESS revision 36 with owner/proof steps
+  - Lease acquired for boss-five-green-recovery at PROGRESS revision 31
+  - Three canonical blockers remain unchanged: GLB same-family fallback/error handling, bossInterval cadence/ordinal propagation, level=0 normalization
+
+### evt-34f4553a-8568-4749-bbc8-87c17159cb16
+
+- Timestamp: 2026-09-05T22:34:05.399Z
+- Actor: boss-five-green-recovery
+- Operation: execution_plan.update
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Preflight complete; activate GLB fallback repair under owner lease before source changes.
+- Idempotency key: abi053-step-glb-start-20260906
+- Request fingerprint: b96fbeddb21af2eeb7a20d0fca484aae52c591155d66ab2f80197199a26ff24d
+- Action: set_state
+- Step ID: repair-glb-fallback
+- State: in_progress
+- Evidence:
+  - ABI-053 is In Progress at task revision 8
+  - Repair plan revision 36 names owner boss-five-green-recovery and focused proof for all blockers
+  - Canonical review-fail remains preserved in PROGRESS
+
+### evt-7edcf073-f046-481f-aff4-a266b38f993a
+
+- Timestamp: 2026-09-05T22:34:15.656Z
+- Actor: boss-five-green-recovery
+- Operation: progress.append
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: EVENT preflight-ready — repair plan/owner/proof initialized; persistence classification: no schema change. Source work remains scoped to GLB same-family rejection handling, custom bossInterval cadence/ordinal context, and level=0 identity normalization; focused behavior regressions and fresh independent gates required.
+- Idempotency key: abi053-repair-preflight-ready-20260906
+- Evidence:
+  - Execution plan revision 38 has repair-glb-fallback in_progress plus cadence, level-zero, regressions, and independent-gates steps
+  - Task status In Progress at task revision 8
+  - Lease owner boss-five-green-recovery acquired at progress revision 31
+
+### evt-0786ff42-0ec7-4aa2-aa7b-7e630a49c857
+
+- Timestamp: 2026-09-05T22:36:39.534Z
+- Actor: boss-five-green-recovery
+- Operation: claim.release
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Released task claim: Recover stalled preflight lease before repair handoff.
+- Idempotency key: abi053-stalled-lease-release-20260906
+- Request fingerprint: 30d281b82b5a955293c907747244fd07e81ae305095a11ddf13fb47016d5961f
+- Agent ID: boss-five-green-recovery
+- Session ID: boss-five-green-recovery-abi053-repair-20260906
+- Intent: Recover stalled preflight lease before repair handoff.
+- Evidence:
+  - None
+
+### evt-52fbce19-4d51-40b5-8de3-15738c6fcb3c
+
+- Timestamp: 2026-09-05T22:36:50.418Z
+- Actor: abi053-repair-owner
+- Operation: claim.acquire
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Claimed task lease: Repair review-fail blockers: same-family GLB rejection fallback, custom bossInterval cadence/ordinal context, and level=0 identity normalization.
+- Idempotency key: abi053-repair-owner-acquire-20260906
+- Request fingerprint: 84cfb4f0c82e472a164edcc4c64ec7ab8081d33d132d1a54e5379d0a48b5a83c
+- Agent ID: abi053-repair-owner
+- Session ID: abi053-repair-owner-20260906
+- Intent: Repair review-fail blockers: same-family GLB rejection fallback, custom bossInterval cadence/ordinal context, and level=0 identity normalization.
+- Expires at: 2026-09-05T23:36:50.418Z
+- Evidence:
+  - None
+
+### evt-21cc3ac1-b8ba-4afb-a873-d7e5d68bfc44
+
+- Timestamp: 2026-09-05T23:04:23.912Z
+- Actor: abi053-repair-owner
+- Operation: claim.release
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Released task claim: Release prior owner lease after worker termination for recovery.
+- Idempotency key: abi053-repair-owner-release-20260906
+- Request fingerprint: cc6059c7dce19b0de7bc4a1893861fb0576ae276fc6bcbf6f37f5f292e1749b7
+- Agent ID: abi053-repair-owner
+- Session ID: abi053-repair-owner-20260906
+- Intent: Release prior owner lease after worker termination for recovery.
+- Evidence:
+  - None
+
+### evt-99b9c454-f2e1-419e-bb63-7b2d6182aaee
+
+- Timestamp: 2026-09-05T23:04:29.034Z
+- Actor: abi053-cadence-finish
+- Operation: claim.acquire
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Claimed task lease: Finish narrow repair: propagate bossInterval through defeat selection, repair identity partial edits, and add focused custom cadence and level-zero regressions.
+- Idempotency key: abi053-cadence-finish-acquire-20260906
+- Request fingerprint: 11b1787925c1699a657a931fedeb71b5e4bb32bfbecc35ca76d939e3bb322d38
+- Agent ID: abi053-cadence-finish
+- Session ID: abi053-cadence-finish-20260906
+- Intent: Finish narrow repair: propagate bossInterval through defeat selection, repair identity partial edits, and add focused custom cadence and level-zero regressions.
+- Expires at: 2026-09-06T00:04:29.034Z
+- Evidence:
+  - None
+
+### evt-6d3050a2-a94c-4489-90d5-c8439b5c1075
+
+- Timestamp: 2026-09-05T23:15:54.260Z
+- Actor: abi053-independent-review
+- Operation: gate.record
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Focused repair self-check passes the changed combat paths and relevant visual lifecycle checks; no project-wide check was rerun for this independent review scope.
+- Idempotency key: abi053-independent-review-self-check-20260906-v1
+- Request fingerprint: 5b66637090d7f971e598ef802e1a9985a7f1e77a25a5ecf4fbfbf634f4ba379e
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - src/domain/combat.test.ts:362-407
+  - src/domain/combat/family-identity.test.ts:95-102
+  - pnpm exec vitest run src/domain/combat.test.ts src/domain/combat/family-identity.test.ts (2 files, 52 tests passed)
+  - pnpm exec vitest run src/game/enemy-visual.test.ts (1 file, 43 tests passed)
+  - pnpm exec tsc -b --pretty false (passed)
+  - pnpm exec eslint src/domain/combat/attacks.ts src/domain/combat.test.ts src/domain/combat/family-identity.test.ts (passed)
+  - git diff --check -- ABI-053 repair files (passed)
+
+### evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+
+- Timestamp: 2026-09-05T23:16:14.022Z
+- Actor: abi053-reviewer-20260906
+- Operation: gate.record
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Independent review passes the current ABI-053 repair: GLB rejection keeps the family root hidden and marks error without exposing legacy fallback; custom bossInterval reaches defeat identity/reward selection; level 0 is normalized before family selection.
+- Idempotency key: abi053-independent-review-20260906-v2
+- Request fingerprint: a400c9198e455c0900f57af353dfab37a0a82189a5eaae563fd535df781931c0
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - src/game/enemy-visual/gltf-boss-body.ts:191-242
+  - src/domain/combat/attacks.ts:98-145
+  - src/domain/combat/family-identity.ts:86-139
+  - src/domain/combat.test.ts:362-407
+  - src/domain/combat/family-identity.test.ts:95-102
+  - pnpm exec vitest run src/domain/combat.test.ts src/domain/combat/family-identity.test.ts (2 files, 52 tests passed)
+  - pnpm exec vitest run src/game/enemy-visual.test.ts (1 file, 43 tests passed)
+  - pnpm exec tsc -b --pretty false (passed)
+  - pnpm exec eslint src/domain/combat/attacks.ts src/domain/combat.test.ts src/domain/combat/family-identity.test.ts (passed)
+  - git diff --check -- ABI-053 repair files (passed)
+
+### evt-d219313a-2ce9-4eb9-951a-151b59e7726d
+
+- Timestamp: 2026-09-05T23:24:13.533Z
+- Actor: abi053-acceptance-qa
+- Operation: gate.record
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Behavioral QA passes focused domain/enemy visual coverage, TypeScript, full Vitest, worker check, production build, and browser GLB routes; gate fails because pnpm check stops at prettier formatting for src/domain/combat/family-identity.test.ts. Deployment not rerun because code is uncommitted/unpushed.
+- Idempotency key: abi053-independent-qa-20260906
+- Request fingerprint: bc5a452cab5ef43b4fe6aee431d8a60f5b4009512214b1554e471256535019fc
+- Gate: independent-qa
+- Verdict: fail
+- Evidence:
+  - pnpm exec vitest run src/domain/combat.test.ts src/domain/combat/family-identity.test.ts src/game/enemy-visual.test.ts src/game/enemy-visual/spec.test.ts — 4 files, 102 tests passed
+  - pnpm exec tsc -b --pretty false — passed
+  - pnpm test — 33 files, 346 tests passed
+  - pnpm check:worker — passed
+  - pnpm build — passed; Vite production build completed (chunk-size warning only)
+  - pnpm check — FAIL at pnpm format:check: src/domain/combat/family-identity.test.ts requires formatting; lint passed before this stop
+  - Local browser desktop Catbug URL loaded identity boss-catbug, textures 4, meshes 16, zero reported page errors; narrow Evil Catbug URL loaded identity boss-evil-catbug, textures 4, scroll width 390, zero reported page errors
+  - Rejected Catbug GLB browser scenario intercepted /assets/catbug.glb with net::ERR_FAILED, pageErrors []; receipt showed renderer g/t 0/0 and screenshot showed only dark background (family root hidden); source rejection path sets gltfStatus=error and does not expose legacy fallback
+  - Focused regressions passed custom bossInterval family/reward path and level 0 normalization (family-identity.test.ts and combat.test.ts)
+
+### evt-86099d31-3cdd-4d75-8d3c-c53fcf0fbe2f
+
+- Timestamp: 2026-09-05T23:25:44.511Z
+- Actor: abi053-cadence-finish
+- Operation: claim.release
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Released task claim: Recover expired stale claim before formatter-only QA repair
+- Idempotency key: abi053-format-repair-release-stale-20260906
+- Request fingerprint: 2d160a8d4e13d950c48121a32ece4a1c8a2292ac2b0ab85289d28f5805eec25f
+- Agent ID: abi053-cadence-finish
+- Session ID: abi053-cadence-finish-20260906
+- Intent: Recover expired stale claim before formatter-only QA repair
+- Evidence:
+  - None
+
+### evt-0e91f71d-d566-4624-b997-452d8c95ff1c
+
+- Timestamp: 2026-09-05T23:25:49.408Z
+- Actor: abi053-format-repair
+- Operation: claim.acquire
+- Prior revision: 47
+- Resulting revision: 48
+- Summary: Claimed task lease: Repair formatter-only QA failure in family identity regression test
+- Idempotency key: abi053-format-repair-claim-20260906-final
+- Request fingerprint: e9bb3ca1e936330584fcb23f1c89fdeec220dec00fe01d8d8cb8c2aa8dd5f50e
+- Agent ID: abi053-format-repair
+- Session ID: abi053-format-repair-20260906
+- Intent: Repair formatter-only QA failure in family identity regression test
+- Expires at: 2026-09-05T23:40:49.408Z
+- Evidence:
+  - None
+
+### evt-e04082eb-a866-4636-8ccc-a512ccc49c89
+
+- Timestamp: 2026-09-05T23:27:56.546Z
+- Actor: abi053-format-repair
+- Operation: progress.append
+- Prior revision: 48
+- Resulting revision: 49
+- Summary: EVENT checkpoint — formatter-only repair applied to family-identity.test.ts; format check, focused regression, and full pnpm check pass.
+- Idempotency key: abi053-format-repair-checkpoint-20260906
+- Evidence:
+  - src/domain/combat/family-identity.test.ts
+  - pnpm format:check
+  - pnpm exec vitest run src/domain/combat/family-identity.test.ts (3 passed)
+  - pnpm check (33 files, 346 tests, worker typecheck, production build pass)
+
+### evt-29c441bd-cf22-454e-9068-5287e6a21980
+
+- Timestamp: 2026-09-05T23:28:03.313Z
+- Actor: abi053-format-repair
+- Operation: claim.release
+- Prior revision: 49
+- Resulting revision: 50
+- Summary: Released task claim: Release lease after formatter repair and validation checkpoint
+- Idempotency key: abi053-format-repair-release-20260906
+- Request fingerprint: 116640151cb709e0be6239965366dd08a2f9979aa01a7f1ca28e7e4c7db28e3b
+- Agent ID: abi053-format-repair
+- Session ID: abi053-format-repair-20260906
+- Intent: Release lease after formatter repair and validation checkpoint
+- Evidence:
+  - None
+
+### evt-53134c11-42db-43cc-b24c-7febe26c787e
+
+- Timestamp: 2026-09-05T23:31:04.656Z
+- Actor: abi053-qa-recheck
+- Operation: gate.record
+- Prior revision: 50
+- Resulting revision: 51
+- Summary: Independent QA passed after formatter-only repair: focused boss behavior tests, full pnpm check, and local browser manual-attack smoke all passed; deployment intentionally not rerun for uncommitted changes.
+- Idempotency key: abi053-qa-recheck-independent-qa-20260906-pass
+- Request fingerprint: 85c9decf1c49556eaa88eb3837b565969c60dc8173e9471c219ff6da6bba2066
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - pnpm exec vitest run src/domain/combat.test.ts src/domain/combat/family-identity.test.ts — 2 files, 52 tests passed.
+  - pnpm check — eslint passed; prettier check passed; full Vitest 33 files/346 tests passed; worker tsc passed; client tsc and Vite production build passed (97 modules).
+  - Browser smoke at http://127.0.0.1:5173/ viewport 1280x900: cleared localStorage and reloaded; initial Magma Brute level 1 normal at 10/10 HP and 0 coins; dispatched primary pointerdown/pointerup on canvas; resulting HUD showed 9/10 HP, Hit: 1 damage, (manual), 0 coins; no observed console error.
+  - Deployment was not rerun because changes remain uncommitted, per QA scope.
+
+### evt-6838d2ad-c665-4c40-8ff9-15a17224b67d
+
+- Timestamp: 2026-09-05T23:32:51.543Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 51
+- Resulting revision: 52
+- Summary: GLB rejection now preserves the same-family root in hidden/error state without exposing a legacy Colossus/Hydra substitute.
+- Idempotency key: abi053-close-plan-glb-complete-20260906
+- Request fingerprint: 14dad8952de3919991fef27efcc3ec1ed25611a321a315e4b51601fb19b45f92
+- Action: set_state
+- Step ID: repair-glb-fallback
+- State: complete
+- Evidence:
+  - src/game/enemy-visual/gltf-boss-body.ts:191-242
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+
+### evt-e9aa44e4-cb68-4d16-a429-532b0645d914
+
+- Timestamp: 2026-09-05T23:32:59.439Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 52
+- Resulting revision: 53
+- Summary: Activate cadence/ordinal propagation proof step after GLB fallback repair completion.
+- Idempotency key: abi053-close-plan-cadence-start-20260906
+- Request fingerprint: f1dfcecf303f775656e2b6c562fc0eb9cf855284797076b4274867a239f1c7f6
+- Action: set_state
+- Step ID: repair-cadence-context
+- State: in_progress
+- Evidence:
+  - repair-glb-fallback complete at progress revision 52
+
+### evt-7b6e719c-6105-4f00-8914-74197f2de95a
+
+- Timestamp: 2026-09-05T23:33:06.424Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 53
+- Resulting revision: 54
+- Summary: Custom bossInterval and ordinal now reach defeat balance and family/reward selection with focused regression proof.
+- Idempotency key: abi053-close-plan-cadence-complete-20260906
+- Request fingerprint: cd9ec6075de66261d545b1017eb1028a9357671484155a57e5ca66938e5705db
+- Action: set_state
+- Step ID: repair-cadence-context
+- State: complete
+- Evidence:
+  - src/domain/combat/attacks.ts:98-145
+  - src/domain/combat/family-identity.ts:86-139
+  - src/domain/combat.test.ts:362-407
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+
+### evt-aaf6a2c5-9b4a-4cbf-972f-f670e716fe83
+
+- Timestamp: 2026-09-05T23:33:12.134Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 54
+- Resulting revision: 55
+- Summary: Activate level-zero normalization proof step after cadence context completion.
+- Idempotency key: abi053-close-plan-level-zero-start-20260906
+- Request fingerprint: a22b68535f3ef3d9bd9dc44c5ae6190884f39848765dceab6d95449a34339a32
+- Action: set_state
+- Step ID: repair-level-zero-identity
+- State: in_progress
+- Evidence:
+  - repair-cadence-context complete at progress revision 54
+
+### evt-758356be-8ad2-49d6-8fb4-90ae9b0ce0e4
+
+- Timestamp: 2026-09-05T23:33:19.050Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 55
+- Resulting revision: 56
+- Summary: Level zero is normalized before identity selection, avoiding invalid families and crashes for ordinary and boss encounters.
+- Idempotency key: abi053-close-plan-level-zero-complete-20260906
+- Request fingerprint: 4957cc0eb00cc85568919c009341be2a94823a398b03edb9f9c32f3f143258e4
+- Action: set_state
+- Step ID: repair-level-zero-identity
+- State: complete
+- Evidence:
+  - src/domain/combat/family-identity.ts:86-139
+  - src/domain/combat/family-identity.test.ts:95-102
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+
+### evt-e6cc24a8-827f-476f-8b79-482254bd8d4d
+
+- Timestamp: 2026-09-05T23:33:24.826Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 56
+- Resulting revision: 57
+- Summary: Activate focused behavioral regression proof step after repair boundaries complete.
+- Idempotency key: abi053-close-plan-regressions-start-20260906
+- Request fingerprint: 0a12a1a3e4c8d7fad4ec2c4119dc3a98bc3922ced5260faa35d377bfd5015b34
+- Action: set_state
+- Step ID: repair-behavior-regressions
+- State: in_progress
+- Evidence:
+  - repair-level-zero-identity complete at progress revision 56
+
+### evt-606d8f36-f26e-4d9a-bba0-0185c0541942
+
+- Timestamp: 2026-09-05T23:33:31.224Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 57
+- Resulting revision: 58
+- Summary: Focused regressions cover same-family GLB rejection handling, custom cadence/ordinal context, and level-zero identity normalization.
+- Idempotency key: abi053-close-plan-regressions-complete-20260906
+- Request fingerprint: 85dbf47116d96ff6932ab3f67de47c00ee52b5958e42210652bc807a51f7dd25
+- Action: set_state
+- Step ID: repair-behavior-regressions
+- State: complete
+- Evidence:
+  - src/domain/combat.test.ts:362-407
+  - src/domain/combat/family-identity.test.ts:95-102
+  - pnpm exec vitest run src/domain/combat.test.ts src/domain/combat/family-identity.test.ts — 52 tests passed
+  - pnpm check — full checks passed
+
+### evt-6b9990fe-1872-4004-8cc4-8b6bc7b1325a
+
+- Timestamp: 2026-09-05T23:33:37.708Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 58
+- Resulting revision: 59
+- Summary: Activate fresh independent gate and verification proof step after all repair and regression steps complete.
+- Idempotency key: abi053-close-plan-gates-start-20260906
+- Request fingerprint: 16beafcd027f91447aac6039a77ea9c078c6d7fa4117c36ee717be8bd33bd0cf
+- Action: set_state
+- Step ID: repair-independent-gates
+- State: in_progress
+- Evidence:
+  - repair-behavior-regressions complete at progress revision 58
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+
+### evt-375c22f2-9be9-49d6-a84a-2de28d2c0b12
+
+- Timestamp: 2026-09-05T23:33:46.613Z
+- Actor: abi053-closure-commit
+- Operation: gate.record
+- Prior revision: 59
+- Resulting revision: 60
+- Summary: Verification is blocked/not-run because deployment was intentionally not rerun while ABI-053 changes remain uncommitted and unpushed; local focused and full checks passed, but no deployed proof is claimed.
+- Idempotency key: abi053-verification-blocked-no-deploy-20260906
+- Request fingerprint: 406534c7acfacb755706eb18aa0aa716c6a89ed1ec8798c38c527b1046e1d214
+- Gate: verification
+- Verdict: blocked
+- Evidence:
+  - evt-53134c11-42db-43cc-b24c-7febe26c787e: independent QA pass explicitly records deployment not rerun for uncommitted changes
+  - pnpm check passed in evt-53134c11-42db-43cc-b24c-7febe26c787e
+  - No deployment or public Pages receipt exists for the current repair changes
+
+### evt-a7e8ad35-6e80-4939-a52c-f732473bb72b
+
+- Timestamp: 2026-09-05T23:33:54.478Z
+- Actor: abi053-closure-commit
+- Operation: execution_plan.update
+- Prior revision: 60
+- Resulting revision: 61
+- Summary: Fresh implementation/review/QA evidence is complete; verification remains explicitly blocked because deployment was not rerun for uncommitted changes.
+- Idempotency key: abi053-close-plan-gates-complete-blocked-20260906
+- Request fingerprint: 97d67ad5847ea95c5d1cb4a73ff71bd7cfffd54008115370d6a0409ba97f968f
+- Action: set_state
+- Step ID: repair-independent-gates
+- State: complete
+- Evidence:
+  - Implementation self-check pass evt-6d3050a2-a94c-4489-90d5-c8439b5c1075
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+  - Verification blocked evt-375c22f2-9be9-49d6-a84a-2de28d2c0b12
+
+### evt-0ed1348c-b511-40ab-8c8e-85806817722a
+
+- Timestamp: 2026-09-05T23:34:23.454Z
+- Actor: abi053-closure-commit
+- Operation: task.advance
+- Prior revision: 61
+- Resulting revision: 62
+- Summary: Repair implementation and focused regressions complete; independent review gate passed, with deployment verification separately blocked/not-run.
+- Idempotency key: abi053-close-advance-review-20260906
+- Request fingerprint: 679891084b72f7bce9df549f93a63716666d9190ebeb72878b347150d48f23df
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - All 10 managed execution-plan steps complete at progress revision 61
+  - Implementation self-check pass evt-6d3050a2-a94c-4489-90d5-c8439b5c1075
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Verification blocked evt-375c22f2-9be9-49d6-a84a-2de28d2c0b12
+
+### evt-f8535e4f-ed71-40ed-8ce3-8b3876445736
+
+- Timestamp: 2026-09-05T23:34:35.737Z
+- Actor: abi053-closure-commit
+- Operation: task.advance
+- Prior revision: 62
+- Resulting revision: 63
+- Summary: Review handoff confirmed; independent QA pass is recorded, while deployment verification remains blocked/not-run.
+- Idempotency key: abi053-close-advance-qa-20260906
+- Request fingerprint: 9bdf776a53772466c1d6356838b415e507ea65581ee549e45abbcccfdf6f007f
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - Exact Planner readback task revision 9, progress revision 62
+  - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
+  - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
+  - Verification blocked evt-375c22f2-9be9-49d6-a84a-2de28d2c0b12

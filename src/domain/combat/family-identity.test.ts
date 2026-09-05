@@ -50,7 +50,7 @@ describe("enemy family identity", () => {
       selectEnemyFamilyIdentity({ goldenBug: true, grade: "elite", level: 51, modifier: null }),
     ).toMatchObject({ family: "beetle", label: "Golden Bug", variant: 0 });
   });
-  it("preserves legacy boss order while threading custom cadence and normalizing zero", () => {
+  it("preserves legacy boss order while threading custom cadence", () => {
     expect(
       Array.from(
         { length: 5 },
@@ -68,9 +68,6 @@ describe("enemy family identity", () => {
       "boss-colossus",
       "boss-goose-hydra",
     ]);
-    expect(selectEnemyFamilyIdentity({ grade: "boss", level: 0, modifier: null }).family).toBe(
-      "boss-evil-catbug",
-    );
     expect(
       Array.from(
         { length: 10 },
@@ -94,5 +91,13 @@ describe("enemy family identity", () => {
       "boss-colossus",
       "boss-goose-hydra",
     ]);
+  });
+  it("normalizes level zero before selecting an ordinary or boss family", () => {
+    expect(selectEnemyFamilyIdentity({ grade: "normal", level: 0, modifier: null }).family).toBe(
+      selectEnemyFamilyIdentity({ grade: "normal", level: 1, modifier: null }).family,
+    );
+    expect(selectEnemyFamilyIdentity({ grade: "boss", level: 0, modifier: null }).family).toBe(
+      selectEnemyFamilyIdentity({ grade: "boss", level: 1, modifier: null }).family,
+    );
   });
 });

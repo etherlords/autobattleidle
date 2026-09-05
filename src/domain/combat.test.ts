@@ -10,6 +10,7 @@ import {
   automaticAttacksPerSecond,
   automaticInterval,
   BOSS_FAMILY_BALANCE,
+  ENEMY_AFFINITIES,
   bossEncounterForOrdinal,
   bossGapForOrdinal,
   COMBAT_BALANCE,
@@ -358,7 +359,54 @@ describe("endless combat progression", () => {
       spawnEnemy(interval * 4, 0, undefined, undefined, interval).reward,
     );
   });
-
+  it("uses the command boss interval when rewarding a defeated custom-cadence boss", () => {
+    let fixture: { readonly bossInterval: number; readonly encounter: number } | undefined;
+    outer: for (let bossInterval = 2; bossInterval <= 35; bossInterval += 1) {
+      for (let ordinal = 2; ordinal <= 12; ordinal += 1) {
+        const encounter = bossInterval * ordinal;
+        const customIdentity = selectEnemyFamilyIdentity({
+          bossInterval,
+          grade: "boss",
+          level: encounter,
+          modifier: null,
+        });
+        const defaultIdentity = selectEnemyFamilyIdentity({
+          grade: "boss",
+          level: encounter,
+          modifier: null,
+        });
+        if (customIdentity.affinity !== defaultIdentity.affinity) {
+          fixture = { bossInterval, encounter };
+          break outer;
+        }
+      }
+    }
+    if (fixture === undefined) throw new Error("Missing custom-cadence affinity fixture");
+    const enemy = spawnEnemy(fixture.encounter, 0, undefined, undefined, fixture.bossInterval);
+    const customIdentity = selectEnemyFamilyIdentity({
+      bossInterval: fixture.bossInterval,
+      grade: enemy.grade,
+      level: enemy.encounter,
+      modifier: enemy.modifier,
+    });
+    const result = attack(
+      {
+        ...createCombatState(),
+        enemy: { ...enemy, health: 1 },
+      },
+      {
+        atMs: 0,
+        bossInterval: fixture.bossInterval,
+        enemyId: enemy.id,
+        rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+        source: "manual",
+      },
+    );
+    expect(result.event).toMatchObject({
+      defeated: true,
+      reward: Math.round(enemy.reward * ENEMY_AFFINITIES[customIdentity.affinity].rewardMultiplier),
+    });
+  });
   it("keeps a scheduled late-run boss above the prior 30-hit save envelope", () => {
     const player = createCombatState({
       automaticSpeedLevel: 4_093,

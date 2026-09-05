@@ -96,6 +96,7 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       state: { ...state, enemy: { ...state.enemy, health }, nextAutomaticAttackAtMs },
     };
   const identity = selectEnemyFamilyIdentity({
+    ...(command.bossInterval === undefined ? {} : { bossInterval: command.bossInterval }),
     goldenBug: state.goldenBug !== null,
     grade: state.enemy.grade,
     level: state.enemy.encounter,

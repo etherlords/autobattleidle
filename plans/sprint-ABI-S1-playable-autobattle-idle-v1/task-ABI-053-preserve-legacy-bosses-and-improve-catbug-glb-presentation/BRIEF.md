@@ -4,8 +4,8 @@ id: ABI-053
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 6
-status: Done
+revision: 10
+status: In QA
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -28,7 +28,7 @@ Preserve legacy bosses and improve Catbug GLB presentation
 
 - Type: bug
 - Priority: high
-- Status: Done
+- Status: In QA
 - Parent: None
 
 ## Acceptance criteria
