@@ -45,6 +45,7 @@ describe("enemy visual specification selection", () => {
     const first = enemyVisualCompositionReceipt(input);
     expect(enemyVisualCompositionReceipt(input)).toEqual(first);
     expect(first.input).toBe(input);
+    expect(first.compositionMode).toBe("production");
     expect(first.seed).toBe(first.identity.seed);
     expect(first.body).toBe(first.family);
     expect(first.bodyVariant).toBe(first.variant);

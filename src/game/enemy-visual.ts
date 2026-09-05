@@ -5,7 +5,17 @@ import type { EnemyUnit } from "./units/enemy";
 import { UNIT_FACTORIES } from "./units/factories";
 
 export { enemyVisualSpec, stableEnemySeed } from "./enemy-visual/spec";
-export type { EnemyVisualInput, EnemyVisualSpec, ModifierCue } from "./enemy-visual/spec";
+export {
+  enemyVisualCompositionReceipt,
+  type EnemyVisualCompositionMode,
+  type EnemyVisualCompositionReceipt,
+} from "./enemy-visual/receipt";
+export type {
+  BodyFamily,
+  EnemyVisualInput,
+  EnemyVisualSpec,
+  ModifierCue,
+} from "./enemy-visual/spec";
 export { EnemyViewBuilder } from "./enemy-visual/builder";
 export { enemyBodyFactories } from "./enemy-visual/bodies";
 

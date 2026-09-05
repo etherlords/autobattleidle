@@ -4,12 +4,10 @@ import { enemyBodyFactories } from "../../enemy-visual/bodies";
 import { EnemyViewBuilder } from "../../enemy-visual/builder";
 import {
   decorateAffinityCue,
-  decorateBossGeometry,
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
   SemanticSurfaceDecorator,
-  type BossFamily,
 } from "../../enemy-visual/decorators";
 import {
   enemyVisualSpec,
@@ -17,11 +15,14 @@ import {
   type EnemyVisualInput,
   type EnemyVisualProfile,
 } from "../../enemy-visual/spec";
+import type { EnemyVisualCompositionMode } from "../../enemy-visual/receipt";
 import type { EnemyVisualComponent } from "../../enemy-visual/components";
 import type { UnitController } from "../core";
 import type { EnemyUnitModel } from "./model";
 import { EnemyUnit } from "./unit";
 import type { EnemyUnitView, EnemyViewComposition } from "./view";
+
+export type { EnemyVisualCompositionMode } from "../../enemy-visual/receipt";
 
 const fitCue = (cue: EnemyVisualComponent, profile: EnemyVisualProfile): EnemyVisualComponent => {
   const scale = profileCueScale(profile);
@@ -32,8 +33,6 @@ const fitCue = (cue: EnemyVisualComponent, profile: EnemyVisualProfile): EnemyVi
   );
   return cue;
 };
-
-export type EnemyVisualCompositionMode = "production" | "legacy/no-overlay";
 
 export class EnemyUnitBuilder {
   private model: EnemyUnitModel | undefined;
@@ -52,18 +51,16 @@ export class EnemyUnitBuilder {
         window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true);
     const builder = new EnemyViewBuilder();
     builder.add(enemyBodyFactories[spec.body](spec.profile, reducedMotion));
-    if (mode === "production")
-      new SemanticSurfaceDecorator(spec.body, spec.profile.palette, spec.profile).attach(builder);
+    if (mode !== "legacy/no-overlay")
+      new SemanticSurfaceDecorator(
+        spec.body,
+        spec.profile.palette,
+        spec.profile,
+        mode === "production" ? "all" : mode,
+      ).attach(builder);
     builder.add(fitCue(decorateGrade(spec.gradeCue), spec.profile));
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
     builder.add(decorateAffinityCue(spec.affinity.cue, spec.affinity.palette, reducedMotion));
-    if (mode === "production" && spec.body.startsWith("boss-"))
-      decorateBossGeometry(
-        spec.body as BossFamily,
-        reducedMotion,
-        spec.seed,
-        snapshot.level,
-      ).forEach((geometry) => builder.add(geometry));
     spec.decorations.forEach((decoration, index) =>
       builder.add(fitCue(decorateSeededDecoration(decoration, index, spec.profile), spec.profile)),
     );

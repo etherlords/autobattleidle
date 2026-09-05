@@ -4,16 +4,26 @@ import {
   type EnemyFamilyIdentity,
   type EnemyGrade,
 } from "../../domain/combat";
-import type { BodyFamily, EnemyVisualInput, EnemyVisualSpec, ModifierCue } from "./spec";
-import { enemyVisualSpec } from "./spec";
+import {
+  enemyVisualSpec,
+  type BodyFamily,
+  type EnemyVisualInput,
+  type EnemyVisualSpec,
+  type ModifierCue,
+} from "./spec";
+import type { SemanticSurfaceMode } from "./decorators/semantic-surface-decorator";
 import {
   bossGeometryProfileForSeed,
   bossGeometryProfilesForFamily,
   type BossGeometryProfile,
 } from "./decorators/boss-geometry-decorator";
 
+export type EnemyVisualCompositionMode =
+  "production" | "legacy/no-overlay" | Exclude<SemanticSurfaceMode, "none">;
+
 export type EnemyVisualCompositionReceipt = {
   readonly input: EnemyVisualInput;
+  readonly compositionMode: EnemyVisualCompositionMode;
   readonly seed: number;
   readonly identity: EnemyFamilyIdentity;
   readonly family: BodyFamily;
@@ -31,6 +41,7 @@ export type EnemyVisualCompositionReceipt = {
 /** Derives the compiler-checked visual identity and authored geometry assignment once. */
 export const enemyVisualCompositionReceipt = (
   input: EnemyVisualInput,
+  compositionMode: EnemyVisualCompositionMode = "production",
 ): EnemyVisualCompositionReceipt => {
   const spec = enemyVisualSpec(input);
   const identity = selectEnemyFamilyIdentity(input);
@@ -40,6 +51,7 @@ export const enemyVisualCompositionReceipt = (
     throw new RangeError("Boss visual geometry profile registry did not select a recipe");
   return {
     input,
+    compositionMode,
     seed: identity.seed,
     identity,
     family: identity.family,

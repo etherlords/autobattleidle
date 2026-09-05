@@ -23,5 +23,6 @@ export {
   SemanticSurfaceDecorator,
   semanticSurfaceCacheStats,
   semanticSurfaceTreatmentsForFamily,
+  type SemanticSurfaceMode,
   type SemanticSurfaceTreatment,
 } from "./decorators/semantic-surface-decorator";
