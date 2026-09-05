@@ -44,6 +44,7 @@ import {
   resourceSnapshot,
   type ResourceReceipt,
 } from "./resource-ledger";
+import { adjustLabZoom, labZoomDirectionForWheel, type LabZoomDirection } from "./zoom";
 
 type OverlayName = "axes" | "bounds" | "sockets";
 type CameraPreset = LabView;
@@ -94,24 +95,38 @@ class VisualLab {
   private current = parseLabCase(window.location.search);
   private overlayState = new Set<OverlayName>();
   private pointerX: number | undefined;
+  private disposed = false;
+  private animationFrame: number | undefined;
+  private readonly onResize = (): void => this.resize();
+  private readonly onPointerDown = (event: PointerEvent): void => {
+    this.pointerX = event.clientX;
+    this.renderer.domElement.setPointerCapture(event.pointerId);
+  };
+  private readonly onPointerMove = (event: PointerEvent): void => {
+    if (this.pointerX === undefined) return;
+    this.azimuth += (event.clientX - this.pointerX) * 0.01;
+    this.pointerX = event.clientX;
+  };
+  private readonly onPointerEnd = (): void => {
+    this.pointerX = undefined;
+  };
+  private readonly onWheel = (event: WheelEvent): void => {
+    const direction: LabZoomDirection | undefined = labZoomDirectionForWheel(event.deltaY);
+    if (direction === undefined) return;
+    event.preventDefault();
+    this.zoom = adjustLabZoom(this.zoom, direction);
+  };
 
   constructor(private readonly host: HTMLElement) {
     this.scene.background = new THREE.Color(BATTLEFIELD_CONFIG.backgroundColor);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.domElement.dataset.visualLab = "true";
     this.renderer.domElement.className = "visual-lab-canvas";
-    this.renderer.domElement.addEventListener("pointerdown", (event) => {
-      this.pointerX = event.clientX;
-      this.renderer.domElement.setPointerCapture(event.pointerId);
-    });
-    this.renderer.domElement.addEventListener("pointermove", (event) => {
-      if (this.pointerX === undefined) return;
-      this.azimuth += (event.clientX - this.pointerX) * 0.01;
-      this.pointerX = event.clientX;
-    });
-    this.renderer.domElement.addEventListener("pointerup", () => {
-      this.pointerX = undefined;
-    });
+    this.renderer.domElement.addEventListener("pointerdown", this.onPointerDown);
+    this.renderer.domElement.addEventListener("pointermove", this.onPointerMove);
+    this.renderer.domElement.addEventListener("pointerup", this.onPointerEnd);
+    this.renderer.domElement.addEventListener("pointercancel", this.onPointerEnd);
+    this.renderer.domElement.addEventListener("wheel", this.onWheel, { passive: false });
     this.correction.className = "visual-lab-correction";
     this.host.append(this.controls(), this.correction, this.renderer.domElement, this.receipt);
     this.scene.add(this.overlays, new THREE.HemisphereLight("#75c7ff", "#25120b", 1.5));
@@ -119,9 +134,9 @@ class VisualLab {
     light.position.set(2, 4, 3);
     this.scene.add(light);
     this.replace();
-    window.addEventListener("resize", () => this.resize());
+    window.addEventListener("resize", this.onResize);
     this.resize();
-    requestAnimationFrame(() => this.frame());
+    this.animationFrame = requestAnimationFrame(() => this.frame());
   }
 
   private controls(): HTMLElement {
@@ -398,10 +413,10 @@ class VisualLab {
       speed.textContent = `Speed ×${this.speed}`;
     });
     zoomIn.addEventListener("click", () => {
-      this.zoom = Math.max(0.45, this.zoom - 0.15);
+      this.zoom = adjustLabZoom(this.zoom, "in");
     });
     zoomOut.addEventListener("click", () => {
-      this.zoom = Math.min(2.5, this.zoom + 0.15);
+      this.zoom = adjustLabZoom(this.zoom, "out");
     });
     controls.append(
       family,
@@ -598,6 +613,7 @@ class VisualLab {
   }
 
   private frame(): void {
+    if (this.disposed) return;
     if (!this.paused) {
       this.fractionalFrames += this.speed;
       while (this.fractionalFrames >= 1) {
@@ -613,7 +629,25 @@ class VisualLab {
     );
     this.camera.lookAt(this.cameraFocus);
     this.renderer.render(this.scene, this.camera);
-    requestAnimationFrame(() => this.frame());
+    this.animationFrame = requestAnimationFrame(() => this.frame());
+  }
+
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    if (this.animationFrame !== undefined) cancelAnimationFrame(this.animationFrame);
+    window.removeEventListener("resize", this.onResize);
+    this.renderer.domElement.removeEventListener("pointerdown", this.onPointerDown);
+    this.renderer.domElement.removeEventListener("pointermove", this.onPointerMove);
+    this.renderer.domElement.removeEventListener("pointerup", this.onPointerEnd);
+    this.renderer.domElement.removeEventListener("pointercancel", this.onPointerEnd);
+    this.renderer.domElement.removeEventListener("wheel", this.onWheel);
+    this.clearEffects();
+    this.disposeUnit();
+    this.disposeOverlays();
+    this.scene.clear();
+    this.renderer.dispose();
+    this.host.replaceChildren();
   }
 
   private refreshReceipt(): void {

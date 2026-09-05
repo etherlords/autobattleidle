@@ -40,7 +40,7 @@ const BOSS_ASSETS: Readonly<Record<GltfBossFamily, BossAssetProfile>> = {
     combatY: 0.88,
     combatZ: 0.92,
     metalness: 0,
-    roughness: 0.82,
+    roughness: 1,
   },
   "boss-evil-catbug": {
     url: "./assets/evilcatbug.glb",
