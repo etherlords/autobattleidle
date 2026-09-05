@@ -6,6 +6,7 @@ import {
   armorPenetrationForPolicy,
   attack,
   automaticAttackPacketMultipliers,
+  automaticPacketSchedule,
   automaticAttacksPerSecond,
   automaticInterval,
   BOSS_FAMILY_BALANCE,
@@ -428,7 +429,25 @@ describe("endless combat progression", () => {
     expect(combined?.timeToKillMs).toBeLessThan(manual?.timeToKillMs ?? Infinity);
   }, 20_000);
 
-  it("keeps Golden Bug above automatic-only damage while 10Hz manual input preserves the automatic cooldown", () => {
+  it("keeps the simulator Golden Bug expiry at one fixed window across automatic packets", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 1_000,
+      damageLevel: 100,
+      damage: damageForLevel(100),
+    }).player;
+    const report = simulateProgression({
+      automaticEnabled: true,
+      eventJump: true,
+      initialPlayer: player,
+      manualIntervalMs: null,
+      startEncounter: 49,
+      horizonMs: COMBAT_BALANCE.goldenBugWindowMs + 2_000,
+    });
+    expect(report.goldenBugDelayMs).toBe(COMBAT_BALANCE.goldenBugWindowMs);
+    expect(report.state.goldenBug).toBeNull();
+  });
+
+  it("keeps Golden Bug HP unchanged at base APS while unlocked automatic attacks run and manual clicks kill it", () => {
     const player = createCombatState().player;
     let state: CombatState = {
       ...createCombatState(player, 0, true),
@@ -436,24 +455,77 @@ describe("endless combat progression", () => {
       goldenBug: { id: 50, resumeEncounter: 51 },
       nextAutomaticAttackAtMs: 1_000,
     };
-    for (let atMs = 1_000; atMs <= 10_000; atMs += 1_000)
-      state = attack(state, {
+    const initialHealth = state.enemy.health;
+    let atMs = 1_000;
+    for (let index = 0; index < 10; index += 1) {
+      const result = attack(state, {
         atMs,
         enemyId: state.enemy.id,
         rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
         source: "automatic",
-      }).state;
-    expect(state.enemy.health).toBeGreaterThan(0);
+      });
+      expect(result.event).toMatchObject({
+        type: "hit",
+        damage: 0,
+        defeated: false,
+        reward: 0,
+      });
+      state = result.state;
+      atMs = state.nextAutomaticAttackAtMs;
+    }
+    expect(state.enemy.health).toBe(initialHealth);
     const beforeCooldown = state.nextAutomaticAttackAtMs;
-    for (let atMs = 0; atMs < 10_000 && state.goldenBug !== null; atMs += 100)
-      state = attack(state, {
+    let manualReward = 0;
+    for (let atMs = 0; atMs < 10_000 && state.goldenBug !== null; atMs += 100) {
+      const result = attack(state, {
         atMs,
         enemyId: state.enemy.id,
         rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
         source: "manual",
-      }).state;
+      });
+      if (result.event.type === "hit" && result.event.defeated) manualReward = result.event.reward;
+      state = result.state;
+    }
     expect(state.goldenBug).toBeNull();
+    expect(manualReward).toBe(spawnEnemy(51, 0).reward * COMBAT_BALANCE.goldenBugRewardFactor);
+    expect(state.goldenBugDefeats).toBe(1);
     expect(state.nextAutomaticAttackAtMs).toBe(beforeCooldown);
+  });
+
+  it("keeps Golden Bug HP unchanged across 4x APS automatic packets", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 1_000,
+      damageLevel: 100,
+      damage: damageForLevel(100),
+    }).player;
+    let state: CombatState = {
+      ...createCombatState(player, 0, true),
+      enemy: spawnGoldenBug(51, player),
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 0,
+    };
+    const initialHealth = state.enemy.health;
+    const schedule = automaticPacketSchedule(state, 0, 4);
+    expect(schedule.packets.length).toBeGreaterThan(1);
+    for (const packet of schedule.packets) {
+      const result = attack(state, {
+        atMs: 0,
+        automaticBatch: packet.automaticBatch,
+        damageMultiplier: packet.damageMultiplier,
+        enemyId: state.enemy.id,
+        rolls: { critical: 1, doubleReward: 1, nextEliteModifier: 0 },
+        source: "automatic",
+      });
+      expect(result.event).toMatchObject({
+        type: "hit",
+        damage: 0,
+        defeated: false,
+        reward: 0,
+      });
+      state = result.state;
+    }
+    expect(state.enemy.health).toBe(initialHealth);
+    expect(state.goldenBug).toEqual({ id: 50, resumeEncounter: 51 });
   });
 
   it("keeps high-APS Golden Bug health below one-for-one automatic scaling", () => {
@@ -1143,7 +1215,7 @@ describe("endless combat progression", () => {
     };
     expect(report.highApsGoldenBug.automaticOnly.packets).toBeGreaterThanOrEqual(100);
     expect(report.highApsGoldenBug.automaticOnly.defeatsGoldenBug).toBe(false);
-    expect(report.highApsGoldenBug.manualPlusAutomatic.manualClicks).toBeGreaterThan(0);
+    expect(report.highApsGoldenBug.manualPlusAutomatic.manualClicks).toBe(99);
     expect(report.highApsGoldenBug.manualPlusAutomatic.manualClicks).toBeLessThanOrEqual(100);
     expect(report.highApsGoldenBug.manualPlusAutomatic.defeatsGoldenBug).toBe(true);
   }, 30_000);

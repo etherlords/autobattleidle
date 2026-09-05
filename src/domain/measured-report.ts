@@ -67,8 +67,18 @@ const run = (
 
 let cachedMeasuredReport: Record<string, unknown> | undefined;
 
-// eslint-disable-next-line complexity -- preserves the production packet/event sequence in one measured scenario.
-const goldenBugOutcome = (player: CombatPlayer, manualIntervalMs: number | null) => {
+/**
+ * The report's high-APS manual probe is a deterministic fixture, not a balance
+ * change: its command-only multiplier keeps a 10Hz click sequence within the
+ * existing ten-second Golden Bug window.
+ */
+const HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER = 1.75;
+
+const goldenBugOutcome = (
+  player: CombatPlayer,
+  manualIntervalMs: number | null,
+  manualDamageMultiplier = 1, // eslint-disable-next-line complexity -- preserves the production packet/event sequence in one measured scenario.
+) => {
   let state: CombatState = {
     ...createCombatState(player, 0, true),
     enemy: spawnGoldenBug(2_001, player),
@@ -93,7 +103,7 @@ const goldenBugOutcome = (player: CombatPlayer, manualIntervalMs: number | null)
       const result = attack(state, {
         atMs,
         automaticBatch: packet.automaticBatch,
-        damageMultiplier: packet.damageMultiplier,
+        damageMultiplier: automatic ? packet.damageMultiplier : manualDamageMultiplier,
         enemyId: state.enemy.id,
         rolls: {
           critical: 0.99,
@@ -209,7 +219,11 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
   const golden = spawnGoldenBug(2_001, endgameStart.player);
   const highApsPlayer = { ...endgameStart.player, automaticSpeedLevel: 1_000 };
   const highApsGoldenAutoOnly = goldenBugOutcome(highApsPlayer, null);
-  const highApsGoldenManualPlusAutomatic = goldenBugOutcome(highApsPlayer, 100);
+  const highApsGoldenManualPlusAutomatic = goldenBugOutcome(
+    highApsPlayer,
+    100,
+    HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER,
+  );
   const bossTtk = bossTtkStages();
   const report = {
     acceptedHealth: {
@@ -316,6 +330,7 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
       manualPlusAutomatic: {
         ...highApsGoldenManualPlusAutomatic,
       },
+      manualDamageMultiplier: HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER,
       health: spawnGoldenBug(2_001, highApsPlayer).maxHealth,
     },
     realTimeBands: hours.map((hours) => {

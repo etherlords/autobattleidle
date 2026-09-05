@@ -1,6 +1,7 @@
 import {
   attack,
   automaticPacketSchedule,
+  COMBAT_BALANCE,
   bossCadenceBandForOrdinal,
   bossCadenceGapForEncounter,
   bossOrdinalForEncounter,
@@ -657,6 +658,8 @@ const runProgression = (
     let reward = 0;
     while (state.enemy.id === enemy.id) {
       const scheduledAutomaticAtMs = automaticEnabled ? state.nextAutomaticAttackAtMs : Infinity;
+      const nextAttackAtMs = Math.min(scheduledAutomaticAtMs, nextManualAttackAtMs);
+      if (goldenBugDeadlineMs !== undefined && goldenBugDeadlineMs <= nextAttackAtMs) break;
       const source = nextManualAttackAtMs <= scheduledAutomaticAtMs ? "manual" : "automatic";
       elapsedMs = source === "manual" ? nextManualAttackAtMs : scheduledAutomaticAtMs;
       if (horizonMs !== undefined && elapsedMs > horizonMs) {
@@ -726,7 +729,8 @@ const runProgression = (
         }
         state = result.state;
         noteOrdinarySnapshot();
-        if (state.goldenBug !== null) goldenBugDeadlineMs = elapsedMs + 10_000;
+        if (!attackedGoldenBug && state.goldenBug !== null)
+          goldenBugDeadlineMs = elapsedMs + COMBAT_BALANCE.goldenBugWindowMs;
       }
       if (schedule !== undefined) {
         state = { ...state, nextAutomaticAttackAtMs: schedule.nextAttackAtMs };

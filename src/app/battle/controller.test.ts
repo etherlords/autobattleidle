@@ -62,6 +62,58 @@ describe("BattleController", () => {
     expect(controller.currentUpdate().state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
     expect(controller.dispatch(battleCommands.frame(100))).toBe(false);
   });
+  it("keeps Golden Bug safe from four-packet automatic frames before a manual reward", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 1_000,
+      damageLevel: 100,
+      damage: 100,
+      doubleRewardChance: 0,
+    }).player;
+    const goldenEnemy = { ...spawnGoldenBug(51, player), health: 1 };
+    const initial = {
+      ...createCombatState(player, 0, true),
+      enemy: goldenEnemy,
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      nextAutomaticAttackAtMs: 0,
+    };
+    const controller = new BattleController({
+      createInitialState: () => initial,
+      initialNowMs: 0,
+      initialState: initial,
+      rolls,
+    });
+    const packets = automaticAttackPacketMultipliers(
+      automaticAttacksPerSecond(initial.player.automaticSpeedLevel),
+    );
+    const events: BattleControllerEvent[] = [];
+    controller.subscribe((event) => events.push(event));
+    expect(controller.dispatch(battleCommands.frame(0))).toBe(true);
+    const afterAutomatic = controller.currentUpdate();
+    expect(afterAutomatic.state).toMatchObject({
+      enemy: { health: 1 },
+      goldenBug: { id: 50, resumeEncounter: 51 },
+      goldenBugDefeats: 0,
+      coins: 0,
+    });
+    expect(afterAutomatic.state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
+    const automaticEvent = events.at(-1);
+    if (automaticEvent?.type !== "frame") throw new Error("Expected automatic frame event");
+    expect(automaticEvent.automaticOutcome).toMatchObject({
+      damage: 0,
+      defeated: false,
+      reward: 0,
+    });
+    expect(automaticEvent.automaticReceipt).toMatchObject({
+      count: packets.length,
+      units: packets.reduce((total, packet) => total + packet, 0),
+    });
+    expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
+    expect(controller.currentUpdate().state).toMatchObject({
+      goldenBug: null,
+      goldenBugDefeats: 1,
+      coins: spawnGoldenBug(51, player).reward,
+    });
+  });
   it("freezes automatic remainder without stopping manual attacks or Golden Bug expiry", () => {
     const player = createCombatState({
       criticalChance: 0,

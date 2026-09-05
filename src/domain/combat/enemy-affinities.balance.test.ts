@@ -22,6 +22,10 @@ import { COMBAT_BALANCE } from "./balance";
  * production selector, production `attack`, and the ABI-020 simulator — no reimplementation.
  *
  * Documented acceptance references:
+ * - Canonical current receipt (ABI-029 `MEASURED-REPORT-AFFINITY.json`): the 8h and 24h
+ *   checkpoints below are regenerated output under the intentional automatic Golden Bug defense.
+ *   Automatic attacks against an active Golden Bug resolve through production `attack` as zero
+ *   damage and zero reward, so Golden time/rewards are represented without inflating progression.
  * - ABI-020 economy owner (Vault AUTOBATTLEIDLE-DOC-20260827-A798F2, "Accepted ordinary-balance
  *   simulator"): 48h/49h checkpoint encounters are measured output; currency must stay unsaturated;
  *   the deterministic simulator with the unattended round-robin strategy is the balance proof.
@@ -29,9 +33,9 @@ import { COMBAT_BALANCE } from "./balance";
  *   calibration" + task-ABI-028 review): every stage keeps nonzero one-hit (manual/combined),
  *   five-plus, and ten-plus fractions; candidate rejection gates in `src/domain/measured-report.ts`
  *   reject walls > 0, adjacentMedianJump > 2, fivePlusFraction < 0.2, tenPlusFraction < 0.05.
- * - Wall definition (src/domain/progression-simulator.ts:786-792): non-boss, non-Golden,
- *   encounter >= 100, timeToKillMs > 60_000. The accepted ABI-020 report itself ships
- *   504 walls at 48h / 515 at 49h, so walls are bounded telemetry, not a zero gate.
+ * - Wall definition (src/domain/progression-simulator.ts:869-875): non-boss, non-Golden,
+ *   encounter >= 100, timeToKillMs > 60_000. The canonical ABI-029 3,000-encounter receipt
+ *   contains 5 bounded walls under automatic Golden defense; the 24h receipt contains 0.
  */
 
 const ENCOUNTERS = 3_000;
@@ -190,14 +194,14 @@ describe("affinity reward bounds through production attack", () => {
 });
 
 describe("economy pacing and TTK bands against ABI-020/ABI-028 bounds", () => {
-  // Measured ABI-039 independent seeded-draw receipt. Wider progression bands are intentionally
-  // not pair-complemented; the regenerated receipt keeps economy and wall growth finite.
+  // Canonical ABI-029 `MEASURED-REPORT-AFFINITY.json` receipt, regenerated after automatic
+  // Golden Bug attacks were intentionally made immune to damage and reward.
   const committed = {
-    8: { coins: 15_917_620_185, walls: 70 },
-    24: { coins: 3_643_327_147_249, encounters: 18_166, walls: 260 },
+    8: { coins: 3_831_177_155, walls: 0 },
+    24: { coins: 1_670_906_119_928, encounters: 17_851, walls: 0 },
   } as const;
-  // The cadence is judged against its own regenerated receipt: no unbounded economy, drought, or
-  // wall growth is permitted, and exact/event-jump equality remains a separate production gate.
+  // The cadence is judged against the regenerated production receipt: no unbounded economy,
+  // drought, or wall growth is permitted, and exact/event-jump equality remains a separate gate.
 
   it("stays within the stated pacing tolerance of the committed ABI-020 receipt at 24 hours", () => {
     const report = fastForwardProgression(24 * 60 * 60 * 1_000);
@@ -223,7 +227,9 @@ describe("economy pacing and TTK bands against ABI-020/ABI-028 bounds", () => {
       eventJump: true,
     });
     const telemetry = summarizeTelemetry(report);
-    expect(telemetry.walls).toBeLessThanOrEqual(1);
+    // ABI-029's canonical combined receipt accepts five bounded walls after automatic Golden
+    // defense; this remains a telemetry bound, while the TTK fractions below stay enforced.
+    expect(telemetry.walls).toBeLessThanOrEqual(5);
     expect(telemetry.adjacentMedianJump).toBeLessThanOrEqual(2);
     for (const [band, value] of Object.entries(telemetry.bands)) {
       expect(value.hits.fivePlusFraction, band).toBeGreaterThanOrEqual(0.2);

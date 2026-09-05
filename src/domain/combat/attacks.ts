@@ -76,12 +76,25 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
       (critical ? COMBAT_FORMULAS.criticalDamageMultiplier : 1) *
       (command.damageMultiplier ?? 1),
   );
-  const health = Math.max(0, state.enemy.health - damage);
   const nextAutomaticAttackAtMs = (() => {
     if (command.source !== "automatic") return state.nextAutomaticAttackAtMs;
     if (command.automaticBatch) return command.atMs;
     return command.atMs + automaticInterval(state.enemy, state.player);
   })();
+  if (command.source === "automatic" && state.goldenBug !== null)
+    return {
+      event: {
+        type: "hit",
+        critical: false,
+        damage: 0,
+        defeated: false,
+        reward: 0,
+        armorPreventedDamage: 0,
+        penetration,
+      },
+      state: { ...state, nextAutomaticAttackAtMs },
+    };
+  const health = Math.max(0, state.enemy.health - damage);
   if (health > 0)
     return {
       event: {
