@@ -1139,7 +1139,7 @@ requiredGates:
 - Verdict: pass
 - Evidence:
   - User reports full pnpm check green: 33 files and 336 tests
-  - ABI-039 first-ten cadence gaps [35,34,36,34,36,34,34,36,36] and 48-hour receipts verified
+  - ABI-039 first-ten cadence gaps [35,34,36,34,36,36,34,34,36,36] and 48-hour receipts verified
   - Historical V3/V4 reload, Goose variants, public desktop/390px routes, reduced motion, orbit, resize, replacement, and zero console errors verified
   - Scope is limited to ABI-036/ABI-039 implementation, tests, measurements, and authorized generated profiles/artifacts
 
