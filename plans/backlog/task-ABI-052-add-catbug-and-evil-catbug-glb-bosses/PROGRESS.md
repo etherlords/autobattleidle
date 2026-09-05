@@ -4,7 +4,7 @@ id: ABI-052
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 36
+revision: 37
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ workspaceProject: autobattleidle
 ## Current state
 
 - Status: Done
-- Revision: 36
-- Last update: Independent QA passes browser rendering, desktop/narrow framing, lifecycle, resource disposal, historical save reload, malformed recovery, and full project checks.
+- Revision: 37
+- Last update: EVENT closed — Main — Isolated ABI-052 implementation and Planner packet commits pushed to main; CI and Deploy GitHub Pages succeeded. Public deployment https://etherlords.github.io/autobattleidle/ returns the app shell and both deployed GLBs return HTTP 200 with valid glTF magic and exact byte sizes.
 
 ## Execution plan
 
@@ -611,3 +611,17 @@ workspaceProject: autobattleidle
 - Evidence:
   - agent://CatbugIndependentQA
   - artifact://2162
+
+### evt-38e5c840-5603-47df-970e-2edefa30597a
+
+- Timestamp: 2026-09-05T00:58:17.418Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: EVENT closed — Main — Isolated ABI-052 implementation and Planner packet commits pushed to main; CI and Deploy GitHub Pages succeeded. Public deployment https://etherlords.github.io/autobattleidle/ returns the app shell and both deployed GLBs return HTTP 200 with valid glTF magic and exact byte sizes.
+- Evidence:
+  - https://etherlords.github.io/autobattleidle/
+  - https://etherlords.github.io/autobattleidle/assets/catbug.glb
+  - https://etherlords.github.io/autobattleidle/assets/evilcatbug.glb
+  - artifact://2243
