@@ -215,7 +215,7 @@ export class BattleController {
   }
 
   private performPurchase(id: UpgradeId, quantity: number): boolean {
-    const requestedQuantity = Math.min(100, Math.max(1, Math.floor(quantity)));
+    const requestedQuantity = Math.min(1_000, Math.max(1, Math.floor(quantity)));
     let successfulPurchases = 0;
     let reason: string | null = null;
     for (let index = 0; index < requestedQuantity; index += 1) {

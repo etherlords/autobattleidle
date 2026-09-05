@@ -8,7 +8,9 @@ import {
   automaticAttackPacketMultipliers,
   automaticAttacksPerSecond,
   automaticInterval,
+  BOSS_FAMILY_BALANCE,
   COMBAT_BALANCE,
+  COMBAT_FORMULAS,
   criticalChanceForLevel,
   criticalChanceForPolicy,
   createCombatState,
@@ -26,6 +28,7 @@ import {
   upgradeDisabledReason,
   upgradeEffectPreview,
   upgradeLevel,
+  selectEnemyFamilyIdentity,
 } from "./combat";
 import {
   fastForwardProgression,
@@ -266,6 +269,60 @@ describe("endless combat progression", () => {
     expect(boss.maxHealth).toBeGreaterThan(damageForLevel(10_000) * 30);
     expect(normal.maxHealth).toBeGreaterThan(200);
     expect(golden.maxHealth).toBeGreaterThan(damageForLevel(10_000));
+  });
+  it("applies the Goose Hydra family multiplier to the bounded legacy max-health envelope", () => {
+    const encounter = COMBAT_BALANCE.bossInterval * 5;
+    const growth =
+      COMBAT_FORMULAS.enemyHealthGrowthBase +
+      (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) * (encounter - 1);
+    const legacyHealth =
+      Math.round(COMBAT_BALANCE.baseEnemyHealth * growth) *
+      (COMBAT_FORMULAS.bossHealthBaseMultiplier +
+        COMBAT_FORMULAS.bossHealthIndexLinearMultiplier * 4 +
+        COMBAT_FORMULAS.bossHealthIndexQuadraticMultiplier * 16);
+    const goose = spawnEnemy(encounter, 0);
+    expect(goose.grade).toBe("boss");
+    expect(goose.maxHealth).toBe(
+      Math.round(legacyHealth * BOSS_FAMILY_BALANCE["boss-goose-hydra"].healthMultiplier),
+    );
+    expect(goose.maxHealth).toBeGreaterThan(legacyHealth);
+    expect(goose.reward).toBe(
+      Math.round(
+        COMBAT_BALANCE.baseReward *
+          encounter *
+          (COMBAT_FORMULAS.bossHealthBaseMultiplier +
+            COMBAT_FORMULAS.bossHealthIndexLinearMultiplier * 4 +
+            COMBAT_FORMULAS.bossHealthIndexQuadraticMultiplier * 16) *
+          BOSS_FAMILY_BALANCE["boss-goose-hydra"].rewardMultiplier,
+      ),
+    );
+    expect(goose.armor).toBe(
+      Math.round(encounter * BOSS_FAMILY_BALANCE["boss-goose-hydra"].armorMultiplier),
+    );
+  });
+  it("threads custom boss cadence through family balance and progression health", () => {
+    const interval = 10;
+    const first = spawnEnemy(interval, 0, undefined, undefined, interval);
+    const second = spawnEnemy(interval * 2, 0, undefined, undefined, interval);
+    const goose = spawnEnemy(interval * 5, 0, undefined, undefined, interval);
+    expect(first.grade).toBe("boss");
+    expect(second.grade).toBe("boss");
+    expect(goose.grade).toBe("boss");
+    expect(
+      selectEnemyFamilyIdentity({
+        bossInterval: interval,
+        grade: "boss",
+        level: interval * 5,
+        modifier: null,
+      }).family,
+    ).toBe("boss-goose-hydra");
+    expect(goose.armor).toBe(
+      Math.round(interval * 5 * BOSS_FAMILY_BALANCE["boss-goose-hydra"].armorMultiplier),
+    );
+    expect(spawnEnemy(interval * 5, 0).grade).not.toBe("boss");
+    expect(goose.reward).toBeGreaterThan(
+      spawnEnemy(interval * 4, 0, undefined, undefined, interval).reward,
+    );
   });
 
   it("keeps the encounter-2170 boss at its accepted legacy ceiling above the prior 30-hit save", () => {
@@ -830,12 +887,14 @@ describe("endless combat progression", () => {
   }, 7_000);
 
   it("reports production ordinary TTK composition across the ABI-020 endgame boundary", () => {
-    const automaticReport = fastForwardProgression(49 * 60 * 60 * 1_000);
+    // Goose Hydra durability slows progression; retain every stage probe by extending this
+    // measured run beyond the historical 49-hour receipt.
+    const automaticReport = fastForwardProgression(60 * 60 * 60 * 1_000);
     const automaticOnly = summarizeOrdinaryTtkBands(automaticReport);
     const stageStarts = Object.values(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS);
     const stageReference = simulateProgression({
       eventJump: true,
-      horizonMs: 49 * 60 * 60 * 1_000,
+      horizonMs: 60 * 60 * 60 * 1_000,
       playerSnapshotEncounters: stageStarts,
     });
     const stagePlayers = Object.fromEntries(
@@ -891,7 +950,7 @@ describe("endless combat progression", () => {
       goldenBug: false,
     });
     expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
-    expect(automaticReport.encounters).toBe(37_065);
+    expect(automaticReport.encounters).toBe(43_015);
     expect(automaticOnly.endgame.count).toBeGreaterThan(0);
     for (const stage of Object.values(automaticOnly)) {
       expect(stage.count).toBeGreaterThan(0);

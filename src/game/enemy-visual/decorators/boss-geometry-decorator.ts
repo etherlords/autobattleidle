@@ -7,7 +7,7 @@ import type { BodyFamily } from "../spec";
 
 export type BossFamily = Extract<
   BodyFamily,
-  "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug"
+  "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug" | "boss-goose-hydra"
 >;
 export type BossGeometryProfile =
   "legacy/no-overlay" | "crystal-crown" | "orbital-runes" | "elemental-spines";
@@ -28,6 +28,7 @@ export const BOSS_GEOMETRY_RECIPES: Readonly<
   "boss-colossus": ["orbital-runes", "elemental-spines"],
   "boss-catbug": ["orbital-runes", "elemental-spines"],
   "boss-evil-catbug": ["crystal-crown", "elemental-spines"],
+  "boss-goose-hydra": ["crystal-crown", "elemental-spines"],
 };
 
 type BossGeometryBuild = {
@@ -214,9 +215,8 @@ const fitSpines = (
   });
   return true;
 };
-
-// Boss-only assignment: Hydra and Evil Catbug carry crystal crowns, while Colossus and
-// Catbug carry orbital runes; all four bosses receive raycast elemental spines on their silhouette.
+// Boss-only assignment: Hydra and Evil Catbug carry crystal crowns, while Colossus, Catbug,
+// and Goose Hydra carry orbital/crystal geometry; every boss receives raycast elemental spines.
 export const bossGeometryProfilesForFamily = (
   family: BodyFamily,
 ): readonly BossGeometryProfile[] => {
@@ -224,7 +224,8 @@ export const bossGeometryProfilesForFamily = (
     family === "boss-hydra" ||
     family === "boss-colossus" ||
     family === "boss-catbug" ||
-    family === "boss-evil-catbug"
+    family === "boss-evil-catbug" ||
+    family === "boss-goose-hydra"
   )
     return BOSS_GEOMETRY_RECIPES[family];
   return ["legacy/no-overlay"];

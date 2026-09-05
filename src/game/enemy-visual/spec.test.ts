@@ -87,22 +87,26 @@ describe("enemy visual specification selection", () => {
     expect(affinities).toEqual(new Set(ENEMY_AFFINITY_IDS));
   });
 
-  it("assigns legacy geometry to ordinary bodies and explicit recipes to both bosses", () => {
+  it("assigns legacy geometry to ordinary bodies and explicit recipes to every boss", () => {
     expect(bossGeometryProfilesForFamily("beetle")).toEqual(["legacy/no-overlay"]);
     expect(bossGeometryProfilesForFamily("drake")).toEqual(["legacy/no-overlay"]);
-    expect(bossGeometryProfilesForFamily("boss-hydra")).toEqual(
-      BOSS_GEOMETRY_RECIPES["boss-hydra"],
-    );
-    expect(bossGeometryProfilesForFamily("boss-colossus")).toEqual(
-      BOSS_GEOMETRY_RECIPES["boss-colossus"],
-    );
+    for (const family of [
+      "boss-hydra",
+      "boss-colossus",
+      "boss-catbug",
+      "boss-evil-catbug",
+      "boss-goose-hydra",
+    ] as const)
+      expect(bossGeometryProfilesForFamily(family)).toEqual(BOSS_GEOMETRY_RECIPES[family]);
 
     const ordinary = enemyVisualCompositionReceipt({ grade: "normal", level: 1, modifier: null });
-    const hydra = enemyVisualCompositionReceipt({ grade: "boss", level: 35, modifier: null });
-    const colossus = enemyVisualCompositionReceipt({ grade: "boss", level: 70, modifier: null });
+    const hydra = enemyVisualCompositionReceipt({ grade: "boss", level: 105, modifier: null });
+    const colossus = enemyVisualCompositionReceipt({ grade: "boss", level: 140, modifier: null });
+    const goose = enemyVisualCompositionReceipt({ grade: "boss", level: 175, modifier: null });
     expect(ordinary.geometryProfile).toBe("legacy/no-overlay");
     expect(ordinary.geometryProfiles).toEqual(["legacy/no-overlay"]);
     expect(hydra.geometryProfiles).toEqual(["crystal-crown", "elemental-spines"]);
     expect(colossus.geometryProfiles).toEqual(["orbital-runes", "elemental-spines"]);
+    expect(goose.geometryProfiles).toEqual(["crystal-crown", "elemental-spines"]);
   });
 });

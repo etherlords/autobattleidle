@@ -1,10 +1,10 @@
-import type { UpgradeId } from "../../domain/combat";
+import type { UpgradeId, UpgradePurchaseQuantity } from "../../domain/combat";
 
 export type HudIntent =
   | { readonly type: "attack" }
   | { readonly type: "toggle-automatic-pause" }
   | { readonly type: "rotate-camera"; readonly delta: number }
-  | { readonly type: "upgrade"; readonly id: UpgradeId; readonly quantity: 1 | 10 | 100 }
+  | { readonly type: "upgrade"; readonly id: UpgradeId; readonly quantity: UpgradePurchaseQuantity }
   | { readonly type: "reset" }
   | { readonly type: "restore" };
 

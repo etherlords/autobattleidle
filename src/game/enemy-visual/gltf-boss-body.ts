@@ -9,7 +9,7 @@ import type { BodyFamily, EnemyVisualProfile } from "./spec";
 const loader = new GLTFLoader();
 const sourceCache = new Map<string, Promise<THREE.Group>>();
 
-type GltfBossFamily = Extract<BodyFamily, "boss-catbug" | "boss-evil-catbug">;
+type GltfBossFamily = Extract<BodyFamily, "boss-catbug" | "boss-evil-catbug" | "boss-goose-hydra">;
 type BossAssetProfile = {
   readonly url: string;
   readonly scale: number;
@@ -23,6 +23,9 @@ type BossAssetProfile = {
   readonly combatZ: number;
   readonly metalness?: number;
   readonly roughness?: number;
+  readonly envMapIntensity?: number;
+  readonly clearcoat?: number;
+  readonly specularIntensity?: number;
 };
 
 // The supplied files use materially different authoring units. These scales keep their
@@ -41,6 +44,9 @@ const BOSS_ASSETS: Readonly<Record<GltfBossFamily, BossAssetProfile>> = {
     combatZ: 0.92,
     metalness: 0,
     roughness: 1,
+    envMapIntensity: 0,
+    clearcoat: 0,
+    specularIntensity: 0.2,
   },
   "boss-evil-catbug": {
     url: "./assets/evilcatbug.glb",
@@ -54,7 +60,27 @@ const BOSS_ASSETS: Readonly<Record<GltfBossFamily, BossAssetProfile>> = {
     combatY: 0.72,
     combatZ: 0.86,
     metalness: 0,
-    roughness: 0.78,
+    roughness: 1,
+    envMapIntensity: 0,
+    clearcoat: 0,
+    specularIntensity: 0.2,
+  },
+  "boss-goose-hydra": {
+    url: "./assets/goose-hydra.glb",
+    scale: 1.1,
+    topY: 2.05,
+    frontZ: 0.78,
+    halfWidth: 0.98,
+    flankZ: 0.08,
+    orbitY: 1.02,
+    orbitRadius: 1.18,
+    combatY: 0.8,
+    combatZ: 0.84,
+    metalness: 0,
+    roughness: 1,
+    envMapIntensity: 0,
+    clearcoat: 0,
+    specularIntensity: 0.2,
   },
 };
 
@@ -70,6 +96,9 @@ const sourceScene = (url: string): Promise<THREE.Group> => {
     );
   });
   sourceCache.set(url, pending);
+  pending.catch(() => {
+    if (sourceCache.get(url) === pending) sourceCache.delete(url);
+  });
   return pending;
 };
 
@@ -80,6 +109,10 @@ const cloneMaterial = (
 ): THREE.Material => {
   const clone = material.clone();
   for (const [key, value] of Object.entries(clone)) {
+    if (key === "roughnessMap") {
+      Reflect.set(clone, key, null);
+      continue;
+    }
     if (!(value instanceof THREE.Texture)) continue;
     let texture = textures.get(value);
     if (texture === undefined) {
@@ -91,6 +124,12 @@ const cloneMaterial = (
   if (clone instanceof THREE.MeshStandardMaterial) {
     if (asset.metalness !== undefined) clone.metalness = asset.metalness;
     if (asset.roughness !== undefined) clone.roughness = asset.roughness;
+    if (asset.envMapIntensity !== undefined) clone.envMapIntensity = asset.envMapIntensity;
+    if (clone instanceof THREE.MeshPhysicalMaterial) {
+      if (asset.clearcoat !== undefined) clone.clearcoat = asset.clearcoat;
+      if (asset.specularIntensity !== undefined) clone.specularIntensity = asset.specularIntensity;
+      clone.clearcoatRoughness = 1;
+    }
   }
   return clone;
 };
@@ -149,6 +188,10 @@ const augmentFallbackWithGltf = (
 ): EnemyVisualComponent => {
   const root = fallback.nodes[0];
   if (root === undefined) return fallback;
+  // Never render another boss family as a loading state. The authored model becomes visible
+  // atomically when its own asset has finished loading.
+  root.visible = false;
+  root.userData.gltfStatus = "loading";
   const fallbackFamily = family === "boss-catbug" ? "boss-colossus" : "boss-hydra";
   root.traverse((child) => {
     if (child.name.includes(fallbackFamily))
@@ -184,11 +227,18 @@ const augmentFallbackWithGltf = (
         }
       });
       root.add(instance);
+      root.userData.gltfStatus = "ready";
+      root.visible = true;
     })
-    .catch(() => undefined);
+    .catch(() => {
+      root.userData.gltfStatus = "error";
+      // Keep the family-specific placeholder hidden when its authored asset is unavailable.
+      // Never expose the legacy Colossus/Hydra loading geometry for a rejected GLB.
+    });
   return {
-    assetReady,
     ...fallback,
+    key: `body-${family}`,
+    assetReady,
     dispose: () => {
       disposed = true;
       fallback.dispose?.();
@@ -232,12 +282,11 @@ export const gltfBossBody = (
     new THREE.Vector3(asset.halfWidth, 0.05, asset.flankZ),
   );
   const orbit = socket(family, "orbit", pose, new THREE.Vector3(0, asset.orbitY, 0));
-  orbit.userData.bodyRadius = asset.orbitRadius;
-  orbit.userData.maxOrbitRadius = 1.93;
   const combat = socket(family, "combat", rig, new THREE.Vector3(0, asset.combatY, asset.combatZ));
-
+  orbit.userData.bodyRadius = asset.orbitRadius;
   let instance: THREE.Group | undefined;
   let disposed = false;
+  pose.userData.gltfStatus = "loading";
   const assetReady: Promise<void> = sourceScene(asset.url)
     .then((source) => {
       if (disposed) return;
@@ -253,8 +302,10 @@ export const gltfBossBody = (
         }
       });
       rig.add(instance);
+      pose.userData.gltfStatus = "ready";
     })
     .catch(() => {
+      pose.userData.gltfStatus = "error";
       // A failed optional asset load leaves the lifecycle intact without a procedural substitute.
     });
 
@@ -397,6 +448,10 @@ export const evilCatbugBossBody = (
   profile?: EnemyVisualProfile,
   reducedMotionOverride?: boolean,
 ): EnemyVisualComponent => gltfBossBody("boss-evil-catbug", profile, reducedMotionOverride);
+export const gooseHydraBossBody = (
+  profile?: EnemyVisualProfile,
+  reducedMotionOverride?: boolean,
+): EnemyVisualComponent => gltfBossBody("boss-goose-hydra", profile, reducedMotionOverride);
 
 export const clearGltfBossCache = (): void => {
   sourceCache.clear();

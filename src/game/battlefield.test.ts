@@ -277,11 +277,11 @@ describe("nextBattlefieldFrame", () => {
     };
     const battlefield = createBattlefieldWithRenderer(host, renderer);
     const profiles = new Map<string, number>();
-    for (let level = 1; level <= 120; level += 1) {
+    for (let level = 1; level <= 180; level += 1) {
       const spec = enemyVisualSpec(snapshot("boss", level).enemy);
       profiles.set(`${spec.body}:${spec.profile.variant}`, level);
     }
-    expect(profiles.size).toBe(12);
+    expect(profiles.size).toBe(15);
     for (const size of [
       [1280, 800],
       [390, 844],
@@ -853,5 +853,50 @@ describe("nextBattlefieldFrame", () => {
     expect(camera.position.x).toBe(0);
     expect(camera.position.z).toBeCloseTo(bossDistance);
     battlefield.dispose();
+  });
+  it("applies bounded wheel zoom to the game camera without changing visual-lab controls", () => {
+    let camera: THREE.Camera | undefined;
+    let wheel: ((event: WheelEvent) => void) | undefined;
+    const canvas = {
+      className: "",
+      dataset: {},
+      addEventListener: (_type: string, listener: EventListenerOrEventListenerObject) => {
+        wheel = listener as (event: WheelEvent) => void;
+      },
+      removeEventListener: vi.fn(),
+      remove: () => undefined,
+      width: 1_280,
+      height: 800,
+    } as unknown as HTMLCanvasElement;
+    const host = { append: () => undefined } as unknown as HTMLElement;
+    const renderer = {
+      domElement: canvas,
+      dispose: () => undefined,
+      render: (_scene: THREE.Scene, nextCamera: THREE.Camera) => {
+        camera = nextCamera;
+      },
+      setPixelRatio: () => undefined,
+      setSize: () => undefined,
+    };
+    const battlefield = createBattlefieldWithRenderer(host, renderer);
+    battlefield.resize(1_280, 800);
+    battlefield.render(snapshot("boss", 35));
+    if (!(camera instanceof THREE.PerspectiveCamera) || wheel === undefined)
+      throw new Error("Expected game camera and wheel listener");
+    const initialDistance = camera.position.length();
+    const preventDefault = vi.fn();
+    wheel({ deltaY: -1, preventDefault } as unknown as WheelEvent);
+    expect(preventDefault).toHaveBeenCalledOnce();
+    expect(camera.position.length()).toBeLessThan(initialDistance);
+    for (let index = 0; index < 30; index += 1)
+      wheel({ deltaY: -1, preventDefault: vi.fn() } as unknown as WheelEvent);
+    const minimumDistance = camera.position.length();
+    wheel({ deltaY: -1, preventDefault: vi.fn() } as unknown as WheelEvent);
+    expect(camera.position.length()).toBe(minimumDistance);
+    for (let index = 0; index < 60; index += 1)
+      wheel({ deltaY: 1, preventDefault: vi.fn() } as unknown as WheelEvent);
+    expect(camera.position.length()).toBeGreaterThan(minimumDistance);
+    battlefield.dispose();
+    expect(canvas.removeEventListener).toHaveBeenCalledWith("wheel", expect.any(Function));
   });
 });

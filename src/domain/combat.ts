@@ -5,7 +5,7 @@ export type {
   AutomaticPacketResolution,
   AutomaticPacketSchedule,
 } from "./combat/automatic-packets";
-export { COMBAT_BALANCE } from "./combat/balance";
+export { BOSS_FAMILY_BALANCE, COMBAT_BALANCE, COMBAT_FORMULAS } from "./combat/balance";
 export { ENEMY_MODIFIERS } from "./combat/enemy-modifiers/enemy-modifier-registry";
 export { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS } from "./combat/enemy-affinities";
 export {
@@ -25,11 +25,13 @@ export type {
   CombatPlayer,
   CombatState,
   CriticalChancePolicy,
+  BossFamily,
   EliteModifier,
   EnemyGrade,
   UpgradeDefinition,
   UpgradeId,
   UpgradePurchase,
+  UpgradePurchaseQuantity,
 } from "./combat/contracts";
 export type { EnemyAffinityProfile } from "./combat/enemy-affinities";
 export type {

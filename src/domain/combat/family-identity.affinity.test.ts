@@ -25,6 +25,7 @@ const familyLabels: Readonly<Record<EnemyFamily, string>> = {
   "boss-hydra": "Hydra",
   "boss-catbug": "Catbug",
   "boss-evil-catbug": "Evil Catbug",
+  "boss-goose-hydra": "Goose Hydra",
 };
 
 type AffinityCase = {
@@ -32,7 +33,8 @@ type AffinityCase = {
   readonly level: number;
   readonly modifier: EnemyPresentationModifier;
 };
-type BossFamily = "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug";
+type BossFamily =
+  "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug" | "boss-goose-hydra";
 type FamilyMatrix = Readonly<Record<EnemyFamily, ReadonlyArray<AffinityCase>>>;
 
 const familyGrades: Readonly<Record<EnemyFamily, "normal" | "elite" | "boss">> = {
@@ -46,6 +48,7 @@ const familyGrades: Readonly<Record<EnemyFamily, "normal" | "elite" | "boss">> =
   "boss-hydra": "boss",
   "boss-catbug": "boss",
   "boss-evil-catbug": "boss",
+  "boss-goose-hydra": "boss",
 };
 
 /**
@@ -194,6 +197,20 @@ const labelMatrix: FamilyMatrix = {
     { affinity: "magma", level: 45, modifier: null },
     { affinity: "prism", level: 13, modifier: null },
   ],
+  "boss-goose-hydra": [
+    { affinity: "cinder", level: 175, modifier: null },
+    { affinity: "ice", level: 1225, modifier: null },
+    { affinity: "ash", level: 7525, modifier: null },
+    { affinity: "toxic", level: 525, modifier: null },
+    { affinity: "volt", level: 350, modifier: null },
+    { affinity: "tide", level: 6300, modifier: null },
+    { affinity: "dusk", level: 6825, modifier: null },
+    { affinity: "verdant", level: 4725, modifier: null },
+    { affinity: "gilded", level: 2975, modifier: null },
+    { affinity: "frost", level: 700, modifier: null },
+    { affinity: "magma", level: 1050, modifier: null },
+    { affinity: "prism", level: 875, modifier: null },
+  ],
 };
 
 describe("enemy affinity selection", () => {
@@ -212,20 +229,22 @@ describe("enemy affinity selection", () => {
     }
   });
 
-  it("reaches every affinity for all four boss families with production-reachable inputs", () => {
+  it("reaches every affinity for all five boss families with production-reachable inputs", () => {
     const bossFamilies: readonly BossFamily[] = [
       "boss-colossus",
       "boss-hydra",
       "boss-catbug",
       "boss-evil-catbug",
+      "boss-goose-hydra",
     ];
     const counts: Record<BossFamily, Partial<Record<EnemyAffinity, number>>> = {
       "boss-colossus": {},
       "boss-hydra": {},
       "boss-catbug": {},
       "boss-evil-catbug": {},
+      "boss-goose-hydra": {},
     };
-    for (let level = 1; level <= 192; level += 1) {
+    for (let level = 1; level <= 7_000; level += 1) {
       const identity = selectEnemyFamilyIdentity({ grade: "boss", level, modifier: null });
       if (!bossFamilies.includes(identity.family as BossFamily))
         throw new Error(`Expected a boss family, received ${identity.family}`);

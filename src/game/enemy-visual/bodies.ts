@@ -149,6 +149,16 @@ const socketLayouts: Readonly<Record<BodyFamily, SemanticSocketLayout>> = {
     combatY: 0.72,
     combatZ: 0.86,
   },
+  "boss-goose-hydra": {
+    topY: 2.05,
+    frontZ: 0.78,
+    halfWidth: 0.98,
+    flankZ: 0.08,
+    orbitY: 1.02,
+    orbitRadius: 1.18,
+    combatY: 0.8,
+    combatZ: 0.84,
+  },
 };
 
 const riggedBody = (
@@ -710,6 +720,14 @@ const catbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverrid
     colossus(profile, reducedMotionOverride),
   );
 
+const gooseHydra: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
+  gltfBossBody(
+    "boss-goose-hydra",
+    profile,
+    reducedMotionOverride,
+    hydra(profile, reducedMotionOverride),
+  );
+
 const evilCatbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
   gltfBossBody(
     "boss-evil-catbug",
@@ -727,5 +745,6 @@ export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> 
   "boss-colossus": colossus,
   "boss-hydra": hydra,
   "boss-catbug": catbug,
+  "boss-goose-hydra": gooseHydra,
   "boss-evil-catbug": evilCatbug,
 };

@@ -153,7 +153,7 @@ const bossTtkStages = () => {
   ][];
   const snapshots = simulateProgression({
     eventJump: true,
-    horizonMs: 49 * 60 * 60 * 1_000,
+    horizonMs: 60 * 60 * 60 * 1_000,
     playerSnapshotEncounters: stages.map(([, encounter]) => encounter),
   }).playerSnapshots;
   const playerAt = new Map(snapshots.map(({ encounter, player }) => [encounter, player]));

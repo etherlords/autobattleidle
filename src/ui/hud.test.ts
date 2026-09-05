@@ -371,6 +371,11 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
   });
+  it("reserves the mute toggle column for the HUD heading on narrow screens", () => {
+    expect(stylesheet).toContain(
+      ".hud-status {\n    left: 0.75rem;\n    right: 6rem;\n    transform: none;\n    width: auto;\n  }",
+    );
+  });
   it("keeps event log border colors tied to their combat source", () => {
     expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');
     expect(stylesheet).toContain(
@@ -461,7 +466,7 @@ describe("createHud", () => {
       "Current upgrade stats",
     );
     expect(element(host, "upgrade-bulk-hint").textContent).toBe(
-      "Shift-click buys x10. Ctrl-click buys x100.",
+      "Shift-click buys x10. Ctrl-click buys x100. Alt-click or Alt+Enter/Space buys up to x1000.",
     );
     hud.render({ ...snapshot, coins: 3 });
     expect(element(host, "upgrades-coins").textContent).toBe("Coins: 3");
@@ -536,10 +541,20 @@ describe("createHud", () => {
     clickUpgrade(upgradeButtons[0], { detail: 1, shiftKey: true });
     clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 1 });
     clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 1, shiftKey: true });
-    clickUpgrade(upgradeButtons[0], { ctrlKey: true, detail: 0, shiftKey: true });
+    clickUpgrade(upgradeButtons[0], { altKey: true, detail: 1 });
+    (upgradeButtons[0] as FakeElement).dispatch("keydown", {
+      altKey: true,
+      key: "Enter",
+      repeat: false,
+    });
+    (upgradeButtons[0] as FakeElement).dispatch("keydown", {
+      altKey: true,
+      key: " ",
+      repeat: true,
+    });
     reset.dispatch("click");
     restore.dispatch("click");
-    expect(upgrades).toBe(5);
+    expect(upgrades).toBe(6);
     expect(upgradeButtons[1]?.disabled).toBe(true);
     expect(upgradeButtons[1]?.title).toContain("Need 45 coins");
     expect(resets).toBe(1);
@@ -564,7 +579,8 @@ describe("createHud", () => {
       { id: "automatic-unlock", quantity: 10, type: "upgrade" },
       { id: "automatic-unlock", quantity: 100, type: "upgrade" },
       { id: "automatic-unlock", quantity: 100, type: "upgrade" },
-      { id: "automatic-unlock", quantity: 1, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 1_000, type: "upgrade" },
+      { id: "automatic-unlock", quantity: 1_000, type: "upgrade" },
       { type: "reset" },
       { type: "restore" },
     ]);
@@ -584,7 +600,7 @@ describe("createHud", () => {
     restore.dispatch("click");
     automaticPause.dispatch("click");
     expect(attacks).toBe(3);
-    expect(intents).toHaveLength(13);
+    expect(intents).toHaveLength(14);
     expect(resets).toBe(1);
     expect(restores).toBe(1);
     expect(launcher.focusCalls).toBe(launcherFocusAtDispose);
@@ -655,9 +671,14 @@ describe("createHud", () => {
     const battlefield = document.createElement();
     const listeners = new Set<(state: string) => void>();
     let currentState = "blocked";
+    let playlist: { readonly current: string; readonly next: string } | null = null;
     const audio: AudioSettingsPort = {
-      currentState,
-      playlist: null,
+      get currentState() {
+        return currentState;
+      },
+      get playlist() {
+        return playlist;
+      },
       preferences: { master: 1, ui: 1, combat: 1, music: 1, muted: false },
       startAudio: async () => {
         currentState = "ready";
@@ -679,6 +700,10 @@ describe("createHud", () => {
     const gate = element(host, "audio-start-gate");
     expect(modal.className).toBe("audio-settings-modal");
     expect(gate.hidden).toBe(false);
+    const trackStatus = element(host, "hud-track-status");
+    playlist = { current: "Idle Fantasy", next: "Idle Dawn" };
+    for (const listener of listeners) listener("ready");
+    expect(trackStatus.textContent).toBe("♪ Idle Fantasy · Next: Idle Dawn");
     launcher.dispatch("click");
     expect(modal.hidden).toBe(false);
     const dialog = element(host, "audio-settings-dialog");

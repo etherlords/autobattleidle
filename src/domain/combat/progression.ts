@@ -1,5 +1,12 @@
-import { COMBAT_BALANCE, COMBAT_FORMULAS, MAX_ENCOUNTER } from "./balance";
+import {
+  BOSS_FAMILY_BALANCE,
+  COMBAT_BALANCE,
+  COMBAT_FORMULAS,
+  MAX_ENCOUNTER,
+  type BossFamilyBalance,
+} from "./balance";
 import type {
+  BossFamily,
   CombatEnemy,
   CombatPlayer,
   CombatState,
@@ -15,6 +22,7 @@ import {
 import { modifierForRoll } from "./enemy-modifiers";
 import { ENEMY_TIERS } from "./enemy-definitions";
 import { armorPenetrationLevelFor, criticalLevelFor, damageLevelFor } from "./player-stats";
+import { selectEnemyFamilyIdentity } from "./family-identity";
 
 type OrdinaryGrade = Exclude<EnemyGrade, "boss">;
 type MissingOrdinaryGrades<Order extends readonly OrdinaryGrade[]> =
@@ -42,10 +50,13 @@ const selectGrade = (
   if (grade === undefined) throw new RangeError("Encounter did not select an ordinary enemy grade");
   return grade;
 };
-
-const legacyMultiplier = (grade: EnemyGrade, encounter: number): number => {
+const legacyMultiplier = (
+  grade: EnemyGrade,
+  encounter: number,
+  bossInterval: number = COMBAT_BALANCE.bossInterval,
+): number => {
   if (grade === "boss") {
-    const bossIndex = Math.ceil(encounter / COMBAT_BALANCE.bossInterval) - 1;
+    const bossIndex = Math.ceil(encounter / bossInterval) - 1;
     return (
       COMBAT_FORMULAS.bossHealthBaseMultiplier +
       COMBAT_FORMULAS.bossHealthIndexLinearMultiplier * bossIndex +
@@ -68,24 +79,55 @@ const productionBaseHealth = (player: CombatPlayer, grade: OrdinaryGrade): numbe
   return damage * ENEMY_TIERS[grade].multiplier(1);
 };
 
-const legacyStageHealth = (grade: EnemyGrade, encounter: number): number => {
+const isBossFamily = (family: string): family is BossFamily => family.startsWith("boss-");
+const bossBalanceForEncounter = (
+  encounter: number,
+  bossInterval: number = COMBAT_BALANCE.bossInterval,
+) => {
+  const family = selectEnemyFamilyIdentity({
+    bossInterval,
+    grade: "boss",
+    level: encounter,
+    modifier: null,
+  }).family;
+  if (!isBossFamily(family)) throw new Error("Boss encounter selected an ordinary family");
+  return BOSS_FAMILY_BALANCE[family];
+};
+
+const legacyStageHealth = (
+  grade: EnemyGrade,
+  encounter: number,
+  bossInterval: number = COMBAT_BALANCE.bossInterval,
+): number => {
   const growth =
     COMBAT_FORMULAS.enemyHealthGrowthBase +
     (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) * (encounter - 1);
   return safeRounded(
-    Math.round(COMBAT_BALANCE.baseEnemyHealth * growth) * legacyMultiplier(grade, encounter),
+    Math.round(COMBAT_BALANCE.baseEnemyHealth * growth) *
+      legacyMultiplier(grade, encounter, bossInterval),
   );
 };
 
 /** Same post-armor non-critical damage owner used by production attack resolution. */
-const bossNonCriticalDamage = (player: CombatPlayer, encounter: number): number => {
-  const armor = effectiveArmor(encounter, armorPenetrationLevelFor(player));
+const bossNonCriticalDamage = (
+  player: CombatPlayer,
+  encounter: number,
+  armorMultiplier = 1,
+): number => {
+  const armor = effectiveArmor(
+    Math.round(encounter * armorMultiplier),
+    armorPenetrationLevelFor(player),
+  );
   return Math.max(COMBAT_FORMULAS.minimumDamage, playerDamage(player) - armor);
 };
 
 /** Expected automatic damage uses the same player-stat and armor rules as production attacks. */
-const expectedAutomaticBossDps = (player: CombatPlayer, encounter: number): number => {
-  const nonCriticalDamage = bossNonCriticalDamage(player, encounter);
+const expectedAutomaticBossDps = (
+  player: CombatPlayer,
+  encounter: number,
+  armorMultiplier = 1,
+): number => {
+  const nonCriticalDamage = bossNonCriticalDamage(player, encounter, armorMultiplier);
   const expectedDamage =
     nonCriticalDamage *
     (1 +
@@ -94,17 +136,23 @@ const expectedAutomaticBossDps = (player: CombatPlayer, encounter: number): numb
   return automaticAttacksPerSecond(player.automaticSpeedLevel) * expectedDamage;
 };
 
-const productionBossHealth = (player: CombatPlayer, encounter: number): number => {
+const productionBossHealth = (
+  player: CombatPlayer,
+  encounter: number,
+  bossInterval: number,
+  armorMultiplier: number,
+): number => {
   const currentThirtyHitHealth = safeRounded(
-    bossNonCriticalDamage(player, encounter) * COMBAT_FORMULAS.bossTargetHits,
+    bossNonCriticalDamage(player, encounter, armorMultiplier) * COMBAT_FORMULAS.bossTargetHits,
   );
-  const automaticThreeMinuteHealth = safeRounded(expectedAutomaticBossDps(player, encounter) * 180);
+  const automaticThreeMinuteHealth = safeRounded(
+    expectedAutomaticBossDps(player, encounter, armorMultiplier) * 180,
+  );
   return Math.min(
-    legacyStageHealth("boss", encounter),
+    legacyStageHealth("boss", encounter, bossInterval),
     Math.max(currentThirtyHitHealth, automaticThreeMinuteHealth),
   );
 };
-
 /** The immediately preceding V4 representation, retained only for save recognition. */
 export const previousPlayerRelativeBossHealth = (player: CombatPlayer): number =>
   safeRounded(playerDamage(player) * COMBAT_FORMULAS.bossTargetHits);
@@ -127,23 +175,86 @@ const validateBossInterval = (bossInterval: number): void => {
     throw new RangeError("Boss interval must be a safe integer of at least two");
 };
 
+const playerBaseHealthForSpawn = (
+  grade: EnemyGrade,
+  encounter: number,
+  candidateGrowth: number,
+  player: CombatPlayer,
+  bossInterval: number,
+  bossBalance: BossFamilyBalance | undefined,
+): number => {
+  if (grade !== "boss") return productionBaseHealth(player, grade) * candidateGrowth;
+  return safeRounded(
+    productionBossHealth(player, encounter, bossInterval, bossBalance?.armorMultiplier ?? 1) *
+      (bossBalance?.healthMultiplier ?? 1),
+  );
+};
+
+const legacyBaseHealthForSpawn = (
+  grade: EnemyGrade,
+  encounter: number,
+  candidateGrowth: number,
+  ordinaryHealthGrowthRate: number | undefined,
+  bossInterval: number,
+  bossBalance: BossFamilyBalance | undefined,
+): number => {
+  if (ordinaryHealthGrowthRate !== undefined && grade !== "boss")
+    return safeRounded(
+      Math.round(COMBAT_BALANCE.baseEnemyHealth * candidateGrowth) *
+        legacyMultiplier(grade, encounter, bossInterval),
+    );
+  if (grade !== "boss") return legacyStageHealth(grade, encounter, bossInterval);
+  return safeRounded(
+    legacyStageHealth(grade, encounter, bossInterval) * (bossBalance?.healthMultiplier ?? 1),
+  );
+};
+
 const baseHealthForSpawn = (
   grade: EnemyGrade,
   encounter: number,
   candidateGrowth: number,
   ordinaryHealthGrowthRate: number | undefined,
   player: CombatPlayer | undefined,
+  bossInterval: number,
 ): number => {
+  const bossBalance =
+    grade === "boss" ? bossBalanceForEncounter(encounter, bossInterval) : undefined;
   if (player !== undefined)
-    return grade === "boss"
-      ? productionBossHealth(player, encounter)
-      : productionBaseHealth(player, grade) * candidateGrowth;
-  if (ordinaryHealthGrowthRate !== undefined && grade !== "boss")
-    return safeRounded(
-      Math.round(COMBAT_BALANCE.baseEnemyHealth * candidateGrowth) *
-        legacyMultiplier(grade, encounter),
+    return playerBaseHealthForSpawn(
+      grade,
+      encounter,
+      candidateGrowth,
+      player,
+      bossInterval,
+      bossBalance,
     );
-  return legacyStageHealth(grade, encounter);
+  return legacyBaseHealthForSpawn(
+    grade,
+    encounter,
+    candidateGrowth,
+    ordinaryHealthGrowthRate,
+    bossInterval,
+    bossBalance,
+  );
+};
+
+const modifierForSpawn = (
+  grade: EnemyGrade,
+  encounter: number,
+  eliteModifierRoll: number,
+  player: CombatPlayer | undefined,
+): {
+  readonly modifier: EliteModifier | null;
+  readonly draft: { readonly armor: number; readonly healthMultiplier: number };
+} => {
+  const tier = ENEMY_TIERS[grade];
+  const baseModifierDraft = { armor: tier.armor(encounter), healthMultiplier: 1 };
+  if (grade !== "elite") return { modifier: null, draft: baseModifierDraft };
+  const modifierStrategy = modifierForRoll(eliteModifierRoll);
+  return {
+    modifier: modifierStrategy.id,
+    draft: modifierStrategy.decorate(baseModifierDraft, encounter, eliteArmorCap(player)),
+  };
 };
 
 export const spawnEnemy = (
@@ -158,7 +269,8 @@ export const spawnEnemy = (
   const safeEncounter = encounter;
   validateBossInterval(bossInterval);
   const grade = selectGrade(safeEncounter, bossInterval);
-  let modifier: EliteModifier | null = null;
+  const bossBalance =
+    grade === "boss" ? bossBalanceForEncounter(safeEncounter, bossInterval) : undefined;
   validateOrdinaryHealthGrowthRate(ordinaryHealthGrowthRate);
   const candidateGrowth =
     ordinaryHealthGrowthRate === undefined || grade === "boss"
@@ -170,25 +282,20 @@ export const spawnEnemy = (
     candidateGrowth,
     ordinaryHealthGrowthRate,
     player,
+    bossInterval,
   );
-  const tier = ENEMY_TIERS[grade];
-  const baseModifierDraft = { armor: tier.armor(safeEncounter), healthMultiplier: 1 };
-  let modifierDraft = baseModifierDraft;
-  if (grade === "elite") {
-    const modifierStrategy = modifierForRoll(eliteModifierRoll);
-    modifier = modifierStrategy.id;
-    modifierDraft = modifierStrategy.decorate(
-      baseModifierDraft,
-      safeEncounter,
-      eliteArmorCap(player),
-    );
-  }
+  const { modifier, draft: modifierDraft } = modifierForSpawn(
+    grade,
+    safeEncounter,
+    eliteModifierRoll,
+    player,
+  );
   const maxHealth = Math.max(
     COMBAT_FORMULAS.minimumDamage,
     Math.min(Number.MAX_SAFE_INTEGER, Math.round(baseHealth * modifierDraft.healthMultiplier)),
   );
   return {
-    armor: modifierDraft.armor,
+    armor: Math.round(modifierDraft.armor * (bossBalance?.armorMultiplier ?? 1)),
     encounter: safeEncounter,
     grade,
     health: maxHealth,
@@ -200,7 +307,10 @@ export const spawnEnemy = (
       Math.max(
         1,
         Math.round(
-          COMBAT_BALANCE.baseReward * safeEncounter * legacyMultiplier(grade, safeEncounter),
+          COMBAT_BALANCE.baseReward *
+            safeEncounter *
+            legacyMultiplier(grade, safeEncounter, bossInterval) *
+            (bossBalance?.rewardMultiplier ?? 1),
         ),
       ),
     ),

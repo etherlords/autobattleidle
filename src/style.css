@@ -394,6 +394,12 @@ body {
     padding-inline: 0.75rem;
     white-space: nowrap;
   }
+  .hud-status {
+    left: 0.75rem;
+    right: 6rem;
+    transform: none;
+    width: auto;
+  }
 
   .leaderboard-tabs button {
     min-height: 2.25rem;

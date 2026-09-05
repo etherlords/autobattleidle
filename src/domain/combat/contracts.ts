@@ -4,6 +4,8 @@ export type CriticalChancePolicy = "asymptotic" | "linear-capped";
 export type ArmorPenetrationPolicy = "asymptotic" | "linear-capped";
 
 export type EnemyGrade = "normal" | "veteran" | "elite" | "boss";
+export type BossFamily =
+  "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug" | "boss-goose-hydra";
 export type EliteModifier =
   "armor" | "health" | "automatic-slow" | "hardened" | "critical-guard" | "manual-guard";
 
@@ -42,6 +44,8 @@ export type UpgradeId =
   | "double-reward"
   | "automatic-speed";
 
+export type UpgradePurchaseQuantity = 1 | 10 | 100 | 1_000;
+
 export type UpgradeDefinition = {
   readonly id: UpgradeId;
   readonly label: string;
@@ -74,7 +78,7 @@ export type AttackCommand = {
   readonly damageMultiplier?: number;
   /** Lets one visual tick resolve several automatic packets at one timestamp. */
   readonly automaticBatch?: boolean;
-  /** Simulator-only alternate cadence passed to production progression spawning. */
+  /** Simulator-only alternate cadence passed to production progression spawning and identity selection. */
   readonly bossInterval?: number;
   /** Simulator-only chance formula evaluated by the production attack operation. */
   readonly criticalChancePolicy?: CriticalChancePolicy;

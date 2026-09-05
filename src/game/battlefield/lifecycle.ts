@@ -5,6 +5,7 @@ import type { EnemyUnit } from "../units/enemy";
 import { UNIT_FACTORIES } from "../units/factories";
 import type { PlayerUnit } from "../units/player";
 import { enemyVisualAnimation } from "../enemy-visual/config";
+import { adjustCameraZoom, cameraZoomDirectionForWheel, type CameraZoomDirection } from "./zoom";
 import { BATTLEFIELD_CONFIG, cameraScaleForAspect } from "./config";
 import {
   advanceBattlefieldEffect,
@@ -102,6 +103,7 @@ class ThreeBattlefield implements Battlefield {
   private effects: BattlefieldEffect[] = [];
   private aspect = 1;
   private azimuth = 0;
+  private cameraZoom = 1;
   private bossFramingEnabled = false;
   private pendingLethalReplacement: PendingLethalReplacement | undefined;
   private ordinaryFramingBounds: THREE.Box3 | undefined;
@@ -110,6 +112,15 @@ class ThreeBattlefield implements Battlefield {
   private readonly reducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  private readonly onWheel = (event: WheelEvent): void => {
+    const direction: CameraZoomDirection | undefined = cameraZoomDirectionForWheel(event.deltaY);
+    if (direction === undefined) return;
+    event.preventDefault();
+    this.cameraZoom = adjustCameraZoom(this.cameraZoom, direction);
+    this.frameCamera(this.aspect);
+    this.refreshProjectionReceipt();
+    this.renderer.render(this.scene, this.camera);
+  };
 
   constructor(
     host: HTMLElement,
@@ -123,6 +134,7 @@ class ThreeBattlefield implements Battlefield {
         : Math.min(window.devicePixelRatio, BATTLEFIELD_CONFIG.renderer.maximumPixelRatio),
     );
     renderer.domElement.className = "battlefield-canvas";
+    renderer.domElement.addEventListener?.("wheel", this.onWheel, { passive: false });
     host.append(renderer.domElement);
     this.addSceneFixtures();
   }
@@ -168,10 +180,10 @@ class ThreeBattlefield implements Battlefield {
     this.refreshProjectionReceipt();
     this.renderer.render(this.scene, this.camera);
   }
-
   resetCamera(): void {
     if (this.disposed) return;
     this.azimuth = 0;
+    this.cameraZoom = 1;
     this.refreshOrdinaryFraming();
     this.frameCamera(this.aspect);
     this.refreshProjectionReceipt();
@@ -198,6 +210,7 @@ class ThreeBattlefield implements Battlefield {
     disposeObject(this.scene);
     this.scene.clear();
     this.renderer.dispose();
+    this.renderer.domElement.removeEventListener?.("wheel", this.onWheel);
     this.renderer.domElement.remove();
     this.clearCanvasReceipt();
     this.effects = [];
@@ -241,10 +254,10 @@ class ThreeBattlefield implements Battlefield {
   private frameCamera(aspect: number): void {
     const scale = cameraScaleForAspect(aspect);
     const framingScale = this.cameraFramingScale();
-    const distance = BATTLEFIELD_CONFIG.camera.distance * scale * framingScale;
+    const distance = BATTLEFIELD_CONFIG.camera.distance * scale * framingScale * this.cameraZoom;
     this.camera.position.set(
       Math.sin(this.azimuth) * distance,
-      BATTLEFIELD_CONFIG.camera.elevation * scale * framingScale,
+      BATTLEFIELD_CONFIG.camera.elevation * scale * framingScale * this.cameraZoom,
       Math.cos(this.azimuth) * distance,
     );
     this.camera.lookAt(0, 0, 0);
@@ -419,6 +432,7 @@ class ThreeBattlefield implements Battlefield {
     dataset.enemyGrade = displayed.grade;
     dataset.enemyModifier = displayed.modifier ?? "none";
     dataset.goldenBug = String(displayed.goldenBug === true);
+    dataset.cameraZoom = String(this.cameraZoom);
     dataset.activeEffectCount = String(this.effects.length);
     dataset.lastEffectKinds = effects
       .slice(0, 8)
@@ -448,6 +462,7 @@ class ThreeBattlefield implements Battlefield {
     delete dataset.enemyGrade;
     delete dataset.enemyModifier;
     delete dataset.goldenBug;
+    delete dataset.cameraZoom;
     delete dataset.activeEffectCount;
     delete dataset.lastEffectKinds;
     delete dataset.lastEffectOrigin;

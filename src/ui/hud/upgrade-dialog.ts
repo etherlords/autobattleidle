@@ -1,10 +1,11 @@
-import type { UpgradeId } from "../../domain/combat";
+import type { UpgradeId, UpgradePurchaseQuantity } from "../../domain/combat";
 import type { BattleSnapshot } from "../../domain/snapshot";
 import { button, makeText } from "./elements";
 import { formatNumber } from "../number-format";
 
-const upgradeQuantity = (event: MouseEvent): 1 | 10 | 100 => {
+const upgradeQuantity = (event: MouseEvent): UpgradePurchaseQuantity => {
   if (event.detail === 0) return 1;
+  if (event.altKey) return 1_000;
   if (event.ctrlKey) return 100;
   if (event.shiftKey) return 10;
   return 1;
@@ -17,7 +18,10 @@ export class UpgradeDialog {
   private readonly close = button("upgrades-close", "Close upgrades");
   private readonly coins = makeText("p", "");
   private readonly currentStats = makeText("p", "");
-  private readonly bulkHint = makeText("p", "Shift-click buys x10. Ctrl-click buys x100.");
+  private readonly bulkHint = makeText(
+    "p",
+    "Shift-click buys x10. Ctrl-click buys x100. Alt-click or Alt+Enter/Space buys up to x1000.",
+  );
   private readonly upgrades = document.createElement("div");
   private readonly resetButton = button("reset-progress", "Reset progress");
   private readonly restoreButton = button("restore-progress", "Restore from previous version");
@@ -27,12 +31,13 @@ export class UpgradeDialog {
     {
       readonly button: HTMLButtonElement;
       readonly effect: HTMLSpanElement;
+      readonly keyboardListener: (event: KeyboardEvent) => void;
       readonly listener: (event: MouseEvent) => void;
       readonly price: HTMLSpanElement;
       readonly title: HTMLSpanElement;
     }
   >();
-  private upgradeListener: ((id: UpgradeId, quantity: 1 | 10 | 100) => void) | undefined;
+  private upgradeListener: ((id: UpgradeId, quantity: UpgradePurchaseQuantity) => void) | undefined;
   private resetListener: (() => void) | undefined;
   private restoreListener: (() => void) | undefined;
 
@@ -70,7 +75,7 @@ export class UpgradeDialog {
     this.restoreButton.addEventListener("click", this.restore);
   }
 
-  onUpgrade(listener: (id: UpgradeId, quantity: 1 | 10 | 100) => void): void {
+  onUpgrade(listener: (id: UpgradeId, quantity: UpgradePurchaseQuantity) => void): void {
     this.upgradeListener = listener;
   }
   onReset(listener: () => void): void {
@@ -116,8 +121,14 @@ export class UpgradeDialog {
         upgradeButton.append(title, price, effect);
         const listener = (event: MouseEvent): void =>
           this.upgradeListener?.(upgrade.id, upgradeQuantity(event));
+        const keyboardListener = (event: KeyboardEvent): void => {
+          if (event.repeat || !event.altKey || (event.key !== "Enter" && event.key !== " ")) return;
+          event.preventDefault();
+          this.upgradeListener?.(upgrade.id, 1_000);
+        };
         upgradeButton.addEventListener("click", listener);
-        entry = { button: upgradeButton, effect, listener, price, title };
+        upgradeButton.addEventListener("keydown", keyboardListener);
+        entry = { button: upgradeButton, effect, keyboardListener, listener, price, title };
         this.upgradeButtons.set(upgrade.id, entry);
         this.upgrades.append(upgradeButton);
       }
@@ -137,7 +148,6 @@ export class UpgradeDialog {
       entry.button.title = actionLabel;
     }
   }
-
   dispose(): void {
     this.closeModal();
     this.launcher.removeEventListener("click", this.open);
@@ -145,8 +155,14 @@ export class UpgradeDialog {
     this.modal.removeEventListener("pointerup", this.closeFromBackdrop);
     this.resetButton.removeEventListener("click", this.reset);
     this.restoreButton.removeEventListener("click", this.restore);
-    for (const { button: upgradeButton, listener } of this.upgradeButtons.values())
+    for (const {
+      button: upgradeButton,
+      keyboardListener,
+      listener,
+    } of this.upgradeButtons.values()) {
       upgradeButton.removeEventListener("click", listener);
+      upgradeButton.removeEventListener("keydown", keyboardListener);
+    }
     this.upgradeButtons.clear();
   }
 

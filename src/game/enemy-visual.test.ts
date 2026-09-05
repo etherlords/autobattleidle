@@ -144,7 +144,7 @@ const findCueInput = (matches: (spec: ReturnType<typeof enemyVisualSpec>) => boo
   ] as const;
   for (const grade of grades)
     for (const modifier of modifiers)
-      for (let level = 1; level <= 120; level += 1) {
+      for (let level = 1; level <= 180; level += 1) {
         const input: EnemyVisualInput = { grade, level, modifier };
         if (matches(enemyVisualSpec(input))) return input;
       }
@@ -168,7 +168,7 @@ const findCueInputs = (
   ] as const;
   for (const grade of grades)
     for (const modifier of modifiers)
-      for (let level = 1; level <= 120; level += 1) {
+      for (let level = 1; level <= 180; level += 1) {
         const input: EnemyVisualInput = { grade, level, modifier };
         const spec = enemyVisualSpec(input);
         if (matches(spec))
@@ -220,6 +220,7 @@ const expectedCueAnchor = (
         "boss-hydra": "enemy-part-hydra-head-1",
         "boss-catbug": "enemy-part-colossus-head",
         "boss-evil-catbug": "enemy-part-hydra-head-1",
+        "boss-goose-hydra": "enemy-part-hydra-head-1",
       }[visual.spec.body],
     );
   return visual.group.getObjectByName(`enemy-socket-${visual.spec.body}-${fixture.anchor}`);
@@ -416,7 +417,9 @@ const assertCueFixture = (fixture: CueFixture): void => {
 const assertBossTopEnvelope = (input: EnemyVisualInput): void => {
   const visual = createEnemyVisual(input);
   const headName =
-    visual.spec.body === "boss-hydra" || visual.spec.body === "boss-evil-catbug"
+    visual.spec.body === "boss-hydra" ||
+    visual.spec.body === "boss-evil-catbug" ||
+    visual.spec.body === "boss-goose-hydra"
       ? "enemy-part-hydra-head-1"
       : "enemy-part-colossus-head";
   const head = visual.group.getObjectByName(headName);
@@ -476,13 +479,19 @@ describe("enemy visual factory", () => {
     expect(decorations.size).toBeGreaterThan(3);
   });
 
-  it("uses all four dedicated boss bodies and visible grade and modifier attachments", () => {
+  it("uses all five dedicated boss bodies and visible grade and modifier attachments", () => {
     const bossBodies = new Set<string>();
-    for (let level = 1; level <= 18; level += 1) {
+    for (let level = 1; level <= 35 * 5; level += 1) {
       bossBodies.add(enemyVisualSpec({ grade: "boss", level, modifier: "armor" }).body);
     }
     expect(bossBodies).toEqual(
-      new Set(["boss-colossus", "boss-hydra", "boss-catbug", "boss-evil-catbug"]),
+      new Set([
+        "boss-colossus",
+        "boss-hydra",
+        "boss-catbug",
+        "boss-evil-catbug",
+        "boss-goose-hydra",
+      ]),
     );
     expect(enemyVisualSpec({ grade: "elite", level: 4, modifier: "armor" })).toMatchObject({
       gradeCue: "spikes",
@@ -514,7 +523,7 @@ describe("enemy visual factory", () => {
   });
   it("keeps every composed boss body on the deterministic ground plane", () => {
     const bossProfiles = findCueInputs((spec) => spec.body.startsWith("boss-"));
-    expect(bossProfiles).toHaveLength(12);
+    expect(bossProfiles).toHaveLength(15);
     for (const input of bossProfiles) {
       const unit = new EnemyUnitFactory().create(input);
       unit.view.group.updateMatrixWorld(true);
@@ -568,21 +577,25 @@ describe("enemy visual factory", () => {
       mantis: { grade: "elite", level: 3, modifier: "hardened" },
       sentinel: { grade: "elite", level: 3, modifier: "critical-guard" },
       drake: { grade: "elite", level: 3, modifier: "manual-guard" },
-      "boss-colossus": { grade: "boss", level: 2, modifier: null },
-      "boss-hydra": { grade: "boss", level: 1, modifier: null },
+      "boss-evil-catbug": { grade: "boss", level: 35, modifier: null },
+      "boss-catbug": { grade: "boss", level: 70, modifier: null },
+      "boss-colossus": { grade: "boss", level: 140, modifier: null },
+      "boss-hydra": { grade: "boss", level: 105, modifier: null },
+      "boss-goose-hydra": { grade: "boss", level: 175, modifier: null },
     };
     for (const [family, input] of Object.entries(inputs)) {
       const variants = new Map<number, string>();
       for (let level = input.level; level < input.level + 120; level += 1) {
         const spec = enemyVisualSpec({ ...input, level });
-        if (spec.body === family)
+        if (spec.body === family) {
           variants.set(
             spec.profile.variant,
             `${spec.profile.palette.core}:${spec.decorations.join("/")}`,
           );
+        }
       }
-      expect(variants.size).toBe(3);
-      expect(new Set(variants.values()).size).toBe(3);
+      expect(variants.size, family).toBe(3);
+      expect(new Set(variants.values()).size, family).toBe(3);
     }
   });
 
@@ -592,10 +605,13 @@ describe("enemy visual factory", () => {
       brute: { grade: "normal", level: 1, modifier: null },
       wisp: { grade: "normal", level: 2, modifier: null },
       mantis: { grade: "elite", level: 3, modifier: "hardened" },
+      "boss-evil-catbug": { grade: "boss", level: 35, modifier: null },
+      "boss-catbug": { grade: "boss", level: 70, modifier: null },
       sentinel: { grade: "elite", level: 3, modifier: "critical-guard" },
       drake: { grade: "elite", level: 3, modifier: "manual-guard" },
-      "boss-colossus": { grade: "boss", level: 2, modifier: null },
-      "boss-hydra": { grade: "boss", level: 1, modifier: null },
+      "boss-colossus": { grade: "boss", level: 140, modifier: null },
+      "boss-hydra": { grade: "boss", level: 105, modifier: null },
+      "boss-goose-hydra": { grade: "boss", level: 175, modifier: null },
     };
     for (const [family, input] of Object.entries(inputs)) {
       const renderedVariants = new Set<number>();
@@ -635,6 +651,11 @@ describe("enemy visual factory", () => {
             "enemy-part-colossus-arm-1",
           ],
           "boss-hydra": [
+            "enemy-part-hydra-neck-2",
+            "enemy-part-hydra-head-2",
+            "enemy-part-hydra-horn-2",
+          ],
+          "boss-goose-hydra": [
             "enemy-part-hydra-neck-2",
             "enemy-part-hydra-head-2",
             "enemy-part-hydra-horn-2",
@@ -906,6 +927,7 @@ describe("enemy visual factory", () => {
       "boss-catbug",
       "boss-colossus",
       "boss-evil-catbug",
+      "boss-goose-hydra",
       "boss-hydra",
       "brute",
       "drake",
@@ -1217,8 +1239,8 @@ describe("enemy visual factory", () => {
 
   it("keeps boss crowns and elite spikes within body-relative top clearance", () => {
     for (const [input, headName, cueName] of [
-      [{ grade: "boss", level: 35, modifier: null }, "enemy-part-hydra-head-1", "boss-crown"],
-      [{ grade: "boss", level: 70, modifier: null }, "enemy-part-colossus-head", "boss-crown"],
+      [{ grade: "boss", level: 105, modifier: null }, "enemy-part-hydra-head-1", "boss-crown"],
+      [{ grade: "boss", level: 140, modifier: null }, "enemy-part-colossus-head", "boss-crown"],
       [
         { grade: "elite", level: 3, modifier: "hardened" },
         "enemy-part-mantis-head",
@@ -1244,7 +1266,9 @@ describe("enemy visual factory", () => {
     )) {
       const visual = createEnemyVisual(input);
       const headName =
-        visual.spec.body === "boss-hydra" || visual.spec.body === "boss-evil-catbug"
+        visual.spec.body === "boss-hydra" ||
+        visual.spec.body === "boss-evil-catbug" ||
+        visual.spec.body === "boss-goose-hydra"
           ? "enemy-part-hydra-head-1"
           : "enemy-part-colossus-head";
       const head = visual.group.getObjectByName(headName);
@@ -1267,7 +1291,7 @@ describe("enemy visual factory", () => {
     const bossProfiles = findCueInputs(
       (spec) => spec.gradeCue === "crown" && spec.body.startsWith("boss-"),
     );
-    expect(bossProfiles).toHaveLength(12);
+    expect(bossProfiles).toHaveLength(15);
     bossProfiles.forEach(assertBossTopEnvelope);
   });
 
@@ -1392,7 +1416,7 @@ describe("enemy visual factory", () => {
 
   it("keeps Colossus feet and every body profile at deterministic ground clearance", () => {
     const fixtures = findCueInputs(() => true);
-    expect(fixtures).toHaveLength(30);
+    expect(fixtures).toHaveLength(33);
     for (const input of fixtures) {
       const visual = createEnemyVisual(input);
       const bodyLayer = visual.group.getObjectByName("enemy-layer-body");
@@ -1401,7 +1425,7 @@ describe("enemy visual factory", () => {
       expect(new THREE.Box3().setFromObject(bodyLayer).min.y).toBeCloseTo(0.02, 5);
       visual.dispose();
     }
-    const colossus = createEnemyVisual({ grade: "boss", level: 70, modifier: null });
+    const colossus = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
     const feet = [-1, 1].map((side) =>
       colossus.group.getObjectByName(`enemy-part-colossus-foot-${side}`),
     );
@@ -1446,8 +1470,8 @@ describe("enemy visual factory", () => {
     const families: Readonly<Record<string, EnemyVisualInput>> = {
       beetle: { grade: "normal", level: 45, modifier: null },
       brute: { grade: "normal", level: 43, modifier: null },
-      hydra: { grade: "boss", level: 35, modifier: null },
-      colossus: { grade: "boss", level: 70, modifier: null },
+      hydra: { grade: "boss", level: 105, modifier: null },
+      colossus: { grade: "boss", level: 140, modifier: null },
     };
     for (const input of Object.values(families)) {
       const visual = createEnemyVisual(input);
@@ -1477,7 +1501,7 @@ describe("enemy visual factory", () => {
       expect(ordinary.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
       ordinary.dispose();
     }
-    const hydra = createEnemyVisual({ grade: "boss", level: 35, modifier: null });
+    const hydra = createEnemyVisual({ grade: "boss", level: 105, modifier: null });
     const crown = hydra.group.getObjectByName("boss-geometry-crystal-crown");
     expect(crown).toBeDefined();
     expect(crown?.children).toHaveLength(3);
@@ -1496,7 +1520,7 @@ describe("enemy visual factory", () => {
     });
     expect(spinesNearHead).toBe(0);
     hydra.dispose();
-    const colossus = createEnemyVisual({ grade: "boss", level: 70, modifier: null });
+    const colossus = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
     const runes = colossus.group.getObjectByName("boss-geometry-orbital-runes");
     expect(runes).toBeDefined();
     expect(runes?.children).toHaveLength(3);
@@ -1536,7 +1560,7 @@ describe("enemy visual factory", () => {
     });
     let visual: EnemyVisual | undefined;
     try {
-      visual = createEnemyVisual({ grade: "boss", level: 70, modifier: null });
+      visual = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
       const runes = visual.group.getObjectByName("boss-geometry-orbital-runes");
       if (runes === undefined) throw new Error("Expected orbital runes");
       const rotations = runes.children.map((rune) => rune.rotation.toArray());

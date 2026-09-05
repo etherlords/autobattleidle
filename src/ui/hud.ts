@@ -1,4 +1,4 @@
-import type { UpgradeId } from "../domain/combat";
+import type { UpgradeId, UpgradePurchaseQuantity } from "../domain/combat";
 import type { BattleSnapshot } from "../domain/snapshot";
 import type { AudioSettingsPort } from "./hud/audio-settings";
 import { button } from "./hud/elements";
@@ -13,7 +13,7 @@ import type { HudIntent, HudIntentListener, HudUnsubscribe } from "./hud/intents
 
 export type Hud = {
   render(snapshot: BattleSnapshot): void;
-  onUpgrade(listener: (id: UpgradeId, quantity?: 1 | 10 | 100) => void): void;
+  onUpgrade(listener: (id: UpgradeId, quantity?: UpgradePurchaseQuantity) => void): void;
   attachAudioSettings?(service: AudioSettingsPort): void;
   subscribe(listener: HudIntentListener): HudUnsubscribe;
   onAttack(listener: () => void): void;

@@ -34,7 +34,8 @@ export const validateLabRecipe = (recipe: LabRecipe, family: EnemyFamily): LabRe
     family !== "boss-hydra" &&
     family !== "boss-colossus" &&
     family !== "boss-catbug" &&
-    family !== "boss-evil-catbug"
+    family !== "boss-evil-catbug" &&
+    family !== "boss-goose-hydra"
   )
     return {
       valid: false,

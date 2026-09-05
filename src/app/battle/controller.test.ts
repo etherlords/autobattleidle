@@ -342,7 +342,7 @@ describe("BattleController", () => {
     expect(beforeFailure.state.coins).toBeGreaterThan(controller.currentUpdate().state.coins);
   });
 
-  it("caps at 100, matches repeated pure purchases, and keeps partial batches bounded", () => {
+  it("caps bulk purchases at 1000, matches repeated pure purchases, and keeps partial batches bounded", () => {
     const initial = stateWith(
       createCombatState({ criticalChance: 0, damage: 1, doubleRewardChance: 0 }),
       40,
@@ -357,12 +357,12 @@ describe("BattleController", () => {
     const updates: BattleControllerEvent[] = [];
     controller.subscribe((event) => updates.push(event));
     let repeated = initial;
-    for (let index = 0; index < 100; index += 1)
+    for (let index = 0; index < 1_000; index += 1)
       repeated = purchaseUpgrade(repeated, "damage", 0).state;
 
-    expect(controller.dispatch(battleCommands.purchase("damage", 100))).toBe(true);
-    expect(updates[0]).toMatchObject({ quantity: 100, state: repeated });
-    expect(updates[0]?.events.map((event) => event.id)).toEqual([95, 96, 97, 98, 99, 100]);
+    expect(controller.dispatch(battleCommands.purchase("damage", 5_000))).toBe(true);
+    expect(updates[0]).toMatchObject({ quantity: 1_000, state: repeated });
+    expect(updates[0]?.events.map((event) => event.id)).toEqual([995, 996, 997, 998, 999, 1_000]);
 
     const partialInitial = stateWith(initial, 40, 8);
     const partial = new BattleController({

@@ -63,17 +63,17 @@
     },
     "midgame": {
       "automaticOnly": {
-        "hits": 1712,
-        "timeToKillMs": 142443.887
+        "hits": 1708,
+        "timeToKillMs": 142110.868
       },
       "combined": {
-        "hits": 1709,
+        "hits": 1705,
         "timeToKillMs": 400
       },
       "encounter": 1015,
       "manualOnly": {
-        "hits": 1283,
-        "timeToKillMs": 128200
+        "hits": 1280,
+        "timeToKillMs": 127900
       }
     },
     "endgameStart": {
@@ -127,8 +127,8 @@
       "telemetry": {
         "adjacentMedianJump": 9.923076923076923,
         "armor": {
-          "minimumDamageFraction": 1.1976832451794255e-8,
-          "prevented": 222072977747,
+          "minimumDamageFraction": 1.2198625645346e-8,
+          "prevented": 222072977770,
           "effective": 26710,
           "raw": 84684
         },
@@ -398,8 +398,8 @@
       "telemetry": {
         "adjacentMedianJump": 44.30487804878049,
         "armor": {
-          "minimumDamageFraction": 1.5512803429717864e-12,
-          "prevented": 1623007063314363,
+          "minimumDamageFraction": 1.5816976045986842e-12,
+          "prevented": 1623007063314386,
           "effective": 26710,
           "raw": 84684
         },
@@ -1763,8 +1763,8 @@
         "telemetry": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.0011468711920292452,
-            "prevented": 382329,
+            "minimumDamageFraction": 0.0014335889900365566,
+            "prevented": 383474,
             "effective": 24813,
             "raw": 99172
           },
@@ -2307,8 +2307,8 @@
         "telemetry": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.005245642732246602,
-            "prevented": 807238,
+            "minimumDamageFraction": 0.006035309380111682,
+            "prevented": 809895,
             "effective": 45452,
             "raw": 153075
           },
@@ -2560,26 +2560,26 @@
   },
   "combinedWalls": 0,
   "endgameStartCalibration": {
-    "damage": 25277,
+    "damage": 23825,
     "goldenBug": {
-      "health": 4398198,
+      "health": 4145550,
       "hits": 174
     },
     "boss": {
       "health": 16351260,
-      "hits": 647
+      "hits": 687
     },
     "ordinary": {
       "elite": {
-        "health": 379155,
+        "health": 357375,
         "hits": 15
       },
       "normal": {
-        "health": 25277,
+        "health": 23825,
         "hits": 1
       },
       "veteran": {
-        "health": 126385,
+        "health": 119125,
         "hits": 5
       }
     }
@@ -2587,7 +2587,7 @@
   "highApsGoldenBug": {
     "automaticOnly": {
       "packets": 120,
-      "damage": 3003450,
+      "damage": 2830920,
       "defeatsGoldenBug": false,
       "escaped": true,
       "manualClicks": 0,
@@ -2599,7 +2599,7 @@
     },
     "manualPlusAutomatic": {
       "packets": 174,
-      "damage": 4374366,
+      "damage": 4123086,
       "defeatsGoldenBug": true,
       "escaped": false,
       "manualClicks": 78,
@@ -2609,7 +2609,7 @@
         "goldenBugDefeats": 1
       }
     },
-    "health": 4372921
+    "health": 4121725
   },
   "realTimeBands": [
     {
@@ -2947,69 +2947,66 @@
       }
     },
     {
-      "automaticAttacksPerSecond": 11.965030485188793,
-      "coins": 3515374,
+      "automaticAttacksPerSecond": 11.945035251341324,
+      "coins": 390093,
       "elapsedMs": 14400000,
-      "encounters": 1925,
-      "encountersPerSecond": 0.13368055555555555,
+      "encounters": 1820,
+      "encountersPerSecond": 0.12638888888888888,
       "economy": {
-        "doubleRewardIncome": 178352914,
-        "income": 356457104,
+        "doubleRewardIncome": 155697921,
+        "income": 311325691,
         "saturation": false,
         "spend": {
           "automatic-unlock": 0,
-          "automatic-speed": 100372247,
+          "automatic-speed": 58892661,
           "armor-penetration": 84068183,
           "critical-chance": 71364179,
-          "damage": 1985180,
+          "damage": 1458634,
           "double-reward": 95151941
         },
-        "unaffordableGaps": 20,
-        "unspent": 3515374
+        "unaffordableGaps": 29,
+        "unspent": 390093
       },
       "hours": 4,
       "outcomes": {
         "boss": {
-          "count": 54,
-          "hits": 66888,
-          "rewards": 353171124
+          "count": 51,
+          "hits": 65394,
+          "rewards": 308407248
         },
         "goldenBug": {
-          "count": 38,
-          "hits": 2910,
-          "rewards": 1686145
+          "count": 36,
+          "hits": 2729,
+          "rewards": 1487349
         },
         "ordinary": {
-          "count": 1492,
-          "hits": 8217,
-          "rewards": 1599835
+          "count": 1439,
+          "hits": 7814,
+          "rewards": 1431094
         }
       },
       "player": {
-        "automaticSpeedLevel": 1842,
+        "automaticSpeedLevel": 1468,
         "armorPenetrationLevel": 2123,
         "criticalChance": 0.594,
         "criticalLevel": 1980,
-        "damage": 739,
-        "damageLevel": 512,
+        "damage": 661,
+        "damageLevel": 449,
         "doubleRewardChance": 0.594,
         "doubleRewardLevel": 1980
       },
       "purchases": {
         "automatic-unlock": 1,
-        "automatic-speed": 408,
+        "automatic-speed": 406,
         "armor-penetration": 218,
         "critical-chance": 194,
-        "damage": 512,
+        "damage": 449,
         "double-reward": 194
       },
       "telemetry": {
         "boss": {
-          "cadenceContributionMs": 7633439.457,
+          "cadenceContributionMs": 7609640.484000002,
           "gaps": [
-            35,
-            35,
-            35,
             35,
             35,
             35,
@@ -3062,35 +3059,35 @@
             35
           ],
           "hits": {
-            "count": 54,
-            "p50": 1362,
-            "p90": 1716,
-            "max": 1720,
+            "count": 51,
+            "p50": 1365,
+            "p90": 1720,
+            "max": 2348,
             "oneHitFraction": 0,
             "fivePlusFraction": 1,
             "tenPlusFraction": 1
           },
           "timeToKillMs": {
             "max": 300000,
-            "p50": 142000,
-            "p90": 144666.667
+            "p50": 142666.667,
+            "p90": 192000
           }
         },
         "goldenBug": {
-          "delayMs": 370000,
+          "delayMs": 350000,
           "outcomes": {
-            "count": 38,
-            "hits": 2910,
-            "rewards": 1686145
+            "count": 36,
+            "hits": 2729,
+            "rewards": 1487349
           }
         },
         "ordinary": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.0027990750882317147,
-            "prevented": 181801,
-            "effective": 10004,
-            "raw": 34227
+            "minimumDamageFraction": 0.002431533145636038,
+            "prevented": 156434,
+            "effective": 9003,
+            "raw": 30336
           },
           "bands": {
             "encounters100To149": {
@@ -3115,58 +3112,58 @@
             },
             "encounters1000To1099": {
               "hits": {
-                "count": 75,
+                "count": 83,
                 "p50": 4,
-                "p90": 12,
+                "p90": 8,
                 "max": 12,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               },
               "timeToKillMs": {
-                "count": 75,
+                "count": 83,
                 "p50": 333.333,
                 "p90": 1000,
-                "max": 138332.61,
+                "max": 122888.723,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               }
             }
           },
           "grades": {
             "normal": {
-              "count": 292,
+              "count": 298,
               "p50": 2,
               "p90": 4,
               "max": 10,
-              "oneHitFraction": 0.3424657534246575,
-              "fivePlusFraction": 0.003424657534246575,
-              "tenPlusFraction": 0.003424657534246575
+              "oneHitFraction": 0.33557046979865773,
+              "fivePlusFraction": 0.003355704697986577,
+              "tenPlusFraction": 0.003355704697986577
             },
             "veteran": {
-              "count": 577,
+              "count": 552,
               "p50": 4,
               "p90": 4,
               "max": 6,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.09012131715771231,
+              "fivePlusFraction": 0.09420289855072464,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 623,
+              "count": 589,
               "p50": 8,
               "p90": 12,
               "max": 22,
-              "oneHitFraction": 0.0016051364365971107,
-              "fivePlusFraction": 0.9085072231139647,
-              "tenPlusFraction": 0.27929373996789725
+              "oneHitFraction": 0.001697792869269949,
+              "fivePlusFraction": 0.8947368421052632,
+              "tenPlusFraction": 0.28183361629881154
             },
             "boss": {
-              "count": 54,
-              "p50": 1362,
-              "p90": 1716,
-              "max": 1720,
+              "count": 51,
+              "p50": 1365,
+              "p90": 1720,
+              "max": 2348,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
               "tenPlusFraction": 1
@@ -3174,36 +3171,36 @@
           },
           "gradeTimeToKillMs": {
             "normal": {
-              "count": 292,
+              "count": 298,
               "p50": 333.333,
-              "p90": 4127.651,
-              "max": 139776.149,
-              "oneHitFraction": 0.3424657534246575,
-              "fivePlusFraction": 0.003424657534246575,
-              "tenPlusFraction": 0.003424657534246575
+              "p90": 4590.909,
+              "max": 140508.414,
+              "oneHitFraction": 0.33557046979865773,
+              "fivePlusFraction": 0.003355704697986577,
+              "tenPlusFraction": 0.003355704697986577
             },
             "veteran": {
-              "count": 577,
+              "count": 552,
               "p50": 333.333,
-              "p90": 4010.111,
-              "max": 141125.318,
+              "p90": 4298.721,
+              "max": 192699.996,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.09012131715771231,
+              "fivePlusFraction": 0.09420289855072464,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 623,
+              "count": 589,
               "p50": 1000,
-              "p90": 7704.452,
+              "p90": 8750,
               "max": 220000,
-              "oneHitFraction": 0.0016051364365971107,
-              "fivePlusFraction": 0.9085072231139647,
-              "tenPlusFraction": 0.27929373996789725
+              "oneHitFraction": 0.001697792869269949,
+              "fivePlusFraction": 0.8947368421052632,
+              "tenPlusFraction": 0.28183361629881154
             },
             "boss": {
-              "count": 54,
-              "p50": 142000,
-              "p90": 144666.667,
+              "count": 51,
+              "p50": 142666.667,
+              "p90": 192000,
               "max": 300000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
@@ -3212,123 +3209,123 @@
           },
           "modifiers": {
             "armor": {
-              "count": 104,
+              "count": 98,
               "p50": 8,
               "p90": 9,
               "max": 17,
-              "oneHitFraction": 0.009615384615384616,
-              "fivePlusFraction": 0.9134615384615384,
-              "tenPlusFraction": 0.09615384615384616
+              "oneHitFraction": 0.01020408163265306,
+              "fivePlusFraction": 0.8673469387755102,
+              "tenPlusFraction": 0.10204081632653061
             },
             "health": {
-              "count": 104,
+              "count": 98,
               "p50": 8,
               "p90": 12,
               "max": 15,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.28846153846153844
+              "tenPlusFraction": 0.29591836734693877
             },
             "automatic-slow": {
-              "count": 104,
+              "count": 98,
               "p50": 6,
               "p90": 9,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.8269230769230769,
-              "tenPlusFraction": 0.0673076923076923
+              "fivePlusFraction": 0.7346938775510204,
+              "tenPlusFraction": 0.07142857142857142
             },
             "hardened": {
-              "count": 104,
+              "count": 98,
               "p50": 8,
               "p90": 12,
               "max": 22,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.25961538461538464
+              "tenPlusFraction": 0.21428571428571427
             },
             "critical-guard": {
-              "count": 104,
+              "count": 98,
               "p50": 12,
               "p90": 15,
               "max": 20,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.8942307692307693
+              "tenPlusFraction": 0.9387755102040817
             },
             "manual-guard": {
-              "count": 103,
+              "count": 99,
               "p50": 6,
               "p90": 9,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.7087378640776699,
-              "tenPlusFraction": 0.06796116504854369
+              "fivePlusFraction": 0.7676767676767676,
+              "tenPlusFraction": 0.0707070707070707
             }
           },
           "modifierTimeToKillMs": {
             "armor": {
-              "count": 104,
+              "count": 98,
               "p50": 666.667,
               "p90": 7704.452,
               "max": 153567.69,
-              "oneHitFraction": 0.009615384615384616,
-              "fivePlusFraction": 0.9134615384615384,
-              "tenPlusFraction": 0.09615384615384616
+              "oneHitFraction": 0.01020408163265306,
+              "fivePlusFraction": 0.8673469387755102,
+              "tenPlusFraction": 0.10204081632653061
             },
             "health": {
-              "count": 104,
+              "count": 98,
               "p50": 1000,
-              "p90": 8289.008,
+              "p90": 10693.63,
               "max": 150000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.28846153846153844
+              "tenPlusFraction": 0.29591836734693877
             },
             "automatic-slow": {
-              "count": 104,
+              "count": 98,
               "p50": 1166.667,
-              "p90": 6148.104,
-              "max": 136763.239,
+              "p90": 7180.63,
+              "max": 134175.418,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.8269230769230769,
-              "tenPlusFraction": 0.0673076923076923
+              "fivePlusFraction": 0.7346938775510204,
+              "tenPlusFraction": 0.07142857142857142
             },
             "hardened": {
-              "count": 104,
-              "p50": 1000,
-              "p90": 7466.586,
+              "count": 98,
+              "p50": 787.585,
+              "p90": 8796.34,
               "max": 220000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.25961538461538464
+              "tenPlusFraction": 0.21428571428571427
             },
             "critical-guard": {
-              "count": 104,
-              "p50": 1000,
-              "p90": 6523.411,
-              "max": 143554.113,
+              "count": 98,
+              "p50": 1137.657,
+              "p90": 7882.428,
+              "max": 142556.178,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.8942307692307693
+              "tenPlusFraction": 0.9387755102040817
             },
             "manual-guard": {
-              "count": 103,
+              "count": 99,
               "p50": 666.667,
-              "p90": 3750.672,
+              "p90": 4618.644,
               "max": 127121.04,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.7087378640776699,
-              "tenPlusFraction": 0.06796116504854369
+              "fivePlusFraction": 0.7676767676767676,
+              "tenPlusFraction": 0.0707070707070707
             }
           },
           "gradeTransitions": {
-            "normal->veteran": 243,
-            "veteran->elite": 561,
-            "elite->normal": 284,
-            "normal->elite": 49,
-            "elite->veteran": 325,
-            "veteran->normal": 7
+            "normal->veteran": 256,
+            "veteran->elite": 536,
+            "elite->normal": 289,
+            "normal->elite": 42,
+            "elite->veteran": 288,
+            "veteran->normal": 8
           },
           "bossGaps": [
             35,
@@ -3380,53 +3377,50 @@
             35,
             35,
             35,
-            35,
-            35,
-            35,
             35
           ],
-          "bossOnlyElapsedMs": 7633439.457,
+          "bossOnlyElapsedMs": 7609640.484000002,
           "walls": 20
         }
       }
     },
     {
       "automaticAttacksPerSecond": 11.995001025839906,
-      "coins": 4874269166,
+      "coins": 2996987854,
       "elapsedMs": 28800000,
-      "encounters": 5049,
-      "encountersPerSecond": 0.1753125,
+      "encounters": 4795,
+      "encountersPerSecond": 0.16649305555555555,
       "economy": {
-        "doubleRewardIncome": 6872639141,
-        "income": 13756165540,
+        "doubleRewardIncome": 5933327379,
+        "income": 11866240527,
         "saturation": false,
         "spend": {
           "automatic-unlock": 0,
           "automatic-speed": 989409372,
           "armor-penetration": 1621031156,
           "critical-chance": 4903091957,
-          "damage": 90965781,
+          "damage": 78322080,
           "double-reward": 1277398108
         },
-        "unaffordableGaps": 20,
-        "unspent": 4874269166
+        "unaffordableGaps": 29,
+        "unspent": 2996987854
       },
       "hours": 8,
       "outcomes": {
         "boss": {
-          "count": 144,
-          "hits": 221972,
-          "rewards": 13733723155
+          "count": 136,
+          "hits": 222038,
+          "rewards": 11845952126
         },
         "goldenBug": {
-          "count": 100,
-          "hits": 8362,
-          "rewards": 11453194
+          "count": 95,
+          "hits": 7909,
+          "rewards": 10336530
         },
         "ordinary": {
-          "count": 3516,
-          "hits": 19737,
-          "rewards": 10989191
+          "count": 3372,
+          "hits": 18802,
+          "rewards": 9951871
         }
       },
       "player": {
@@ -3434,8 +3428,8 @@
         "armorPenetrationLevel": 7480,
         "criticalChance": 0.599,
         "criticalLevel": 11980,
-        "damage": 3120,
-        "damageLevel": 2609,
+        "damage": 2943,
+        "damageLevel": 2448,
         "doubleRewardChance": 0.598,
         "doubleRewardLevel": 5980
       },
@@ -3444,21 +3438,13 @@
         "automatic-speed": 411,
         "armor-penetration": 223,
         "critical-chance": 199,
-        "damage": 2609,
+        "damage": 2448,
         "double-reward": 198
       },
       "telemetry": {
         "boss": {
-          "cadenceContributionMs": 20561772.798999984,
+          "cadenceContributionMs": 20667640.49199999,
           "gaps": [
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35,
             35,
             35,
@@ -3596,35 +3582,35 @@
             35
           ],
           "hits": {
-            "count": 144,
+            "count": 136,
             "p50": 1720,
-            "p90": 1728,
-            "max": 1728,
+            "p90": 2324,
+            "max": 2348,
             "oneHitFraction": 0,
             "fivePlusFraction": 1,
             "tenPlusFraction": 1
           },
           "timeToKillMs": {
             "max": 300000,
-            "p50": 143333.333,
-            "p90": 144000
+            "p50": 143666.667,
+            "p90": 194000
           }
         },
         "goldenBug": {
-          "delayMs": 1000000,
+          "delayMs": 950000,
           "outcomes": {
-            "count": 100,
-            "hits": 8362,
-            "rewards": 11453194
+            "count": 95,
+            "hits": 7909,
+            "rewards": 10336530
           }
         },
         "ordinary": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.0011653240107412474,
-            "prevented": 1574937,
-            "effective": 92501,
-            "raw": 361231
+            "minimumDamageFraction": 0.0010105307945963194,
+            "prevented": 1401072,
+            "effective": 82575,
+            "raw": 321913
           },
           "bands": {
             "encounters100To149": {
@@ -3649,58 +3635,58 @@
             },
             "encounters1000To1099": {
               "hits": {
-                "count": 75,
+                "count": 83,
                 "p50": 4,
-                "p90": 12,
+                "p90": 8,
                 "max": 12,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               },
               "timeToKillMs": {
-                "count": 75,
+                "count": 83,
                 "p50": 333.333,
                 "p90": 1000,
-                "max": 138332.61,
+                "max": 122888.723,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               }
             }
           },
           "grades": {
             "normal": {
-              "count": 540,
+              "count": 536,
               "p50": 4,
               "p90": 4,
               "max": 10,
-              "oneHitFraction": 0.18518518518518517,
-              "fivePlusFraction": 0.001851851851851852,
-              "tenPlusFraction": 0.001851851851851852
+              "oneHitFraction": 0.1865671641791045,
+              "fivePlusFraction": 0.0018656716417910447,
+              "tenPlusFraction": 0.0018656716417910447
             },
             "veteran": {
-              "count": 1342,
+              "count": 1283,
               "p50": 4,
               "p90": 4,
               "max": 6,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.038748137108792845,
+              "fivePlusFraction": 0.04053000779423227,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 1634,
+              "count": 1553,
               "p50": 8,
               "p90": 12,
               "max": 22,
-              "oneHitFraction": 0.0006119951040391676,
-              "fivePlusFraction": 0.7998776009791921,
-              "tenPlusFraction": 0.17686658506731945
+              "oneHitFraction": 0.000643915003219575,
+              "fivePlusFraction": 0.7997424339987121,
+              "tenPlusFraction": 0.1706374758531874
             },
             "boss": {
-              "count": 144,
+              "count": 136,
               "p50": 1720,
-              "p90": 1728,
-              "max": 1728,
+              "p90": 2324,
+              "max": 2348,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
               "tenPlusFraction": 1
@@ -3708,36 +3694,36 @@
           },
           "gradeTimeToKillMs": {
             "normal": {
-              "count": 540,
+              "count": 536,
               "p50": 333.333,
-              "p90": 1432.907,
-              "max": 139776.149,
-              "oneHitFraction": 0.18518518518518517,
-              "fivePlusFraction": 0.001851851851851852,
-              "tenPlusFraction": 0.001851851851851852
+              "p90": 1536.126,
+              "max": 140508.414,
+              "oneHitFraction": 0.1865671641791045,
+              "fivePlusFraction": 0.0018656716417910447,
+              "tenPlusFraction": 0.0018656716417910447
             },
             "veteran": {
-              "count": 1342,
+              "count": 1283,
               "p50": 333.333,
-              "p90": 1139.44,
-              "max": 143000,
+              "p90": 1209.677,
+              "max": 193666.667,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.038748137108792845,
+              "fivePlusFraction": 0.04053000779423227,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 1634,
+              "count": 1553,
               "p50": 666.667,
               "p90": 2000,
               "max": 220000,
-              "oneHitFraction": 0.0006119951040391676,
-              "fivePlusFraction": 0.7998776009791921,
-              "tenPlusFraction": 0.17686658506731945
+              "oneHitFraction": 0.000643915003219575,
+              "fivePlusFraction": 0.7997424339987121,
+              "tenPlusFraction": 0.1706374758531874
             },
             "boss": {
-              "count": 144,
-              "p50": 143333.333,
-              "p90": 144000,
+              "count": 136,
+              "p50": 143666.667,
+              "p90": 194000,
               "max": 300000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
@@ -3746,123 +3732,123 @@
           },
           "modifiers": {
             "armor": {
-              "count": 273,
+              "count": 260,
               "p50": 8,
               "p90": 8,
               "max": 17,
-              "oneHitFraction": 0.003663003663003663,
-              "fivePlusFraction": 0.6996336996336996,
-              "tenPlusFraction": 0.03663003663003663
+              "oneHitFraction": 0.0038461538461538464,
+              "fivePlusFraction": 0.6346153846153846,
+              "tenPlusFraction": 0.038461538461538464
             },
             "health": {
-              "count": 273,
+              "count": 260,
               "p50": 8,
               "p90": 10,
               "max": 15,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.10989010989010989
+              "tenPlusFraction": 0.11153846153846154
             },
             "automatic-slow": {
-              "count": 272,
+              "count": 258,
               "p50": 6,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5551470588235294,
-              "tenPlusFraction": 0.025735294117647058
+              "fivePlusFraction": 0.5581395348837209,
+              "tenPlusFraction": 0.027131782945736434
             },
             "hardened": {
-              "count": 272,
+              "count": 258,
               "p50": 8,
               "p90": 9,
               "max": 22,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.09926470588235294
+              "tenPlusFraction": 0.08139534883720931
             },
             "critical-guard": {
-              "count": 272,
+              "count": 258,
               "p50": 12,
               "p90": 12,
               "max": 20,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7647058823529411
+              "tenPlusFraction": 0.7403100775193798
             },
             "manual-guard": {
-              "count": 272,
-              "p50": 5,
+              "count": 259,
+              "p50": 6,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5441176470588235,
-              "tenPlusFraction": 0.025735294117647058
+              "fivePlusFraction": 0.6061776061776062,
+              "tenPlusFraction": 0.02702702702702703
             }
           },
           "modifierTimeToKillMs": {
             "armor": {
-              "count": 273,
+              "count": 260,
               "p50": 666.667,
               "p90": 1333.333,
               "max": 153567.69,
-              "oneHitFraction": 0.003663003663003663,
-              "fivePlusFraction": 0.6996336996336996,
-              "tenPlusFraction": 0.03663003663003663
+              "oneHitFraction": 0.0038461538461538464,
+              "fivePlusFraction": 0.6346153846153846,
+              "tenPlusFraction": 0.038461538461538464
             },
             "health": {
-              "count": 273,
+              "count": 260,
               "p50": 666.667,
               "p90": 1666.667,
-              "max": 150000,
+              "max": 192500,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.10989010989010989
+              "tenPlusFraction": 0.11153846153846154
             },
             "automatic-slow": {
-              "count": 272,
+              "count": 258,
               "p50": 1166.667,
-              "p90": 2000,
-              "max": 141500,
+              "p90": 2308.015,
+              "max": 193500,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5551470588235294,
-              "tenPlusFraction": 0.025735294117647058
+              "fivePlusFraction": 0.5581395348837209,
+              "tenPlusFraction": 0.027131782945736434
             },
             "hardened": {
-              "count": 272,
+              "count": 258,
               "p50": 666.667,
-              "p90": 1529.742,
+              "p90": 1666.667,
               "max": 220000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.09926470588235294
+              "tenPlusFraction": 0.08139534883720931
             },
             "critical-guard": {
-              "count": 272,
+              "count": 258,
               "p50": 1000,
-              "p90": 2236.02,
-              "max": 143666.667,
+              "p90": 2000,
+              "max": 142556.178,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7647058823529411
+              "tenPlusFraction": 0.7403100775193798
             },
             "manual-guard": {
-              "count": 272,
+              "count": 259,
               "p50": 666.667,
               "p90": 1000,
-              "max": 141833.333,
+              "max": 191833.333,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5441176470588235,
-              "tenPlusFraction": 0.025735294117647058
+              "fivePlusFraction": 0.6061776061776062,
+              "tenPlusFraction": 0.02702702702702703
             }
           },
           "gradeTransitions": {
-            "normal->veteran": 249,
-            "veteran->elite": 1303,
-            "elite->normal": 526,
-            "normal->elite": 289,
-            "elite->veteran": 1066,
-            "veteran->normal": 11
+            "normal->veteran": 263,
+            "veteran->elite": 1246,
+            "elite->normal": 520,
+            "normal->elite": 272,
+            "elite->veteran": 997,
+            "veteran->normal": 14
           },
           "bossGaps": [
             35,
@@ -3999,58 +3985,50 @@
             35,
             35,
             35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35
           ],
-          "bossOnlyElapsedMs": 20561772.798999984,
-          "walls": 65
+          "bossOnlyElapsedMs": 20667640.49199999,
+          "walls": 64
         }
       }
     },
     {
       "automaticAttacksPerSecond": 11.995001025839906,
-      "coins": 1734093825012,
+      "coins": 1464050950145,
       "elapsedMs": 86400000,
-      "encounters": 17551,
-      "encountersPerSecond": 0.20313657407407407,
+      "encounters": 16555,
+      "encountersPerSecond": 0.1916087962962963,
       "economy": {
-        "doubleRewardIncome": 878767618583,
-        "income": 1757523820022,
+        "doubleRewardIncome": 743683958787,
+        "income": 1487113498323,
         "saturation": false,
         "spend": {
           "automatic-unlock": 0,
           "automatic-speed": 989409372,
           "armor-penetration": 8289734256,
           "critical-chance": 4903091957,
-          "damage": 2710305440,
+          "damage": 2342858608,
           "double-reward": 6537453985
         },
-        "unaffordableGaps": 20,
-        "unspent": 1734093825012
+        "unaffordableGaps": 29,
+        "unspent": 1464050950145
       },
       "hours": 24,
       "outcomes": {
         "boss": {
-          "count": 501,
-          "hits": 838488,
-          "rewards": 1757251865501
+          "count": 472,
+          "hits": 842750,
+          "rewards": 1486870595625
         },
         "goldenBug": {
-          "count": 350,
-          "hits": 30358,
-          "rewards": 138875611
+          "count": 331,
+          "hits": 28677,
+          "rewards": 124269563
         },
         "ordinary": {
-          "count": 11614,
-          "hits": 66285,
-          "rewards": 133078910
+          "count": 10987,
+          "hits": 62570,
+          "rewards": 118633135
         }
       },
       "player": {
@@ -4058,8 +4036,8 @@
         "armorPenetrationLevel": 14980,
         "criticalChance": 0.599,
         "criticalLevel": 11980,
-        "damage": 12114,
-        "damageLevel": 11062,
+        "damage": 11417,
+        "damageLevel": 10397,
         "doubleRewardChance": 0.599,
         "doubleRewardLevel": 11980
       },
@@ -4068,42 +4046,13 @@
         "automatic-speed": 411,
         "armor-penetration": 224,
         "critical-chance": 199,
-        "damage": 11062,
+        "damage": 10397,
         "double-reward": 199
       },
       "telemetry": {
         "boss": {
-          "cadenceContributionMs": 71956272.83000013,
+          "cadenceContributionMs": 72408807.16800004,
           "gaps": [
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35,
             35,
             35,
@@ -4577,10 +4526,10 @@
             35
           ],
           "hits": {
-            "count": 501,
+            "count": 472,
             "p50": 1728,
-            "p90": 1728,
-            "max": 1728,
+            "p90": 2328,
+            "max": 2348,
             "oneHitFraction": 0,
             "fivePlusFraction": 1,
             "tenPlusFraction": 1
@@ -4588,24 +4537,24 @@
           "timeToKillMs": {
             "max": 300000,
             "p50": 144000,
-            "p90": 144166.667
+            "p90": 194333.333
           }
         },
         "goldenBug": {
-          "delayMs": 3500000,
+          "delayMs": 3300000,
           "outcomes": {
-            "count": 350,
-            "hits": 30358,
-            "rewards": 138875611
+            "count": 331,
+            "hits": 28677,
+            "rewards": 124269563
           }
         },
         "ordinary": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.00034698649769932866,
-            "prevented": 22675048,
-            "effective": 1385840,
-            "raw": 5516241
+            "minimumDamageFraction": 0.00030365990091097973,
+            "prevented": 19973164,
+            "effective": 1231350,
+            "raw": 4900752
           },
           "bands": {
             "encounters100To149": {
@@ -4630,58 +4579,58 @@
             },
             "encounters1000To1099": {
               "hits": {
-                "count": 75,
+                "count": 83,
                 "p50": 4,
-                "p90": 12,
+                "p90": 8,
                 "max": 12,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               },
               "timeToKillMs": {
-                "count": 75,
+                "count": 83,
                 "p50": 333.333,
                 "p90": 1000,
-                "max": 138332.61,
+                "max": 122888.723,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               }
             }
           },
           "grades": {
             "normal": {
-              "count": 1597,
+              "count": 1474,
               "p50": 4,
               "p90": 4,
               "max": 10,
-              "oneHitFraction": 0.06261740763932373,
-              "fivePlusFraction": 0.0006261740763932373,
-              "tenPlusFraction": 0.0006261740763932373
+              "oneHitFraction": 0.06784260515603799,
+              "fivePlusFraction": 0.0006784260515603799,
+              "tenPlusFraction": 0.0006784260515603799
             },
             "veteran": {
-              "count": 4334,
+              "count": 4152,
               "p50": 4,
               "p90": 4,
               "max": 6,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.011998154130133826,
+              "fivePlusFraction": 0.012524084778420038,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 5683,
+              "count": 5361,
               "p50": 8,
               "p90": 12,
               "max": 22,
-              "oneHitFraction": 0.00017596339961288053,
-              "fivePlusFraction": 0.7691360197079008,
-              "tenPlusFraction": 0.13443603730424072
+              "oneHitFraction": 0.00018653236336504383,
+              "fivePlusFraction": 0.7575079276254431,
+              "tenPlusFraction": 0.1441895168811789
             },
             "boss": {
-              "count": 501,
+              "count": 472,
               "p50": 1728,
-              "p90": 1728,
-              "max": 1728,
+              "p90": 2328,
+              "max": 2348,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
               "tenPlusFraction": 1
@@ -4689,36 +4638,36 @@
           },
           "gradeTimeToKillMs": {
             "normal": {
-              "count": 1597,
+              "count": 1474,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 142666.667,
-              "oneHitFraction": 0.06261740763932373,
-              "fivePlusFraction": 0.0006261740763932373,
-              "tenPlusFraction": 0.0006261740763932373
+              "max": 193500,
+              "oneHitFraction": 0.06784260515603799,
+              "fivePlusFraction": 0.0006784260515603799,
+              "tenPlusFraction": 0.0006784260515603799
             },
             "veteran": {
-              "count": 4334,
+              "count": 4152,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 144000,
+              "max": 193666.667,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.011998154130133826,
+              "fivePlusFraction": 0.012524084778420038,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 5683,
+              "count": 5361,
               "p50": 666.667,
               "p90": 1166.667,
               "max": 220000,
-              "oneHitFraction": 0.00017596339961288053,
-              "fivePlusFraction": 0.7691360197079008,
-              "tenPlusFraction": 0.13443603730424072
+              "oneHitFraction": 0.00018653236336504383,
+              "fivePlusFraction": 0.7575079276254431,
+              "tenPlusFraction": 0.1441895168811789
             },
             "boss": {
-              "count": 501,
+              "count": 472,
               "p50": 144000,
-              "p90": 144166.667,
+              "p90": 194333.333,
               "max": 300000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
@@ -4727,123 +4676,123 @@
           },
           "modifiers": {
             "armor": {
-              "count": 947,
-              "p50": 7,
+              "count": 894,
+              "p50": 8,
               "p90": 8,
               "max": 17,
-              "oneHitFraction": 0.0010559662090813093,
-              "fivePlusFraction": 0.5237592397043295,
-              "tenPlusFraction": 0.010559662090813094
+              "oneHitFraction": 0.0011185682326621924,
+              "fivePlusFraction": 0.5816554809843401,
+              "tenPlusFraction": 0.011185682326621925
             },
             "health": {
-              "count": 947,
+              "count": 894,
               "p50": 8,
               "p90": 8,
               "max": 15,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.03167898627243928
+              "tenPlusFraction": 0.03243847874720358
             },
             "automatic-slow": {
-              "count": 947,
-              "p50": 6,
+              "count": 894,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5163674762407603,
-              "tenPlusFraction": 0.007391763463569166
+              "fivePlusFraction": 0.4753914988814318,
+              "tenPlusFraction": 0.007829977628635347
             },
             "hardened": {
-              "count": 947,
+              "count": 894,
               "p50": 8,
               "p90": 8,
               "max": 22,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.028511087645195353
+              "tenPlusFraction": 0.02348993288590604
             },
             "critical-guard": {
-              "count": 947,
+              "count": 892,
               "p50": 12,
               "p90": 12,
               "max": 20,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7212249208025343
+              "tenPlusFraction": 0.7836322869955157
             },
             "manual-guard": {
-              "count": 948,
-              "p50": 8,
+              "count": 893,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5748945147679325,
-              "tenPlusFraction": 0.007383966244725738
+              "fivePlusFraction": 0.48824188129899215,
+              "tenPlusFraction": 0.007838745800671893
             }
           },
           "modifierTimeToKillMs": {
             "armor": {
-              "count": 947,
+              "count": 894,
               "p50": 666.667,
               "p90": 666.667,
               "max": 153567.69,
-              "oneHitFraction": 0.0010559662090813093,
-              "fivePlusFraction": 0.5237592397043295,
-              "tenPlusFraction": 0.010559662090813094
+              "oneHitFraction": 0.0011185682326621924,
+              "fivePlusFraction": 0.5816554809843401,
+              "tenPlusFraction": 0.011185682326621925
             },
             "health": {
-              "count": 947,
+              "count": 894,
               "p50": 666.667,
               "p90": 666.667,
-              "max": 150000,
+              "max": 193666.667,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.03167898627243928
+              "tenPlusFraction": 0.03243847874720358
             },
             "automatic-slow": {
-              "count": 947,
-              "p50": 1166.667,
+              "count": 894,
+              "p50": 333.333,
               "p90": 1166.667,
-              "max": 143333.333,
+              "max": 193666.667,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5163674762407603,
-              "tenPlusFraction": 0.007391763463569166
+              "fivePlusFraction": 0.4753914988814318,
+              "tenPlusFraction": 0.007829977628635347
             },
             "hardened": {
-              "count": 947,
+              "count": 894,
               "p50": 666.667,
               "p90": 666.667,
               "max": 220000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.028511087645195353
+              "tenPlusFraction": 0.02348993288590604
             },
             "critical-guard": {
-              "count": 947,
+              "count": 892,
               "p50": 1000,
               "p90": 1000,
-              "max": 144666.667,
+              "max": 142556.178,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7212249208025343
+              "tenPlusFraction": 0.7836322869955157
             },
             "manual-guard": {
-              "count": 948,
-              "p50": 666.667,
+              "count": 893,
+              "p50": 418.985,
               "p90": 666.667,
-              "max": 143333.333,
+              "max": 194000,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5748945147679325,
-              "tenPlusFraction": 0.007383966244725738
+              "fivePlusFraction": 0.48824188129899215,
+              "tenPlusFraction": 0.007838745800671893
             }
           },
           "gradeTransitions": {
-            "normal->veteran": 284,
-            "veteran->elite": 4212,
-            "elite->normal": 1561,
-            "normal->elite": 1311,
-            "elite->veteran": 3961,
-            "veteran->normal": 33
+            "normal->veteran": 286,
+            "veteran->elite": 4026,
+            "elite->normal": 1423,
+            "normal->elite": 1187,
+            "elite->veteran": 3789,
+            "veteran->normal": 49
           },
           "bossGaps": [
             35,
@@ -5316,79 +5265,50 @@
             35,
             35,
             35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35
           ],
-          "bossOnlyElapsedMs": 71956272.83000013,
-          "walls": 239
+          "bossOnlyElapsedMs": 72408807.16800004,
+          "walls": 233
         }
       }
     },
     {
       "automaticAttacksPerSecond": 11.995001025839906,
-      "coins": 31113448669722,
+      "coins": 26273898755007,
       "elapsedMs": 172800000,
-      "encounters": 36295,
-      "encountersPerSecond": 0.21004050925925927,
+      "encounters": 34195,
+      "encountersPerSecond": 0.19788773148148148,
       "economy": {
-        "doubleRewardIncome": 15573027899220,
-        "income": 31150468511192,
+        "doubleRewardIncome": 13152265480312,
+        "income": 26308739716904,
         "saturation": false,
         "spend": {
           "automatic-unlock": 0,
           "automatic-speed": 989409372,
           "armor-penetration": 8289734256,
           "critical-chance": 4903091957,
-          "damage": 16300151900,
+          "damage": 14121272327,
           "double-reward": 6537453985
         },
-        "unaffordableGaps": 20,
-        "unspent": 31113448669722
+        "unaffordableGaps": 29,
+        "unspent": 26273898755007
       },
       "hours": 48,
       "outcomes": {
         "boss": {
-          "count": 1036,
-          "hits": 1762372,
-          "rewards": 31149304767367
+          "count": 976,
+          "hits": 1774262,
+          "rewards": 26307705964623
         },
         "goldenBug": {
-          "count": 725,
-          "hits": 63358,
-          "rewards": 594804909
+          "count": 683,
+          "hits": 59653,
+          "rewards": 528256953
         },
         "ordinary": {
-          "count": 23753,
-          "hits": 136145,
-          "rewards": 568938916
+          "count": 22416,
+          "hits": 128250,
+          "rewards": 505495328
         }
       },
       "player": {
@@ -5396,8 +5316,8 @@
         "armorPenetrationLevel": 14980,
         "criticalChance": 0.599,
         "criticalLevel": 11980,
-        "damage": 25277,
-        "damageLevel": 23736,
+        "damage": 23825,
+        "damageLevel": 22330,
         "doubleRewardChance": 0.599,
         "doubleRewardLevel": 11980
       },
@@ -5406,73 +5326,13 @@
         "automatic-speed": 411,
         "armor-penetration": 224,
         "critical-chance": 199,
-        "damage": 23736,
+        "damage": 22330,
         "double-reward": 199
       },
       "telemetry": {
         "boss": {
-          "cadenceContributionMs": 148975939.54399952,
+          "cadenceContributionMs": 150057307.16800004,
           "gaps": [
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35,
             35,
             35,
@@ -6450,10 +6310,10 @@
             35
           ],
           "hits": {
-            "count": 1036,
+            "count": 976,
             "p50": 1728,
-            "p90": 1728,
-            "max": 1728,
+            "p90": 2332,
+            "max": 2348,
             "oneHitFraction": 0,
             "fivePlusFraction": 1,
             "tenPlusFraction": 1
@@ -6461,24 +6321,24 @@
           "timeToKillMs": {
             "max": 300000,
             "p50": 144000,
-            "p90": 144166.667
+            "p90": 194333.333
           }
         },
         "goldenBug": {
-          "delayMs": 7250000,
+          "delayMs": 6830000,
           "outcomes": {
-            "count": 725,
-            "hits": 63358,
-            "rewards": 594804909
+            "count": 683,
+            "hits": 59653,
+            "rewards": 528256953
           }
         },
         "ordinary": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.00016893752983950934,
-            "prevented": 100130965,
-            "effective": 6136785,
-            "raw": 24448299
+            "minimumDamageFraction": 0.00014814814814814815,
+            "prevented": 88366635,
+            "effective": 5445618,
+            "raw": 21694455
           },
           "bands": {
             "encounters100To149": {
@@ -6503,58 +6363,58 @@
             },
             "encounters1000To1099": {
               "hits": {
-                "count": 75,
+                "count": 83,
                 "p50": 4,
-                "p90": 12,
+                "p90": 8,
                 "max": 12,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               },
               "timeToKillMs": {
-                "count": 75,
+                "count": 83,
                 "p50": 333.333,
                 "p90": 1000,
-                "max": 138332.61,
+                "max": 122888.723,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               }
             }
           },
           "grades": {
             "normal": {
-              "count": 3202,
+              "count": 2901,
               "p50": 4,
               "p90": 4,
               "max": 10,
-              "oneHitFraction": 0.03123048094940662,
-              "fivePlusFraction": 0.0003123048094940662,
-              "tenPlusFraction": 0.0003123048094940662
+              "oneHitFraction": 0.03447087211306446,
+              "fivePlusFraction": 0.0003447087211306446,
+              "tenPlusFraction": 0.0003447087211306446
             },
             "veteran": {
-              "count": 8798,
+              "count": 8442,
               "p50": 4,
               "p90": 4,
               "max": 6,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.005910434189588543,
+              "fivePlusFraction": 0.006159677801468846,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 11753,
+              "count": 11073,
               "p50": 8,
               "p90": 12,
               "max": 22,
-              "oneHitFraction": 0.00008508465923593976,
-              "fivePlusFraction": 0.7644005785756828,
-              "tenPlusFraction": 0.12567004169148302
+              "oneHitFraction": 0.00009030976248532467,
+              "fivePlusFraction": 0.7528221800776664,
+              "tenPlusFraction": 0.13447123634064842
             },
             "boss": {
-              "count": 1036,
+              "count": 976,
               "p50": 1728,
-              "p90": 1728,
-              "max": 1728,
+              "p90": 2332,
+              "max": 2348,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
               "tenPlusFraction": 1
@@ -6562,36 +6422,36 @@
           },
           "gradeTimeToKillMs": {
             "normal": {
-              "count": 3202,
+              "count": 2901,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 142666.667,
-              "oneHitFraction": 0.03123048094940662,
-              "fivePlusFraction": 0.0003123048094940662,
-              "tenPlusFraction": 0.0003123048094940662
+              "max": 193500,
+              "oneHitFraction": 0.03447087211306446,
+              "fivePlusFraction": 0.0003447087211306446,
+              "tenPlusFraction": 0.0003447087211306446
             },
             "veteran": {
-              "count": 8798,
+              "count": 8442,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 144000,
+              "max": 193833.333,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.005910434189588543,
+              "fivePlusFraction": 0.006159677801468846,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 11753,
+              "count": 11073,
               "p50": 666.667,
               "p90": 1166.667,
               "max": 220000,
-              "oneHitFraction": 0.00008508465923593976,
-              "fivePlusFraction": 0.7644005785756828,
-              "tenPlusFraction": 0.12567004169148302
+              "oneHitFraction": 0.00009030976248532467,
+              "fivePlusFraction": 0.7528221800776664,
+              "tenPlusFraction": 0.13447123634064842
             },
             "boss": {
-              "count": 1036,
+              "count": 976,
               "p50": 144000,
-              "p90": 144166.667,
+              "p90": 194333.333,
               "max": 300000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
@@ -6600,123 +6460,123 @@
           },
           "modifiers": {
             "armor": {
-              "count": 1960,
-              "p50": 4,
+              "count": 1846,
+              "p50": 8,
               "p90": 8,
               "max": 17,
-              "oneHitFraction": 0.0005102040816326531,
-              "fivePlusFraction": 0.48112244897959183,
-              "tenPlusFraction": 0.00510204081632653
+              "oneHitFraction": 0.0005417118093174431,
+              "fivePlusFraction": 0.5438786565547129,
+              "tenPlusFraction": 0.005417118093174431
             },
             "health": {
-              "count": 1960,
+              "count": 1846,
               "p50": 8,
               "p90": 8,
               "max": 15,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.015306122448979591
+              "tenPlusFraction": 0.01570964247020585
             },
             "automatic-slow": {
-              "count": 1958,
-              "p50": 6,
+              "count": 1846,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5081716036772217,
-              "tenPlusFraction": 0.003575076608784474
+              "fivePlusFraction": 0.4815817984832069,
+              "tenPlusFraction": 0.003791982665222102
             },
             "hardened": {
-              "count": 1958,
+              "count": 1846,
               "p50": 8,
               "p90": 8,
               "max": 22,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.013789581205311542
+              "tenPlusFraction": 0.011375947995666305
             },
             "critical-guard": {
-              "count": 1958,
+              "count": 1844,
               "p50": 12,
               "p90": 12,
               "max": 20,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7129724208375894
+              "tenPlusFraction": 0.767353579175705
             },
             "manual-guard": {
-              "count": 1959,
-              "p50": 8,
+              "count": 1845,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5972434915773354,
-              "tenPlusFraction": 0.0035732516590096988
+              "fivePlusFraction": 0.4915989159891599,
+              "tenPlusFraction": 0.003794037940379404
             }
           },
           "modifierTimeToKillMs": {
             "armor": {
-              "count": 1960,
-              "p50": 333.333,
-              "p90": 666.667,
-              "max": 153567.69,
-              "oneHitFraction": 0.0005102040816326531,
-              "fivePlusFraction": 0.48112244897959183,
-              "tenPlusFraction": 0.00510204081632653
-            },
-            "health": {
-              "count": 1960,
+              "count": 1846,
               "p50": 666.667,
               "p90": 666.667,
-              "max": 150000,
+              "max": 193500,
+              "oneHitFraction": 0.0005417118093174431,
+              "fivePlusFraction": 0.5438786565547129,
+              "tenPlusFraction": 0.005417118093174431
+            },
+            "health": {
+              "count": 1846,
+              "p50": 666.667,
+              "p90": 666.667,
+              "max": 193666.667,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.015306122448979591
+              "tenPlusFraction": 0.01570964247020585
             },
             "automatic-slow": {
-              "count": 1958,
-              "p50": 1166.667,
+              "count": 1846,
+              "p50": 333.333,
               "p90": 1166.667,
-              "max": 143333.333,
+              "max": 194166.667,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5081716036772217,
-              "tenPlusFraction": 0.003575076608784474
+              "fivePlusFraction": 0.4815817984832069,
+              "tenPlusFraction": 0.003791982665222102
             },
             "hardened": {
-              "count": 1958,
+              "count": 1846,
               "p50": 666.667,
               "p90": 666.667,
               "max": 220000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.013789581205311542
+              "tenPlusFraction": 0.011375947995666305
             },
             "critical-guard": {
-              "count": 1958,
+              "count": 1844,
               "p50": 1000,
               "p90": 1000,
-              "max": 144666.667,
+              "max": 194500,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.7129724208375894
+              "tenPlusFraction": 0.767353579175705
             },
             "manual-guard": {
-              "count": 1959,
-              "p50": 666.667,
+              "count": 1845,
+              "p50": 437.701,
               "p90": 666.667,
-              "max": 143333.333,
+              "max": 194000,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5972434915773354,
-              "tenPlusFraction": 0.0035732516590096988
+              "fivePlusFraction": 0.4915989159891599,
+              "tenPlusFraction": 0.003794037940379404
             }
           },
           "gradeTransitions": {
-            "normal->veteran": 343,
-            "veteran->elite": 8557,
-            "elite->normal": 3137,
-            "normal->elite": 2857,
-            "elite->veteran": 8276,
-            "veteran->normal": 62
+            "normal->veteran": 322,
+            "veteran->elite": 8194,
+            "elite->normal": 2806,
+            "normal->elite": 2568,
+            "elite->veteran": 7955,
+            "veteran->normal": 83
           },
           "bossGaps": [
             35,
@@ -7693,110 +7553,50 @@
             35,
             35,
             35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35
           ],
-          "bossOnlyElapsedMs": 148975939.54399952,
-          "walls": 503
+          "bossOnlyElapsedMs": 150057307.16800004,
+          "walls": 487
         }
       }
     },
     {
       "automaticAttacksPerSecond": 11.995001025839906,
-      "coins": 33823626340675,
+      "coins": 28583362776303,
       "elapsedMs": 176400000,
-      "encounters": 37065,
-      "encountersPerSecond": 0.21011904761904762,
+      "encounters": 34930,
+      "encountersPerSecond": 0.198015873015873,
       "economy": {
-        "doubleRewardIncome": 16928501383389,
-        "income": 33861499446814,
+        "doubleRewardIncome": 14306306380587,
+        "income": 28618948853667,
         "saturation": false,
         "spend": {
           "automatic-unlock": 0,
           "automatic-speed": 989409372,
           "armor-penetration": 8289734256,
           "critical-chance": 4903091957,
-          "damage": 17153416569,
+          "damage": 14866387794,
           "double-reward": 6537453985
         },
-        "unaffordableGaps": 20,
-        "unspent": 33823626340675
+        "unaffordableGaps": 29,
+        "unspent": 28583362776303
       },
       "hours": 49,
       "outcomes": {
         "boss": {
-          "count": 1058,
-          "hits": 1800368,
-          "rewards": 33860285322068
+          "count": 997,
+          "hits": 1812950,
+          "rewards": 28617869701771
         },
         "goldenBug": {
-          "count": 741,
-          "hits": 64766,
-          "rewards": 620780827
+          "count": 698,
+          "hits": 60973,
+          "rewards": 551717232
         },
         "ordinary": {
-          "count": 24252,
-          "hits": 139013,
-          "rewards": 593343919
+          "count": 22889,
+          "hits": 130986,
+          "rewards": 527434664
         }
       },
       "player": {
@@ -7804,8 +7604,8 @@
         "armorPenetrationLevel": 14980,
         "criticalChance": 0.599,
         "criticalLevel": 11980,
-        "damage": 25815,
-        "damageLevel": 24257,
+        "damage": 24335,
+        "damageLevel": 22824,
         "doubleRewardChance": 0.599,
         "doubleRewardLevel": 11980
       },
@@ -7814,74 +7614,13 @@
         "automatic-speed": 411,
         "armor-penetration": 224,
         "critical-chance": 199,
-        "damage": 24257,
+        "damage": 22824,
         "double-reward": 199
       },
       "telemetry": {
         "boss": {
-          "cadenceContributionMs": 152143272.8789995,
+          "cadenceContributionMs": 153282807.16800004,
           "gaps": [
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35,
             35,
             35,
@@ -8880,10 +8619,10 @@
             35
           ],
           "hits": {
-            "count": 1058,
+            "count": 997,
             "p50": 1728,
-            "p90": 1728,
-            "max": 1728,
+            "p90": 2332,
+            "max": 2348,
             "oneHitFraction": 0,
             "fivePlusFraction": 1,
             "tenPlusFraction": 1
@@ -8891,24 +8630,24 @@
           "timeToKillMs": {
             "max": 300000,
             "p50": 144000,
-            "p90": 144166.667
+            "p90": 194333.333
           }
         },
         "goldenBug": {
-          "delayMs": 7400000,
+          "delayMs": 6980000,
           "outcomes": {
-            "count": 741,
-            "hits": 64766,
-            "rewards": 620780827
+            "count": 698,
+            "hits": 60973,
+            "rewards": 551717232
           }
         },
         "ordinary": {
           "adjacentMedianJump": 1.3333333333333333,
           "armor": {
-            "minimumDamageFraction": 0.00016545215195701122,
-            "prevented": 104473224,
-            "effective": 6402830,
-            "raw": 25508404
+            "minimumDamageFraction": 0.0001450536698578474,
+            "prevented": 92171505,
+            "effective": 5681291,
+            "raw": 22633535
           },
           "bands": {
             "encounters100To149": {
@@ -8933,58 +8672,58 @@
             },
             "encounters1000To1099": {
               "hits": {
-                "count": 75,
+                "count": 83,
                 "p50": 4,
-                "p90": 12,
+                "p90": 8,
                 "max": 12,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               },
               "timeToKillMs": {
-                "count": 75,
+                "count": 83,
                 "p50": 333.333,
                 "p90": 1000,
-                "max": 138332.61,
+                "max": 122888.723,
                 "oneHitFraction": 0,
-                "fivePlusFraction": 0.37333333333333335,
-                "tenPlusFraction": 0.17333333333333334
+                "fivePlusFraction": 0.3253012048192771,
+                "tenPlusFraction": 0.0963855421686747
               }
             }
           },
           "grades": {
             "normal": {
-              "count": 3269,
+              "count": 2961,
               "p50": 4,
               "p90": 4,
               "max": 10,
-              "oneHitFraction": 0.030590394616090547,
-              "fivePlusFraction": 0.0003059039461609055,
-              "tenPlusFraction": 0.0003059039461609055
+              "oneHitFraction": 0.033772374197906116,
+              "fivePlusFraction": 0.00033772374197906115,
+              "tenPlusFraction": 0.00033772374197906115
             },
             "veteran": {
-              "count": 8981,
+              "count": 8617,
               "p50": 4,
               "p90": 4,
               "max": 6,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.0057900011134617525,
+              "fivePlusFraction": 0.006034582801439016,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 12002,
+              "count": 11311,
               "p50": 8,
               "p90": 12,
               "max": 22,
-              "oneHitFraction": 0.00008331944675887353,
-              "fivePlusFraction": 0.764205965672388,
-              "tenPlusFraction": 0.1255624062656224
+              "oneHitFraction": 0.00008840951286358412,
+              "fivePlusFraction": 0.7530722305720096,
+              "tenPlusFraction": 0.1342056405269207
             },
             "boss": {
-              "count": 1058,
+              "count": 997,
               "p50": 1728,
-              "p90": 1728,
-              "max": 1728,
+              "p90": 2332,
+              "max": 2348,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
               "tenPlusFraction": 1
@@ -8992,36 +8731,36 @@
           },
           "gradeTimeToKillMs": {
             "normal": {
-              "count": 3269,
+              "count": 2961,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 142666.667,
-              "oneHitFraction": 0.030590394616090547,
-              "fivePlusFraction": 0.0003059039461609055,
-              "tenPlusFraction": 0.0003059039461609055
+              "max": 193500,
+              "oneHitFraction": 0.033772374197906116,
+              "fivePlusFraction": 0.00033772374197906115,
+              "tenPlusFraction": 0.00033772374197906115
             },
             "veteran": {
-              "count": 8981,
+              "count": 8617,
               "p50": 333.333,
               "p90": 833.333,
-              "max": 144000,
+              "max": 193833.333,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.0057900011134617525,
+              "fivePlusFraction": 0.006034582801439016,
               "tenPlusFraction": 0
             },
             "elite": {
-              "count": 12002,
+              "count": 11311,
               "p50": 666.667,
               "p90": 1166.667,
               "max": 220000,
-              "oneHitFraction": 0.00008331944675887353,
-              "fivePlusFraction": 0.764205965672388,
-              "tenPlusFraction": 0.1255624062656224
+              "oneHitFraction": 0.00008840951286358412,
+              "fivePlusFraction": 0.7530722305720096,
+              "tenPlusFraction": 0.1342056405269207
             },
             "boss": {
-              "count": 1058,
+              "count": 997,
               "p50": 144000,
-              "p90": 144166.667,
+              "p90": 194333.333,
               "max": 300000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
@@ -9030,123 +8769,123 @@
           },
           "modifiers": {
             "armor": {
-              "count": 2001,
-              "p50": 4,
+              "count": 1886,
+              "p50": 8,
               "p90": 8,
               "max": 17,
-              "oneHitFraction": 0.0004997501249375312,
-              "fivePlusFraction": 0.4802598700649675,
-              "tenPlusFraction": 0.004997501249375313
+              "oneHitFraction": 0.0005302226935312832,
+              "fivePlusFraction": 0.54135737009544,
+              "tenPlusFraction": 0.005302226935312832
             },
             "health": {
-              "count": 2000,
+              "count": 1886,
               "p50": 8,
               "p90": 8,
               "max": 15,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.015
+              "tenPlusFraction": 0.015376458112407211
             },
             "automatic-slow": {
-              "count": 2000,
-              "p50": 6,
+              "count": 1886,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5075,
-              "tenPlusFraction": 0.0035
+              "fivePlusFraction": 0.4851537645811241,
+              "tenPlusFraction": 0.003711558854718982
             },
             "hardened": {
-              "count": 2000,
+              "count": 1884,
               "p50": 8,
               "p90": 8,
               "max": 22,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.0135
+              "tenPlusFraction": 0.011146496815286623
             },
             "critical-guard": {
-              "count": 2000,
+              "count": 1884,
               "p50": 12,
               "p90": 12,
               "max": 20,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.713
+              "tenPlusFraction": 0.7664543524416136
             },
             "manual-guard": {
-              "count": 2001,
-              "p50": 8,
+              "count": 1885,
+              "p50": 4,
               "p90": 8,
               "max": 10,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5977011494252874,
-              "tenPlusFraction": 0.0034982508745627187
+              "fivePlusFraction": 0.49230769230769234,
+              "tenPlusFraction": 0.003713527851458886
             }
           },
           "modifierTimeToKillMs": {
             "armor": {
-              "count": 2001,
-              "p50": 333.333,
-              "p90": 666.667,
-              "max": 153567.69,
-              "oneHitFraction": 0.0004997501249375312,
-              "fivePlusFraction": 0.4802598700649675,
-              "tenPlusFraction": 0.004997501249375313
-            },
-            "health": {
-              "count": 2000,
+              "count": 1886,
               "p50": 666.667,
               "p90": 666.667,
-              "max": 150000,
+              "max": 193500,
+              "oneHitFraction": 0.0005302226935312832,
+              "fivePlusFraction": 0.54135737009544,
+              "tenPlusFraction": 0.005302226935312832
+            },
+            "health": {
+              "count": 1886,
+              "p50": 666.667,
+              "p90": 666.667,
+              "max": 193666.667,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.015
+              "tenPlusFraction": 0.015376458112407211
             },
             "automatic-slow": {
-              "count": 2000,
-              "p50": 1166.667,
+              "count": 1886,
+              "p50": 333.333,
               "p90": 1166.667,
-              "max": 143333.333,
+              "max": 194166.667,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5075,
-              "tenPlusFraction": 0.0035
+              "fivePlusFraction": 0.4851537645811241,
+              "tenPlusFraction": 0.003711558854718982
             },
             "hardened": {
-              "count": 2000,
+              "count": 1884,
               "p50": 666.667,
               "p90": 666.667,
               "max": 220000,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.0135
+              "tenPlusFraction": 0.011146496815286623
             },
             "critical-guard": {
-              "count": 2000,
+              "count": 1884,
               "p50": 1000,
               "p90": 1000,
-              "max": 144666.667,
+              "max": 194500,
               "oneHitFraction": 0,
               "fivePlusFraction": 1,
-              "tenPlusFraction": 0.713
+              "tenPlusFraction": 0.7664543524416136
             },
             "manual-guard": {
-              "count": 2001,
-              "p50": 666.667,
+              "count": 1885,
+              "p50": 441.552,
               "p90": 666.667,
-              "max": 143333.333,
+              "max": 194000,
               "oneHitFraction": 0,
-              "fivePlusFraction": 0.5977011494252874,
-              "tenPlusFraction": 0.0034982508745627187
+              "fivePlusFraction": 0.49230769230769234,
+              "tenPlusFraction": 0.003713527851458886
             }
           },
           "gradeTransitions": {
-            "normal->veteran": 346,
-            "veteran->elite": 8735,
-            "elite->normal": 3203,
-            "normal->elite": 2921,
-            "elite->veteran": 8453,
-            "veteran->normal": 63
+            "normal->veteran": 323,
+            "veteran->elite": 8363,
+            "elite->normal": 2864,
+            "normal->elite": 2627,
+            "elite->veteran": 8125,
+            "veteran->normal": 85
           },
           "bossGaps": [
             35,
@@ -10144,71 +9883,10 @@
             35,
             35,
             35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
-            35,
             35
           ],
-          "bossOnlyElapsedMs": 152143272.8789995,
-          "walls": 513
+          "bossOnlyElapsedMs": 153282807.16800004,
+          "walls": 497
         }
       }
     }

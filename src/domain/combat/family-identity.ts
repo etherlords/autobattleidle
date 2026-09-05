@@ -1,20 +1,12 @@
-import type { EliteModifier, EnemyGrade } from "./contracts";
+import { COMBAT_BALANCE } from "./balance";
+import type { BossFamily, EliteModifier, EnemyGrade } from "./contracts";
 
 import { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS, type EnemyAffinity } from "./enemy-affinities";
 
 export type { EnemyAffinity };
 
 export type EnemyFamily =
-  | "beetle"
-  | "brute"
-  | "wisp"
-  | "mantis"
-  | "sentinel"
-  | "drake"
-  | "boss-colossus"
-  | "boss-hydra"
-  | "boss-catbug"
-  | "boss-evil-catbug";
+  "beetle" | "brute" | "wisp" | "mantis" | "sentinel" | "drake" | BossFamily;
 export type EnemyPresentationModifier = EliteModifier | "wealth" | null;
 export type EnemyFamilyIdentity = {
   readonly affinity: EnemyAffinity;
@@ -28,6 +20,7 @@ export type EnemyFamilyInput = {
   readonly grade: EnemyGrade;
   readonly level: number;
   readonly modifier: EnemyPresentationModifier;
+  readonly bossInterval?: number;
 };
 
 const ordinaryFamilies = ["beetle", "brute", "wisp"] as const;
@@ -42,6 +35,7 @@ const labels: Readonly<Record<EnemyFamily, string>> = {
   "boss-hydra": "Hydra",
   "boss-catbug": "Catbug",
   "boss-evil-catbug": "Evil Catbug",
+  "boss-goose-hydra": "Goose Hydra",
 };
 const modifierFamilies: Readonly<
   Partial<Record<Exclude<EnemyPresentationModifier, null>, EnemyFamily>>
@@ -58,9 +52,9 @@ const identityLabel = (affinity: EnemyAffinity, family: EnemyFamily, goldenBug: 
 
 /**
  * The affinity channel is mixed independently of the family channel: bosses derive their
- * family from a stable level-modulo-four cycle, so a shared seed would make affinities
- * correlate with one boss family. A second mix of the same canonical inputs keeps
- * same-input-same-affinity determinism while decorrelating the two selections.
+ * family from a stable boss-ordinal cycle, so a shared seed would make affinities correlate
+ * with one boss family. A second mix of the same canonical inputs keeps same-input-same-affinity
+ * determinism while decorrelating the two selections.
  */
 export const stableAffinitySeed = (enemy: EnemyFamilyInput): number => {
   if (!Number.isFinite(enemy.level)) throw new RangeError("Enemy visual level must be finite");
@@ -79,18 +73,28 @@ export const stableEnemySeed = (enemy: EnemyFamilyInput): number => {
     seed = (seed * 31 + character.charCodeAt(0)) >>> 0;
   return seed;
 };
+const BOSS_FAMILY_ORDER = [
+  "boss-evil-catbug",
+  "boss-catbug",
+  "boss-hydra",
+  "boss-colossus",
+  "boss-goose-hydra",
+] as const satisfies readonly BossFamily[];
+
+const bossOrdinalFamily = (ordinal: number): BossFamily | undefined =>
+  BOSS_FAMILY_ORDER[ordinal % BOSS_FAMILY_ORDER.length];
 
 const selectFamily = (enemy: EnemyFamilyInput): EnemyFamily => {
-  const level = Math.abs(Math.trunc(enemy.level));
+  const level = Math.max(1, Math.abs(Math.trunc(enemy.level)));
   if (enemy.goldenBug) return "beetle";
   if (enemy.grade === "boss") {
-    const bossFamilies = [
-      "boss-colossus",
-      "boss-hydra",
-      "boss-catbug",
-      "boss-evil-catbug",
-    ] as const;
-    const family = bossFamilies[level % bossFamilies.length];
+    const bossInterval = enemy.bossInterval ?? COMBAT_BALANCE.bossInterval;
+    if (!Number.isSafeInteger(bossInterval) || bossInterval < 2)
+      throw new RangeError("Boss interval must be a safe integer of at least two");
+    // Boss identity is cadence-slot based: this keeps each encounter family stable across
+    // its visual level band while preserving V4's 35/70/105/140 order and adding Goose
+    // as the fifth deterministic slot.
+    const family = bossOrdinalFamily(Math.max(0, Math.floor(level / bossInterval) - 1));
     if (family === undefined)
       throw new RangeError("Enemy visual level did not select a boss family");
     return family;

@@ -263,6 +263,26 @@ const FAMILY_PROFILES: Readonly<
       variant: 2,
     },
   ]),
+  "boss-goose-hydra": p([
+    {
+      attachment: [0.94, 0.38, 0],
+      decorations: ["fins", "orbitals"],
+      palette: { core: "#f5e4a8", emissive: "#4f4316", accent: "#6ec9b1" },
+      variant: 0,
+    },
+    {
+      attachment: [0.98, 0.32, 0],
+      decorations: ["satellites", "horns"],
+      palette: { core: "#d8f0d0", emissive: "#23462d", accent: "#60a9d8" },
+      variant: 1,
+    },
+    {
+      attachment: [0.9, 0.44, 0],
+      decorations: ["scar", "fins"],
+      palette: { core: "#f0c878", emissive: "#55310f", accent: "#5b93d0" },
+      variant: 2,
+    },
+  ]),
 };
 
 const modifierCueRegistry: Readonly<
