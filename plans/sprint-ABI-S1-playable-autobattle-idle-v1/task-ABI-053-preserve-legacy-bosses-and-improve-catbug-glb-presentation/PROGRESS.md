@@ -4,7 +4,7 @@ id: ABI-053
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 16
+revision: 22
 status: In Progress
 sprintId: ABI-S1
 dependencies: []
@@ -23,8 +23,8 @@ workspaceProject: autobattleidle
 ## Current state
 
 - Status: In Progress
-- Revision: 16
-- Last update: Begin final quality, commit, CI, and Pages gates.
+- Revision: 22
+- Last update: All required gates pass: implementation, review, QA, verification, manager closure; commit and Pages receipts recorded.
 
 ## Execution plan
 
@@ -32,7 +32,7 @@ workspaceProject: autobattleidle
 - [x] boss-family-implementation: Restore legacy bosses and add distinct Catbug family mappings
 - [x] catbug-asset-replacement: Validate and integrate improved supplied Catbug GLB material
 - [x] boss-visual-proof: Verify lab labels lighting overlays lifecycle and four-family framing
-- [~] boss-gates: Run checks independent review QA and deployed proof
+- [x] boss-gates: Run checks independent review QA and deployed proof
 
 ## Events
 
@@ -283,3 +283,106 @@ workspaceProject: autobattleidle
 - Evidence:
   - All prior managed plan steps complete
   - Progress revision 15 final-gate checkpoint
+
+### evt-e48d7893-f5a1-4a95-8775-abf254237a24
+
+- Timestamp: 2026-09-05T01:53:11.614Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 16
+- Resulting revision: 17
+- Summary: Implementation self-check passes TypeScript, focused tests, full tests, and production build before commit.
+- Idempotency key: abi053-gate-implementation-20260905
+- Request fingerprint: 6d3f169371cc5f5d923e476e452069a919d4863c3d2b08cbcc9c092042248431
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - pnpm check completed: lint, format, 31 files/318 tests, worker tsc, vite build
+  - Focused post-camera-refit: 3 files/58 tests passed
+
+### evt-93629fab-4fb8-480d-9a8d-6af89b0a1523
+
+- Timestamp: 2026-09-05T01:53:16.462Z
+- Actor: FourBossReview2
+- Operation: gate.record
+- Prior revision: 17
+- Resulting revision: 18
+- Summary: Independent review confirms async asset readiness propagation, camera refit guard, four-family mappings, and scoped material tuning.
+- Idempotency key: abi053-gate-review-20260905
+- Request fingerprint: 623d17834e308abe01b15a57aefd918b91cf413ec72c184d8503cc09cd1c281d
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - FourBossReview2 report: overall_correctness correct, confidence 0.96, no patch-anchored findings
+
+### evt-e06def16-d09f-41fe-8bc6-93a223e5ea7b
+
+- Timestamp: 2026-09-05T01:53:22.776Z
+- Actor: FourBossQA
+- Operation: gate.record
+- Prior revision: 18
+- Resulting revision: 19
+- Summary: Independent browser QA passes new Catbug/Evil Catbug GLBs, legacy bosses, four-family switching, lifecycle cues, responsive 390px, Golden Bug isolation, and zero console errors.
+- Idempotency key: abi053-gate-qa-20260905
+- Request fingerprint: 57fda13d8ca6f9734144ce4081aeae1ed5bc3cdc94ce0eea8fb5384f8e759664
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - FourBossQA local desktop Catbug receipt live52/meshes29/textures3
+  - FourBossQA local narrow Evil Catbug viewport390 scrollWidth390 receipt live51/meshes28/textures3
+  - FourBossQA Colossus/Hydra procedural receipts and Golden Bug baseline
+
+### evt-ce74411e-522b-42e1-b0f8-4149ff9cb628
+
+- Timestamp: 2026-09-05T01:57:50.065Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 19
+- Resulting revision: 20
+- Summary: Verification passes exact commit CI and Pages deployment plus public desktop Catbug and 390px Evil Catbug visual-lab routes.
+- Idempotency key: abi053-gate-verification-20260905
+- Request fingerprint: a946d322c13b749150c1c94b1f4489e92045b6b5cee4fb89ab64d0e8d6f43e8f
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Commit 081e4180383e6d95118636e4dec614b0... pushed main
+  - CI run 33937576972 success, check job 101228380501 success
+  - Pages run 33937576999 success, deploy job 101228380682 success
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-catbug&grade=boss&recipe=production&viewport=desktop rendered live52/meshes29/textures3
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-evil-catbug&grade=boss&recipe=production&viewport=narrow rendered viewport390/scrollWidth390/live51/meshes28/textures3
+
+### evt-2bbc0276-fcd6-4cf1-97c5-ae83ba97b705
+
+- Timestamp: 2026-09-05T01:58:01.364Z
+- Actor: Manager
+- Operation: gate.record
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: Manager closure evidence is complete: coherent ABI-053 commit pushed, CI and Pages green, public visual proof recorded, unrelated worktree changes left unstaged.
+- Idempotency key: abi053-gate-manager-closure-manager-20260905
+- Request fingerprint: 605495e2f5753d1e0f3e4fb971252eb83c6de19ba5b8cdc214fbbebeffe81272
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Commit 081e418 pushed origin/main
+  - CI 33937576972 success
+  - Pages 33937576999 success
+  - No unrelated files staged in ABI-053 commit
+
+### evt-fe1d8e94-1ea8-406e-9026-d27128d62cd3
+
+- Timestamp: 2026-09-05T01:58:07.323Z
+- Actor: Manager
+- Operation: execution_plan.update
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: All required gates pass: implementation, review, QA, verification, manager closure; commit and Pages receipts recorded.
+- Idempotency key: abi053-step-gates-complete-20260905
+- Request fingerprint: 6efc7e867ae05fe5b551ad6ab0bf8971711461f6a47bbb18aec94017f214683e
+- Action: set_state
+- Step ID: boss-gates
+- State: complete
+- Evidence:
+  - CI 33937576972 success
+  - Pages 33937576999 success
+  - Public desktop/narrow routes verified
