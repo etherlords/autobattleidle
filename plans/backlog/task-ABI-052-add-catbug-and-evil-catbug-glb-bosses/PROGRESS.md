@@ -4,7 +4,7 @@ id: ABI-052
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 37
+revision: 38
 status: Done
 sprintId: ABI-S1
 dependencies:
@@ -24,8 +24,8 @@ workspaceProject: autobattleidle
 ## Current state
 
 - Status: Done
-- Revision: 37
-- Last update: EVENT closed — Main — Isolated ABI-052 implementation and Planner packet commits pushed to main; CI and Deploy GitHub Pages succeeded. Public deployment https://etherlords.github.io/autobattleidle/ returns the app shell and both deployed GLBs return HTTP 200 with valid glTF magic and exact byte sizes.
+- Revision: 38
+- Last update: Deployed Pages visual proof complete: public visual-lab Catbug desktop and Evil Catbug narrow routes settled after async load with production overlay receipts, 49 live objects/26 meshes/26 geometries/26 materials/3 textures, clean rendered screenshots, and no shell/runtime errors observed.
 
 ## Execution plan
 
@@ -625,3 +625,16 @@ workspaceProject: autobattleidle
   - https://etherlords.github.io/autobattleidle/assets/catbug.glb
   - https://etherlords.github.io/autobattleidle/assets/evilcatbug.glb
   - artifact://2243
+
+### evt-e8ce7572-a0a6-4322-a48a-d09ae45709a3
+
+- Timestamp: 2026-09-05T01:00:35.367Z
+- Actor: Main
+- Operation: progress.append
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: Deployed Pages visual proof complete: public visual-lab Catbug desktop and Evil Catbug narrow routes settled after async load with production overlay receipts, 49 live objects/26 meshes/26 geometries/26 materials/3 textures, clean rendered screenshots, and no shell/runtime errors observed.
+- Evidence:
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-colossus&grade=boss&recipe=production&viewport=desktop
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-hydra&grade=boss&recipe=production&viewport=narrow
+  - artifact://2247
