@@ -4,8 +4,8 @@ id: ABI-036
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 10
-status: Ready
+revision: 15
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -29,7 +29,7 @@ Research and add bounded semantic decals and procedural surface textures
 
 - Type: research
 - Priority: normal
-- Status: Ready
+- Status: Done
 
 ## Acceptance criteria
 

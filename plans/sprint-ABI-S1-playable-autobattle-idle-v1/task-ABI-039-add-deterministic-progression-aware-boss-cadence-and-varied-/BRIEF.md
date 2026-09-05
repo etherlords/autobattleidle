@@ -4,8 +4,8 @@ id: ABI-039
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 17
-status: Ready
+revision: 22
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -30,7 +30,7 @@ Add deterministic progression-aware boss cadence and varied boss encounters
 
 - Type: task
 - Priority: high
-- Status: Ready
+- Status: Done
 
 ## Acceptance criteria
 

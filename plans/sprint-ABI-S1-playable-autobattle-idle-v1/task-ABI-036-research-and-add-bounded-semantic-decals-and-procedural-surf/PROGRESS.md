@@ -4,8 +4,8 @@ id: ABI-036
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 80
-status: Ready
+revision: 99
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready
-- Revision: 80
-- Last update: Visual-lab case URL and animation fixture receipts reconciled for recipe, variant, viewport, reduced-motion, and loaded-body anchor coverage.
+- Status: Done
+- Revision: 99
+- Last update: Manager closure complete: all required gates PASS and deployed exact-SHA proof is recorded; close ABI-036 as Done.
 
 ## Execution plan
 
@@ -1368,3 +1368,370 @@ requiredGates:
   - src/debug/visual-lab/case-url.test.ts:95-108 — recipe case IDs parse deterministically
   - src/game/enemy-visual.test.ts:307-337 — idle/peak/recovery/death animation attachment
   - src/game/enemy-visual.test.ts:1748-1788 — async GLB loaded-body anchor receipt
+
+### evt-97c206f8-4ac1-49bb-af7a-afbe754b5ba5
+
+- Timestamp: 2026-09-05T18:49:16.990Z
+- Actor: abi036-planner-reconcile
+- Operation: claim.acquire
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Claimed task lease: Refresh post-reopen evidence and required gates for ABI-036; no code changes unless bounded preflight finds a concrete defect.
+- Idempotency key: ABI-036-claim-20260905-abi036-planner-reconcile
+- Request fingerprint: 2f41284f6568b98239d2a3ef983dec3c3a06f3ba2e9da383a05a332f85ccfd5d
+- Agent ID: abi036-planner-reconcile
+- Session ID: abi036-planner-reconcile-20260905
+- Intent: Refresh post-reopen evidence and required gates for ABI-036; no code changes unless bounded preflight finds a concrete defect.
+- Branch: main
+- Expires at: 2026-09-05T19:19:16.990Z
+- Evidence:
+  - None
+
+### evt-4caa59a4-653f-475b-ab8d-66e5f82e4feb
+
+- Timestamp: 2026-09-05T18:50:55.310Z
+- Actor: abi036-planner-reconcile
+- Operation: progress.append
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: EVENT preflight-ready — abi036-planner-reconcile — Current code and Vault decision reconcile the shipped semantic surface contract; focused regressions pass. No implementation defect or schema change found. Fresh independent review, independent QA, verification, and manager closure remain required after reopen.
+- Idempotency key: ABI-036-preflight-ready-20260905-abi036-planner-reconcile
+- Evidence:
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts:8-29,106-147,230-290 — explicit treatments, bounded texture cache, body-local DecalGeometry and disposal
+  - src/game/enemy-visual.test.ts:1573-1799 — deterministic placement, normals, 33 shipped families, async GLB replacement, cache cap and idempotent disposal
+  - src/debug/visual-lab/case-url.test.ts:93-205 — deterministic recipes and invalid-input/resource baselines
+  - pnpm exec vitest run src/game/enemy-visual.test.ts src/debug/visual-lab/case-url.test.ts — 2 files, 58 tests passed
+  - AUTOBATTLEIDLE-DOC-20260905-109628@48487424ce40e261c8d03dff35071e957d306e133476618f25a136f5a6e146ad — active semantic surface decision, no schema change
+
+### evt-47566c0a-4996-4a33-943a-8a60e0791cae
+
+- Timestamp: 2026-09-05T18:51:05.889Z
+- Actor: abi036-planner-reconcile
+- Operation: gate.record
+- Prior revision: 82
+- Resulting revision: 83
+- Summary: Fresh implementation self-check PASS: current semantic-surface implementation and focused regression suite remain green after reopen; no implementation defect or schema change found.
+- Idempotency key: ABI-036-implementation-self-check-20260905-abi036-planner-reconcile
+- Request fingerprint: d62b30b3fc1a592af3a8d52711f8e90ac85c7ab52278b763bc5c265702c67294
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - pnpm exec vitest run src/game/enemy-visual.test.ts src/debug/visual-lab/case-url.test.ts — 2 files passed, 58 tests passed, 5.07s test duration
+  - src/game/enemy-visual.test.ts:1573-1799 — deterministic placement/normals, shipped-family body-local decals, async GLB replacement, bounded cache, idempotent disposal
+  - src/debug/visual-lab/case-url.test.ts:93-205 — deterministic recipe round-trip, invalid-input correction, and resource-baseline checks
+  - AUTOBATTLEIDLE-DOC-20260905-109628@48487424ce40e261c8d03dff35071e957d306e133476618f25a136f5a6e146ad#L28-L49 — active body-local DecalGeometry, explicit semantic treatments, cache/disposal decision and evidence
+
+### evt-1a09f75a-7162-4ee5-afbd-9349f04527f9
+
+- Timestamp: 2026-09-05T18:51:12.274Z
+- Actor: abi036-planner-reconcile
+- Operation: claim.release
+- Prior revision: 83
+- Resulting revision: 84
+- Summary: Released task claim: Release after recording only the fresh implementation-self-check gate; independent gates remain for manager follow-up.
+- Idempotency key: ABI-036-release-20260905-abi036-planner-reconcile
+- Request fingerprint: 52f8ebe5fe458ae9af54e599c6f9997a8d320fcdeb6555a835c76e8f7d73bdeb
+- Agent ID: abi036-planner-reconcile
+- Session ID: abi036-planner-reconcile-20260905
+- Intent: Release after recording only the fresh implementation-self-check gate; independent gates remain for manager follow-up.
+- Evidence:
+  - None
+
+### evt-e30bb0b7-12a6-4490-b065-475d154e0643
+
+- Timestamp: 2026-09-05T18:56:45.566Z
+- Actor: abi036-planner-reconcile
+- Operation: claim.acquire
+- Prior revision: 84
+- Resulting revision: 85
+- Summary: Claimed task lease: Record the canonical independent-review failure and return ABI-036 to implementation owner for the identified DecalGeometry transform fix.
+- Idempotency key: ABI-036-review-fail-claim-20260905-abi036-planner-reconcile
+- Request fingerprint: 6a0c04d2024d7288724d94e6131b1f1d04e3722cc7061cdff2f8d5926b7669eb
+- Agent ID: abi036-planner-reconcile
+- Session ID: abi036-planner-reconcile-reviewfail-20260905
+- Intent: Record the canonical independent-review failure and return ABI-036 to implementation owner for the identified DecalGeometry transform fix.
+- Branch: main
+- Expires at: 2026-09-05T19:26:45.566Z
+- Evidence:
+  - None
+
+### evt-2ef80884-709e-4757-aed9-9e57549af47e
+
+- Timestamp: 2026-09-05T18:58:19.385Z
+- Actor: abi036-review-gate-record
+- Operation: gate.record
+- Prior revision: 85
+- Resulting revision: 86
+- Summary: Independent review FAIL: src/game/enemy-visual/decorators/semantic-surface-decorator.ts:257-290 converts DecalGeometry positions/normals to parent-local then reapplies parentOrientation, double-rotating +X/-X surfaces; existing focused tests miss vertex placement. Return to implementation owner for transform fix; no QA or closure.
+- Idempotency key: abi036-independent-review-fail-decal-transform-20260905
+- Request fingerprint: d25ecd9912ebbaf15b4a26e3ad4d318c58e1da743be38c026a1da841cc1f8c11
+- Gate: independent-review
+- Verdict: fail
+- Evidence:
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts:257-290
+  - Existing focused tests omit vertex-placement assertions for +X/-X DecalGeometry surfaces
+
+### evt-7beadb62-786d-4a7e-b62b-36e3aff5f2ee
+
+- Timestamp: 2026-09-05T18:58:40.886Z
+- Actor: abi036-review-gate-record
+- Operation: task.advance
+- Prior revision: 86
+- Resulting revision: 87
+- Summary: Independent review failed on DecalGeometry parent-local/world orientation double-rotation at +X/-X surfaces; return to implementation owner for corrective transform and vertex-placement proof. Do not proceed to QA or closure.
+- Idempotency key: abi036-return-implementation-transform-fix-20260905-v2
+- Request fingerprint: 7d71313e5e04db7218b51f3b4ca825b98520dd7cc20a089a27b68ef16e79feb4
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - evt-2ef80884-709e-4757-aed9-9e57549af47e
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts:257-290
+
+### evt-afaeb295-e379-405c-bd04-97c54e58b136
+
+- Timestamp: 2026-09-05T18:58:56.013Z
+- Actor: abi036-planner-reconcile
+- Operation: claim.release
+- Prior revision: 87
+- Resulting revision: 88
+- Summary: Released task claim: Release superseded lease after independent reviewer actor recorded the canonical review failure and returned task; no QA or closure mutation by this session.
+- Idempotency key: ABI-036-review-fail-release-final-20260905-abi036-planner-reconcile
+- Request fingerprint: baf93f86f047f4b4edb80e2b68667bbf366752315f73b3cd689ecd8dd9986fa3
+- Agent ID: abi036-planner-reconcile
+- Session ID: abi036-planner-reconcile-reviewfail-20260905
+- Intent: Release superseded lease after independent reviewer actor recorded the canonical review failure and returned task; no QA or closure mutation by this session.
+- Evidence:
+  - None
+
+### evt-e6d4f48e-24b1-4b30-9749-2b2af38b3026
+
+- Timestamp: 2026-09-05T19:04:50.492Z
+- Actor: abi036-independent-review-recheck
+- Operation: gate.record
+- Prior revision: 88
+- Resulting revision: 89
+- Summary: Independent review PASS after repair: semantic-surface-decorator.ts now uses inverse parentOrientation for parent-local DecalGeometry transforms, and focused +X/-X world-center assertions cover vertex placement; no QA, verification, or manager-closure mutation by this actor.
+- Idempotency key: abi036-independent-review-pass-repair-20260906
+- Request fingerprint: feb82ad2bb6776fa9ce6abda3ca3c3eed7b5d497da892238da68dabd6978ca11
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - Re-review PASS
+  - pnpm vitest run src/game/enemy-visual.test.ts — 43/43 tests passed
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts — inverse parentOrientation repair applied
+  - src/game/enemy-visual.test.ts — +X/-X world-center vertex-placement assertions
+
+### evt-96551892-a711-44b8-824d-a3420e2bf3a8
+
+- Timestamp: 2026-09-05T19:05:19.272Z
+- Actor: abi036-qa-pass-gate
+- Operation: claim.acquire
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: Claimed task lease: Record fresh independent-QA PASS after canonical independent-review PASS; no verification or manager-closure mutation.
+- Idempotency key: abi036-qa-pass-gate-acquire-20260906-reviewpass89
+- Request fingerprint: c0d226ac2cd298890351e116e9c7c16804f66c787e86c6cad684656b7ec7a872
+- Agent ID: abi036-qa-pass-gate
+- Session ID: abi036-qa-pass-gate-20260906
+- Intent: Record fresh independent-QA PASS after canonical independent-review PASS; no verification or manager-closure mutation.
+- Expires at: 2026-09-05T19:20:19.272Z
+- Evidence:
+  - None
+
+### evt-33c5225f-1d76-4bdb-8c01-d6c3e709dc5a
+
+- Timestamp: 2026-09-05T19:05:32.624Z
+- Actor: abi036-qa-pass-gate
+- Operation: gate.record
+- Prior revision: 90
+- Resulting revision: 91
+- Summary: Independent QA PASS: fresh local semantic-vite visual-lab evidence covers the accepted recipe matrix, all five boss families, narrow responsive framing, clean runtime/network behavior, and local resource disposal; public Pages cache/disposal fields were unavailable and are not claimed. No verification or manager-closure mutation.
+- Idempotency key: abi036-independent-qa-pass-20260906-reviewevt-e6d4f48e
+- Request fingerprint: a6f7f5aec364228c73bc666543b824bdf60daa97c6ef503150285e4052a5f0e3
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Fresh local semantic-vite visual-lab receipt: recipes beetle scratches, drake plates, mantis affinity, and boss-catbug all exercised.
+  - Fresh local semantic-vite visual-lab receipt: all five boss families covered.
+  - Fresh focused suite: 3 test files, 66 tests passed.
+  - Fresh local narrow viewport receipt at 390px: no overflow.
+  - Fresh local browser receipt: zero console failures and zero request failures.
+  - Fresh local disposal/resource receipts: local cache/disposal/resource behavior observed and disposed correctly.
+  - Public Pages cache/disposal fields unavailable; no public Pages cache or disposal claim made.
+  - Prerequisite canonical independent-review PASS: evt-e6d4f48e-24b1-4b30-9749-2b2af38b3026 at progress revision 89.
+
+### evt-95728154-0ed5-4285-b38b-bebd4ec6addc
+
+- Timestamp: 2026-09-05T19:05:48.705Z
+- Actor: abi036-qa-pass-gate
+- Operation: claim.release
+- Prior revision: 91
+- Resulting revision: 92
+- Summary: Released task claim: Release after recording independent-QA PASS; leave verification and manager closure untouched for ordered follow-up.
+- Idempotency key: abi036-qa-pass-gate-release-20260906-qapass91
+- Request fingerprint: 5c294f2d0d448de0b294b7032db738e571574a1cdae08d2a9f44acd236cf00da
+- Agent ID: abi036-qa-pass-gate
+- Session ID: abi036-qa-pass-gate-20260906
+- Intent: Release after recording independent-QA PASS; leave verification and manager closure untouched for ordered follow-up.
+- Evidence:
+  - None
+
+### evt-ba36733a-811e-4245-9b14-38bda0eee3cb
+
+- Timestamp: 2026-09-05T19:07:10.105Z
+- Actor: abi036-verification-gate
+- Operation: gate.record
+- Prior revision: 92
+- Resulting revision: 93
+- Summary: Verification BLOCKED: current acceptance requires exact-SHA CI/Pages proof plus deployed exact case IDs and public asset proof. Fresh evidence supports implementation self-check (58 tests), independent review PASS (43 visual tests with +X/-X placement assertions), and independent QA PASS (66 tests, local recipes, all five families, narrow framing, clean console/network, local disposal/resource behavior), with no schema change; however public Pages cache/disposal fields and the required deployed exact case IDs/public asset proof are unavailable. Preserve that limitation and do not claim deployed lifecycle proof. Manager closure remains blocked.
+- Idempotency key: abi036-verification-blocked-20260906-public-proof-gap
+- Request fingerprint: 88f2990843150f9327ad6bfecad151be66a40b8304fd0b42a6669e00358cf9c3
+- Gate: verification
+- Verdict: blocked
+- Evidence:
+  - Acceptance criterion in BRIEF.md requires independent review, independent QA, pnpm check, exact-SHA CI/Pages, public asset proof, and Manager closure.
+  - Independent review PASS evt-e6d4f48e-24b1-4b30-9749-2b2af38b3026 at progress 89: 43/43 focused visual tests passed with inverse parentOrientation repair and +X/-X world-center vertex-placement assertions.
+  - Independent QA PASS evt-33c5225f-1d76-4bdb-8c01-d6c3e709dc5a at progress 91: 3 files, 66 tests; recipes beetle scratches, drake plates, mantis affinity, boss-catbug; all five boss families; 390px narrow no overflow; zero console/request failures; local disposal/resource behavior observed.
+  - Implementation self-check evt-47566c0a-4996-4a33-943a-8a60e0791cae at progress 83: focused suites passed 58 tests; deterministic placement/normals, cache/disposal, resource baselines; no schema change.
+  - Public Pages cache/disposal fields unavailable; no public Pages cache/disposal claim made.
+  - Unmet: fresh deployed exact case IDs, exact-SHA CI/Pages proof, and public asset proof required by BRIEF.md are not present; deployed lifecycle proof is not claimed.
+
+### evt-86bf1583-0749-471e-8263-fbaece0346c8
+
+- Timestamp: 2026-09-05T19:28:50.749Z
+- Actor: abi036-deployed-verification-gate
+- Operation: gate.record
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: Verification PASS from fresh deployed Pages proof for commit b24ee52f834b936b2794aa1fb085d205cd1c2ef3: Pages run 33986470081 and CI run 33986470181 succeeded. Exact asset SHAs, deployed case receipts, source/full-check evidence, and no save-schema impact recorded. Manager closure intentionally untouched.
+- Idempotency key: abi036-verification-pass-deployed-b24ee52-20260906
+- Request fingerprint: d310dd229a54739562c91ad56ec196f15d03e8105ecd8302b2a33431b528cbc8
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Pages run 33986470081 succeeded; head SHA b24ee52f834b936b2794aa1fb085d205cd1c2ef3 (commit b24ee52). Served HTML has no commit marker; Pages run is the SHA linkage receipt.
+  - SHA-256 visual-lab.html: 11fe8cfa4522c3825c2d8da7c28947b269a850602ea8003a807bc97a70db43dc (574B).
+  - SHA-256 assets/visualLab-CvOlCW-t.js: 1c06de88231c18fd439b1dc19f0c4bb4746b9df31539fd31df4db0d0fa9747a4 (23198B).
+  - SHA-256 assets/receipt-CxxhCt08.js: 3147c9f0711d8e4ac4370eb6f1d8d6e762a02233890afe6fa4145f7f9f9ff64b (725796B).
+  - SHA-256 assets/visualLab-BqKU3jLG.css: c84cb8d322d100579f55ebf179d3a7f3a2eb39b4d9db6f66ef7c748078388284 (671B).
+  - Drake +X/front URL: https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=cinder&family=drake&grade=normal&modifier=manual-guard&variant=0&golden=0&motion=0&view=front&viewport=desktop&recipe=plates&subject=enemy&stage=1&detail=1000&level=1; screenshot artifacts/abi036-drake-plates-front-plus-x.png.
+  - Drake -X/side URL: https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=cinder&family=drake&grade=normal&modifier=manual-guard&variant=0&golden=0&motion=0&view=side&viewport=desktop&recipe=plates&subject=enemy&stage=1&detail=1000&level=1; screenshot artifacts/abi036-drake-plates-side-minus-x.png.
+  - Drake receipt: mode plates, identity drake/body-0/cinder, directional-barrier; live 54, disposal returned 52/52.
+  - Mantis affinity URL: https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=prism&family=mantis&grade=normal&modifier=hardened&variant=0&golden=0&motion=0&view=front&viewport=desktop&recipe=affinity&subject=enemy&stage=1&detail=1000&level=1; screenshot artifacts/abi036-mantis-affinity-prism.png.
+  - Mantis receipt: mode affinity, identity mantis/body-0/prism, reinforced-band; live 33, disposed 18/18.
+  - Boss canonical query: affinity=prism&family={boss-colossus|boss-hydra|boss-catbug|boss-goose-hydra|boss-evil-catbug}&grade=boss&modifier=none&variant=0&golden=0&motion=0&view=orbit&viewport=desktop&recipe=all&subject=enemy&stage=1&detail=1000&level=1.
+  - boss-colossus artifact artifacts/abi036-boss-colossus-all.png: live 52/disposed 32/32; orbital-runes, elemental-spines.
+  - boss-hydra artifact artifacts/abi036-boss-hydra-all.png: live 46/disposed 51/51; crystal-crown, elemental-spines.
+  - boss-catbug artifact artifacts/abi036-boss-catbug-all-desktop.png: live 54/disposed 55/55; orbital-runes, elemental-spines.
+  - boss-goose-hydra artifact artifacts/abi036-boss-goose-hydra-all.png: live 52/disposed 43/43; crystal-crown, elemental-spines.
+  - boss-evil-catbug artifact artifacts/abi036-boss-evil-catbug-all.png: live 48/disposed 28/28; crystal-crown, elemental-spines.
+  - Narrow Catbug at 390x844 CSS px, DPR3: artifacts artifacts/abi036-boss-catbug-all-narrow-390.png and artifacts/abi036-boss-catbug-all-narrow-390-full.png; innerWidth=390, innerHeight=844, scrollWidth=390, scrollHeight=1388; no horizontal overflow/misplacement.
+  - Deployed console error filter empty; zero request failures. visual-lab.html, JS/CSS bundles, catbug.glb, goose-hydra.glb, evilcatbug.glb, and favicon all observed HTTP 200.
+  - Cache caveat: HTML/assets max-age=600; HTML x-cache HIT age=0, bundles/CSS MISS age=0 via varnish. No stronger cache/disposal claim made.
+  - CI run 33986470181: workflow CI, title [ABI] Correct semantic decal transforms, branch main, job 101360838315 completed/success.
+  - CI pnpm check: eslint; prettier All matched files; vitest 33 test files/335 tests; worker tsc; tsc -b plus Vite build (97 modules) all passed.
+  - Current source: semantic-surface-decorator.ts:8-9 explicit modes; :27-38 cache cap 8/families; :164-178 disposal; :195-228 Drake +X/flank normals; :310-347 scratches; :350-395 plates.
+  - Current source tests: enemy-visual.test.ts:1634-1672 Drake/Mantis placement; :1692+ plate/body placement; :1524-1565 boss overlays and legacy omission.
+  - No save-schema impact: persistence-boundary.test.ts (30 passed) reload derives identity without writing a visual field; ABI-036 decision lines 50-52 records no save-schema expansion.
+  - Manager closure not recorded or advanced; task remains In Progress at task revision 11 after verification PASS.
+
+### evt-0513a2e8-425f-4f4b-baaa-00e02b258bf7
+
+- Timestamp: 2026-09-05T19:29:49.523Z
+- Actor: abi036-manager-closure
+- Operation: gate.record
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Manager closure PASS: native required gates are PASS; exact deployed verification is complete for commit b24ee52f834b936b2794aa1fb085d205cd1c2ef3 with Pages/CI runs 33986470081/33986470181, exact visual-lab receipts covering all boss families, narrow viewport, clean console/network, asset SHA receipts, and no schema impact.
+- Idempotency key: abi036-manager-closure-20260906
+- Request fingerprint: 996217149e078db13b2c720a9f9c3b03f2b29e9d7dd78c49040f467f7b9936be
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-47566c... implementation self-check PASS
+  - evt-e6d4f48... independent-review PASS
+  - evt-33c5225... independent-QA PASS
+  - evt-86bf1583... verification PASS
+  - commit:b24ee52f834b936b2794aa1fb085d205cd1c2ef3
+  - pages-run:33986470081
+  - ci-run:33986470181
+  - exact-visual-lab:all-boss-families+narrow-viewport+clean-console-network
+  - asset-sha-receipts
+  - no-schema-impact
+
+### evt-fef61dc7-6920-42e7-ac4a-5deac6eb1543
+
+- Timestamp: 2026-09-05T19:30:38.815Z
+- Actor: abi036-manager-closure
+- Operation: task.advance
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: Implementation self-check gate is PASS; advance ABI-036 into independent review.
+- Idempotency key: abi036-in-review-20260906
+- Request fingerprint: fe20e99386f7057896a8433d8af40558199dea41ecd3c175c8af9629e6d0056a
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-47566c... implementation self-check PASS
+
+### evt-e2757275-deec-4f2c-8100-d2998284439c
+
+- Timestamp: 2026-09-05T19:30:45.129Z
+- Actor: abi036-manager-closure
+- Operation: task.advance
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: Independent review gate is PASS; advance ABI-036 into QA.
+- Idempotency key: abi036-in-qa-20260906
+- Request fingerprint: 651587329fa89b29afe81b829400687a8b7a40f63e90465e96e7f64e20769caf
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-e6d4f48... independent-review PASS
+
+### evt-8a2869b6-bc18-48c6-9a18-1e5fdac786e3
+
+- Timestamp: 2026-09-05T19:30:53.575Z
+- Actor: abi036-manager-closure
+- Operation: task.advance
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Independent QA and verification gates are PASS; ABI-036 is ready for manager closure.
+- Idempotency key: abi036-ready-for-manager-20260906
+- Request fingerprint: 116abeb2a8e8fd9a3617c12e6e3f3d255fe98908ecb05ef26c57eb85fb9db4e8
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-33c5225... independent-QA PASS
+  - evt-86bf1583... verification PASS
+  - commit:b24ee52f834b936b2794aa1fb085d205cd1c2ef3
+  - pages-run:33986470081
+  - ci-run:33986470181
+  - exact-visual-lab receipts:all boss families+narrow viewport+clean console/network
+  - asset SHA receipts
+  - no schema impact
+
+### evt-5e77c8b4-1520-4247-b8f9-1a2b83c7ca8e
+
+- Timestamp: 2026-09-05T19:31:13.589Z
+- Actor: abi036-manager-closure
+- Operation: task.advance
+- Prior revision: 98
+- Resulting revision: 99
+- Summary: Manager closure complete: all required gates PASS and deployed exact-SHA proof is recorded; close ABI-036 as Done.
+- Idempotency key: abi036-done-20260906
+- Request fingerprint: 494df29e722fccf51593e9bbe8777bea6a9b1f354fd5408210ece167a95eaf99
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-0513a2e8-425f-4f4b-baaa-00e02b258bf7 manager-closure PASS
+  - evt-47566c... implementation self-check PASS
+  - evt-e6d4f48... independent-review PASS
+  - evt-33c5225... independent-QA PASS
+  - evt-86bf1583... verification PASS
+  - commit:b24ee52f834b936b2794aa1fb085d205cd1c2ef3
+  - pages-run:33986470081
+  - ci-run:33986470181
+  - exact-visual-lab receipts:all boss families+narrow viewport+clean console/network
+  - asset SHA receipts
+  - no schema impact

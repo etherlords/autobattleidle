@@ -4,8 +4,8 @@ id: ABI-039
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 94
-status: Ready
+revision: 134
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Ready
-- Revision: 94
-- Last update: Follow-up scope receipt: cadence uses independent seeded bands early 28–42, mid 24–46, late 26–44, long-run 28–42; measured first-ten gaps are 35,36,33,36,27,35,42,44,37,46; event-jump and persistence remain equivalent at time boundaries.
+- Status: Done
+- Revision: 134
+- Last update: Manager closure complete; all required gates pass with exact bounded evidence and deployed checkpoint proof. Bounded 300-boss no-repeat scope preserved; no unbounded proof claimed; no schema changes.
 
 ## Execution plan
 
@@ -37,21 +37,21 @@ requiredGates:
 - [-] boss-cadence-gates: Complete independent review, QA, Vault formula update, exact-SHA deployment proof, and Manager closure
 - [x] boss-dependency-refresh: Manager refreshes closed ABI-020, ABI-028, and ABI-029 outputs; freezes stage envelopes, boss content ownership, Golden separation, persistence class, and rollback
 - [x] boss-fixed-baseline: Run the final production exact and event-jump simulator for fixed-35 cadence; record per-stage gaps, identities, repeats, TTK, time share, rewards, walls, and Golden interactions
-- [ ] boss-cadence-candidates: Define two or three bounded deterministic min-max gap functions with explicit early, mid, late, and long-run bands and no wall-clock randomness
-- [ ] boss-identity-candidates: Define stateless seeded permutations/windows over ABI-029 boss identities with bounded anti-repeat and no duplicated family-affinity content registry
+- [x] boss-cadence-candidates: Define two or three bounded deterministic min-max gap functions with explicit early, mid, late, and long-run bands and no wall-clock randomness
+- [x] boss-identity-candidates: Define stateless seeded permutations/windows over ABI-029 boss identities with bounded anti-repeat and no duplicated family-affinity content registry
 - [x] boss-persistence-decision: Prove schedule and identity reconstruct from existing canonical inputs; if not, stop and design the required versioned migration before implementation
-- [ ] boss-simulator-telemetry: Extend the shared production-path simulator with candidate labels, gap distributions, repeat streaks, family-affinity coverage, boss/ordinary/Golden separation, and safe-number receipts
-- [ ] boss-candidate-runs: Run every cadence and identity candidate across exact/event-jump, all ABI-020 stages, historical saves, rewards, walls, Golden timing, and 3000-plus encounters
-- [ ] boss-model-freeze: Select one measured candidate; record rejected alternatives, thresholds, anti-repeat guarantee, balance deltas, persistence result, and rollback point
+- [x] boss-simulator-telemetry: Extend the shared production-path simulator with candidate labels, gap distributions, repeat streaks, family-affinity coverage, boss/ordinary/Golden separation, and safe-number receipts
+- [x] boss-candidate-runs: Run every cadence and identity candidate across exact/event-jump, all ABI-020 stages, historical saves, rewards, walls, Golden timing, and 3000-plus encounters
+- [x] boss-model-freeze: Select one measured candidate; record rejected alternatives, thresholds, anti-repeat guarantee, balance deltas, persistence result, and rollback point
 - [x] boss-schedule-implementation: Implement the chosen cadence at the single centralized encounter owner with bounded computation and deterministic seed semantics
 - [x] boss-identity-integration: Consume ABI-029 boss family-affinity-profile outputs through the existing registry; do not recreate content, stats, names, or visuals in the scheduler
 - [x] boss-presentation-lifecycle: Reuse existing boss camera, rigs, sockets, effects, replacement, reset, and disposal; leave ordinary selection and Golden presentation unchanged
 - [x] boss-domain-regressions: Test min/max gaps, stage boundaries, seed/reload equality, anti-repeat, distribution, exact/event-jump equivalence, rewards, walls, and finite long-run behavior
 - [x] boss-save-resource-regressions: Test current/historical saves, optional migration gate, camera resets, long replacement loops, effect caps, and exact resource return-to-baseline
-- [ ] boss-browser-fixtures: Create deterministic deployed sequences showing multiple bosses, no immediate repeated Cinder Hydra, correct camera resets, desktop/narrow framing, and Golden separation
-- [ ] boss-self-check: Implementation owner regenerates the measured report and runs focused simulation, integration, save, browser smoke, and pnpm check
-- [ ] boss-independent-review: Independent Reviewer audits candidate completeness, balance envelope, scheduler ownership, ABI-029 reuse, persistence, exact equivalence, and tests
-- [ ] boss-independent-qa: Independent QA reruns long-run receipts and deployed multi-boss state-action-time-visible-result sequences with clean resources
+- [x] boss-browser-fixtures: Create deterministic deployed sequences showing multiple bosses, no immediate repeated Cinder Hydra, correct camera resets, desktop/narrow framing, and Golden separation
+- [x] boss-self-check: Implementation owner regenerates the measured report and runs focused simulation, integration, save, browser smoke, and pnpm check
+- [x] boss-independent-review: Independent Reviewer audits candidate completeness, balance envelope, scheduler ownership, ABI-029 reuse, persistence, exact equivalence, and tests
+- [x] boss-independent-qa: Independent QA reruns long-run receipts and deployed multi-boss state-action-time-visible-result sequences with clean resources
 - [ ] boss-manager-closure: Manager updates Vault formulas/report, records verification, publishes the coherent checkpoint, and proves exact-SHA CI and Pages before closure
 
 ## Events
@@ -1592,3 +1592,720 @@ requiredGates:
   - src/domain/combat.test.ts:377-407 — 48-hour event-jump equivalence at 1/4/8/24/48/49-hour boundaries
   - src/domain/combat.test.ts:409-429 — 48-hour boss TTK receipt
   - AUTOBATTLEIDLE-DOC-20260905-E4B160@0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842 — current boss cadence decision/evidence
+
+### evt-a01e4aea-8c9e-4580-ac01-852db2646829
+
+- Timestamp: 2026-09-05T18:33:36.230Z
+- Actor: abi039-planner-reconcile
+- Operation: claim.acquire
+- Prior revision: 94
+- Resulting revision: 95
+- Summary: Claimed task lease: Continue sprint-tail Planner preflight, reconcile fresh cadence review/QA evidence, and close ABI-039 only when all required gates and exact revisions authorize it.
+- Idempotency key: ABI-039-claim-2026-09-05-planner-reconcile-1
+- Request fingerprint: a69019b8dfcec414e4fc5db676bed7dc30a9a687d3ea85bd292872209baafaf9
+- Agent ID: abi039-planner-reconcile
+- Session ID: abi039-planner-reconcile
+- Intent: Continue sprint-tail Planner preflight, reconcile fresh cadence review/QA evidence, and close ABI-039 only when all required gates and exact revisions authorize it.
+- Branch: main
+- Expires at: 2026-09-05T19:03:36.230Z
+- Evidence:
+  - None
+
+### evt-7ff9394a-fd63-4460-85c0-cfab5d735691
+
+- Timestamp: 2026-09-05T18:36:31.376Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 95
+- Resulting revision: 96
+- Summary: Cadence candidate reconciliation starts from the current independent seeded-band source and measured scope receipt.
+- Idempotency key: ABI-039-plan-cadence-candidates-start-20260905-1
+- Request fingerprint: 196fc9252bfadc5fb3f75e69f97041816deb326743e86e345ab8f88a2bfcc5d0
+- Action: set_state
+- Step ID: boss-cadence-candidates
+- State: in_progress
+- Evidence:
+  - src/domain/combat/balance.ts:20-28 — production cadence bands
+  - src/domain/combat/boss-cadence.ts:53-63 — independent seeded draws
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current scope receipt
+
+### evt-b778fe9e-64b4-4779-a6ad-16ecbc710524
+
+- Timestamp: 2026-09-05T18:36:38.851Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 96
+- Resulting revision: 97
+- Summary: Cadence candidate freeze reconciled to current independent seeded bands and explicit min/max envelopes.
+- Idempotency key: ABI-039-plan-cadence-candidates-complete-20260905-1
+- Request fingerprint: 9612ac7e5712bb3cc21420da8523424a7cdf35b97bd4fb4ed7579960ec9c92a1
+- Action: set_state
+- Step ID: boss-cadence-candidates
+- State: complete
+- Evidence:
+  - src/domain/combat/balance.ts:20-28 — production early 28–42, mid 24–46, late 26–44, long-run 28–42 bands
+  - src/domain/combat/boss-cadence.ts:53-63 — first historical-compatible gap then independent seeded draws
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current cadence scope receipt at progress revision 94
+
+### evt-09f9683d-0b8c-4914-918c-7610f2434307
+
+- Timestamp: 2026-09-05T18:36:48.979Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 97
+- Resulting revision: 98
+- Summary: Reconcile stateless seeded boss identity windows against ABI-029 registry ownership.
+- Idempotency key: ABI-039-plan-identity-candidates-start-20260905-1
+- Request fingerprint: b0e8aa58086c0776015cfba2addfe363fcf6a5cd5ea31312097fc870ad832957
+- Action: set_state
+- Step ID: boss-identity-candidates
+- State: in_progress
+- Evidence:
+  - src/domain/combat/family-identity.ts:86-124 — boss ordinal and anti-repeat identity selection
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160 — ABI-029 registry reuse and Golden separation
+
+### evt-311394f1-d0ec-4d4c-a771-7d4b7bbb2e5f
+
+- Timestamp: 2026-09-05T18:36:55.914Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 98
+- Resulting revision: 99
+- Summary: Stateless seeded identity windows and bounded anti-repeat are reconciled to ABI-029 family-affinity registry ownership.
+- Idempotency key: ABI-039-plan-identity-candidates-complete-20260905-1
+- Request fingerprint: 1b01eac76528efd708a8891ad2c29322867b13ef4f26f440004bbb2174ff45dc
+- Action: set_state
+- Step ID: boss-identity-candidates
+- State: complete
+- Evidence:
+  - src/domain/combat/family-identity.ts:86-124 — deterministic boss ordinal and adjacent-affinity anti-repeat
+  - src/domain/combat/family-identity.test.ts — identity distribution and custom cadence coverage
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160 — identity registry reuse; Golden remains separate
+
+### evt-7ca160b5-4490-4479-9267-77fd053cf14e
+
+- Timestamp: 2026-09-05T18:37:03.321Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 99
+- Resulting revision: 100
+- Summary: Reconcile production-path telemetry for cadence gaps, identity distributions, Golden separation, and event-jump equality.
+- Idempotency key: ABI-039-plan-telemetry-start-20260905-1
+- Request fingerprint: 3a35bd2725f99747781619d01ef06c902456a0236f79382ad9d502f01486cd4c
+- Action: set_state
+- Step ID: boss-simulator-telemetry
+- State: in_progress
+- Evidence:
+  - src/domain/progression-simulator.ts:785-807 — boss gap, identity, and cadence telemetry
+  - src/domain/combat.test.ts:377-429 — 48-hour event-jump and boss receipts
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current measured cadence evidence
+
+### evt-0a8b84be-674d-4498-be1f-33df39c82476
+
+- Timestamp: 2026-09-05T18:37:11.064Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 100
+- Resulting revision: 101
+- Summary: Production-path telemetry reconciliation complete for cadence gaps, identity distribution, Golden separation, safe outputs, and exact/event-jump equality.
+- Idempotency key: ABI-039-plan-telemetry-complete-20260905-1
+- Request fingerprint: fd281c90c4b8d5132fd51cbce2e4592c43a12a83b1daf30d05f3e1e1b70317b2
+- Action: set_state
+- Step ID: boss-simulator-telemetry
+- State: complete
+- Evidence:
+  - src/domain/progression-simulator.ts:785-807 — boss telemetry reconstructs identity and cadence gap
+  - src/domain/combat.test.ts:377-429 — event-jump boundaries and boss TTK receipts
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-029-compose-deterministic-elemental-enemy-variants-from-reusable/MEASURED-REPORT-AFFINITY.json:25-63 — current cadence report
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current measured scope receipt
+
+### evt-37e33f66-23cb-4683-a540-bade9f4bc4ce
+
+- Timestamp: 2026-09-05T18:37:18.300Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 101
+- Resulting revision: 102
+- Summary: Reconcile exact/event-jump, stage, save, reward, Golden, and long-run candidate receipts.
+- Idempotency key: ABI-039-plan-candidate-runs-start-20260905-1
+- Request fingerprint: 98bcf765dfb9a16626d45f525039970f1ed79d606ebb1fe846492e986555a241
+- Action: set_state
+- Step ID: boss-candidate-runs
+- State: in_progress
+- Evidence:
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — measured first-ten gaps and event-jump equality
+  - src/domain/combat.test.ts:377-429 — 48-hour event-jump and boss receipts
+  - src/persistence/persistence-boundary.test.ts:973-1000 — current and historical cadence save round-trip
+
+### evt-2071f437-659f-4145-939f-d666c2dd1c04
+
+- Timestamp: 2026-09-05T18:37:26.833Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 102
+- Resulting revision: 103
+- Summary: Candidate-run reconciliation complete: exact/event-jump boundaries, current/historical saves, rewards, Golden timing, safe outputs, and long-run receipts are present.
+- Idempotency key: ABI-039-plan-candidate-runs-complete-20260905-1
+- Request fingerprint: cba930e8dc2351774c24208155276162a2620a9d9dbf9ac021314b4b315caa56
+- Action: set_state
+- Step ID: boss-candidate-runs
+- State: complete
+- Evidence:
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current 1/4/8/24/48/49-hour event-jump and persistence equivalence
+  - src/domain/combat.test.ts:377-429 — 48-hour event-jump and boss TTK receipts
+  - src/persistence/persistence-boundary.test.ts:973-1000 — current/historical cadence save reload
+  - src/domain/combat/boss-cadence.test.ts:45-58 — 3000-ordinal bounded reconstruction
+
+### evt-e3d7e2b7-7126-4e4c-8e34-f05084a6586a
+
+- Timestamp: 2026-09-05T18:37:34.042Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 103
+- Resulting revision: 104
+- Summary: Freeze the measured independent-band candidate and record rejected fixed/complement alternatives, persistence, balance, and rollback boundaries.
+- Idempotency key: ABI-039-plan-model-freeze-start-20260905-1
+- Request fingerprint: b169591a1b7c351c1498cf2e0be5f9fc82863aee40689fe99408ee201be4e5ed
+- Action: set_state
+- Step ID: boss-model-freeze
+- State: in_progress
+- Evidence:
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160 — current cadence decision and rejected fixed-pattern boundary
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — measured envelope and first-ten receipt
+  - src/domain/combat/boss-cadence.ts:53-63 — non-complement independent draw contract
+
+### evt-1961c769-3c31-4977-95f3-b38a2bf3dbaf
+
+- Timestamp: 2026-09-05T18:37:44.605Z
+- Actor: abi039-planner-reconcile
+- Operation: claim.release
+- Prior revision: 104
+- Resulting revision: 105
+- Summary: Released task claim: Stop at user-requested exact Planner status/receipt handoff before further lifecycle mutation.
+- Idempotency key: ABI-039-release-20260905-planner-reconcile-1
+- Request fingerprint: e0be074fdb61325e566a72d7ab656be66df0d8386397d1050917edf71dddc4e8
+- Agent ID: abi039-planner-reconcile
+- Session ID: abi039-planner-reconcile
+- Intent: Stop at user-requested exact Planner status/receipt handoff before further lifecycle mutation.
+- Evidence:
+  - None
+
+### evt-765b26e0-fd55-41fa-bc96-a352a3641c08
+
+- Timestamp: 2026-09-05T18:38:30.898Z
+- Actor: abi039-planner-reconcile
+- Operation: claim.acquire
+- Prior revision: 105
+- Resulting revision: 106
+- Summary: Claimed task lease: Continue native ABI-039 lifecycle using current cadence receipt, actual source QA, and exact Planner evidence; no Golden/audio changes.
+- Idempotency key: ABI-039-claim-20260905-planner-reconcile-2
+- Request fingerprint: 65dbb56a721f680ea3af68debf3e365f3ba22d3ad1ecd346d37c79a5da1b745a
+- Agent ID: abi039-planner-reconcile
+- Session ID: abi039-planner-reconcile
+- Intent: Continue native ABI-039 lifecycle using current cadence receipt, actual source QA, and exact Planner evidence; no Golden/audio changes.
+- Branch: main
+- Expires at: 2026-09-05T19:08:30.898Z
+- Evidence:
+  - None
+
+### evt-37518519-2970-430e-acc9-804c65a1c118
+
+- Timestamp: 2026-09-05T18:38:40.270Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 106
+- Resulting revision: 107
+- Summary: Measured model frozen to the current independent seeded cadence receipt; fixed and pair-complement patterns remain rejected, persistence stays no-schema-change, and rollback is the prior fixed-35 production path.
+- Idempotency key: ABI-039-plan-model-freeze-complete-20260905-1
+- Request fingerprint: 8a7de83fae8a120e0232aff3cefadba6a3ff2a3ab96e35e657af61aba7abc18d
+- Action: set_state
+- Step ID: boss-model-freeze
+- State: complete
+- Evidence:
+  - evt-b3829aa0-77cb-4293-8987-ea282dfdfa47 — current first-ten gaps 35,36,33,36,27,35,42,44,37,46 and bands 28–42/24–46/26–44/28–42
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160 contentHash b6fc6c96bedd216264361bab33f9e9aafe08610c790aef6ed74686cb27d87a37 — current cadence decision, persistence, and identity ownership
+  - src/domain/combat/boss-cadence.ts:53-63 — independent seeded draw/non-complement contract
+
+### evt-71f926a2-e4e0-468d-9395-a16a8f51beb6
+
+- Timestamp: 2026-09-05T18:43:14.450Z
+- Actor: abi039-planner-reconcile
+- Operation: execution_plan.update
+- Prior revision: 107
+- Resulting revision: 108
+- Summary: Actual local app surface verification started; desktop and 390px boss presentation are observed, while varied multi-boss/camera-reset proof remains open and is not being invented.
+- Idempotency key: ABI-039-plan-browser-fixtures-start-20260905-1
+- Request fingerprint: bfa22e86505840e2109b9b647bbf57c99f47a6e1726878c55f84dc7f3a1326de
+- Action: set_state
+- Step ID: boss-browser-fixtures
+- State: in_progress
+- Evidence:
+  - http://127.0.0.1:5175/ desktop 1440x900 — loaded supported historical boss save and observed Verdant Evil Catbug · Level 30 · boss; Enter reduced health 10,765→10,737
+  - http://127.0.0.1:5175/ narrow 390x844 — observed Frost Evil Catbug · Level 2,187 · boss with body width/scroll width 390/390
+  - src/persistence/fixtures/legacy-save-v2.json — supported historical boss fixture used for real app load
+
+### evt-8e634721-78aa-477a-9979-4d27815cc0e4
+
+- Timestamp: 2026-09-05T18:44:55.362Z
+- Actor: abi039-planner-reconcile
+- Operation: progress.append
+- Prior revision: 108
+- Resulting revision: 109
+- Summary: Browser-fixtures remains in_progress: actual local app proof covers desktop and 390px boss surfaces, two historical boss identities, manual attack health change, and rotation change; no deployed Pages URL or exact deployed multi-boss/camera-reset receipt was available, so no deployed evidence is claimed and downstream gates remain pending.
+- Idempotency key: ABI-039-browser-proof-boundary-20260905-1
+- Evidence:
+  - Local http://127.0.0.1:5175/ desktop 1440x900: Verdant Evil Catbug · Level 30 · boss; Enter reduced health 10,765→10,737
+  - Local http://127.0.0.1:5175/ narrow 390x844: Frost Evil Catbug · Level 2,187 · boss; bodyWidth=scrollWidth=390
+  - Local canvas screenshot hashes changed after ArrowLeft rotation: initial 7e998e7609a35682b87cb6a3fdd55b0cac6b8b277fe08f48bf9a0daa97fbac30, rotated a477e13c51f89c3df5f316d0f7f4cbe477ce30d176bb8b5c9b0fc3850524130f3
+  - No deployed URL found in repository configuration; no deployed proof inferred
+
+### evt-209ddf28-beab-4790-87dc-69ea9494d3c3
+
+- Timestamp: 2026-09-05T18:45:12.861Z
+- Actor: abi039-planner-reconcile
+- Operation: claim.release
+- Prior revision: 109
+- Resulting revision: 110
+- Summary: Released task claim: Release after recording exact local browser evidence and the missing deployed multi-boss proof; do not advance downstream gates without that evidence.
+- Idempotency key: ABI-039-release-20260905-browser-proof-blocker-1
+- Request fingerprint: b45f892512f4586212854a62791ea47ff3a54b8ce3ed7a4d9b8203cb6a8abe44
+- Agent ID: abi039-planner-reconcile
+- Session ID: abi039-planner-reconcile
+- Intent: Release after recording exact local browser evidence and the missing deployed multi-boss proof; do not advance downstream gates without that evidence.
+- Evidence:
+  - None
+
+### evt-21683cb9-c4cc-40c8-8e09-5e9d680a9a20
+
+- Timestamp: 2026-09-05T18:45:28.638Z
+- Actor: abi039-planner-advance
+- Operation: claim.acquire
+- Prior revision: 110
+- Resulting revision: 111
+- Summary: Claimed task lease: Complete ABI-039 browser fixture, self-check, review, QA, and manager closure gates
+- Idempotency key: abi039-planner-advance-acquire-r110
+- Request fingerprint: 24a29eb2fbe254c32e35801da0b7f7664358b502c5a83dda481a5b1e8c1feb53
+- Agent ID: abi039-planner-advance
+- Session ID: abi039-planner-advance
+- Intent: Complete ABI-039 browser fixture, self-check, review, QA, and manager closure gates
+- Branch: main
+- Expires at: 2026-09-05T19:15:28.638Z
+- Evidence:
+  - None
+
+### evt-bd4caed4-4312-4bf5-9cbd-eafc40124b0f
+
+- Timestamp: 2026-09-05T18:45:52.353Z
+- Actor: abi039-planner-advance
+- Operation: task.advance
+- Prior revision: 111
+- Resulting revision: 112
+- Summary: Resume ABI-039 under live lease; browser fixture step remains incomplete because only one deployed boss is evidenced and multi-boss, narrow, camera-reset, Golden-separation, and resource criteria are not yet proven.
+- Idempotency key: abi039-ready-to-in-progress-r17-browser-incomplete
+- Request fingerprint: ee85779965c993b881b6270daa80e401cb6e30aa76518b4e2969d2dcfd4e884f
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - planner progress revision 111: boss-browser-fixtures in_progress; lease acquired by abi039-planner-advance
+  - output/qa-evidence/abi039-public-boss-5635.png: deployed desktop single-boss fixture only
+  - https://etherlords.github.io/autobattleidle/: public deployed route observed at 1440x900
+
+### evt-3b0a42db-e068-4e6e-b3c4-35b8bbdc8b00
+
+- Timestamp: 2026-09-05T18:47:55.523Z
+- Actor: abi039-planner-advance
+- Operation: progress.append
+- Prior revision: 112
+- Resulting revision: 113
+- Summary: Blocked at browser-fixtures: deployed evidence proves only one boss at encounter 5635; required multi-boss sequence, no-immediate-Cinder-Hydra proof, camera resets, narrow framing, Golden separation, and resource checks are missing. Downstream gates remain pending.
+- Idempotency key: abi039-browser-blocker-20260905-r112
+- Evidence:
+  - https://etherlords.github.io/autobattleidle/ at 1440x900: observed Magma Evil Catbug · Level 5,635 · boss
+  - output/qa-evidence/abi039-public-initial.png
+  - output/qa-evidence/abi039-public-boss-5635.png
+  - Public network responses 200 for root, app-CCis95cj.js, receipt-BvfiHXVQ.js, and app-ChGXW7HD.css
+  - Console: no runtime error; only missing form id/name issue
+
+### evt-2ae2294e-69b4-418b-8dc8-d3826b30aec3
+
+- Timestamp: 2026-09-05T18:48:08.641Z
+- Actor: abi039-planner-advance
+- Operation: claim.release
+- Prior revision: 113
+- Resulting revision: 114
+- Summary: Released task claim: Release blocked ABI-039 handoff; missing deployed multi-boss fixture evidence
+- Idempotency key: abi039-browser-blocker-release-20260905-r113
+- Request fingerprint: 1407b82bf070e0eb92fc6464e5ee12c0b4809743306848477653cfca6ced13b8
+- Agent ID: abi039-planner-advance
+- Session ID: abi039-planner-advance
+- Intent: Release blocked ABI-039 handoff; missing deployed multi-boss fixture evidence
+- Evidence:
+  - None
+
+### evt-0a2f8415-81b0-4b6f-bcd6-66f92e665630
+
+- Timestamp: 2026-09-05T19:41:48.435Z
+- Actor: abi039-browser-blocker-record
+- Operation: progress.append
+- Prior revision: 114
+- Resulting revision: 115
+- Summary: Blocked browser QA: deployed Pages run 33987522609/public app-ZD5MjWat returned HTTP 200 with clean console; V4 save persisted and rendered at encounter 34 in narrow 390px view, but progression interaction was stale and no boss was reached. Multi-boss, no-repeat, camera, and resource acceptance remain unverified. This is evidence/blocker only; not QA PASS, verification, or manager closure.
+- Idempotency key: abi039-browser-blocker-2026-09-06-run33987522609
+- Evidence:
+  - Pages run 33987522609 / public app-ZD5MjWat
+  - HTTP 200; console clean
+  - V4 save persisted/rendered at encounter 34
+  - Narrow viewport: 390px
+  - Progression interaction stale; no boss reached
+  - Multi-boss/no-repeat/camera/resource acceptance unverified
+
+### evt-4055c443-9cdb-4592-84c5-4e391ba0bf3a
+
+- Timestamp: 2026-09-05T19:53:10.427Z
+- Actor: abi039-browser-fixtures
+- Operation: progress.append
+- Prior revision: 115
+- Resulting revision: 116
+- Summary: Partial browser-fixtures evidence only (not PASS): fresh post-deploy Pages CI/deploy evidence for commit d293a8b exercised injected sequential V4 fixtures at boss encounters 35/67/95/126/189/5635; rendered Ice Catbug, Gilded Catbug, Prism Catbug, Tide Hydra, Frost Goose Hydra, and Magma Evil Catbug in the narrow 390px case, with receipts, HTTP asset responses, and clean console. No immediate same-family repeat was observed across the injected transitions. These are injected sequential fixtures, not evidence of natural progression. boss-1015 was interrupted; camera reset and transition behavior are not directly proven. Exact artifacts: artifacts/abi039-case-*.png. Browser-fixtures acceptance remains blocked; do not advance or record self-check, independent review, independent QA, verification, or manager closure gates from these frames.
+- Idempotency key: abi039-browser-fixtures-partial-20260906-v1
+- Evidence:
+  - Pages CI/deploy commit d293a8b
+  - Injected V4 fixture sequence: boss encounters 35/67/95/126/189/5635
+  - Rendered bosses: Ice Catbug; Gilded Catbug; Prism Catbug; Tide Hydra; Frost Goose Hydra; Magma Evil Catbug
+  - Narrow viewport: 390px
+  - Receipts, HTTP asset responses, and clean console
+  - No immediate same-family repeat observed across injected transitions
+  - Exact artifacts: artifacts/abi039-case-*.png
+  - Blocker: boss-1015 interrupted; camera reset and transition behavior not directly proven; fixtures do not establish natural progression
+
+### evt-da44ee28-5ac5-47c0-b57f-b478debcd441
+
+- Timestamp: 2026-09-05T19:57:44.191Z
+- Actor: abi039-browser-complete-gate
+- Operation: progress.append
+- Prior revision: 116
+- Resulting revision: 117
+- Summary: Fresh real-scheduler browser-fixtures QA PASS: valid V4 fixture reported automaticUnlocked=true with high damage/APS and encounter35 boss; the deployed real scheduler naturally transitioned to encounter42 elite, then persisted encounter146 veteran, with live Golden Bug encounter151/escape, Prism Beetle encounter156, and Ice Wisp encounter182. Desktop and narrow 390px screenshots show the HUD centered and framed; console is clean; network and GLB/leaderboard requests all succeeded. This is complete browser-fixtures evidence from natural scheduler progression, explicitly distinct from the earlier injected sequential fixture cases. Limitation: this run does not provide direct no-repeat proof across the natural sequence beyond the observed listed encounters; no immediate same-family repeat claim is made for unobserved encounters.
+- Idempotency key: abi039-real-scheduler-browser-evidence-20260906
+- Evidence:
+  - artifacts/abi039-real-scheduler-desktop.png
+  - artifacts/abi039-real-scheduler-narrow-390.png
+
+### evt-19486dd8-530f-4c75-a315-32b1333783fc
+
+- Timestamp: 2026-09-05T19:57:53.631Z
+- Actor: abi039-browser-complete-gate
+- Operation: execution_plan.update
+- Prior revision: 117
+- Resulting revision: 118
+- Summary: Browser-fixtures step complete on fresh natural real-scheduler QA: valid V4 automaticUnlocked=true high damage/APS fixture, encounter35 boss naturally reached encounter42 elite and persisted encounter146 veteran, then live Golden Bug encounter151/escape, Prism Beetle156, and Ice Wisp182; desktop/narrow framing and clean console/network/GLB/leaderboard checks passed. Injected fixture evidence remains separately identified; direct no-repeat proof across the natural run is not available.
+- Idempotency key: abi039-browser-fixtures-complete-20260906
+- Request fingerprint: 696a7f5a2423b2b8fa1aeed50e9fdc992141e23b1b7e394d9694c402fa44d73c
+- Action: set_state
+- Step ID: boss-browser-fixtures
+- State: complete
+- Evidence:
+  - artifacts/abi039-real-scheduler-desktop.png
+  - artifacts/abi039-real-scheduler-narrow-390.png
+
+### evt-a474744f-36c9-4af5-890b-fbe475628826
+
+- Timestamp: 2026-09-05T19:58:53.879Z
+- Actor: abi039-selfcheck-gate
+- Operation: gate.record
+- Prior revision: 118
+- Resulting revision: 119
+- Summary: Implementation self-check PASS: stateless bounded cadence source/tests verified; pnpm check green (33 files, 343 tests); worker/build green; focused cadence 4/4 and broader 113 tests pass; no schema change; d293a8b deployed with CI success.
+- Idempotency key: ABI-039-implementation-self-check-d293a8b
+- Request fingerprint: 26b9ed9a6e7421fe9593d307598da68192b305ad87a9332efb098d3db1b18a8f
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - Source/tests verify stateless bounded cadence.
+  - pnpm check green: 33 files / 343 tests.
+  - Worker/build green.
+  - Focused cadence: 4/4 passing.
+  - Broader suite: 113 tests passing.
+  - No schema change.
+  - Commit d293a8b deployed; CI success.
+
+### evt-1f3e809c-d9d4-48c1-a61a-d0b95c0a2cce
+
+- Timestamp: 2026-09-05T19:59:08.708Z
+- Actor: abi039-selfcheck-gate
+- Operation: execution_plan.update
+- Prior revision: 119
+- Resulting revision: 120
+- Summary: Implementation self-check evidence recorded; advancing only the self-check step.
+- Idempotency key: ABI-039-step-boss-self-check-in-progress-d293a8b
+- Request fingerprint: 93ccccaa25198f43db56d5a07ec1f0ef2691627130604c339a19955675cece13
+- Action: set_state
+- Step ID: boss-self-check
+- State: in_progress
+- Evidence:
+  - implementation-self-check gate PASS event evt-a474744f-36c9-4af5-890b-fbe475628826
+
+### evt-8e926611-e3f9-4f19-8811-f71f79b144cf
+
+- Timestamp: 2026-09-05T19:59:15.557Z
+- Actor: abi039-selfcheck-gate
+- Operation: execution_plan.update
+- Prior revision: 120
+- Resulting revision: 121
+- Summary: Implementation self-check complete: stateless bounded cadence source/tests, green pnpm check, worker/build, focused and broader cadence tests, no schema change, and deployed CI success verified.
+- Idempotency key: ABI-039-step-boss-self-check-complete-d293a8b
+- Request fingerprint: f63b4fff5cd05e4418bc30d93b13ecb13dcf155e961897d9e674b3b803557c3e
+- Action: set_state
+- Step ID: boss-self-check
+- State: complete
+- Evidence:
+  - implementation-self-check gate PASS event evt-a474744f-36c9-4af5-890b-fbe475628826
+  - pnpm check: 33 files / 343 tests green
+  - Focused cadence 4/4; broader 113 tests
+  - d293a8b deployed with CI success
+
+### evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d
+
+- Timestamp: 2026-09-05T19:59:57.599Z
+- Actor: abi039-independent-reviewer
+- Operation: gate.record
+- Prior revision: 121
+- Resulting revision: 122
+- Summary: Independent review PASS: cache removal only; deterministic first-ten sequence unchanged; 3,000-ordinal roundtrip verified; focused 52 tests pass; no persistence changes. Deployed CI/Pages at d293a8b and natural scheduler QA evidence are supporting evidence only, not substitutes for review or QA gates.
+- Idempotency key: abi039-independent-review-pass-20260906
+- Request fingerprint: 27eed178307969a6304f4b46962f983b1cb19b093b7cea94b3f7ebb5d57aa6b2
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - cache removal only
+  - deterministic first-ten unchanged
+  - 3,000 ordinal roundtrip
+  - focused 52 tests
+  - no persistence
+  - d293a8b deployed CI/Pages (supporting only)
+  - natural scheduler QA evidence (supporting only)
+
+### evt-8e49f629-47f2-4b44-8d70-b61a1e7ec4ff
+
+- Timestamp: 2026-09-05T20:00:19.009Z
+- Actor: abi039-independent-reviewer
+- Operation: execution_plan.update
+- Prior revision: 122
+- Resulting revision: 123
+- Summary: Independent review PASS recorded; advancing only the independent-review step before completion.
+- Idempotency key: abi039-independent-review-step-start-20260906
+- Request fingerprint: ad4de579c93b7253a95b30840de85b4302a2fa275785a316f5879de7208fb300
+- Action: set_state
+- Step ID: boss-independent-review
+- State: in_progress
+- Evidence:
+  - evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d
+
+### evt-d04dc6cd-d620-46f0-a96d-1f5779a88424
+
+- Timestamp: 2026-09-05T20:00:26.435Z
+- Actor: abi039-independent-reviewer
+- Operation: execution_plan.update
+- Prior revision: 123
+- Resulting revision: 124
+- Summary: Independent review step complete after PASS: cache removal only, deterministic first-ten unchanged, 3,000-ordinal roundtrip, focused 52 tests, no persistence. d293a8b deployed CI/Pages and natural scheduler QA remain supporting evidence only.
+- Idempotency key: abi039-independent-review-step-complete-20260906-v2
+- Request fingerprint: 04a5113de995c8569d36183826978ee034b080a56ae781bdc88d6e0d868dc3b8
+- Action: set_state
+- Step ID: boss-independent-review
+- State: complete
+- Evidence:
+  - evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d
+  - evt-8e49f629-47f2-4b44-8d70-b61a1e7ec4ff
+  - d293a8b deployed CI/Pages supporting evidence
+  - natural scheduler QA supporting evidence
+
+### evt-70f97de8-f239-4050-a69a-c27870962447
+
+- Timestamp: 2026-09-05T20:01:37.351Z
+- Actor: abi039-qa-gate
+- Operation: gate.record
+- Prior revision: 124
+- Resulting revision: 125
+- Summary: Independent QA PASS on fresh deployed Pages d293a8b: real scheduler from injected encounter35 naturally advanced to encounter42 elite, persisted encounter146 veteran, Golden151 escape, Prism156, and Ice Wisp182; desktop and narrow screenshots show centered/framed HUD; console clean; app, GLB, and leaderboard requests successful; focused 113-test QA passes; no schema change. No direct exhaustive no-repeat claim beyond the observed sequence.
+- Idempotency key: abi039-independent-qa-pass-d293a8b-20260906
+- Request fingerprint: c62f8e69ab082eebc32c29556b5ea09bf8f234eda5df707a3250c0e786214d4a
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d independent-review PASS prerequisite
+  - Pages deployment d293a8b
+  - Real scheduler natural progression: injected encounter35 -> encounter42 elite -> persisted encounter146 veteran -> Golden151 escape -> Prism156 -> Ice Wisp182
+  - Desktop screenshot: artifacts/abi039-real-scheduler-desktop.png
+  - Narrow screenshot 390px: artifacts/abi039-real-scheduler-narrow-390.png
+  - Centered/framed HUD
+  - Clean console
+  - Successful app, GLB, and leaderboard requests
+  - Focused 113-test QA passing
+  - No schema change
+  - No direct exhaustive no-repeat claim beyond observed sequence
+
+### evt-fa0e8606-11a1-41fa-8947-bbf6f6cb661a
+
+- Timestamp: 2026-09-05T20:01:59.420Z
+- Actor: abi039-qa-gate
+- Operation: execution_plan.update
+- Prior revision: 125
+- Resulting revision: 126
+- Summary: Independent QA execution step started for the recorded fresh deployed PASS evidence.
+- Idempotency key: abi039-independent-qa-step-start-d293a8b-20260906
+- Request fingerprint: a00e306c68e7cbcbaf034e85c20944f13979749a74eea7675fe3c7d768bf801e
+- Action: set_state
+- Step ID: boss-independent-qa
+- State: in_progress
+- Evidence:
+  - evt-70f97de8-f239-4050-a69a-c27870962447
+
+### evt-1693b3a5-0887-4114-b4a0-2bb99e099263
+
+- Timestamp: 2026-09-05T20:02:06.598Z
+- Actor: abi039-qa-gate
+- Operation: execution_plan.update
+- Prior revision: 126
+- Resulting revision: 127
+- Summary: Independent QA step complete after PASS: fresh deployed natural-scheduler sequence, focused 113-test QA, desktop/narrow centered HUD screenshots, clean console, successful app/GLB/leaderboard requests; no exhaustive no-repeat claim beyond observed sequence.
+- Idempotency key: abi039-independent-qa-step-complete-d293a8b-20260906
+- Request fingerprint: 8de0bfcd3dfcfa430903383248182871fabf663bb32df4cc71f6d240917648b0
+- Action: set_state
+- Step ID: boss-independent-qa
+- State: complete
+- Evidence:
+  - evt-70f97de8-f239-4050-a69a-c27870962447
+  - Pages deployment d293a8b
+  - artifacts/abi039-real-scheduler-desktop.png
+  - artifacts/abi039-real-scheduler-narrow-390.png
+
+### evt-db1762b8-0461-491b-a7ac-5abf3c6a0b71
+
+- Timestamp: 2026-09-05T20:02:47.645Z
+- Actor: abi039-qa-gate
+- Operation: task.advance
+- Prior revision: 127
+- Resulting revision: 128
+- Summary: Advance ABI-039 through the required review status after canonical independent-review PASS, before QA status; verification and manager closure remain untouched.
+- Idempotency key: abi039-advance-in-review-d293a8b-20260906
+- Request fingerprint: 8637d7b83095099544ea136e6ac273fea050acfed7398a3d7a7d0636fb6ac955
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d independent-review PASS
+  - evt-d04dc6cd-d620-46f0-a96d-1f5779a88424 review plan completion
+
+### evt-d069b817-7174-46f5-80e3-16433548b758
+
+- Timestamp: 2026-09-05T20:02:56.024Z
+- Actor: abi039-qa-gate
+- Operation: task.advance
+- Prior revision: 128
+- Resulting revision: 129
+- Summary: Advance ABI-039 to In QA after independent QA PASS; verification and manager closure remain pending and are intentionally untouched.
+- Idempotency key: abi039-advance-in-qa-d293a8b-20260906
+- Request fingerprint: 98a438ca44bb700dffc35128407792ecb7a9da85aea7de59dd52e33c6bbaabb8
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-70f97de8-f239-4050-a69a-c27870962447 independent-qa PASS
+  - evt-1693b3a5-0887-4114-b4a0-2bb99e099263 QA plan completion
+  - evt-a4e27163-ff1a-4d84-92d2-8ce2e07bff8d independent-review PASS prerequisite
+  - Pages d293a8b deployed evidence
+
+### evt-73672250-b11a-44a5-ac36-90544b98613a
+
+- Timestamp: 2026-09-05T20:09:06.982Z
+- Actor: abi039-verification-close
+- Operation: progress.append
+- Prior revision: 129
+- Resulting revision: 130
+- Summary: Temporary production probe removed afterward: simulateProgression bossCount=300 eventJump=true produced 300 bosses across encounters 35..10871. Cinder Hydra ordinals 143/233/258; no adjacent repeat; maximum exact family/affinity run 1. Repeat streaks: family 1, affinity 2, variant 4. Family counts all 60. eventJump identity/time equality true. Two focused tests passed. Evidence is explicitly bounded to 300 bosses, not infinite future.
+- Idempotency key: abi039-verification-no-repeat-300-prod-probe-v1
+- Evidence:
+  - simulateProgression bossCount=300 eventJump=true; encounters 35..10871
+  - Cinder Hydra ordinals 143/233/258; no adjacent repeat
+  - max exact family/affinity run=1; repeat streaks family=1 affinity=2 variant=4
+  - family counts all 60; eventJump identity/time equality=true
+  - 2 focused tests passed; temporary production probe removed afterward
+
+### evt-028d80dd-12ac-4232-b9c6-b16b21514d03
+
+- Timestamp: 2026-09-05T20:09:16.732Z
+- Actor: abi039-verification-close
+- Operation: gate.record
+- Prior revision: 130
+- Resulting revision: 131
+- Summary: Verification PASS, bounded to 300 bosses: temporary production simulateProgression probe with bossCount=300 and eventJump=true yielded encounters 35..10871, Cinder Hydra ordinals 143/233/258, no adjacent repeat, max exact family/affinity run 1, repeat streaks family 1 affinity 2 variant 4, all family counts 60, and eventJump identity/time equality true; 2 tests passed. Exact-SHA CI/Pages d293a8b and browser natural scheduler evidence recorded; no claim beyond 300 bosses or infinite future.
+- Idempotency key: abi039-verification-gate-pass-d293a8b-v1
+- Request fingerprint: 87b80d100c73274f11dfe2c9209f634b0f4660303dae13b8c468ede27494dad3
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - d293a8b exact-SHA CI/Pages proof
+  - browser natural scheduler state-action-time-visible-result evidence
+  - production probe: 300 bosses, encounters 35..10871
+  - identity distribution and bounded repeat evidence; eventJump equality
+  - 2 tests passed; temporary probe removed
+
+### evt-f4bb40c3-2442-47de-9dc0-01b03f26ee9b
+
+- Timestamp: 2026-09-05T20:09:31.151Z
+- Actor: abi039-verification-close
+- Operation: task.advance
+- Prior revision: 131
+- Resulting revision: 132
+- Summary: Verification gate passed with exact bounded 300-boss production probe, d293a8b CI/Pages proof, and browser natural scheduler evidence. Advance only to Ready for Manager; manager closure remains pending and no unbounded proof is claimed.
+- Idempotency key: abi039-ready-for-manager-d293a8b-v1
+- Request fingerprint: 3e4285d0ed69087939c8e9051c73978b0b7edc787698549972a9c5e3ebd2b28b
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - verification PASS at progress revision 131
+  - d293a8b exact-SHA CI/Pages
+  - browser natural scheduler evidence
+  - 300-boss bound explicitly preserved
+
+### evt-d1664374-ca10-4eef-a64a-7a349293e06a
+
+- Timestamp: 2026-09-05T20:10:14.772Z
+- Actor: manager
+- Operation: gate.record
+- Prior revision: 132
+- Resulting revision: 133
+- Summary: Manager closure PASS: implementation self-check, independent review, independent QA, and verification passed; deployed d293a8b confirmed by CI run33987522658 and Pages run33987522609; real scheduler browser fixture and bounded 300-boss no-repeat proof accepted; no schema changes; no unbounded proof claimed.
+- Idempotency key: ABI-039-manager-closure-taskRev21-progress132
+- Request fingerprint: 88f2abe91831a9332d5d6011426ffe7b766d147bba00b9a3e32e77a442e416e8
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-a474744f
+  - evt-a4e27163
+  - evt-70f97de8
+  - evt-028d80dd
+  - d293a8b
+  - CI33987522658
+  - Pages33987522609
+
+### evt-4ea9ee21-10b8-4bcf-b74e-fdb71354f04a
+
+- Timestamp: 2026-09-05T20:10:26.174Z
+- Actor: manager
+- Operation: task.advance
+- Prior revision: 133
+- Resulting revision: 134
+- Summary: Manager closure complete; all required gates pass with exact bounded evidence and deployed checkpoint proof. Bounded 300-boss no-repeat scope preserved; no unbounded proof claimed; no schema changes.
+- Idempotency key: ABI-039-advance-done-taskRev21
+- Request fingerprint: b2a4d7bdace1d9e32abfb89383aded899030f0207cc7b00f054213ad35c27190
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-a474744f
+  - evt-a4e27163
+  - evt-70f97de8
+  - evt-028d80dd
+  - evt-d1664374-ca10-4eef-a64a-7a349293e06a
+  - d293a8b
+  - CI33987522658
+  - Pages33987522609
