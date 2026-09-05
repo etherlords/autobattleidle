@@ -30,10 +30,15 @@ export type LabRecipeValidation = {
 export const validateLabRecipe = (recipe: LabRecipe, family: EnemyFamily): LabRecipeValidation => {
   if (recipe === "production" || recipe === "legacy/no-overlay" || recipe === "socket-probe")
     return { valid: true };
-  if (family !== "boss-hydra" && family !== "boss-colossus")
+  if (
+    family !== "boss-hydra" &&
+    family !== "boss-colossus" &&
+    family !== "boss-catbug" &&
+    family !== "boss-evil-catbug"
+  )
     return {
       valid: false,
-      reason: `${recipe} is boss-only; select Hydra or Colossus before attaching it`,
+      reason: `${recipe} is boss-only; select a boss family before attaching it`,
     };
   return { valid: true };
 };

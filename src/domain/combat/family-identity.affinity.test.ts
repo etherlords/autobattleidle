@@ -21,8 +21,10 @@ const familyLabels: Readonly<Record<EnemyFamily, string>> = {
   mantis: "Mantis",
   sentinel: "Sentinel",
   drake: "Drake",
-  "boss-colossus": "Catbug",
-  "boss-hydra": "Evil Catbug",
+  "boss-colossus": "Colossus",
+  "boss-hydra": "Hydra",
+  "boss-catbug": "Catbug",
+  "boss-evil-catbug": "Evil Catbug",
 };
 
 type AffinityCase = {
@@ -30,6 +32,7 @@ type AffinityCase = {
   readonly level: number;
   readonly modifier: EnemyPresentationModifier;
 };
+type BossFamily = "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug";
 type FamilyMatrix = Readonly<Record<EnemyFamily, ReadonlyArray<AffinityCase>>>;
 
 const familyGrades: Readonly<Record<EnemyFamily, "normal" | "elite" | "boss">> = {
@@ -41,6 +44,8 @@ const familyGrades: Readonly<Record<EnemyFamily, "normal" | "elite" | "boss">> =
   drake: "elite",
   "boss-colossus": "boss",
   "boss-hydra": "boss",
+  "boss-catbug": "boss",
+  "boss-evil-catbug": "boss",
 };
 
 /**
@@ -161,6 +166,34 @@ const labelMatrix: FamilyMatrix = {
     { affinity: "magma", level: 45, modifier: null },
     { affinity: "prism", level: 13, modifier: null },
   ],
+  "boss-catbug": [
+    { affinity: "cinder", level: 2, modifier: null },
+    { affinity: "ice", level: 18, modifier: null },
+    { affinity: "ash", level: 46, modifier: null },
+    { affinity: "toxic", level: 34, modifier: null },
+    { affinity: "volt", level: 6, modifier: null },
+    { affinity: "tide", level: 14, modifier: null },
+    { affinity: "dusk", level: 44, modifier: null },
+    { affinity: "verdant", level: 30, modifier: null },
+    { affinity: "gilded", level: 20, modifier: null },
+    { affinity: "frost", level: 10, modifier: null },
+    { affinity: "magma", level: 40, modifier: null },
+    { affinity: "prism", level: 32, modifier: null },
+  ],
+  "boss-evil-catbug": [
+    { affinity: "cinder", level: 5, modifier: null },
+    { affinity: "ice", level: 31, modifier: null },
+    { affinity: "ash", level: 41, modifier: null },
+    { affinity: "toxic", level: 19, modifier: null },
+    { affinity: "volt", level: 1, modifier: null },
+    { affinity: "tide", level: 37, modifier: null },
+    { affinity: "dusk", level: 43, modifier: null },
+    { affinity: "verdant", level: 11, modifier: null },
+    { affinity: "gilded", level: 9, modifier: null },
+    { affinity: "frost", level: 33, modifier: null },
+    { affinity: "magma", level: 45, modifier: null },
+    { affinity: "prism", level: 13, modifier: null },
+  ],
 };
 
 describe("enemy affinity selection", () => {
@@ -179,25 +212,30 @@ describe("enemy affinity selection", () => {
     }
   });
 
-  it("reaches every affinity for both boss families with production-reachable inputs", () => {
-    const counts: Readonly<
-      Record<"boss-colossus" | "boss-hydra", Partial<Record<EnemyAffinity, number>>>
-    > = {
+  it("reaches every affinity for all four boss families with production-reachable inputs", () => {
+    const bossFamilies: readonly BossFamily[] = [
+      "boss-colossus",
+      "boss-hydra",
+      "boss-catbug",
+      "boss-evil-catbug",
+    ];
+    const counts: Record<BossFamily, Partial<Record<EnemyAffinity, number>>> = {
       "boss-colossus": {},
       "boss-hydra": {},
+      "boss-catbug": {},
+      "boss-evil-catbug": {},
     };
-    for (let level = 1; level <= 96; level += 1) {
-      const identity = selectEnemyFamilyIdentity({
-        grade: "boss",
-        level,
-        modifier: null,
-      });
-      const bucket = counts[identity.family === "boss-colossus" ? "boss-colossus" : "boss-hydra"];
-      bucket[identity.affinity] = (bucket[identity.affinity] ?? 0) + 1;
+    for (let level = 1; level <= 192; level += 1) {
+      const identity = selectEnemyFamilyIdentity({ grade: "boss", level, modifier: null });
+      if (!bossFamilies.includes(identity.family as BossFamily))
+        throw new Error(`Expected a boss family, received ${identity.family}`);
+      const family = identity.family as BossFamily;
+      counts[family][identity.affinity] = (counts[family][identity.affinity] ?? 0) + 1;
     }
-    for (const affinityId of ENEMY_AFFINITY_IDS) {
-      expect(counts["boss-colossus"][affinityId]).toBeGreaterThan(0);
-      expect(counts["boss-hydra"][affinityId]).toBeGreaterThan(0);
+    for (const family of bossFamilies) {
+      for (const affinityId of ENEMY_AFFINITY_IDS) {
+        expect(counts[family][affinityId]).toBeGreaterThan(0);
+      }
     }
   });
 
@@ -243,9 +281,9 @@ describe("deterministic affinity label grammar", () => {
       for (const { affinity, level, modifier } of cases) {
         const input = { grade: familyGrades[family as EnemyFamily], level, modifier };
         const identity = selectEnemyFamilyIdentity(input);
-        const profile = ENEMY_AFFINITIES[affinity];
+        const profile = ENEMY_AFFINITIES[identity.affinity];
         expect(identity.affinity).toBe(affinity);
-        expect(identity.label).toBe(`${profile.label} ${familyLabels[family as EnemyFamily]}`);
+        expect(identity.label).toBe(`${profile.label} ${familyLabels[identity.family]}`);
       }
     }
   });

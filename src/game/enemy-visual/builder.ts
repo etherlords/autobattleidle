@@ -10,6 +10,7 @@ import type {
 export type EnemyViewBuild = {
   readonly group: THREE.Group;
   readonly roots: Readonly<Record<EnemyVisualLayer, THREE.Group>>;
+  readonly assetReady?: Promise<void>;
   command(command: EnemyVisualCommand): boolean;
   anchor(anchor: EnemyVisualAnchor): THREE.Object3D | undefined;
   dispose(): void;
@@ -39,6 +40,7 @@ export class EnemyViewBuilder {
     critical: [],
     death: [],
   };
+  private readonly assetReadies: Array<Promise<void>> = [];
   private readonly disposers: Array<() => void> = [];
   private sealed = false;
 
@@ -53,6 +55,7 @@ export class EnemyViewBuilder {
     this.attachNodes(component);
     this.registerAnchors(component);
     this.componentKeys.add(component.key);
+    if (component.assetReady !== undefined) this.assetReadies.push(component.assetReady);
     if (component.dispose !== undefined) this.disposers.push(component.dispose);
     for (const command of ["spawn", "hit", "critical", "death"] as const) {
       const handler = component.commands?.[command];
@@ -70,10 +73,15 @@ export class EnemyViewBuilder {
     if (!this.attached.body) throw new Error("Enemy view requires exactly one body");
     this.sealed = true;
     const roots: Record<EnemyVisualLayer, THREE.Group> = { ...this.roots };
+    const assetReady =
+      this.assetReadies.length === 0
+        ? undefined
+        : Promise.all(this.assetReadies).then(() => undefined);
     let disposed = false;
     return {
       group: this.group,
       roots,
+      ...(assetReady === undefined ? {} : { assetReady }),
       command: (command) => {
         const handlers = this.commandHandlers[command];
         handlers.forEach((handler) => handler());

@@ -223,6 +223,46 @@ const FAMILY_PROFILES: Readonly<
       variant: 2,
     },
   ]),
+  "boss-catbug": p([
+    {
+      attachment: [0.88, 0.35, 0],
+      decorations: ["fins", "scar"],
+      palette: { core: "#e9b75c", emissive: "#4b2d0c", accent: "#c9803e" },
+      variant: 0,
+    },
+    {
+      attachment: [0.92, 0.28, 0],
+      decorations: ["horns", "orbitals"],
+      palette: { core: "#d89048", emissive: "#45240b", accent: "#a96135" },
+      variant: 1,
+    },
+    {
+      attachment: [0.84, 0.4, 0],
+      decorations: ["satellites", "fins"],
+      palette: { core: "#f0c878", emissive: "#533510", accent: "#c1753d" },
+      variant: 2,
+    },
+  ]),
+  "boss-evil-catbug": p([
+    {
+      attachment: [0.82, 0.42, 0],
+      decorations: ["horns", "scar"],
+      palette: { core: "#8f5fba", emissive: "#28143d", accent: "#d26fa3" },
+      variant: 0,
+    },
+    {
+      attachment: [0.86, 0.35, 0],
+      decorations: ["fins", "orbitals"],
+      palette: { core: "#704d9e", emissive: "#211332", accent: "#b35c99" },
+      variant: 1,
+    },
+    {
+      attachment: [0.78, 0.5, 0],
+      decorations: ["satellites", "horns"],
+      palette: { core: "#b66f9d", emissive: "#3d182c", accent: "#e58ab4" },
+      variant: 2,
+    },
+  ]),
 };
 
 const modifierCueRegistry: Readonly<

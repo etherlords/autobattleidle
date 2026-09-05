@@ -218,6 +218,8 @@ const expectedCueAnchor = (
         drake: "enemy-part-drake-head",
         "boss-colossus": "enemy-part-colossus-head",
         "boss-hydra": "enemy-part-hydra-head-1",
+        "boss-catbug": "enemy-part-colossus-head",
+        "boss-evil-catbug": "enemy-part-hydra-head-1",
       }[visual.spec.body],
     );
   return visual.group.getObjectByName(`enemy-socket-${visual.spec.body}-${fixture.anchor}`);
@@ -414,7 +416,9 @@ const assertCueFixture = (fixture: CueFixture): void => {
 const assertBossTopEnvelope = (input: EnemyVisualInput): void => {
   const visual = createEnemyVisual(input);
   const headName =
-    visual.spec.body === "boss-hydra" ? "enemy-part-hydra-head-1" : "enemy-part-colossus-head";
+    visual.spec.body === "boss-hydra" || visual.spec.body === "boss-evil-catbug"
+      ? "enemy-part-hydra-head-1"
+      : "enemy-part-colossus-head";
   const head = visual.group.getObjectByName(headName);
   const crown = visual.group.getObjectByName("boss-crown");
   if (!(head instanceof THREE.Mesh) || crown === undefined)
@@ -472,12 +476,14 @@ describe("enemy visual factory", () => {
     expect(decorations.size).toBeGreaterThan(3);
   });
 
-  it("uses dedicated boss bodies and visible grade and modifier attachments", () => {
+  it("uses all four dedicated boss bodies and visible grade and modifier attachments", () => {
     const bossBodies = new Set<string>();
     for (let level = 1; level <= 18; level += 1) {
       bossBodies.add(enemyVisualSpec({ grade: "boss", level, modifier: "armor" }).body);
     }
-    expect(bossBodies).toEqual(new Set(["boss-colossus", "boss-hydra"]));
+    expect(bossBodies).toEqual(
+      new Set(["boss-colossus", "boss-hydra", "boss-catbug", "boss-evil-catbug"]),
+    );
     expect(enemyVisualSpec({ grade: "elite", level: 4, modifier: "armor" })).toMatchObject({
       gradeCue: "spikes",
       modifierCue: "shield-plates",
@@ -506,10 +512,9 @@ describe("enemy visual factory", () => {
     boss.dispose();
     ordinary.dispose();
   });
-
   it("keeps every composed boss body on the deterministic ground plane", () => {
     const bossProfiles = findCueInputs((spec) => spec.body.startsWith("boss-"));
-    expect(bossProfiles).toHaveLength(6);
+    expect(bossProfiles).toHaveLength(12);
     for (const input of bossProfiles) {
       const unit = new EnemyUnitFactory().create(input);
       unit.view.group.updateMatrixWorld(true);
@@ -542,14 +547,14 @@ describe("enemy visual factory", () => {
       scale: 1.12,
     });
     expect(enemyVisualSpec({ grade: "boss", level: 35, modifier: null })).toMatchObject({
-      body: "boss-hydra",
-      decorations: ["fins", "horns"],
+      body: "boss-evil-catbug",
+      decorations: ["horns", "scar"],
       gradeCue: "crown",
       scale: 1.45,
     });
     expect(enemyVisualSpec({ grade: "boss", level: 70, modifier: null })).toMatchObject({
-      body: "boss-colossus",
-      decorations: ["horns", "satellites"],
+      body: "boss-catbug",
+      decorations: ["fins", "scar"],
       gradeCue: "crown",
       scale: 1.45,
     });
@@ -898,7 +903,9 @@ describe("enemy visual factory", () => {
   it("uses an exhaustive body registry and seals valid component builds", () => {
     expect(Object.keys(enemyBodyFactories).sort()).toEqual([
       "beetle",
+      "boss-catbug",
       "boss-colossus",
+      "boss-evil-catbug",
       "boss-hydra",
       "brute",
       "drake",
@@ -963,13 +970,13 @@ describe("enemy visual factory", () => {
     unit.dispatchEnemy({ type: "spawn", parent });
     expect(parent.children).toContain(unit.view.group);
     unit.dispatchEnemy({ type: "sync", snapshot: { grade: "boss", level: 35, modifier: null } });
-    expect(unit.spec.body).toBe("boss-hydra");
+    expect(unit.spec.body).toBe("boss-evil-catbug");
     unit.dispatchEnemy({ type: "hit" });
     unit.dispatchEnemy({ type: "critical" });
     unit.dispatchEnemy({ type: "death" });
-    expect(unit.view.group.getObjectByName("enemy-body-boss-hydra")?.userData.lastCommand).toBe(
-      "death",
-    );
+    expect(
+      unit.view.group.getObjectByName("enemy-body-boss-evil-catbug")?.userData.lastCommand,
+    ).toBe("death");
     unit.dispatchEnemy({ type: "dispose" });
     unit.dispatchEnemy({ type: "dispose" });
     expect(unit.view.group.parent).toBeNull();
@@ -1237,7 +1244,9 @@ describe("enemy visual factory", () => {
     )) {
       const visual = createEnemyVisual(input);
       const headName =
-        visual.spec.body === "boss-hydra" ? "enemy-part-hydra-head-1" : "enemy-part-colossus-head";
+        visual.spec.body === "boss-hydra" || visual.spec.body === "boss-evil-catbug"
+          ? "enemy-part-hydra-head-1"
+          : "enemy-part-colossus-head";
       const head = visual.group.getObjectByName(headName);
       if (!(head instanceof THREE.Mesh)) throw new Error(`Expected ${headName} mesh`);
       visual.group.updateMatrixWorld(true);
@@ -1258,56 +1267,59 @@ describe("enemy visual factory", () => {
     const bossProfiles = findCueInputs(
       (spec) => spec.gradeCue === "crown" && spec.body.startsWith("boss-"),
     );
-    expect(bossProfiles).toHaveLength(6);
+    expect(bossProfiles).toHaveLength(12);
     bossProfiles.forEach(assertBossTopEnvelope);
   });
 
   it("samples hit and critical at neutral endpoints with one bounded shared peak", () => {
-    const hydra = new EnemyUnitFactory().create({ grade: "boss", level: 35, modifier: null });
-    const pose = hydra.view.group.getObjectByName("enemy-pose-boss-hydra");
-    if (pose === undefined) throw new Error("Expected Hydra pose");
+    const evilCatbug = new EnemyUnitFactory().create({ grade: "boss", level: 35, modifier: null });
+    const pose = evilCatbug.view.group.getObjectByName("enemy-pose-boss-evil-catbug");
+    if (pose === undefined) throw new Error("Expected Evil Catbug pose");
     const neutral = pose.scale.clone();
     for (const [command, frames] of [
       ["hit", 10],
       ["critical", 12],
     ] as const) {
-      hydra.dispatchEnemy({ type: command });
-      hydra.tick();
+      evilCatbug.dispatchEnemy({ type: command });
+      evilCatbug.tick();
       expect(pose.scale).toEqual(neutral);
-      hydra.tick();
+      evilCatbug.tick();
       expect(pose.scale.y).toBeLessThan(neutral.y);
-      for (let frame = 0; frame < frames - 2; frame += 1) hydra.tick();
+      for (let frame = 0; frame < frames - 2; frame += 1) evilCatbug.tick();
       expect(pose.scale).toEqual(neutral);
-      hydra.tick();
+      evilCatbug.tick();
       expect(pose.scale).toEqual(neutral);
     }
-    hydra.dispose();
+    evilCatbug.dispose();
   });
-
   it("anchors head cues to deforming family poses and keeps shared boss motion bounded", () => {
-    const hydra = new EnemyUnitFactory().create({ grade: "boss", level: 35, modifier: "armor" });
-    const crown = hydra.view.group.getObjectByName("boss-crown");
-    const centerHead = hydra.view.group.getObjectByName("enemy-part-hydra-head-1");
-    const shield = hydra.view.group.getObjectByName("armor-shield-0");
+    const evilCatbug = new EnemyUnitFactory().create({
+      grade: "boss",
+      level: 35,
+      modifier: "armor",
+    });
+    const crown = evilCatbug.view.group.getObjectByName("boss-crown");
+    const centerHead = evilCatbug.view.group.getObjectByName("enemy-part-hydra-head-1");
+    const shield = evilCatbug.view.group.getObjectByName("armor-shield-0");
     if (crown === undefined || centerHead === undefined || shield === undefined)
-      throw new Error("Expected Hydra semantic anchors");
-    expect(crown.parent?.name).toBe("enemy-socket-boss-hydra-top");
-    expect(shield.parent?.name).toBe("enemy-socket-boss-hydra-orbit");
-    hydra.view.group.updateMatrixWorld(true);
+      throw new Error("Expected Evil Catbug semantic anchors");
+    expect(crown.parent?.name).toBe("enemy-socket-boss-evil-catbug-top");
+    expect(shield.parent?.name).toBe("enemy-socket-boss-evil-catbug-orbit");
+    evilCatbug.view.group.updateMatrixWorld(true);
     const crownBefore = crown.getWorldPosition(new THREE.Vector3());
-    hydra.dispatchEnemy({ type: "critical" });
-    hydra.tick();
-    hydra.tick();
-    hydra.view.group.updateMatrixWorld(true);
+    evilCatbug.dispatchEnemy({ type: "critical" });
+    evilCatbug.tick();
+    evilCatbug.tick();
+    evilCatbug.view.group.updateMatrixWorld(true);
     expect(crown.getWorldPosition(new THREE.Vector3()).distanceTo(crownBefore)).toBeGreaterThan(0);
-    const colossus = new EnemyUnitFactory().create({ grade: "boss", level: 70, modifier: null });
-    const colossusPose = colossus.view.group.getObjectByName("enemy-pose-boss-colossus");
-    if (colossusPose === undefined) throw new Error("Expected Colossus pose");
-    colossus.dispatchEnemy({ type: "death" });
-    for (let frame = 0; frame < 12; frame += 1) colossus.tick();
-    expect(colossusPose.position.y).toBeGreaterThanOrEqual(-0.1);
-    hydra.dispose();
-    colossus.dispose();
+    const catbug = new EnemyUnitFactory().create({ grade: "boss", level: 70, modifier: null });
+    const catbugPose = catbug.view.group.getObjectByName("enemy-pose-boss-catbug");
+    if (catbugPose === undefined) throw new Error("Expected Catbug pose");
+    catbug.dispatchEnemy({ type: "death" });
+    for (let frame = 0; frame < 12; frame += 1) catbug.tick();
+    expect(catbugPose.position.y).toBeGreaterThanOrEqual(-0.1);
+    evilCatbug.dispose();
+    catbug.dispose();
   });
 
   it("keeps overhead vitality centered above the deforming family rig", () => {
@@ -1380,7 +1392,7 @@ describe("enemy visual factory", () => {
 
   it("keeps Colossus feet and every body profile at deterministic ground clearance", () => {
     const fixtures = findCueInputs(() => true);
-    expect(fixtures).toHaveLength(24);
+    expect(fixtures).toHaveLength(30);
     for (const input of fixtures) {
       const visual = createEnemyVisual(input);
       const bodyLayer = visual.group.getObjectByName("enemy-layer-body");

@@ -281,7 +281,7 @@ describe("nextBattlefieldFrame", () => {
       const spec = enemyVisualSpec(snapshot("boss", level).enemy);
       profiles.set(`${spec.body}:${spec.profile.variant}`, level);
     }
-    expect(profiles.size).toBe(6);
+    expect(profiles.size).toBe(12);
     for (const size of [
       [1280, 800],
       [390, 844],

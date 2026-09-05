@@ -8,6 +8,7 @@ import {
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
+  type BossFamily,
 } from "../../enemy-visual/decorators";
 import {
   enemyVisualSpec,
@@ -54,8 +55,8 @@ export class EnemyUnitBuilder {
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
     builder.add(decorateAffinityCue(spec.affinity.cue, spec.affinity.palette, reducedMotion));
     if (mode === "production" && spec.body.startsWith("boss-"))
-      decorateBossGeometry(spec.body as "boss-colossus" | "boss-hydra", reducedMotion).forEach(
-        (geometry) => builder.add(geometry),
+      decorateBossGeometry(spec.body as BossFamily, reducedMotion).forEach((geometry) =>
+        builder.add(geometry),
       );
     spec.decorations.forEach((decoration, index) =>
       builder.add(fitCue(decorateSeededDecoration(decoration, index, spec.profile), spec.profile)),

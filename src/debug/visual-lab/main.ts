@@ -430,6 +430,7 @@ class VisualLab {
   private replace(): void {
     this.clearEffects();
     this.disposeUnit();
+    let assetReady: Promise<void> | undefined;
     if (this.current.subject === "player") {
       this.unit = new LabPlayerEvolution(
         this.current.playerStage,
@@ -439,7 +440,7 @@ class VisualLab {
       );
       this.scene.add(this.unit.group);
     } else {
-      this.unit = UNIT_FACTORIES.enemy.create(
+      const enemy = UNIT_FACTORIES.enemy.create(
         {
           ...inputForCase(this.current),
           reducedMotion: this.current.reducedMotion,
@@ -449,13 +450,24 @@ class VisualLab {
             this.current.recipe === "production" ? "production" : "legacy/no-overlay",
         },
       );
-      this.unit.dispatchEnemy({ type: "spawn", parent: this.scene });
-      this.disposeRecipe = attachLabRecipe(this.current.recipe, this.unit.view.group);
+      this.unit = enemy;
+      enemy.dispatchEnemy({ type: "spawn", parent: this.scene });
+      this.disposeRecipe = attachLabRecipe(this.current.recipe, enemy.view.group);
+      assetReady = enemy.enemyView.assetReady();
     }
     this.fitCameraToUnit();
     this.setCameraPreset(this.current.view);
     this.refreshOverlays();
     this.refreshReceipt();
+    if (assetReady !== undefined) {
+      const currentUnit = this.unit;
+      void assetReady.then(() => {
+        if (this.unit !== currentUnit) return;
+        this.fitCameraToUnit();
+        this.refreshOverlays();
+        this.refreshReceipt();
+      });
+    }
   }
 
   private setCameraPreset(preset: CameraPreset): void {

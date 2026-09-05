@@ -129,6 +129,26 @@ const socketLayouts: Readonly<Record<BodyFamily, SemanticSocketLayout>> = {
     combatY: 0.28,
     combatZ: 1.35,
   },
+  "boss-catbug": {
+    topY: 2.18,
+    frontZ: 0.86,
+    halfWidth: 0.98,
+    flankZ: 0.1,
+    orbitY: 1.08,
+    orbitRadius: 1.2,
+    combatY: 0.88,
+    combatZ: 0.92,
+  },
+  "boss-evil-catbug": {
+    topY: 1.85,
+    frontZ: 0.82,
+    halfWidth: 0.99,
+    flankZ: 0.1,
+    orbitY: 0.9,
+    orbitRadius: 1.15,
+    combatY: 0.72,
+    combatZ: 0.86,
+  },
 };
 
 const riggedBody = (
@@ -684,15 +704,19 @@ const hydra: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride
 };
 const catbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
   gltfBossBody(
-    "boss-colossus",
+    "boss-catbug",
     profile,
     reducedMotionOverride,
     colossus(profile, reducedMotionOverride),
   );
 
 const evilCatbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
-  gltfBossBody("boss-hydra", profile, reducedMotionOverride, hydra(profile, reducedMotionOverride));
-
+  gltfBossBody(
+    "boss-evil-catbug",
+    profile,
+    reducedMotionOverride,
+    hydra(profile, reducedMotionOverride),
+  );
 export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> = {
   beetle,
   brute,
@@ -700,6 +724,8 @@ export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> 
   mantis,
   sentinel,
   drake,
-  "boss-colossus": catbug,
-  "boss-hydra": evilCatbug,
+  "boss-colossus": colossus,
+  "boss-hydra": hydra,
+  "boss-catbug": catbug,
+  "boss-evil-catbug": evilCatbug,
 };

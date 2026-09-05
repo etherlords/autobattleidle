@@ -13,6 +13,7 @@ export type EnemyVisualComponent = {
   readonly animations?: Readonly<Record<string, () => void>>;
   readonly commands?: Partial<Readonly<Record<EnemyVisualCommand, () => void>>>;
   readonly onAttach?: () => void;
+  readonly assetReady?: Promise<void>;
   readonly dispose?: () => void;
 };
 

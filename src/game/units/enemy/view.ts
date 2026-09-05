@@ -47,13 +47,16 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
     return this.currentSpec;
   }
 
+  assetReady(): Promise<void> | undefined {
+    return this.build?.assetReady;
+  }
+
   combatSocketWorldPosition(): THREE.Vector3 | undefined {
     const socket = this.build?.anchor("combat");
     if (socket === undefined) return undefined;
     this.group.updateMatrixWorld(true);
     return socket.getWorldPosition(new THREE.Vector3());
   }
-
   override dispose(): void {
     this.clearBuild();
     super.dispose();

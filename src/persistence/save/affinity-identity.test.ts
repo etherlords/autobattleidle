@@ -33,6 +33,8 @@ const familyNouns = [
   "Mantis",
   "Sentinel",
   "Drake",
+  "Colossus",
+  "Hydra",
   "Catbug",
   "Evil Catbug",
 ] as const;

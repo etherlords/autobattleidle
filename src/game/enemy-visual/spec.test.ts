@@ -14,7 +14,9 @@ describe("enemy visual specification selection", () => {
       body: "brute",
       decorations: ["orbitals", "fins"],
     });
-    expect(enemyVisualSpec({ grade: "boss", level: 35, modifier: null }).body).toBe("boss-hydra");
+    expect(enemyVisualSpec({ grade: "boss", level: 35, modifier: null }).body).toBe(
+      "boss-evil-catbug",
+    );
   });
 
   it("rejects a non-finite visual identity instead of selecting default parts", () => {

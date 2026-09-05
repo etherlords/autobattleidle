@@ -5,7 +5,10 @@ import { component, type EnemyVisualComponent } from "../components";
 import { enemyVisualAnimation } from "../config";
 import type { BodyFamily } from "../spec";
 
-export type BossFamily = Extract<BodyFamily, "boss-colossus" | "boss-hydra">;
+export type BossFamily = Extract<
+  BodyFamily,
+  "boss-colossus" | "boss-hydra" | "boss-catbug" | "boss-evil-catbug"
+>;
 export type BossGeometryProfile =
   "legacy/no-overlay" | "crystal-crown" | "orbital-runes" | "elemental-spines";
 export type BossRecipe = Exclude<BossGeometryProfile, "legacy/no-overlay">;
@@ -23,6 +26,8 @@ export const BOSS_GEOMETRY_RECIPES: Readonly<
 > = {
   "boss-hydra": ["crystal-crown", "elemental-spines"],
   "boss-colossus": ["orbital-runes", "elemental-spines"],
+  "boss-catbug": ["orbital-runes", "elemental-spines"],
+  "boss-evil-catbug": ["crystal-crown", "elemental-spines"],
 };
 
 type BossGeometryBuild = {
@@ -210,12 +215,18 @@ const fitSpines = (
   return true;
 };
 
-// Boss-only assignment: Hydra carries the crystal crown, Colossus the orbital
-// runes; both bosses also receive raycast elemental spines on their silhouette.
+// Boss-only assignment: Hydra and Evil Catbug carry crystal crowns, while Colossus and
+// Catbug carry orbital runes; all four bosses receive raycast elemental spines on their silhouette.
 export const bossGeometryProfilesForFamily = (
   family: BodyFamily,
 ): readonly BossGeometryProfile[] => {
-  if (family === "boss-hydra" || family === "boss-colossus") return BOSS_GEOMETRY_RECIPES[family];
+  if (
+    family === "boss-hydra" ||
+    family === "boss-colossus" ||
+    family === "boss-catbug" ||
+    family === "boss-evil-catbug"
+  )
+    return BOSS_GEOMETRY_RECIPES[family];
   return ["legacy/no-overlay"];
 };
 
@@ -264,7 +275,13 @@ const fit = (
   const nativeBounds = new THREE.Box3().setFromObject(group);
   if (recipe === "crystal-crown") return fitAbove(group, localBounds, nativeBounds, 0.38);
   if (recipe === "orbital-runes") return fitOrbit(group, localBounds, nativeBounds);
-  return fitSpines(group, bossBody, anchor, unit.getObjectByName("enemy-part-hydra-head-1"));
+  return fitSpines(
+    group,
+    bossBody,
+    anchor,
+    unit.getObjectByName("enemy-part-hydra-head-1") ??
+      unit.getObjectByName(`enemy-socket-${bossBody.name.replace("enemy-body-", "")}-head`),
+  );
 };
 
 export const decorateBossGeometry = (

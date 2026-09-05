@@ -9,6 +9,7 @@ import type { BodyFamily, EnemyVisualProfile } from "./spec";
 const loader = new GLTFLoader();
 const sourceCache = new Map<string, Promise<THREE.Group>>();
 
+type GltfBossFamily = Extract<BodyFamily, "boss-catbug" | "boss-evil-catbug">;
 type BossAssetProfile = {
   readonly url: string;
   readonly scale: number;
@@ -20,12 +21,14 @@ type BossAssetProfile = {
   readonly orbitRadius: number;
   readonly combatY: number;
   readonly combatZ: number;
+  readonly metalness?: number;
+  readonly roughness?: number;
 };
 
-// The two supplied files use materially different authoring units. These scales keep their
+// The supplied files use materially different authoring units. These scales keep their
 // world-space envelopes comparable to the existing boss bodies after the shared boss scale.
-const BOSS_ASSETS: Readonly<Record<"boss-colossus" | "boss-hydra", BossAssetProfile>> = {
-  "boss-colossus": {
+const BOSS_ASSETS: Readonly<Record<GltfBossFamily, BossAssetProfile>> = {
+  "boss-catbug": {
     url: "./assets/catbug.glb",
     scale: 1.1,
     topY: 2.18,
@@ -36,8 +39,10 @@ const BOSS_ASSETS: Readonly<Record<"boss-colossus" | "boss-hydra", BossAssetProf
     orbitRadius: 1.2,
     combatY: 0.88,
     combatZ: 0.92,
+    metalness: 0,
+    roughness: 0.82,
   },
-  "boss-hydra": {
+  "boss-evil-catbug": {
     url: "./assets/evilcatbug.glb",
     scale: 15,
     topY: 1.85,
@@ -48,6 +53,8 @@ const BOSS_ASSETS: Readonly<Record<"boss-colossus" | "boss-hydra", BossAssetProf
     orbitRadius: 1.15,
     combatY: 0.72,
     combatZ: 0.86,
+    metalness: 0,
+    roughness: 0.78,
   },
 };
 
@@ -69,6 +76,7 @@ const sourceScene = (url: string): Promise<THREE.Group> => {
 const cloneMaterial = (
   material: THREE.Material,
   textures: Map<THREE.Texture, THREE.Texture>,
+  asset: BossAssetProfile,
 ): THREE.Material => {
   const clone = material.clone();
   for (const [key, value] of Object.entries(clone)) {
@@ -80,10 +88,14 @@ const cloneMaterial = (
     }
     Reflect.set(clone, key, texture);
   }
+  if (clone instanceof THREE.MeshStandardMaterial) {
+    if (asset.metalness !== undefined) clone.metalness = asset.metalness;
+    if (asset.roughness !== undefined) clone.roughness = asset.roughness;
+  }
   return clone;
 };
 
-const cloneResources = (source: THREE.Group): THREE.Group => {
+const cloneResources = (source: THREE.Group, asset: BossAssetProfile): THREE.Group => {
   const clone = SkeletonUtils.clone(source) as THREE.Group;
   const textures = new Map<THREE.Texture, THREE.Texture>();
   clone.traverse((child) => {
@@ -91,8 +103,8 @@ const cloneResources = (source: THREE.Group): THREE.Group => {
     child.geometry = child.geometry.clone();
     const surface = child.material;
     child.material = Array.isArray(surface)
-      ? surface.map((entry) => cloneMaterial(entry, textures))
-      : cloneMaterial(surface, textures);
+      ? surface.map((entry) => cloneMaterial(entry, textures, asset))
+      : cloneMaterial(surface, textures, asset);
   });
   return clone;
 };
@@ -131,23 +143,30 @@ const socket = (
 };
 
 const augmentFallbackWithGltf = (
-  family: "boss-colossus" | "boss-hydra",
+  family: GltfBossFamily,
   asset: BossAssetProfile,
   fallback: EnemyVisualComponent,
 ): EnemyVisualComponent => {
   const root = fallback.nodes[0];
   if (root === undefined) return fallback;
+  const fallbackFamily = family === "boss-catbug" ? "boss-colossus" : "boss-hydra";
+  root.traverse((child) => {
+    if (child.name.includes(fallbackFamily))
+      child.name = child.name.replaceAll(fallbackFamily, family);
+  });
   const fallbackBounds = new THREE.Box3().setFromObject(root);
   const legacyMeshes: THREE.Mesh[] = [];
   root.traverse((child) => {
     if (child instanceof THREE.Mesh) legacyMeshes.push(child);
   });
+  const fallbackBody = legacyMeshes.find((mesh) => mesh.name.startsWith("enemy-body-"));
+  if (fallbackBody !== undefined) fallbackBody.name = `enemy-body-${family}`;
   let instance: THREE.Group | undefined;
   let disposed = false;
-  void sourceScene(asset.url)
+  const assetReady: Promise<void> = sourceScene(asset.url)
     .then((source) => {
       if (disposed) return;
-      instance = cloneResources(source);
+      instance = cloneResources(source, asset);
       const sourceBounds = new THREE.Box3().setFromObject(instance);
       instance.scale.setScalar(asset.scale);
       instance.position.y =
@@ -168,6 +187,7 @@ const augmentFallbackWithGltf = (
     })
     .catch(() => undefined);
   return {
+    assetReady,
     ...fallback,
     dispose: () => {
       disposed = true;
@@ -182,7 +202,7 @@ const augmentFallbackWithGltf = (
 };
 
 export const gltfBossBody = (
-  family: "boss-colossus" | "boss-hydra",
+  family: GltfBossFamily,
   _profile?: EnemyVisualProfile,
   reducedMotionOverride?: boolean,
   fallback?: EnemyVisualComponent,
@@ -218,10 +238,10 @@ export const gltfBossBody = (
 
   let instance: THREE.Group | undefined;
   let disposed = false;
-  void sourceScene(asset.url)
+  const assetReady: Promise<void> = sourceScene(asset.url)
     .then((source) => {
       if (disposed) return;
-      instance = cloneResources(source);
+      instance = cloneResources(source, asset);
       const sourceBounds = new THREE.Box3().setFromObject(instance);
       instance.scale.setScalar(asset.scale);
       instance.position.y = -sourceBounds.min.y * asset.scale;
@@ -356,6 +376,7 @@ export const gltfBossBody = (
   );
   return {
     ...componentBase,
+    assetReady,
     dispose: () => {
       disposed = true;
       if (instance !== undefined) {
@@ -366,15 +387,16 @@ export const gltfBossBody = (
     },
   };
 };
+
 export const catbugBossBody = (
   profile?: EnemyVisualProfile,
   reducedMotionOverride?: boolean,
-): EnemyVisualComponent => gltfBossBody("boss-colossus", profile, reducedMotionOverride);
+): EnemyVisualComponent => gltfBossBody("boss-catbug", profile, reducedMotionOverride);
 
 export const evilCatbugBossBody = (
   profile?: EnemyVisualProfile,
   reducedMotionOverride?: boolean,
-): EnemyVisualComponent => gltfBossBody("boss-hydra", profile, reducedMotionOverride);
+): EnemyVisualComponent => gltfBossBody("boss-evil-catbug", profile, reducedMotionOverride);
 
 export const clearGltfBossCache = (): void => {
   sourceCache.clear();

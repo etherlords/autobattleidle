@@ -5,7 +5,16 @@ import { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS, type EnemyAffinity } from "./enem
 export type { EnemyAffinity };
 
 export type EnemyFamily =
-  "beetle" | "brute" | "wisp" | "mantis" | "sentinel" | "drake" | "boss-colossus" | "boss-hydra";
+  | "beetle"
+  | "brute"
+  | "wisp"
+  | "mantis"
+  | "sentinel"
+  | "drake"
+  | "boss-colossus"
+  | "boss-hydra"
+  | "boss-catbug"
+  | "boss-evil-catbug";
 export type EnemyPresentationModifier = EliteModifier | "wealth" | null;
 export type EnemyFamilyIdentity = {
   readonly affinity: EnemyAffinity;
@@ -29,8 +38,10 @@ const labels: Readonly<Record<EnemyFamily, string>> = {
   mantis: "Mantis",
   sentinel: "Sentinel",
   drake: "Drake",
-  "boss-colossus": "Catbug",
-  "boss-hydra": "Evil Catbug",
+  "boss-colossus": "Colossus",
+  "boss-hydra": "Hydra",
+  "boss-catbug": "Catbug",
+  "boss-evil-catbug": "Evil Catbug",
 };
 const modifierFamilies: Readonly<
   Partial<Record<Exclude<EnemyPresentationModifier, null>, EnemyFamily>>
@@ -47,8 +58,8 @@ const identityLabel = (affinity: EnemyAffinity, family: EnemyFamily, goldenBug: 
 
 /**
  * The affinity channel is mixed independently of the family channel: bosses derive their
- * family from level parity alone, so a shared seed would make half the affinities
- * unreachable for each boss family. A second mix of the same canonical inputs keeps
+ * family from a stable level-modulo-four cycle, so a shared seed would make affinities
+ * correlate with one boss family. A second mix of the same canonical inputs keeps
  * same-input-same-affinity determinism while decorrelating the two selections.
  */
 export const stableAffinitySeed = (enemy: EnemyFamilyInput): number => {
@@ -72,7 +83,18 @@ export const stableEnemySeed = (enemy: EnemyFamilyInput): number => {
 const selectFamily = (enemy: EnemyFamilyInput): EnemyFamily => {
   const level = Math.abs(Math.trunc(enemy.level));
   if (enemy.goldenBug) return "beetle";
-  if (enemy.grade === "boss") return level % 2 === 0 ? "boss-colossus" : "boss-hydra";
+  if (enemy.grade === "boss") {
+    const bossFamilies = [
+      "boss-colossus",
+      "boss-hydra",
+      "boss-catbug",
+      "boss-evil-catbug",
+    ] as const;
+    const family = bossFamilies[level % bossFamilies.length];
+    if (family === undefined)
+      throw new RangeError("Enemy visual level did not select a boss family");
+    return family;
+  }
   const modifierFamily = enemy.modifier === null ? undefined : modifierFamilies[enemy.modifier];
   if (modifierFamily !== undefined) return modifierFamily;
   const family = ordinaryFamilies[level % ordinaryFamilies.length];
