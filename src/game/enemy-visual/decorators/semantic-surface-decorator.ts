@@ -264,12 +264,14 @@ const createBodyDecal = (
   const normalMatrix = new THREE.Matrix3().getNormalMatrix(inverse);
   const parentWorldQuaternion = parent.getWorldQuaternion(new THREE.Quaternion());
   const parentOrientation = parentWorldQuaternion.clone().invert().multiply(worldOrientation);
+  const projectorLocalOrientation = parentOrientation.clone().invert();
   const positions = geometry.getAttribute("position");
   for (let index = 0; index < positions.count; index += 1)
     positions.setXYZ(
       index,
       ...new THREE.Vector3(positions.getX(index), positions.getY(index), positions.getZ(index))
         .applyMatrix4(inverse)
+        .applyQuaternion(projectorLocalOrientation)
         .toArray(),
     );
   const normals = geometry.getAttribute("normal");
@@ -279,6 +281,7 @@ const createBodyDecal = (
         index,
         ...new THREE.Vector3(normals.getX(index), normals.getY(index), normals.getZ(index))
           .applyNormalMatrix(normalMatrix)
+          .applyQuaternion(projectorLocalOrientation)
           .normalize()
           .toArray(),
       );

@@ -1675,6 +1675,47 @@ describe("enemy visual factory", () => {
       mantis.dispose();
     }
   });
+  it("keeps projected vertices on their +X and -X face after parent-local conversion", () => {
+    const worldGeometryCenter = (mesh: THREE.Mesh): THREE.Vector3 => {
+      mesh.geometry.computeBoundingBox();
+      if (mesh.geometry.boundingBox === null) throw new Error(`Expected bounds for ${mesh.name}`);
+      return mesh.geometry.boundingBox
+        .getCenter(new THREE.Vector3())
+        .applyMatrix4(mesh.matrixWorld);
+    };
+    const visual = createEnemyVisual({
+      grade: "elite",
+      level: 3,
+      modifier: "manual-guard",
+    });
+    try {
+      visual.group.updateMatrixWorld(true);
+      const body = visual.group.getObjectByName("enemy-body-drake");
+      const leftPlate = visual.group.getObjectByName("surface-shell-plate-left-0");
+      const rightPlate = visual.group.getObjectByName("surface-shell-plate-right-0");
+      if (
+        !(body instanceof THREE.Mesh) ||
+        !(leftPlate instanceof THREE.Mesh) ||
+        !(rightPlate instanceof THREE.Mesh)
+      )
+        throw new Error("Expected drake body and flank plates");
+      const bodyCenter = worldGeometryCenter(body);
+      expect(
+        worldGeometryCenter(leftPlate)
+          .sub(bodyCenter)
+          .normalize()
+          .dot(new THREE.Vector3(-1, 0, 0)),
+      ).toBeGreaterThan(0.8);
+      expect(
+        worldGeometryCenter(rightPlate)
+          .sub(bodyCenter)
+          .normalize()
+          .dot(new THREE.Vector3(1, 0, 0)),
+      ).toBeGreaterThan(0.8);
+    } finally {
+      visual.dispose();
+    }
+  });
   it("keeps semantic decal geometry body-local and non-empty for every shipped family", () => {
     const inputs = findCueInputs(() => true);
     expect(inputs).toHaveLength(33);
