@@ -29,8 +29,8 @@ const labels: Readonly<Record<EnemyFamily, string>> = {
   mantis: "Mantis",
   sentinel: "Sentinel",
   drake: "Drake",
-  "boss-colossus": "Colossus",
-  "boss-hydra": "Hydra",
+  "boss-colossus": "Catbug",
+  "boss-hydra": "Evil Catbug",
 };
 const modifierFamilies: Readonly<
   Partial<Record<Exclude<EnemyPresentationModifier, null>, EnemyFamily>>

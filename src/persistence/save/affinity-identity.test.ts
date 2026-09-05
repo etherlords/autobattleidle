@@ -25,7 +25,7 @@ const fallback = () =>
     false,
   );
 
-/** Frozen grammar nouns: `<Affinity label> <neutral family noun>`. */
+/** Frozen grammar nouns: `<Affinity label> <boss/family noun>`. */
 const familyNouns = [
   "Beetle",
   "Brute",
@@ -33,8 +33,8 @@ const familyNouns = [
   "Mantis",
   "Sentinel",
   "Drake",
-  "Colossus",
-  "Hydra",
+  "Catbug",
+  "Evil Catbug",
 ] as const;
 
 const saveV4Keys = [

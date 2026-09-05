@@ -21,8 +21,8 @@ const familyLabels: Readonly<Record<EnemyFamily, string>> = {
   mantis: "Mantis",
   sentinel: "Sentinel",
   drake: "Drake",
-  "boss-colossus": "Colossus",
-  "boss-hydra": "Hydra",
+  "boss-colossus": "Catbug",
+  "boss-hydra": "Evil Catbug",
 };
 
 type AffinityCase = {

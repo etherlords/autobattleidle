@@ -3,6 +3,7 @@ import * as THREE from "three";
 import type { BodyFamily, EnemyVisualProfile } from "./spec";
 import { component, mesh, type EnemyVisualCommand, type EnemyVisualComponent } from "./components";
 import { enemyVisualAnimation, enemyVisualGeometry, enemyVisualTransforms } from "./config";
+import { gltfBossBody } from "./gltf-boss-body";
 
 export type EnemyBodyFactory = (
   profile?: EnemyVisualProfile,
@@ -681,6 +682,16 @@ const hydra: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride
   if (centerHead === undefined) throw new Error("Hydra requires a center head");
   return riggedBody("boss-hydra", body, heads, centerHead, "standard", 0.2, reducedMotionOverride);
 };
+const catbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
+  gltfBossBody(
+    "boss-colossus",
+    profile,
+    reducedMotionOverride,
+    colossus(profile, reducedMotionOverride),
+  );
+
+const evilCatbug: EnemyBodyFactory = (profile = defaultProfile, reducedMotionOverride) =>
+  gltfBossBody("boss-hydra", profile, reducedMotionOverride, hydra(profile, reducedMotionOverride));
 
 export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> = {
   beetle,
@@ -689,6 +700,6 @@ export const enemyBodyFactories: Readonly<Record<BodyFamily, EnemyBodyFactory>> 
   mantis,
   sentinel,
   drake,
-  "boss-colossus": colossus,
-  "boss-hydra": hydra,
+  "boss-colossus": catbug,
+  "boss-hydra": evilCatbug,
 };

@@ -44,7 +44,7 @@ describe("battle snapshots", () => {
         state: { ...initial, enemy: spawnEnemy(3, 0.76, undefined, initial.player) },
       },
       {
-        expectedName: "Ice Hydra",
+        expectedName: "Ice Evil Catbug",
         state: { ...initial, enemy: spawnEnemy(35, 0, undefined, initial.player) },
       },
       { expectedName: "Golden Bug", state: goldenBug },

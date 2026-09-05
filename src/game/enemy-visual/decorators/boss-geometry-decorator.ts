@@ -190,13 +190,22 @@ const fitSpines = (
       .normalize();
     return { node, normal, point: anchor.worldToLocal(hit.point.clone()) };
   });
-  if (placements.some((placement) => placement === undefined)) return false;
-  placements.forEach((placement) => {
-    if (placement === undefined) return;
-    const { node, normal, point } = placement;
-    node.scale.setScalar(scale);
-    node.position.copy(point).addScaledVector(normal, length * 0.42);
-    node.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+  placements.forEach((placement, index) => {
+    const node = group.children[index];
+    if (!(node instanceof THREE.Mesh)) return;
+    if (placement === undefined) {
+      const direction = spikeDirection(index);
+      node.scale.setScalar(scale);
+      node.position.copy(
+        anchor.worldToLocal(center.clone().addScaledVector(direction, size.length() * 0.45)),
+      );
+      node.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+      return;
+    }
+    const { node: placedNode, normal, point } = placement;
+    placedNode.scale.setScalar(scale);
+    placedNode.position.copy(point).addScaledVector(normal, length * 0.42);
+    placedNode.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
   });
   return true;
 };
@@ -265,23 +274,31 @@ export const decorateBossGeometry = (
   return recipesFor(family).map((recipe) => {
     const build = builders[recipe]();
     const key = `boss-geometry-${recipe}`;
+    let fitted = false;
+    let fittedBody: THREE.Mesh | undefined;
+    const fitIfReady = (): void => {
+      const anchor = build.group.parent;
+      const unit = anchor?.parent;
+      if (anchor === null || unit === null || anchor === undefined || unit === undefined) return;
+      const bossBody = unit.getObjectByName(`enemy-body-${family}`);
+      if (!(bossBody instanceof THREE.Mesh) || (fitted && fittedBody === bossBody)) return;
+      fitted = fit(recipe, build.group, unit, bossBody, anchor);
+      fittedBody = fitted ? bossBody : undefined;
+      if (fitted) anchor.add(build.group);
+    };
     return {
       ...component(
         key,
         "decoration",
         [build.group],
-        build.tick === undefined ? undefined : { [key]: () => build.tick?.(reducedMotion) },
+        {
+          [`${key}-fit`]: fitIfReady,
+          ...(build.tick === undefined ? {} : { [key]: () => build.tick?.(reducedMotion) }),
+        },
         undefined,
         ANCHORS[recipe],
       ),
-      onAttach: () => {
-        const anchor = build.group.parent;
-        const unit = anchor?.parent;
-        if (anchor === null || unit === null || unit === undefined) return;
-        const bossBody = unit.getObjectByName(`enemy-body-${family}`);
-        if (!(bossBody instanceof THREE.Mesh)) return;
-        if (fit(recipe, build.group, unit, bossBody, anchor)) anchor.add(build.group);
-      },
+      onAttach: fitIfReady,
     };
   });
 };
