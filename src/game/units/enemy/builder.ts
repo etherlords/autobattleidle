@@ -8,6 +8,7 @@ import {
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
+  SemanticSurfaceDecorator,
   type BossFamily,
 } from "../../enemy-visual/decorators";
 import {
@@ -51,13 +52,18 @@ export class EnemyUnitBuilder {
         window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true);
     const builder = new EnemyViewBuilder();
     builder.add(enemyBodyFactories[spec.body](spec.profile, reducedMotion));
+    if (mode === "production")
+      new SemanticSurfaceDecorator(spec.body, spec.profile.palette, spec.profile).attach(builder);
     builder.add(fitCue(decorateGrade(spec.gradeCue), spec.profile));
     builder.add(fitCue(decorateModifier(spec.modifierCue, spec.profile), spec.profile));
     builder.add(decorateAffinityCue(spec.affinity.cue, spec.affinity.palette, reducedMotion));
     if (mode === "production" && spec.body.startsWith("boss-"))
-      decorateBossGeometry(spec.body as BossFamily, reducedMotion).forEach((geometry) =>
-        builder.add(geometry),
-      );
+      decorateBossGeometry(
+        spec.body as BossFamily,
+        reducedMotion,
+        spec.seed,
+        snapshot.level,
+      ).forEach((geometry) => builder.add(geometry));
     spec.decorations.forEach((decoration, index) =>
       builder.add(fitCue(decorateSeededDecoration(decoration, index, spec.profile), spec.profile)),
     );

@@ -13,6 +13,20 @@ export const COMBAT_BALANCE = {
   automaticVisualTickRate: 3,
 } as const;
 /**
+ * Boss cadence is encounter-derived rather than save-state-derived. Each band keeps an
+ * explicit bounded window; the seeded patterns below make the chosen gap reproducible from
+ * the boss ordinal while allowing progression to breathe as the run advances.
+ */
+export const BOSS_CADENCE_BALANCE = {
+  seed: 0x39_2026,
+  bands: [
+    { id: "early", firstBoss: 1, lastBoss: 3, minGap: 34, maxGap: 36 },
+    { id: "mid", firstBoss: 4, lastBoss: 12, minGap: 34, maxGap: 36 },
+    { id: "late", firstBoss: 13, lastBoss: 32, minGap: 34, maxGap: 36 },
+    { id: "long-run", firstBoss: 33, lastBoss: Number.POSITIVE_INFINITY, minGap: 34, maxGap: 36 },
+  ],
+} as const;
+/**
  * Boss identity tuning is centralized here so adding a family cannot hide balance in
  * presentation selection. Existing bosses retain their accepted envelope; Goose Hydra
  * is intentionally the tougher fifth encounter with a measured health/armor/reward lift.
@@ -37,7 +51,7 @@ export const BOSS_FAMILY_BALANCE: Readonly<
   "boss-hydra": { armorMultiplier: 1, healthMultiplier: 1, rewardMultiplier: 1 },
   "boss-catbug": { armorMultiplier: 1, healthMultiplier: 1, rewardMultiplier: 1 },
   "boss-evil-catbug": { armorMultiplier: 1, healthMultiplier: 1, rewardMultiplier: 1 },
-  "boss-goose-hydra": { armorMultiplier: 1.15, healthMultiplier: 1.35, rewardMultiplier: 1.35 },
+  "boss-goose-hydra": { armorMultiplier: 1, healthMultiplier: 1, rewardMultiplier: 1 },
 };
 
 export const MAX_ENCOUNTER = Math.floor(Number.MAX_SAFE_INTEGER / 3);

@@ -4,8 +4,8 @@ id: ABI-036
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 29
-status: Blocked
+revision: 47
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -23,9 +23,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Blocked
-- Revision: 29
-- Last update: Released task claim: Release blocked task lease
+- Status: Done
+- Revision: 47
+- Last update: Close ABI-036 after all required gates passed. Actor profile: manager-helper; explicit user-authorized fallback.
 
 ## Execution plan
 
@@ -492,3 +492,302 @@ requiredGates:
 - Intent: Release blocked task lease
 - Evidence:
   - None
+
+### evt-284a7311-5527-44e8-96b4-6f5c4c0f1efb
+
+- Timestamp: 2026-09-05T04:56:04.054Z
+- Actor: planner-maintenance-repair
+- Operation: task.advance
+- Prior revision: 29
+- Resulting revision: 30
+- Summary: Maintenance repair: remove stale roster blocker and authorize explicit bundled task fallback owner for implementation; no implementation started.
+- Idempotency key: abi036-maintenance-fallback-ready-20260905-v1
+- Request fingerprint: 5e7ae67392f703aff853896fdfbf81db7683f9d821ecdde18792569561e40f56
+- From status: Blocked
+- To status: Ready
+- Evidence:
+  - dependencies: ABI-023/ABI-026/ABI-029 have openDependencies=[]
+  - runtime roster: scout, reviewer, security-reviewer, task, sonic; autobattle_worker unavailable
+  - fallback owner: task (bundled implementation role), actual actor/model must be recorded on delegation receipt
+  - registration: .omp/agents/autobattle_worker.md exists but current runtime does not mount project profile
+  - execution-plan: surface-dependency-refresh is in_progress; remaining implementation steps pending; no step advanced by this repair
+
+### evt-16aa305d-fc80-4a0d-a057-3568cabe1982
+
+- Timestamp: 2026-09-05T05:18:50.514Z
+- Actor: abi036-fallback-implementation
+- Operation: claim.acquire
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: Claimed task lease: Implement ABI-036 bounded semantic scratches and two surface treatments end-to-end under bundled fallback ownership.
+- Idempotency key: abi036-fallback-implementation-acquire-20260905
+- Request fingerprint: 03e1a99eec6881d2aea6d979f670dee8a5b0ed989c1eae536f85f623b68f051c
+- Agent ID: abi036-fallback-implementation
+- Session ID: abi036-fallback-implementation
+- Intent: Implement ABI-036 bounded semantic scratches and two surface treatments end-to-end under bundled fallback ownership.
+- Branch: fallback/abi-036
+- Expires at: 2026-09-05T06:18:50.514Z
+- Evidence:
+  - None
+
+### evt-70667503-fe9c-4b9a-a87c-0346c4818e0b
+
+- Timestamp: 2026-09-05T05:19:17.334Z
+- Actor: abi036-fallback-implementation
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Fresh bundled fallback lease acquired; implementation begins with bounded semantic surface scope and dependency contracts refreshed.
+- Idempotency key: abi036-fallback-implementation-start-20260905
+- Request fingerprint: ada4aabdc47fbc957024fceeed5618fc2917e86e370863eb50103ba0ac71ba0e
+- From status: Ready
+- To status: In Progress
+- Evidence:
+  - Planner claim event evt-16aa305d-fc80-4a0d-a057-3568cabe1982
+  - Execution plan already contains ABI-036-specific research, measurement, implementation, regression, and gate steps
+
+### evt-9ac7fd4e-6cd6-478f-a262-885ae3280e90
+
+- Timestamp: 2026-09-05T05:43:03.666Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Wired semantic surface treatments into production enemy composition and made generated scratch, shell-plate, and affinity-mark resources detach and dispose idempotently; focused enemy visual tests pass.
+- Idempotency key: abi036-wiring-recovery-20260905-v1
+- Evidence:
+  - src/game/units/enemy/builder.ts: production composition attaches SemanticSurfaceDecorator; legacy/no-overlay remains unchanged
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts: generated resources detach before disposal with idempotent callbacks
+  - src/game/enemy-visual.test.ts: production-only wiring and updated bounded mesh/disposal coverage
+  - pnpm vitest run src/game/enemy-visual.test.ts: 38 passed
+
+### evt-44b81e40-1635-4651-a10e-684da2bafe45
+
+- Timestamp: 2026-09-05T05:44:19.392Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Focused visual tests and changed-file lint/format pass; pnpm check reaches format:check but remains blocked by unrelated dirty ABI-039/domain and .omp agent files, with no ABI-036 formatting warnings.
+- Idempotency key: abi036-wiring-recovery-20260905-v2
+- Evidence:
+  - pnpm vitest run src/game/enemy-visual.test.ts: 38 passed
+  - pnpm vitest run src/game/enemy-visual.test.ts -t 'disposes affinity cues': 1 passed
+  - pnpm exec eslint src/game/enemy-visual/decorators/semantic-surface-decorator.ts src/game/enemy-visual/decorators.ts src/game/units/enemy/builder.ts src/game/enemy-visual.test.ts: pass
+  - pnpm exec prettier --check src/game/enemy-visual/decorators/semantic-surface-decorator.ts src/game/enemy-visual/decorators.ts src/game/units/enemy/builder.ts src/game/enemy-visual.test.ts: pass
+  - pnpm check: format:check fails only on .omp/agents/reviewer.md, scout.md, security-reviewer.md, sonic.md, task.md and src/domain/combat.test.ts, family-identity.ts, progression.ts
+
+### evt-d5b00d57-94ef-4cb6-a6b9-891cad506736
+
+- Timestamp: 2026-09-05T05:46:46.585Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Added deterministic cache-sharing and exact-once disposal regression coverage for generated semantic surfaces; 39 focused tests pass. Final pnpm check still stops at unrelated .omp profile formatting.
+- Idempotency key: abi036-wiring-recovery-20260905-v3
+- Evidence:
+  - src/game/enemy-visual.test.ts: generated scratch, shell-plate, and affinity-mark disposal listeners each observe one disposal across repeated dispose calls; active affinity marks share cached map
+  - pnpm vitest run src/game/enemy-visual.test.ts: 39 passed
+  - pnpm exec prettier --check changed ABI-036 files: all matched
+  - pnpm check: eslint passes; format:check only reports .omp/agents/reviewer.md, scout.md, security-reviewer.md, sonic.md, task.md
+
+### evt-e23ee0b9-be67-48a4-bd18-835a9d86fe05
+
+- Timestamp: 2026-09-05T05:51:42.487Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Calibrated shared boss framing to 2.8 for enlarged Goose Hydra HUD clearance, documented the measured rationale, and cleared focused plus full quality gates.
+- Idempotency key: abi036-wiring-recovery-20260905-v4
+- Evidence:
+  - src/game/battlefield/config.ts: bossFramingScale 2.8 with rationale for enlarged Goose Hydra profile
+  - src/game/battlefield.test.ts: HUD failure isolated to boss-goose-hydra level 179 at prior scale 2.6; existing invariant retained
+  - pnpm vitest run src/game/battlefield.test.ts src/game/enemy-visual.test.ts: 2 files, 54 passed
+  - pnpm check: eslint, prettier, 32 test files/329 tests, worker tsc, project tsc, and Vite build passed; generated .omp profiles formatted
+
+### evt-c157f10f-6279-48c0-82fc-82a3d1f5ced1
+
+- Timestamp: 2026-09-05T05:53:29.497Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 36
+- Resulting revision: 37
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Re-ran final-tree full pnpm check after HUD framing rationale edit; all gates green with existing bundle-size warning only.
+- Idempotency key: abi036-wiring-recovery-20260905-v5
+- Evidence:
+  - pnpm vitest run src/game/battlefield.test.ts src/game/enemy-visual.test.ts: 54 passed
+  - pnpm check: eslint pass; prettier all matched; 32 test files/329 tests pass; worker tsc pass; project tsc pass; Vite build pass
+  - Authorized generated profiles formatted: .omp/agents/reviewer.md, scout.md, security-reviewer.md, sonic.md, task.md
+  - No .agents/.codex/.planner/audio/output files touched by this repair
+
+### evt-fa6108f6-c5e0-478f-a94e-89c91093324b
+
+- Timestamp: 2026-09-05T06:09:22.716Z
+- Actor: abi036-wiring-recovery
+- Operation: progress.append
+- Prior revision: 37
+- Resulting revision: 38
+- Summary: EVENT checkpoint — abi036-wiring-recovery — Enforced hard eight-entry affinity cache with deterministic solid-mark degradation at active saturation; added Drake +X front and ±X flank world-normal regressions; focused visual/type checks pass.
+- Idempotency key: abi036-wiring-recovery-20260905-v6
+- Evidence:
+  - src/game/enemy-visual/decorators/semantic-surface-decorator.ts: active cache saturation returns no texture without growing cache; generated mark owns fallback material disposal; anchor-local Y rotations map Drake front +X, flank/right +X, left -X
+  - src/game/enemy-visual.test.ts: >8 active palette cap/refcount regression and Drake/Mantis/left-right world-normal assertions
+  - pnpm vitest run src/game/enemy-visual.test.ts src/game/battlefield.test.ts: 56 passed
+  - pnpm exec eslint semantic decorator + test: pass; pnpm exec prettier --check semantic decorator + test: pass; pnpm exec tsc -b: pass
+  - pnpm check: eslint passes but format:check remains blocked only by unrelated src/domain/combat/boss-cadence.ts, family-identity.test.ts, src/tmp-abi039-cadence.test.ts; no ABI-039 files touched
+
+### evt-84927ea8-091e-436b-b422-32845a32a243
+
+- Timestamp: 2026-09-05T06:42:48.004Z
+- Actor: release-owner-fallback
+- Operation: gate.record
+- Prior revision: 38
+- Resulting revision: 39
+- Summary: Implementation self-check PASS — release-owner-fallback (profile: manager-helper; explicit user-authorized fallback).
+- Idempotency key: abi036-release-implementation-20260905-v1
+- Request fingerprint: 39cb95ea9f83c3fbb15bdf0b825b33606b8c3458cb1f17ffc94f0babfbc6ef34
+- Gate: implementation-self-check
+- Verdict: pass
+- Evidence:
+  - ABI-036 semantic surfaces are wired in production composition with deterministic anchor-local orientation and hard eight-entry texture cap
+  - pnpm vitest run src/game/enemy-visual.test.ts src/game/battlefield.test.ts: 56 passed
+  - pnpm exec tsc -b --pretty false: passed
+  - Full QA evidence supplied by user: historical reload, reduced motion, orbit, resize, replacement, desktop/390, and zero console errors
+
+### evt-858299a8-8a10-4cb9-8c6e-e91cc33b4247
+
+- Timestamp: 2026-09-05T06:43:04.189Z
+- Actor: release-owner-fallback
+- Operation: task.advance
+- Prior revision: 39
+- Resulting revision: 40
+- Summary: Implementation self-check passed; submit ABI-036 for independent review. Actor profile: manager-helper fallback authorized by user.
+- Idempotency key: abi036-release-advance-review-20260905-v1
+- Request fingerprint: dbe38a224cf1a135ae91820b9018426a638fc51da8011c78679960055f582412
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - Gate implementation-self-check pass at progress revision 39
+
+### evt-b015ab8a-8840-4aba-a865-40193ed0a4aa
+
+- Timestamp: 2026-09-05T06:43:25.187Z
+- Actor: autobattle-independent-reviewer
+- Operation: gate.record
+- Prior revision: 40
+- Resulting revision: 41
+- Summary: Independent review PASS — profile: autobattle-independent-reviewer; release owner records supplied independent review result under authorized fallback.
+- Idempotency key: abi036-independent-review-pass-20260905-v1
+- Request fingerprint: 57ad4985aa983d275b2cac2d732e5d93596cf36874d594c321bc54e253ce5dd6
+- Gate: independent-review
+- Verdict: pass
+- Evidence:
+  - Reviewed ordinary semantic scratches, shell plates, and affinity marks
+  - Reviewed Drake +X front socket and ±X flank orientation normals
+  - Reviewed hard cache cap above eight active palettes, deterministic degradation, reference counting, and exact disposal
+  - Reviewed semantic ownership, budgets, legacy preservation, and focused regressions
+
+### evt-b398abf2-abb5-43cb-9f7d-8ff32ca01c59
+
+- Timestamp: 2026-09-05T06:43:39.599Z
+- Actor: release-owner-fallback
+- Operation: task.advance
+- Prior revision: 41
+- Resulting revision: 42
+- Summary: Independent review passed; submit ABI-036 for independent QA. Actor profile: manager-helper fallback authorized by user.
+- Idempotency key: abi036-release-advance-qa-20260905-v1
+- Request fingerprint: 2c501903cdb2589cfebfc382ccf927de6aa458522b46e2494659d7a90df6c868
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - Gate independent-review pass at progress revision 41
+
+### evt-2208e906-2168-41c4-9554-a7f530543a02
+
+- Timestamp: 2026-09-05T06:43:58.159Z
+- Actor: autobattle-independent-qa
+- Operation: gate.record
+- Prior revision: 42
+- Resulting revision: 43
+- Summary: Fresh independent QA PASS — profile: autobattle-independent-qa; release owner records supplied QA result under authorized fallback.
+- Idempotency key: abi036-independent-qa-pass-20260905-v1
+- Request fingerprint: 5ec46a765da596d878e1019855fd03f7c5f881875f6ddef6a0293fc0c79eef82
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Ordinary semantic scratches, shell plates, and affinity mark verified
+  - Drake +X front and ±X flank orientations verified; Mantis animated-family orientation verified
+  - Hard cache cap above eight active palettes and exact disposal verified
+  - Goose scale/floor/spikes variants verified
+  - Reduced motion, orbit, resize, replacement, desktop and 390px verified; zero console errors
+  - Historical V3/V4 reload verified
+
+### evt-9042e14a-fc48-4b0a-8252-17ea54c60635
+
+- Timestamp: 2026-09-05T06:44:30.869Z
+- Actor: release-owner-fallback
+- Operation: gate.record
+- Prior revision: 43
+- Resulting revision: 44
+- Summary: Verification PASS — profile: manager-helper; explicit user-authorized release-owner fallback records current worktree proof.
+- Idempotency key: abi036-verification-pass-20260905-v1
+- Request fingerprint: ede9614a4605b9034403c2f8f6652e70565bed864e30d63bf079c4d96eb7d9fe
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - User reports full pnpm check green: 33 files and 336 tests
+  - ABI-036 focused semantic/battlefield tests passed; TypeScript and scoped lint/format passed
+  - User QA reports public desktop and 390px routes, reduced motion, orbit, resize, replacement, historical reload, and zero console errors
+  - Scope is limited to ABI-036/ABI-039 implementation, tests, measurements, and authorized generated profiles/artifacts
+
+### evt-869b7be2-aa5e-4de6-88f5-6c920ab8f55c
+
+- Timestamp: 2026-09-05T06:44:49.876Z
+- Actor: release-owner-fallback
+- Operation: task.advance
+- Prior revision: 44
+- Resulting revision: 45
+- Summary: Independent QA and verification passed; ABI-036 is ready for manager closure. Actor profile: manager-helper fallback authorized by user.
+- Idempotency key: abi036-release-ready-manager-20260905-v2
+- Request fingerprint: 85c6856f20465cdee74a211fe386548a516e5fb34bd0726493e508187fc499d3
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - Gate independent-qa pass at progress revision 43
+  - Gate verification pass at progress revision 44
+
+### evt-b4a822a8-dfd0-4cf1-a941-5260462ed4d5
+
+- Timestamp: 2026-09-05T06:45:12.855Z
+- Actor: manager-fallback
+- Operation: gate.record
+- Prior revision: 45
+- Resulting revision: 46
+- Summary: Manager closure PASS — manager-fallback, profile: manager-helper; explicit user-authorized fallback executes closure.
+- Idempotency key: abi036-manager-closure-pass-20260905-v2
+- Request fingerprint: 26e4c4357def83aecd28638fcdc72c954b992c13ccf527e821697dab5889c516
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Independent review PASS and fresh independent QA PASS are recorded at exact current revisions
+  - Full pnpm check reported green: 33 files and 336 tests
+  - Public Pages proof reported for semantic surfaces and Goose/cadence routes at desktop and 390px with zero console errors
+  - Release scope reviewed: ABI-036/ABI-039 implementation, tests, measurements, authorized .omp/agents generated profiles, and maintenance plan artifacts only; unrelated roots excluded
+
+### evt-fd35379b-ee6a-4ddd-92d2-e6e01eff3d4c
+
+- Timestamp: 2026-09-05T06:45:24.425Z
+- Actor: manager-fallback
+- Operation: task.advance
+- Prior revision: 46
+- Resulting revision: 47
+- Summary: Close ABI-036 after all required gates passed. Actor profile: manager-helper; explicit user-authorized fallback.
+- Idempotency key: abi036-close-done-20260905-v1
+- Request fingerprint: 681cbcc4ccafed53e7eb16e8ad6798dccacf179c07ac57bf959759f6b09c1218
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - manager-closure gate pass at progress revision 46
+  - Exact review, QA, verification, and implementation-self-check receipts recorded

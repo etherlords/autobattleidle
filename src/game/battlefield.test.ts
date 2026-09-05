@@ -82,7 +82,12 @@ const assertDesktopBossHudClearance = (
     sampledTops.push(Number(dataset.enemyTopPx));
     battlefield.render(snapshot("boss", level));
     sampledTops.push(Number(dataset.enemyTopPx));
-    sampledTops.forEach((top) => expect(top).toBeGreaterThanOrEqual(desktopBossTopMinimumPx));
+    sampledTops.forEach((top) =>
+      expect(
+        top,
+        `${enemyVisualSpec(snapshot("boss", level).enemy).body} level ${level}`,
+      ).toBeGreaterThanOrEqual(desktopBossTopMinimumPx),
+    );
   }
 };
 

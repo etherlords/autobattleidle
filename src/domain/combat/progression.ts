@@ -23,6 +23,7 @@ import { modifierForRoll } from "./enemy-modifiers";
 import { ENEMY_TIERS } from "./enemy-definitions";
 import { armorPenetrationLevelFor, criticalLevelFor, damageLevelFor } from "./player-stats";
 import { selectEnemyFamilyIdentity } from "./family-identity";
+import { bossOrdinalForEncounter, isBossEncounter } from "./boss-cadence";
 
 type OrdinaryGrade = Exclude<EnemyGrade, "boss">;
 type MissingOrdinaryGrades<Order extends readonly OrdinaryGrade[]> =
@@ -41,22 +42,18 @@ type CompleteOrdinaryGradeOrder =
     : never;
 const ORDINARY_GRADES: CompleteOrdinaryGradeOrder = ORDINARY_GRADE_VALUES;
 
-const selectGrade = (
-  encounter: number,
-  bossInterval: number = COMBAT_BALANCE.bossInterval,
-): EnemyGrade => {
-  if (encounter % bossInterval === 0) return "boss";
+const selectGrade = (encounter: number, bossInterval?: number): EnemyGrade => {
+  if (isBossEncounter(encounter, bossInterval)) return "boss";
   const grade = ORDINARY_GRADES[(encounter - 1) % ORDINARY_GRADES.length];
   if (grade === undefined) throw new RangeError("Encounter did not select an ordinary enemy grade");
   return grade;
 };
-const legacyMultiplier = (
-  grade: EnemyGrade,
-  encounter: number,
-  bossInterval: number = COMBAT_BALANCE.bossInterval,
-): number => {
+const legacyMultiplier = (grade: EnemyGrade, encounter: number, bossInterval?: number): number => {
   if (grade === "boss") {
-    const bossIndex = Math.ceil(encounter / bossInterval) - 1;
+    const bossOrdinal = bossOrdinalForEncounter(encounter, bossInterval);
+    if (bossOrdinal === undefined)
+      throw new RangeError("Boss encounter did not select a boss ordinal");
+    const bossIndex = bossOrdinal - 1;
     return (
       COMBAT_FORMULAS.bossHealthBaseMultiplier +
       COMBAT_FORMULAS.bossHealthIndexLinearMultiplier * bossIndex +
@@ -80,25 +77,19 @@ const productionBaseHealth = (player: CombatPlayer, grade: OrdinaryGrade): numbe
 };
 
 const isBossFamily = (family: string): family is BossFamily => family.startsWith("boss-");
-const bossBalanceForEncounter = (
-  encounter: number,
-  bossInterval: number = COMBAT_BALANCE.bossInterval,
-) => {
-  const family = selectEnemyFamilyIdentity({
-    bossInterval,
+const bossBalanceForEncounter = (encounter: number, bossInterval?: number) => {
+  const identity = selectEnemyFamilyIdentity({
+    ...(bossInterval === undefined ? {} : { bossInterval }),
     grade: "boss",
     level: encounter,
     modifier: null,
-  }).family;
+  });
+  const family = identity.family;
   if (!isBossFamily(family)) throw new Error("Boss encounter selected an ordinary family");
   return BOSS_FAMILY_BALANCE[family];
 };
 
-const legacyStageHealth = (
-  grade: EnemyGrade,
-  encounter: number,
-  bossInterval: number = COMBAT_BALANCE.bossInterval,
-): number => {
+const legacyStageHealth = (grade: EnemyGrade, encounter: number, bossInterval?: number): number => {
   const growth =
     COMBAT_FORMULAS.enemyHealthGrowthBase +
     (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) * (encounter - 1);
@@ -139,7 +130,7 @@ const expectedAutomaticBossDps = (
 const productionBossHealth = (
   player: CombatPlayer,
   encounter: number,
-  bossInterval: number,
+  bossInterval: number | undefined,
   armorMultiplier: number,
 ): number => {
   const currentThirtyHitHealth = safeRounded(
@@ -180,7 +171,7 @@ const playerBaseHealthForSpawn = (
   encounter: number,
   candidateGrowth: number,
   player: CombatPlayer,
-  bossInterval: number,
+  bossInterval: number | undefined,
   bossBalance: BossFamilyBalance | undefined,
 ): number => {
   if (grade !== "boss") return productionBaseHealth(player, grade) * candidateGrowth;
@@ -195,7 +186,7 @@ const legacyBaseHealthForSpawn = (
   encounter: number,
   candidateGrowth: number,
   ordinaryHealthGrowthRate: number | undefined,
-  bossInterval: number,
+  bossInterval: number | undefined,
   bossBalance: BossFamilyBalance | undefined,
 ): number => {
   if (ordinaryHealthGrowthRate !== undefined && grade !== "boss")
@@ -215,7 +206,7 @@ const baseHealthForSpawn = (
   candidateGrowth: number,
   ordinaryHealthGrowthRate: number | undefined,
   player: CombatPlayer | undefined,
-  bossInterval: number,
+  bossInterval: number | undefined,
 ): number => {
   const bossBalance =
     grade === "boss" ? bossBalanceForEncounter(encounter, bossInterval) : undefined;
@@ -262,12 +253,12 @@ export const spawnEnemy = (
   eliteModifierRoll: number,
   ordinaryHealthGrowthRate?: number,
   player?: CombatPlayer,
-  bossInterval: number = COMBAT_BALANCE.bossInterval,
+  bossInterval?: number,
 ): CombatEnemy => {
   if (!Number.isSafeInteger(encounter) || encounter < 1 || encounter > MAX_ENCOUNTER)
     throw new RangeError("Encounter must be a positive safe integer with safe outputs");
   const safeEncounter = encounter;
-  validateBossInterval(bossInterval);
+  if (bossInterval !== undefined) validateBossInterval(bossInterval);
   const grade = selectGrade(safeEncounter, bossInterval);
   const bossBalance =
     grade === "boss" ? bossBalanceForEncounter(safeEncounter, bossInterval) : undefined;
@@ -341,8 +332,12 @@ export const goldenBugHealth = (player: CombatPlayer): number =>
     ),
   );
 
-export const spawnGoldenBug = (resumeEncounter: number, player: CombatPlayer): CombatEnemy => {
-  const resumed = spawnEnemy(resumeEncounter, 0);
+export const spawnGoldenBug = (
+  resumeEncounter: number,
+  player: CombatPlayer,
+  bossInterval?: number,
+): CombatEnemy => {
+  const resumed = spawnEnemy(resumeEncounter, 0, undefined, undefined, bossInterval);
   const maxHealth = goldenBugHealth(player);
   return {
     armor: 0,
@@ -358,10 +353,10 @@ export const spawnGoldenBug = (resumeEncounter: number, player: CombatPlayer): C
     ),
   };
 };
-
 export const expireGoldenBug = (
   state: CombatState,
   ordinaryHealthGrowthRate?: number,
+  bossInterval?: number,
 ): CombatState =>
   state.goldenBug === null
     ? state
@@ -372,6 +367,7 @@ export const expireGoldenBug = (
           0,
           ordinaryHealthGrowthRate,
           state.player,
+          bossInterval,
         ),
         goldenBug: null,
       };

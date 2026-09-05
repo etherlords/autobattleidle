@@ -6,7 +6,7 @@ import {
   spawnGoldenBug,
 } from "../../domain/combat";
 import type { CombatEnemy, CombatPlayer, CombatState } from "../../domain/combat";
-import { COMBAT_FORMULAS } from "../../domain/combat/balance";
+import { COMBAT_BALANCE, COMBAT_FORMULAS } from "../../domain/combat/balance";
 import { decodeV2 } from "./validation-v2";
 import {
   hasExactKeys,
@@ -66,6 +66,7 @@ const matchesPreviousPlayerRelativeBoss = (
   enemy.maxHealth === previousPlayerRelativeBossHealth(player) &&
   enemy.reward === expected.reward;
 
+/* eslint-disable complexity -- legacy V3 validation covers several historical enemy shapes. */
 const decodePrePlayerRelativeV3 = (
   value: Record<string, unknown>,
   nowMs: number,
@@ -73,8 +74,21 @@ const decodePrePlayerRelativeV3 = (
   const player = parseV2Player(value.player);
   const enemy = parseEnemyShape(value.enemy);
   if (!player || !enemy) return undefined;
-  const prePlayerRelative = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier));
-  const normalized = spawnEnemy(enemy.encounter, modifierRoll(enemy.modifier), undefined, player);
+  const legacyBossInterval = enemy.grade === "boss" ? COMBAT_BALANCE.bossInterval : undefined;
+  const prePlayerRelative = spawnEnemy(
+    enemy.encounter,
+    modifierRoll(enemy.modifier),
+    undefined,
+    undefined,
+    legacyBossInterval,
+  );
+  const normalized = spawnEnemy(
+    enemy.encounter,
+    modifierRoll(enemy.modifier),
+    undefined,
+    player,
+    enemy.grade === "boss" ? COMBAT_BALANCE.bossInterval : undefined,
+  );
   if (
     !matchesPrePlayerRelativeEnemy(enemy, prePlayerRelative) &&
     !matchesPreArmorCapEnemy(enemy, normalized) &&
@@ -89,6 +103,7 @@ const decodePrePlayerRelativeV3 = (
     enemy: {
       ...normalized,
       health: Math.max(1, Math.ceil((enemy.health / enemy.maxHealth) * normalized.maxHealth)),
+      reward: enemy.grade === "boss" ? enemy.reward : normalized.reward,
     },
     goldenBug: null,
     goldenBugDefeats: 0,
@@ -98,6 +113,7 @@ const decodePrePlayerRelativeV3 = (
     player,
   };
 };
+/* eslint-enable complexity */
 
 // eslint-disable-next-line complexity -- V3 validates each persisted timed-event field at the boundary.
 export const decodeV3 = (value: unknown, nowMs: number): CombatState | undefined => {

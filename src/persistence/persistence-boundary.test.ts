@@ -11,11 +11,14 @@ import v4ArmoredPreCapFixture from "./fixtures/save-v4-active-armored-pre-cap.js
 import v4GoldenDefeatsFixture from "./fixtures/save-v4-golden-defeats.json";
 import v4HardenedPreCapFixture from "./fixtures/save-v4-active-hardened-pre-cap.json";
 import v4PlayerRelativeBossFixture from "./fixtures/save-v4-player-relative-boss.json";
+import v4Post160CadenceFixture from "./fixtures/save-v4-post-160-cadence.json";
 
 import {
   automaticInterval,
+  bossEncounterForOrdinal,
   COMBAT_BALANCE,
   createCombatState,
+  purchaseUpgrade,
   spawnEnemy,
   spawnGoldenBug,
 } from "../domain/combat";
@@ -580,6 +583,18 @@ describe("persistence boundary", () => {
       goldenBugDefeats: historicalV4.goldenBugDefeats,
     });
   });
+  it("round-trips the post-160 seeded cadence save without schema migration", () => {
+    const loaded = decodeSave(v4Post160CadenceFixture, fallback(), 100);
+    expect(loaded.enemy).toMatchObject({
+      encounter: bossEncounterForOrdinal(161),
+      grade: "boss",
+    });
+    const reloaded = decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200);
+    expect(reloaded).toEqual({
+      ...loaded,
+      nextAutomaticAttackAtMs: 200 + automaticInterval(loaded.enemy, loaded.player),
+    });
+  });
 
   it("backs up a rejected current payload before historical repair", () => {
     const rejectedV4 = "not json";
@@ -1136,5 +1151,19 @@ describe("persistence boundary", () => {
       enemy: spawnEnemy(highestBoss, 0),
     };
     expect(decodeSave(JSON.parse(encodeSave(state)), fallback(), 0)).toEqual(state);
+  });
+  it("round-trips state after a deterministic 1000-purchase batch without a schema change", () => {
+    let state = { ...fallback(), coins: Number.MAX_SAFE_INTEGER };
+    for (let index = 0; index < 1_000; index += 1) {
+      const purchase = purchaseUpgrade(state, "damage", 0);
+      expect(purchase.reason).toBeNull();
+      state = purchase.state;
+    }
+    const raw = encodeSave(state);
+    expect(JSON.parse(raw)).toMatchObject({
+      player: { damageLevel: 1_000 },
+      version: SAVE_VERSION,
+    });
+    expect(decodeSave(JSON.parse(raw), fallback(), 0)).toEqual(state);
   });
 });

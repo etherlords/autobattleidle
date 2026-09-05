@@ -1,22 +1,35 @@
 import {
   attack,
   automaticPacketSchedule,
+  bossCadenceBandForOrdinal,
+  bossCadenceGapForEncounter,
+  bossOrdinalForEncounter,
   createCombatState,
   expireGoldenBug,
   purchaseUpgrade,
   spawnEnemy,
   effectiveArmor,
+  selectEnemyFamilyIdentity,
   type CombatPlayer,
   type CombatState,
   type CombatEnemy,
   type ArmorPenetrationPolicy,
   type CriticalChancePolicy,
   type EliteModifier,
+  type EnemyAffinity,
+  type EnemyFamily,
   type EnemyGrade,
   type UpgradeId,
 } from "./combat";
-
-export type BossEncounter = { readonly encounter: number; readonly elapsedMs: number };
+export type BossEncounter = {
+  readonly encounter: number;
+  readonly elapsedMs: number;
+  readonly family: EnemyFamily;
+  readonly affinity: EnemyAffinity;
+  readonly variant: 0 | 1 | 2;
+  readonly gap: number | undefined;
+  readonly cadenceBand: string | undefined;
+};
 export type ProgressionReport = {
   readonly armorPreventedDamage: number;
   readonly bosses: readonly BossEncounter[];
@@ -150,6 +163,15 @@ export type TelemetrySummary = {
   /** Transition counts keep long 3,000-encounter receipts compact and reproducible. */
   readonly gradeTransitions: Readonly<Record<string, number>>;
   readonly bossGaps: readonly number[];
+  readonly bossGapBounds: { readonly min: number; readonly max: number };
+  readonly bossFamilies: Readonly<Record<string, number>>;
+  readonly bossAffinities: Readonly<Record<string, number>>;
+  readonly bossVariants: Readonly<Record<string, number>>;
+  readonly bossRepeatStreaks: {
+    readonly family: number;
+    readonly affinity: number;
+    readonly variant: number;
+  };
   readonly bossOnlyElapsedMs: number;
   readonly walls: number;
   readonly adjacentMedianJump: number;
@@ -333,13 +355,40 @@ export const summarizeTelemetry = (report: MeasuredProgressionReport): Telemetry
       }
       return counts;
     }, {});
-  const bosses = report.observations.filter(({ grade }) => grade === "boss");
+  const bosses = report.bosses;
+  const bossGaps = bosses
+    .slice(1)
+    .map((boss, index) => boss.encounter - (bosses[index]?.encounter ?? boss.encounter));
+  const countBy = (values: readonly string[]): Readonly<Record<string, number>> =>
+    values.reduce<Record<string, number>>((counts, value) => {
+      counts[value] = (counts[value] ?? 0) + 1;
+      return counts;
+    }, {});
+  const maxRepeatStreak = (values: readonly string[]): number => {
+    let longest = 0;
+    let current = 0;
+    let previous: string | undefined;
+    for (const value of values) {
+      current = value === previous ? current + 1 : 1;
+      longest = Math.max(longest, current);
+      previous = value;
+    }
+    return longest;
+  };
   const bands = [100, 150, 200, 500, 1000, 1100].map(
     (at) =>
       distribution(ordinary.filter((value) => value.encounter >= at && value.encounter < at + 50))
         .p50,
   );
   const jumps = bands.slice(1).map((value, index) => value / Math.max(1, bands[index] ?? 1));
+  const bossObservations = report.observations.filter(
+    ({ grade, goldenBug }) => grade === "boss" && !goldenBug,
+  );
+  const bossGapValues = bossGaps.length === 0 ? [] : bossGaps;
+  const bossGapBounds = {
+    min: bossGapValues.length === 0 ? 0 : Math.min(...bossGapValues),
+    max: bossGapValues.length === 0 ? 0 : Math.max(...bossGapValues),
+  };
   return {
     adjacentMedianJump: Math.max(...jumps, 0),
     armor: {
@@ -375,10 +424,17 @@ export const summarizeTelemetry = (report: MeasuredProgressionReport): Telemetry
     modifiers,
     modifierTimeToKillMs,
     gradeTransitions,
-    bossGaps: bosses
-      .slice(1)
-      .map((boss, index) => boss.encounter - (bosses[index]?.encounter ?? boss.encounter)),
-    bossOnlyElapsedMs: bosses.reduce((total, boss) => total + boss.timeToKillMs, 0),
+    bossAffinities: countBy(bosses.map(({ affinity }) => affinity)),
+    bossFamilies: countBy(bosses.map(({ family }) => family)),
+    bossGapBounds,
+    bossGaps,
+    bossOnlyElapsedMs: bossObservations.reduce((total, boss) => total + boss.timeToKillMs, 0),
+    bossRepeatStreaks: {
+      affinity: maxRepeatStreak(bosses.map(({ affinity }) => affinity)),
+      family: maxRepeatStreak(bosses.map(({ family }) => family)),
+      variant: maxRepeatStreak(bosses.map(({ variant }) => String(variant))),
+    },
+    bossVariants: countBy(bosses.map(({ variant }) => String(variant))),
     walls: report.ordinaryWallsOver60Seconds,
   };
 };
@@ -562,7 +618,7 @@ const runProgression = (
       }
       elapsedMs = goldenBugDeadlineMs;
       activeTtkByEnemyId.delete(state.enemy.id);
-      state = expireGoldenBug(state, options.ordinaryHealthGrowthRate);
+      state = expireGoldenBug(state, options.ordinaryHealthGrowthRate, options.bossInterval);
       noteOrdinarySnapshot();
       capturePendingSnapshots();
       goldenBugDelayMs += 10_000;
@@ -720,8 +776,31 @@ const runProgression = (
       }
     }
     if (horizonReached) break;
-    if (enemy.grade === "boss")
-      bosses.push({ encounter: enemy.encounter, elapsedMs: roundedElapsedMs(elapsedMs) });
+    const bossIdentity =
+      enemy.grade === "boss"
+        ? selectEnemyFamilyIdentity({
+            ...(options.bossInterval === undefined ? {} : { bossInterval: options.bossInterval }),
+            grade: enemy.grade,
+            level: enemy.encounter,
+            modifier: enemy.modifier,
+          })
+        : undefined;
+    const bossOrdinal =
+      enemy.grade === "boss"
+        ? bossOrdinalForEncounter(enemy.encounter, options.bossInterval)
+        : undefined;
+    if (enemy.grade === "boss" && (bossIdentity === undefined || bossOrdinal === undefined))
+      throw new Error("Boss telemetry could not reconstruct its deterministic identity");
+    if (enemy.grade === "boss" && bossIdentity !== undefined && bossOrdinal !== undefined)
+      bosses.push({
+        affinity: bossIdentity.affinity,
+        cadenceBand: bossCadenceBandForOrdinal(bossOrdinal).id,
+        encounter: enemy.encounter,
+        elapsedMs: roundedElapsedMs(elapsedMs),
+        family: bossIdentity.family,
+        gap: bossCadenceGapForEncounter(enemy.encounter, options.bossInterval),
+        variant: bossIdentity.variant,
+      });
     if (!wasGoldenBug && enemy.grade !== "boss" && state.goldenBug === null) ordinaryDefeats += 1;
     observations.push({
       armorPreventedDamage: prevented,

@@ -7,6 +7,7 @@ import {
 import type { BodyFamily, EnemyVisualInput, EnemyVisualSpec, ModifierCue } from "./spec";
 import { enemyVisualSpec } from "./spec";
 import {
+  bossGeometryProfileForSeed,
   bossGeometryProfilesForFamily,
   type BossGeometryProfile,
 } from "./decorators/boss-geometry-decorator";
@@ -31,12 +32,12 @@ export type EnemyVisualCompositionReceipt = {
 export const enemyVisualCompositionReceipt = (
   input: EnemyVisualInput,
 ): EnemyVisualCompositionReceipt => {
-  const identity = selectEnemyFamilyIdentity(input);
   const spec = enemyVisualSpec(input);
+  const identity = selectEnemyFamilyIdentity(input);
   const geometryProfiles = bossGeometryProfilesForFamily(spec.body);
-  const geometryProfile = geometryProfiles[0];
-  if (geometryProfile === undefined)
-    throw new RangeError("Enemy visual geometry profile registry is empty");
+  const geometryProfile = bossGeometryProfileForSeed(spec.body, spec.seed, input.level);
+  if (geometryProfile === "legacy/no-overlay" && spec.body.startsWith("boss-"))
+    throw new RangeError("Boss visual geometry profile registry did not select a recipe");
   return {
     input,
     seed: identity.seed,

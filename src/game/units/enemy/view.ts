@@ -75,6 +75,7 @@ export class EnemyUnitView extends UnitView<EnemyVisualInput> {
     const bodyBounds = new THREE.Box3().setFromObject(this.build.roots.body);
     if (Number.isFinite(bodyBounds.min.y))
       this.group.position.y += enemyVisualLayout.actorAnchor.groundClearance - bodyBounds.min.y;
+    this.group.position.y += spec.groundOffset;
     this.currentSeed = spec.seed;
     this.currentSpec = spec;
   }

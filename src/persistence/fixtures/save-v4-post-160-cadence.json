@@ -1,0 +1,27 @@
+{
+  "automaticUnlocked": true,
+  "coins": 427622176,
+  "enemy": {
+    "armor": 5635,
+    "encounter": 5635,
+    "grade": "boss",
+    "health": 17777,
+    "id": 5635,
+    "maxHealth": 191100,
+    "modifier": null,
+    "reward": 16883685
+  },
+  "goldenBug": null,
+  "goldenBugDefeats": 4,
+  "player": {
+    "automaticSpeedLevel": 4093,
+    "armorPenetrationLevel": 1074,
+    "criticalChance": 0.589873417721519,
+    "criticalLevel": 1165,
+    "damage": 6370,
+    "damageLevel": 5620,
+    "doubleRewardChance": 0.5941775836972343,
+    "doubleRewardLevel": 2041
+  },
+  "version": 4
+}

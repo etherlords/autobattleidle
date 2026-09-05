@@ -5,7 +5,20 @@ export type {
   AutomaticPacketResolution,
   AutomaticPacketSchedule,
 } from "./combat/automatic-packets";
-export { BOSS_FAMILY_BALANCE, COMBAT_BALANCE, COMBAT_FORMULAS } from "./combat/balance";
+export {
+  BOSS_CADENCE_BALANCE,
+  BOSS_FAMILY_BALANCE,
+  COMBAT_BALANCE,
+  COMBAT_FORMULAS,
+} from "./combat/balance";
+export {
+  bossCadenceBandForOrdinal,
+  bossCadenceGapForEncounter,
+  bossEncounterForOrdinal,
+  bossGapForOrdinal,
+  bossOrdinalForEncounter,
+  isBossEncounter,
+} from "./combat/boss-cadence";
 export { ENEMY_MODIFIERS } from "./combat/enemy-modifiers/enemy-modifier-registry";
 export { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS } from "./combat/enemy-affinities";
 export {

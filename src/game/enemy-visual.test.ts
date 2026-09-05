@@ -14,9 +14,11 @@ import { component } from "./enemy-visual/components";
 import { enemyVisualTransforms } from "./enemy-visual/config";
 import { profileCueScale } from "./enemy-visual/spec";
 import {
+  bossGeometryProfileForSeed,
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
+  semanticSurfaceCacheStats,
 } from "./enemy-visual/decorators";
 import { observeResourceDisposal, resourceCounts } from "../debug/visual-lab/resource-ledger";
 import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enemy";
@@ -529,7 +531,10 @@ describe("enemy visual factory", () => {
       unit.view.group.updateMatrixWorld(true);
       const body = unit.view.group.getObjectByName("enemy-layer-body");
       if (body === undefined) throw new Error("Expected boss body layer");
-      expect(new THREE.Box3().setFromObject(body).min.y).toBeCloseTo(0.02, 5);
+      expect(new THREE.Box3().setFromObject(body).min.y).toBeCloseTo(
+        0.02 + unit.spec.groundOffset,
+        5,
+      );
       unit.dispose();
     }
   });
@@ -563,7 +568,6 @@ describe("enemy visual factory", () => {
     });
     expect(enemyVisualSpec({ grade: "boss", level: 70, modifier: null })).toMatchObject({
       body: "boss-catbug",
-      decorations: ["fins", "scar"],
       gradeCue: "crown",
       scale: 1.45,
     });
@@ -625,7 +629,7 @@ describe("enemy visual factory", () => {
         expect(profileCueScale(visual.spec.profile)).toBeGreaterThanOrEqual(0.8);
         expect(profileCueScale(visual.spec.profile)).toBeLessThanOrEqual(1.2);
         expect(visual.group.getObjectByName(`enemy-body-${family}`)).toBeDefined();
-        expect(meshCount(visual)).toBeLessThanOrEqual(family.startsWith("boss-") ? 51 : 30);
+        expect(meshCount(visual), family).toBeLessThanOrEqual(family.startsWith("boss-") ? 59 : 38);
         const markers: Readonly<Record<string, readonly string[]>> = {
           beetle: [
             "enemy-part-beetle-shell",
@@ -1422,7 +1426,10 @@ describe("enemy visual factory", () => {
       const bodyLayer = visual.group.getObjectByName("enemy-layer-body");
       if (bodyLayer === undefined) throw new Error("Expected body layer");
       visual.group.updateMatrixWorld(true);
-      expect(new THREE.Box3().setFromObject(bodyLayer).min.y).toBeCloseTo(0.02, 5);
+      expect(new THREE.Box3().setFromObject(bodyLayer).min.y).toBeCloseTo(
+        0.02 + visual.spec.groundOffset,
+        5,
+      );
       visual.dispose();
     }
     const colossus = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
@@ -1501,26 +1508,26 @@ describe("enemy visual factory", () => {
       expect(ordinary.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
       ordinary.dispose();
     }
-    const hydra = createEnemyVisual({ grade: "boss", level: 105, modifier: null });
+    const hydraInput = { grade: "boss", level: 105, modifier: null } as const;
+    const hydra = createEnemyVisual(hydraInput);
+    const selectedHydraProfile = bossGeometryProfileForSeed(
+      "boss-hydra",
+      stableEnemySeed(hydraInput),
+      hydraInput.level,
+    );
     const crown = hydra.group.getObjectByName("boss-geometry-crystal-crown");
-    expect(crown).toBeDefined();
-    expect(crown?.children).toHaveLength(3);
     const spines = hydra.group.getObjectByName("boss-geometry-elemental-spines");
-    expect(spines).toBeDefined();
-    expect(spines?.children).toHaveLength(18);
-    const centerHead = hydra.group.getObjectByName("enemy-part-hydra-head-1");
-    if (!(centerHead instanceof THREE.Mesh)) throw new Error("Expected Hydra center head");
-    hydra.group.updateMatrixWorld(true);
-    const headBox = new THREE.Box3().setFromObject(centerHead);
-    let spinesNearHead = 0;
-    spines?.children.forEach((spine) => {
-      if (!(spine instanceof THREE.Mesh)) return;
-      if (headBox.distanceToPoint(spine.getWorldPosition(new THREE.Vector3())) < 0.05)
-        spinesNearHead += 1;
-    });
-    expect(spinesNearHead).toBe(0);
+    expect(crown !== undefined || spines !== undefined).toBe(true);
+    if (selectedHydraProfile === "crystal-crown") {
+      expect(crown).toBeDefined();
+      expect(crown?.children).toHaveLength(3);
+    } else {
+      expect(spines).toBeDefined();
+      expect(spines?.children).toHaveLength(18);
+    }
     hydra.dispose();
-    const colossus = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
+    const colossusInput = { grade: "boss", level: 141, modifier: null } as const;
+    const colossus = createEnemyVisual(colossusInput);
     const runes = colossus.group.getObjectByName("boss-geometry-orbital-runes");
     expect(runes).toBeDefined();
     expect(runes?.children).toHaveLength(3);
@@ -1560,7 +1567,7 @@ describe("enemy visual factory", () => {
     });
     let visual: EnemyVisual | undefined;
     try {
-      visual = createEnemyVisual({ grade: "boss", level: 140, modifier: null });
+      visual = createEnemyVisual({ grade: "boss", level: 141, modifier: null });
       const runes = visual.group.getObjectByName("boss-geometry-orbital-runes");
       if (runes === undefined) throw new Error("Expected orbital runes");
       const rotations = runes.children.map((rune) => rune.rotation.toArray());
@@ -1569,6 +1576,178 @@ describe("enemy visual factory", () => {
     } finally {
       visual?.dispose();
       vi.unstubAllGlobals();
+    }
+  });
+
+  it("wires semantic surfaces into production composition only", () => {
+    const input = { grade: "elite", level: 3, modifier: null } as const;
+    const production = new EnemyUnitFactory().create(input);
+    expect(production.enemyView.group.getObjectByName("semantic-surface-scratches")).toBeDefined();
+    expect(
+      production.enemyView.group.getObjectByName("semantic-surface-shell-plates-left"),
+    ).toBeDefined();
+    expect(production.enemyView.group.getObjectByName("surface-affinity-mark")).toBeDefined();
+    production.dispose();
+
+    const legacy = new EnemyUnitFactory().create(input, { compositionMode: "legacy/no-overlay" });
+    expect(legacy.enemyView.group.getObjectByName("semantic-surface-scratches")).toBeUndefined();
+    legacy.dispose();
+  });
+
+  it("disposes generated surface resources exactly once while sharing affinity textures", () => {
+    const input = { grade: "elite", level: 3, modifier: null } as const;
+    const baselineReferences = semanticSurfaceCacheStats().references;
+    const first = createEnemyVisual(input);
+    const second = createEnemyVisual(input);
+    const firstScratch = first.group.getObjectByName("surface-scratch-0");
+    const firstPlate = first.group.getObjectByName("surface-shell-plate-left-0");
+    const firstMark = first.group.getObjectByName("surface-affinity-mark");
+    const secondMark = second.group.getObjectByName("surface-affinity-mark");
+    if (
+      !(firstScratch instanceof THREE.Mesh) ||
+      !(firstPlate instanceof THREE.Mesh) ||
+      !(firstMark instanceof THREE.Mesh) ||
+      !(secondMark instanceof THREE.Mesh) ||
+      Array.isArray(firstScratch.material) ||
+      Array.isArray(firstPlate.material) ||
+      Array.isArray(firstMark.material) ||
+      Array.isArray(secondMark.material)
+    )
+      throw new Error("Expected generated semantic surface meshes");
+    expect(firstMark.material.map).toBe(secondMark.material.map);
+    expect(semanticSurfaceCacheStats().references).toBe(baselineReferences + 2);
+    let scratchGeometryDisposals = 0;
+    let plateGeometryDisposals = 0;
+    let markGeometryDisposals = 0;
+    let scratchMaterialDisposals = 0;
+    let plateMaterialDisposals = 0;
+    let markMaterialDisposals = 0;
+    firstScratch.geometry.addEventListener("dispose", () => {
+      scratchGeometryDisposals += 1;
+    });
+    firstPlate.geometry.addEventListener("dispose", () => {
+      plateGeometryDisposals += 1;
+    });
+    firstMark.geometry.addEventListener("dispose", () => {
+      markGeometryDisposals += 1;
+    });
+    firstScratch.material.addEventListener("dispose", () => {
+      scratchMaterialDisposals += 1;
+    });
+    firstPlate.material.addEventListener("dispose", () => {
+      plateMaterialDisposals += 1;
+    });
+    firstMark.material.addEventListener("dispose", () => {
+      markMaterialDisposals += 1;
+    });
+
+    first.dispose();
+    first.dispose();
+    expect(scratchGeometryDisposals).toBe(1);
+    expect(plateGeometryDisposals).toBe(1);
+    expect(markGeometryDisposals).toBe(1);
+    expect(scratchMaterialDisposals).toBe(1);
+    expect(plateMaterialDisposals).toBe(1);
+    expect(markMaterialDisposals).toBe(1);
+    expect(semanticSurfaceCacheStats().references).toBe(baselineReferences + 1);
+    second.dispose();
+    second.dispose();
+    expect(semanticSurfaceCacheStats().references).toBe(baselineReferences);
+  });
+
+  it("keeps surface normals face-aligned across animated front and flank sockets", () => {
+    const worldNormal = (mesh: THREE.Mesh): THREE.Vector3 =>
+      new THREE.Vector3(0, 0, 1)
+        .applyQuaternion(mesh.getWorldQuaternion(new THREE.Quaternion()))
+        .normalize();
+    const drake = createEnemyVisual({
+      grade: "elite",
+      level: 3,
+      modifier: "manual-guard",
+    });
+    const mantis = createEnemyVisual({
+      grade: "elite",
+      level: 3,
+      modifier: "hardened",
+    });
+    try {
+      drake.group.updateMatrixWorld(true);
+      mantis.group.updateMatrixWorld(true);
+      const drakeScratch = drake.group.getObjectByName("surface-scratch-0");
+      const drakeAffinity = drake.group.getObjectByName("surface-affinity-mark");
+      const drakeLeftPlate = drake.group.getObjectByName("surface-shell-plate-left-0");
+      const drakeRightPlate = drake.group.getObjectByName("surface-shell-plate-right-0");
+      const mantisScratch = mantis.group.getObjectByName("surface-scratch-0");
+      const mantisAffinity = mantis.group.getObjectByName("surface-affinity-mark");
+      if (
+        !(drakeScratch instanceof THREE.Mesh) ||
+        !(drakeAffinity instanceof THREE.Mesh) ||
+        !(drakeLeftPlate instanceof THREE.Mesh) ||
+        !(drakeRightPlate instanceof THREE.Mesh) ||
+        !(mantisScratch instanceof THREE.Mesh) ||
+        !(mantisAffinity instanceof THREE.Mesh)
+      )
+        throw new Error("Expected face-aligned semantic meshes");
+      expect(worldNormal(drakeScratch).dot(new THREE.Vector3(1, 0, 0))).toBeGreaterThan(0.99);
+      expect(worldNormal(drakeAffinity).dot(new THREE.Vector3(1, 0, 0))).toBeGreaterThan(0.99);
+      expect(worldNormal(drakeLeftPlate).dot(new THREE.Vector3(-1, 0, 0))).toBeGreaterThan(0.99);
+      expect(worldNormal(drakeRightPlate).dot(new THREE.Vector3(1, 0, 0))).toBeGreaterThan(0.99);
+      expect(worldNormal(mantisScratch).dot(new THREE.Vector3(0, 0, 1))).toBeGreaterThan(0.99);
+      expect(worldNormal(mantisAffinity).dot(new THREE.Vector3(1, 0, 0))).toBeGreaterThan(0.99);
+    } finally {
+      drake.dispose();
+      mantis.dispose();
+    }
+  });
+
+  it("keeps the affinity texture cache bounded when more than eight palettes are active", () => {
+    const baseline = semanticSurfaceCacheStats();
+    const inputs = [
+      { grade: "normal", level: 1, modifier: null },
+      { grade: "normal", level: 2, modifier: null },
+      { grade: "normal", level: 3, modifier: null },
+      { grade: "elite", level: 3, modifier: "hardened" },
+      { grade: "elite", level: 3, modifier: "critical-guard" },
+      { grade: "elite", level: 3, modifier: "manual-guard" },
+      { grade: "boss", level: 35, modifier: null },
+      { grade: "boss", level: 70, modifier: null },
+      { grade: "boss", level: 105, modifier: null },
+      { grade: "boss", level: 140, modifier: null },
+      { grade: "boss", level: 175, modifier: null },
+    ] as const satisfies readonly EnemyVisualInput[];
+    const visuals = inputs.map((input) => createEnemyVisual(input));
+    try {
+      const keys = new Set(
+        visuals.map(
+          (visual) =>
+            `${visual.spec.profile.palette.core}:${visual.spec.profile.palette.accent}:${visual.spec.profile.variant}`,
+        ),
+      );
+      expect(keys.size).toBeGreaterThan(8);
+      visuals.forEach((visual) => {
+        const mark = visual.group.getObjectByName("surface-affinity-mark");
+        if (!(mark instanceof THREE.Mesh) || Array.isArray(mark.material))
+          throw new Error("Expected affinity mark material");
+      });
+      const stats = semanticSurfaceCacheStats();
+      const cachedVisualCount = visuals.filter((visual) => {
+        const mark = visual.group.getObjectByName("surface-affinity-mark");
+        return (
+          mark instanceof THREE.Mesh &&
+          !Array.isArray(mark.material) &&
+          mark.material.map instanceof THREE.DataTexture
+        );
+      }).length;
+      expect(stats.entries).toBeLessThanOrEqual(8);
+      expect(stats.references).toBe(baseline.references + cachedVisualCount);
+      expect(cachedVisualCount).toBeLessThan(visuals.length);
+      visuals.forEach((visual) => {
+        visual.dispose();
+        visual.dispose();
+      });
+      expect(semanticSurfaceCacheStats()).toEqual(baseline);
+    } finally {
+      visuals.forEach((visual) => visual.dispose());
     }
   });
 

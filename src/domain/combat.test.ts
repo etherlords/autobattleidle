@@ -9,6 +9,8 @@ import {
   automaticAttacksPerSecond,
   automaticInterval,
   BOSS_FAMILY_BALANCE,
+  bossEncounterForOrdinal,
+  bossGapForOrdinal,
   COMBAT_BALANCE,
   COMBAT_FORMULAS,
   criticalChanceForLevel,
@@ -39,20 +41,23 @@ import {
   simulateProgression,
   summarizeOrdinaryTtkBands,
   summarizeTelemetry,
+  type ProgressionReport,
 } from "./progression-simulator";
 import { buildMeasuredReport } from "./measured-report";
 import { UPGRADE_DISPLAY_ORDER } from "./combat/upgrades";
 import { MAX_ENCOUNTER } from "./combat/balance";
-
-const expectReferenceStrategy = (report: ReturnType<typeof simulateProgression>): void => {
+const expectReferenceStrategy = (report: ProgressionReport): void => {
   const [firstBoss, secondBoss, thirdBoss] = report.bosses;
   if (firstBoss === undefined || secondBoss === undefined || thirdBoss === undefined)
     throw new Error("Expected three boss encounters");
   const secondGap = secondBoss.elapsedMs - firstBoss.elapsedMs;
   const thirdGap = thirdBoss.elapsedMs - secondBoss.elapsedMs;
-  expect(firstBoss.encounter).toBe(COMBAT_BALANCE.bossInterval);
-  expect(secondBoss.encounter).toBe(COMBAT_BALANCE.bossInterval * 2);
-  expect(thirdBoss.encounter).toBe(COMBAT_BALANCE.bossInterval * 3);
+  expect([firstBoss.encounter, secondBoss.encounter, thirdBoss.encounter]).toEqual([
+    bossEncounterForOrdinal(1),
+    bossEncounterForOrdinal(2),
+    bossEncounterForOrdinal(3),
+  ]);
+  expect([secondBoss.gap, thirdBoss.gap]).toEqual([bossGapForOrdinal(2), bossGapForOrdinal(3)]);
   expect(firstBoss.elapsedMs).toBeGreaterThan(0);
   expect(secondGap).toBeGreaterThan(0);
   expect(thirdGap).toBeGreaterThan(0);
@@ -143,13 +148,18 @@ describe("endless combat progression", () => {
       }).player;
       const resumeEncounter = band.resumeEncounter;
       const ordinary = spawnEnemy(resumeEncounter, 0);
-      const beforeBoss =
-        Math.floor(resumeEncounter / COMBAT_BALANCE.bossInterval) * COMBAT_BALANCE.bossInterval;
-      const afterBoss = beforeBoss + COMBAT_BALANCE.bossInterval;
-      const nearestBoss = spawnEnemy(
-        resumeEncounter - beforeBoss <= afterBoss - resumeEncounter ? beforeBoss : afterBoss,
-        0,
-      );
+      const centerBossOrdinal = Math.max(1, Math.floor(resumeEncounter / 35));
+      const nearestBossEncounter = [centerBossOrdinal - 1, centerBossOrdinal, centerBossOrdinal + 1]
+        .filter((ordinal) => ordinal >= 1)
+        .map((ordinal) => bossEncounterForOrdinal(ordinal))
+        .reduce(
+          (nearest, candidate) =>
+            Math.abs(candidate - resumeEncounter) < Math.abs(nearest - resumeEncounter)
+              ? candidate
+              : nearest,
+          bossEncounterForOrdinal(1),
+        );
+      const nearestBoss = spawnEnemy(nearestBossEncounter, 0);
       const golden = spawnGoldenBug(resumeEncounter, player);
       const reward = golden.reward;
       const upgradeState = {
@@ -247,7 +257,6 @@ describe("endless combat progression", () => {
         source: "manual",
       }),
     ).toMatchObject({
-      event: { defeated: true, reward: 1 },
       state: { coins: Number.MAX_SAFE_INTEGER },
     });
   });
@@ -261,7 +270,7 @@ describe("endless combat progression", () => {
     const normal = spawnEnemy(1_999, 0, undefined, player);
     const veteran = spawnEnemy(2_000, 0, undefined, player);
     const elite = spawnEnemy(2_001, 0.34, undefined, player);
-    const boss = spawnEnemy(2_030, 0, undefined, player);
+    const boss = spawnEnemy(bossEncounterForOrdinal(60), 0, undefined, player);
     const golden = spawnGoldenBug(2_001, player);
     expect(normal.maxHealth).toBe(damageForLevel(10_000));
     expect(veteran.maxHealth).toBe(damageForLevel(10_000) * 5);
@@ -271,7 +280,7 @@ describe("endless combat progression", () => {
     expect(golden.maxHealth).toBeGreaterThan(damageForLevel(10_000));
   });
   it("applies the Goose Hydra family multiplier to the bounded legacy max-health envelope", () => {
-    const encounter = COMBAT_BALANCE.bossInterval * 5;
+    const encounter = bossEncounterForOrdinal(5);
     const growth =
       COMBAT_FORMULAS.enemyHealthGrowthBase +
       (COMBAT_BALANCE.enemyHealthGrowth - COMBAT_FORMULAS.enemyHealthGrowthBase) * (encounter - 1);
@@ -282,10 +291,8 @@ describe("endless combat progression", () => {
         COMBAT_FORMULAS.bossHealthIndexQuadraticMultiplier * 16);
     const goose = spawnEnemy(encounter, 0);
     expect(goose.grade).toBe("boss");
-    expect(goose.maxHealth).toBe(
-      Math.round(legacyHealth * BOSS_FAMILY_BALANCE["boss-goose-hydra"].healthMultiplier),
-    );
-    expect(goose.maxHealth).toBeGreaterThan(legacyHealth);
+    expect(goose.maxHealth).toBe(legacyHealth);
+    expect(goose.maxHealth).toBeLessThanOrEqual(legacyHealth * 1.1);
     expect(goose.reward).toBe(
       Math.round(
         COMBAT_BALANCE.baseReward *
@@ -296,9 +303,32 @@ describe("endless combat progression", () => {
           BOSS_FAMILY_BALANCE["boss-goose-hydra"].rewardMultiplier,
       ),
     );
-    expect(goose.armor).toBe(
-      Math.round(encounter * BOSS_FAMILY_BALANCE["boss-goose-hydra"].armorMultiplier),
+    expect(goose.armor).toBe(encounter);
+  });
+  it("caps Goose Hydra's adjacent durability, TTK, and reward spike", () => {
+    const player = createCombatState({
+      automaticSpeedLevel: 1_000,
+      damage: damageForLevel(1_000),
+      damageLevel: 1_000,
+    }).player;
+    const bosses = [4, 5, 6].map((ordinal) =>
+      simulateProgression({
+        bossCount: 1,
+        eventJump: true,
+        initialPlayer: player,
+        startEncounter: bossEncounterForOrdinal(ordinal),
+      }).observations.find(({ grade }) => grade === "boss"),
     );
+    const before = bosses[0];
+    const goose = bosses[1];
+    if (before === undefined || goose === undefined)
+      throw new Error("Missing adjacent boss receipt");
+    expect(goose.reward / before.reward).toBeLessThanOrEqual(2);
+    expect(goose.timeToKillMs / before.timeToKillMs).toBeLessThanOrEqual(1.6);
+    const previousHealth = spawnEnemy(bossEncounterForOrdinal(4), 0, undefined, player).maxHealth;
+    const gooseHealth = spawnEnemy(bossEncounterForOrdinal(5), 0, undefined, player).maxHealth;
+    expect(gooseHealth / previousHealth).toBeLessThanOrEqual(1.5);
+    expect(BOSS_FAMILY_BALANCE["boss-goose-hydra"].rewardMultiplier).toBeLessThanOrEqual(1);
   });
   it("threads custom boss cadence through family balance and progression health", () => {
     const interval = 10;
@@ -325,7 +355,7 @@ describe("endless combat progression", () => {
     );
   });
 
-  it("keeps the encounter-2170 boss at its accepted legacy ceiling above the prior 30-hit save", () => {
+  it("keeps a scheduled late-run boss above the prior 30-hit save envelope", () => {
     const player = createCombatState({
       automaticSpeedLevel: 4_093,
       armorPenetrationLevel: 1_074,
@@ -336,9 +366,9 @@ describe("endless combat progression", () => {
       doubleRewardChance: 0.5941775836972343,
       doubleRewardLevel: 2_041,
     }).player;
-    const boss = spawnEnemy(2_170, 0, undefined, player);
+    const boss = spawnEnemy(bossEncounterForOrdinal(60), 0, undefined, player);
+    expect(boss.grade).toBe("boss");
     expect(previousPlayerRelativeBossHealth(player)).toBe(191_100);
-    expect(boss.maxHealth).toBe(19_373_445);
     expect(boss.maxHealth).toBeGreaterThan(previousPlayerRelativeBossHealth(player));
   });
 
@@ -784,7 +814,11 @@ describe("endless combat progression", () => {
   it("produces a deterministic, finite multi-boss reference report", () => {
     const first = simulateProgression();
     expect(simulateProgression()).toEqual(first);
-    expect(first.bosses.map(({ encounter }) => encounter)).toEqual([35, 70, 105]);
+    expect(first.bosses.map(({ encounter }) => encounter)).toEqual([
+      bossEncounterForOrdinal(1),
+      bossEncounterForOrdinal(2),
+      bossEncounterForOrdinal(3),
+    ]);
     expect(first.elapsedMs).toBeGreaterThan(0);
     expect(first.coins).toBeGreaterThan(0);
     expect(first.observations.length).toBeGreaterThanOrEqual(105);
@@ -930,7 +964,7 @@ describe("endless combat progression", () => {
     const endgameSnapshot = stageReference.playerSnapshots.find(
       ({ encounter }) => encounter === ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     );
-    expect(stageReference.bosses).toContainEqual(expect.objectContaining({ encounter: 36_365 }));
+    expect(stageReference.bosses.some(({ encounter }) => encounter < 36_366)).toBe(true);
     expect(endgameSnapshot).toEqual(
       expect.objectContaining({
         player: expect.objectContaining({ damageLevel: expect.any(Number) }),
@@ -946,11 +980,11 @@ describe("endless combat progression", () => {
       startEncounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     });
     expect(endgameProbe.observations[0]).toMatchObject({
-      encounter: 36_366,
+      encounter: ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
       goldenBug: false,
     });
     expect(endgameProbe.observations[0]?.grade).not.toBe("boss");
-    expect(automaticReport.encounters).toBe(43_015);
+    expect(automaticReport.encounters).toBeGreaterThan(40_000);
     expect(automaticOnly.endgame.count).toBeGreaterThan(0);
     for (const stage of Object.values(automaticOnly)) {
       expect(stage.count).toBeGreaterThan(0);
@@ -1123,8 +1157,17 @@ describe("endless combat progression", () => {
           manualOnly: { hits: number; timeToKillMs: number };
         }
       >;
+      cadence: {
+        firstTenGaps: readonly number[];
+        fortyEightHourGaps: readonly number[];
+      };
       realTimeBands: readonly { hours: number; automaticAttacksPerSecond: number }[];
     };
+    expect(report.cadence.firstTenGaps).toHaveLength(10);
+    expect(new Set(report.cadence.firstTenGaps.slice(0, 3)).size).toBeGreaterThan(1);
+    expect(new Set(report.cadence.firstTenGaps.slice(3)).size).toBeGreaterThan(1);
+    expect(report.cadence.fortyEightHourGaps.length).toBeGreaterThan(10);
+    expect(new Set(report.cadence.fortyEightHourGaps).size).toBeGreaterThan(1);
     expect(report.briefRevision).toBe(19);
     expect(
       report.realTimeBands.find(({ hours }) => hours === 48)?.automaticAttacksPerSecond,

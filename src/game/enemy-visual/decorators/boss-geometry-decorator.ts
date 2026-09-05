@@ -1,9 +1,10 @@
 import * as THREE from "three";
 
+import { bossOrdinalForEncounter } from "../../../domain/combat";
 import type { EnemyViewBuilder } from "../builder";
 import { component, type EnemyVisualComponent } from "../components";
-import { enemyVisualAnimation } from "../config";
 import type { BodyFamily } from "../spec";
+import { enemyVisualAnimation } from "../config";
 
 export type BossFamily = Extract<
   BodyFamily,
@@ -215,8 +216,9 @@ const fitSpines = (
   });
   return true;
 };
-// Boss-only assignment: Hydra and Evil Catbug carry crystal crowns, while Colossus, Catbug,
-// and Goose Hydra carry orbital/crystal geometry; every boss receives raycast elemental spines.
+// Boss-only assignment: authored recipes remain family-owned, while production picks one
+// deterministic recipe per boss seed. This prevents every boss from receiving elemental
+// spines and keeps the alternate treatment available without runtime randomness.
 export const bossGeometryProfilesForFamily = (
   family: BodyFamily,
 ): readonly BossGeometryProfile[] => {
@@ -229,6 +231,20 @@ export const bossGeometryProfilesForFamily = (
   )
     return BOSS_GEOMETRY_RECIPES[family];
   return ["legacy/no-overlay"];
+};
+
+export const bossGeometryProfileForSeed = (
+  family: BodyFamily,
+  seed: number,
+  level?: number,
+): BossGeometryProfile => {
+  const profiles = bossGeometryProfilesForFamily(family);
+  const ordinal = level === undefined ? undefined : bossOrdinalForEncounter(level);
+  const index =
+    ordinal === undefined
+      ? Math.abs(Math.trunc(seed)) % profiles.length
+      : (ordinal - 1) % profiles.length;
+  return profiles[index] ?? "legacy/no-overlay";
 };
 
 const recipesFor = (family: BossFamily): readonly [BossRecipe, BossRecipe] =>
@@ -288,8 +304,14 @@ const fit = (
 export const decorateBossGeometry = (
   family: BossFamily,
   reducedMotion: boolean,
+  seed?: number,
+  level?: number,
 ): EnemyVisualComponent[] => {
-  return recipesFor(family).map((recipe) => {
+  const recipes =
+    seed === undefined
+      ? recipesFor(family)
+      : ([bossGeometryProfileForSeed(family, seed, level)] as readonly BossRecipe[]);
+  return recipes.map((recipe) => {
     const build = builders[recipe]();
     const key = `boss-geometry-${recipe}`;
     let fitted = false;

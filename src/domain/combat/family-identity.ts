@@ -1,6 +1,5 @@
-import { COMBAT_BALANCE } from "./balance";
+import { bossEncounterForOrdinal, bossOrdinalForEncounter } from "./boss-cadence";
 import type { BossFamily, EliteModifier, EnemyGrade } from "./contracts";
-
 import { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS, type EnemyAffinity } from "./enemy-affinities";
 
 export type { EnemyAffinity };
@@ -82,19 +81,20 @@ const BOSS_FAMILY_ORDER = [
 ] as const satisfies readonly BossFamily[];
 
 const bossOrdinalFamily = (ordinal: number): BossFamily | undefined =>
-  BOSS_FAMILY_ORDER[ordinal % BOSS_FAMILY_ORDER.length];
+  BOSS_FAMILY_ORDER[(ordinal - 1) % BOSS_FAMILY_ORDER.length];
+
+const bossOrdinalForIdentity = (enemy: EnemyFamilyInput, level: number): number => {
+  const scheduledOrdinal = bossOrdinalForEncounter(level, enemy.bossInterval);
+  if (scheduledOrdinal !== undefined) return scheduledOrdinal;
+  const interval = enemy.bossInterval ?? 35;
+  return Math.max(1, Math.floor(level / interval));
+};
 
 const selectFamily = (enemy: EnemyFamilyInput): EnemyFamily => {
   const level = Math.max(1, Math.abs(Math.trunc(enemy.level)));
   if (enemy.goldenBug) return "beetle";
   if (enemy.grade === "boss") {
-    const bossInterval = enemy.bossInterval ?? COMBAT_BALANCE.bossInterval;
-    if (!Number.isSafeInteger(bossInterval) || bossInterval < 2)
-      throw new RangeError("Boss interval must be a safe integer of at least two");
-    // Boss identity is cadence-slot based: this keeps each encounter family stable across
-    // its visual level band while preserving V4's 35/70/105/140 order and adding Goose
-    // as the fifth deterministic slot.
-    const family = bossOrdinalFamily(Math.max(0, Math.floor(level / bossInterval) - 1));
+    const family = bossOrdinalFamily(bossOrdinalForIdentity(enemy, level));
     if (family === undefined)
       throw new RangeError("Enemy visual level did not select a boss family");
     return family;
@@ -105,12 +105,28 @@ const selectFamily = (enemy: EnemyFamilyInput): EnemyFamily => {
   if (family === undefined) throw new RangeError("Enemy visual level did not select a body family");
   return family;
 };
-
 export const selectEnemyFamilyIdentity = (enemy: EnemyFamilyInput): EnemyFamilyIdentity => {
+  const level = Math.max(1, Math.abs(Math.trunc(enemy.level)));
   const family = selectFamily(enemy);
   const seed = stableEnemySeed(enemy);
   const affinitySeed = stableAffinitySeed(enemy);
-  const affinityId = ENEMY_AFFINITY_IDS[affinitySeed % ENEMY_AFFINITY_IDS.length];
+  let affinityIndex = affinitySeed % ENEMY_AFFINITY_IDS.length;
+  const bossOrdinal =
+    enemy.grade === "boss" ? bossOrdinalForEncounter(level, enemy.bossInterval) : undefined;
+  let variant = (seed % 3) as 0 | 1 | 2;
+  if (bossOrdinal !== undefined && bossOrdinal > 1) {
+    const previousLevel =
+      enemy.bossInterval === undefined
+        ? bossEncounterForOrdinal(bossOrdinal - 1)
+        : (bossOrdinal - 1) * enemy.bossInterval;
+    const previousEnemy = { ...enemy, level: previousLevel };
+    const previousAffinityIndex = stableAffinitySeed(previousEnemy) % ENEMY_AFFINITY_IDS.length;
+    if (affinityIndex === previousAffinityIndex)
+      affinityIndex = (affinityIndex + 1) % ENEMY_AFFINITY_IDS.length;
+    const previousVariant = stableEnemySeed(previousEnemy) % 3;
+    if (variant === previousVariant) variant = ((variant + 1) % 3) as 0 | 1 | 2;
+  }
+  const affinityId = ENEMY_AFFINITY_IDS[affinityIndex];
   if (affinityId === undefined)
     throw new RangeError("Enemy visual affinity seed did not select an affinity");
   const affinity = enemy.goldenBug ? goldenBugAffinity : affinityId;
@@ -119,6 +135,6 @@ export const selectEnemyFamilyIdentity = (enemy: EnemyFamilyInput): EnemyFamilyI
     family,
     label: identityLabel(affinity, family, enemy.goldenBug === true),
     seed,
-    variant: enemy.goldenBug ? 0 : ((seed % 3) as 0 | 1 | 2),
+    variant: enemy.goldenBug ? 0 : variant,
   };
 };

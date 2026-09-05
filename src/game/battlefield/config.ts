@@ -1,7 +1,8 @@
 export const BATTLEFIELD_CONFIG = {
   backgroundColor: "#07121f",
   camera: {
-    bossFramingScale: 2.6,
+    // The enlarged Goose Hydra profile needs this shared distance to clear the measured HUD edge.
+    bossFramingScale: 2.8,
     elevation: 2,
     far: 100,
     fieldOfView: 50,

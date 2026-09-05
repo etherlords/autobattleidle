@@ -298,7 +298,14 @@ describe("deterministic affinity label grammar", () => {
   it("prefixes every family label with the affinity adjective across the 96-combination matrix", () => {
     for (const [family, cases] of Object.entries(labelMatrix)) {
       for (const { affinity, level, modifier } of cases) {
-        const input = { grade: familyGrades[family as EnemyFamily], level, modifier };
+        const input = {
+          grade: familyGrades[family as EnemyFamily],
+          level,
+          modifier,
+          ...(familyGrades[family as EnemyFamily] === "boss"
+            ? { bossInterval: COMBAT_BALANCE.bossInterval }
+            : {}),
+        };
         const identity = selectEnemyFamilyIdentity(input);
         const profile = ENEMY_AFFINITIES[identity.affinity];
         expect(identity.affinity).toBe(affinity);

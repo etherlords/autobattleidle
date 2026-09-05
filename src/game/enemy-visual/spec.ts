@@ -52,6 +52,7 @@ export type EnemyVisualSpec = {
   readonly modifierCue: ModifierCue;
   readonly profile: EnemyVisualProfile;
   readonly scale: number;
+  readonly groundOffset: number;
   readonly seed: number;
 };
 
@@ -308,6 +309,10 @@ const visualScaleRegistry: Readonly<Record<EnemyGrade, number>> = {
   elite: 1.12,
   boss: 1.45,
 };
+const visualScaleFor = (body: BodyFamily, grade: EnemyGrade): number =>
+  body === "boss-goose-hydra" ? visualScaleRegistry[grade] * 1.2 : visualScaleRegistry[grade];
+const visualGroundOffsetFor = (body: BodyFamily): number =>
+  body === "boss-goose-hydra" ? -0.04 : 0;
 const visualModifierCue = (enemy: EnemyVisualInput): ModifierCue => {
   if (enemy.goldenBug) return "wealth-orbitals";
   return enemy.modifier === null ? null : modifierCueRegistry[enemy.modifier];
@@ -335,7 +340,8 @@ export const enemyVisualSpec = (enemy: EnemyVisualInput): EnemyVisualSpec => {
     gradeCue: enemy.goldenBug ? "crown" : ENEMY_VISUAL_GRADE_CUES[enemy.grade],
     modifierCue: visualModifierCue(enemy),
     profile: enemy.goldenBug ? profile : { ...profile, palette: affinity.palette },
-    scale: visualScaleRegistry[enemy.grade],
+    scale: visualScaleFor(body, enemy.grade),
+    groundOffset: visualGroundOffsetFor(body),
     seed,
   };
 };

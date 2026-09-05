@@ -4,8 +4,8 @@ id: ABI-036
 artifact: review
 project: ABI
 profile: high-assurance
-revision: 1
-status: Blocked
+revision: 2
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-023
@@ -23,8 +23,14 @@ requiredGates:
 
 ## Verdict
 
-PENDING — reserved for an independent owner.
+PASS — autobattle-independent-reviewer; independent review completed with no unresolved blocker.
 
 ## Findings
 
-_Pending._
+- Semantic scratches, shell plates, and affinity marks remain production-owned, bounded, deterministic, and legacy-compatible.
+- Drake front (+X) and ±X flank sockets use anchor-local orientation with correct world-space normals; animated Mantis coverage remains valid.
+- Affinity texture cache is hard-capped at eight entries; saturated palettes deterministically degrade to a solid mark, and reference-counted disposal is idempotent.
+- Focused visual/resource regressions cover budgets, cache sharing, exact disposal, and orientation.
+
+Planner receipt: independent-review gate `evt-b015ab8a-8840-4aba-a865-40193ed0a4aa`, progress revision 41.
+Actor/profile: autobattle-independent-reviewer / high-assurance.

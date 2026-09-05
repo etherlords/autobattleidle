@@ -7,6 +7,8 @@ import {
   attack,
   automaticAttacksPerSecond,
   automaticPacketSchedule,
+  bossEncounterForOrdinal,
+  bossGapForOrdinal,
   createCombatState,
   damageForLevel,
   expireGoldenBug,
@@ -17,13 +19,12 @@ import {
   type CombatState,
 } from "./combat";
 import type { ProgressionObservation, SimulationOptions } from "./progression-simulator";
-
 const BOSS_TTK_STAGE_PROBES = {
-  starter: 35,
-  early: 70,
-  midgame: 1_015,
-  endgameStart: 10_010,
-  endgame: 36_365,
+  starter: bossEncounterForOrdinal(1),
+  early: bossEncounterForOrdinal(2),
+  midgame: bossEncounterForOrdinal(10),
+  endgameStart: bossEncounterForOrdinal(32),
+  endgame: bossEncounterForOrdinal(1_000),
 } as const;
 
 const run = (
@@ -191,14 +192,20 @@ const bossTtkStages = () => {
 
 export const buildMeasuredReport = (): Record<string, unknown> => {
   if (cachedMeasuredReport !== undefined) return cachedMeasuredReport;
-  const bosses = simulateProgression(3).bosses;
+  const reference = simulateProgression({ bossCount: 3 });
+  const bosses = reference.bosses;
+  const referenceTelemetry = summarizeTelemetry(reference);
   const hours = [1, 4, 8, 24, 48, 49] as const;
   const endgameStart = fastForwardProgression(48 * 60 * 60 * 1_000);
+  const firstTenGaps = Array.from({ length: 10 }, (_, index) => bossGapForOrdinal(index + 1));
+  const fortyEightHourGaps = endgameStart.bosses
+    .slice(1)
+    .map((boss, index) => boss.encounter - (endgameStart.bosses[index]?.encounter ?? 0));
   const damage = damageForLevel(endgameStart.player.damageLevel ?? endgameStart.player.damage - 1);
   const normal = spawnEnemy(1_999, 0, undefined, endgameStart.player);
   const veteran = spawnEnemy(2_000, 0, undefined, endgameStart.player);
   const elite = spawnEnemy(2_001, 0.34, undefined, endgameStart.player);
-  const boss = spawnEnemy(2_030, 0, undefined, endgameStart.player);
+  const boss = spawnEnemy(bossEncounterForOrdinal(60), 0, undefined, endgameStart.player);
   const golden = spawnGoldenBug(2_001, endgameStart.player);
   const highApsPlayer = { ...endgameStart.player, automaticSpeedLevel: 1_000 };
   const highApsGoldenAutoOnly = goldenBugOutcome(highApsPlayer, null);
@@ -217,6 +224,15 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
     bossGaps: bosses
       .slice(1)
       .map((boss, index) => boss.encounter - (bosses[index]?.encounter ?? 0)),
+    cadence: {
+      bossGapBounds: referenceTelemetry.bossGapBounds,
+      firstThreeGaps: bosses.slice(0, 3).map(({ gap }) => gap),
+      firstTenGaps,
+      fortyEightHourGaps,
+      bossAffinities: referenceTelemetry.bossAffinities,
+      bossRepeatStreaks: referenceTelemetry.bossRepeatStreaks,
+      bossVariants: referenceTelemetry.bossVariants,
+    },
     bosses,
     bossTtk,
     briefRevision: 19,
@@ -240,7 +256,7 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
       cadence: {
         input: { bossInterval: 50 },
         measured: run(null, undefined, 3_000, { bossInterval: 50, eventJump: true }),
-        reason: "rejected: production boss cadence remains every 35 encounters",
+        reason: "rejected: fixed-interval override is not the production seeded cadence",
       },
       damage: {
         input: { damageMultiplier: 1.25 },

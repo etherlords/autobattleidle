@@ -133,7 +133,8 @@ export const attack = (state: CombatState, command: AttackCommand): AttackResult
         state.player,
         command.bossInterval,
       );
-    if (goldenBug !== null) return spawnGoldenBug(goldenBug.resumeEncounter, state.player);
+    if (goldenBug !== null)
+      return spawnGoldenBug(goldenBug.resumeEncounter, state.player, command.bossInterval);
     return spawnEnemy(
       nextEncounter,
       command.rolls.nextEliteModifier,
