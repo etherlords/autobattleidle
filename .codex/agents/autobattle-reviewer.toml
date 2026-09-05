@@ -12,4 +12,4 @@ Return severity-ordered findings with file/line evidence and APPROVE, CHANGES_RE
 """
 
 [agents]
-enabled = false
+enabled = true

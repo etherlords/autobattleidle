@@ -1,6 +1,6 @@
 ---
 name: vault-use
-description: Search, read, cite, create, update, link, validate, and migrate local Markdown documentation through Vault MCP. Use for project architecture, decisions, guides, game design, unknown-name documentation discovery, stable article IDs, backlinks, Vault format repair, or when an implementation task should consult existing durable project knowledge before changing code.
+description: Set up Vault for one checkout or shared parallel code worktrees, then search, read, cite and maintain documentation through MCP. Use for project adoption, architecture, decisions, stable article IDs, backlinks and durable project knowledge.
 ---
 
 # Vault Use
@@ -11,29 +11,54 @@ code definitions/usages, and Planner for active task lifecycle.
 For a new project, run the built `vault setup` command to generate its project
 config and Codex MCP snippet, then restart Codex or create a new saved-project
 task. Spawned subcontexts are not assumed to inherit project MCP. If the native
-namespace is absent, report `BLOCKED_TOOL_UNAVAILABLE`; canonical Markdown is
-an ordinary fallback, but that fallback is not a native MCP pass.
+namespace is absent, report `BLOCKED_TOOL_UNAVAILABLE` and follow the consumer
+root's `planner_and_vault_rules.md`.
+
+For installation or a storage-topology change, read
+[references/tool-flow.md](references/tool-flow.md#installation-and-worktree-registration).
+Use `embedded` for one writable checkout, or one `external-repo` data root for
+parallel code worktrees on one host. A shared pinned package installation is
+enough; every checkout still needs its own config/cache and discoverable MCP
+registration. No broker or shared stdin service is needed. Confirm actual
+tools/root identity before writing. Legacy adoption follows `vault-migrate`,
+not repeated setup or a raw Markdown copy into each worktree.
 
 ## Retrieval flow
 
-1. If an exact canonical relative Markdown path is known, resolve it under the
-   configured Vault root and read it directly. Do not search merely to translate
-   a known path. Exact source-code paths still use source search/direct reads.
-2. If an exact stable ID is known, prefer `vault_get_article` directly.
-3. For known metadata, path-prefix, tag, status, or link constraints, call
+In a monorepo, inspect `vault_status.workspace` once to discover valid project
+contexts. Keep its stable project key aligned with the task's Planner project;
+the context's `knowledgeProjects` may deliberately include engine/shared
+articles. Pass `project` to search, query and graph export. To investigate across
+the entire corpus explicitly, use `allProjects=true` instead of omitting scope;
+do not combine it with `project`. `scope=all` means knowledge plus work records,
+not all projects. Always check the returned article's actual project/authority.
+Use `vault_query.articleProject` for an exact article-owner filter inside a
+context (for example CHD context, GE-only articles); it cannot broaden scope.
+
+An exact globally unique `vaultId` is sufficient for direct reads and updates:
+read its ownership and current hash before writing. Do not silently reassign
+its project. Creates and assets need the intended registered article owner;
+shared ownership is deliberate, not a default for uncertain material. If the
+task's project or the article owner remains unclear, ask the user rather than
+guessing a folder or choosing the first project. Browser navigation does not
+change the project context of an agent's tool calls.
+
+1. If an exact stable ID is known, call `vault_get_article` directly. Exact
+   source-code paths still use source search/direct reads.
+2. For known metadata, path-prefix, tag, status, or link constraints, call
    `vault_query` first with `limit<=10`. Do not run preliminary semantic search
    or retry a deterministic query without correcting its filters.
-4. If the article name is unknown, describe the architectural question in
+3. If the article name is unknown, describe the architectural question in
    `vault_search` with `mode=auto` and the default `scope=knowledge`. Use
    `scope=work-records` only for explicitly historical implementation/review/QA
    evidence, or `scope=all` when both authority classes are required.
-5. Inspect result type, authority, status, summary, snippet, and confidence.
-6. Call `vault_get_article` by `vaultId` for at most 200 lines by default and
+4. Inspect result type, authority, status, summary, snippet, and confidence.
+5. Call `vault_get_article` by `vaultId` for at most 200 lines by default and
    for the hard evaluation slice. Request one further bounded slice only when
    the first canonical evidence is insufficient.
-7. Call `vault_get_related` when explicit links/backlinks can resolve missing
+6. Call `vault_get_related` when explicit links/backlinks can resolve missing
    context.
-8. Cite stable ID, title, path, line range, and content hash when evidence
+7. Cite stable ID, title, path, line range, and content hash when evidence
    matters.
 
 ## Precise citations
@@ -44,6 +69,9 @@ an ordinary fallback, but that fallback is not a native MCP pass.
   and columns are 1-based; columns count Unicode code points, not UTF-16 units.
 - Pass the fragment without `#` as `locator` to `vault_get_article`. The tool
   returns the resolved range and canonical target.
+- For a named Obsidian block, use `locator: "^block-id"`; references use
+  `[[Article#^block-id]]`. Read the exact target; do not guess through duplicate
+  or missing IDs. Blocks inside code examples are not targets.
 - Wiki-link graph edges resolve at document level and retain `locator` for the
   precise destination. Standard Markdown links render in the UI but are not
   graph edges.
@@ -61,18 +89,37 @@ through to hybrid retrieval; a generic BM25/lexical score is not authoritative.
 
 ## Write flow
 
+- Manage Obsidian YAML `aliases` through `vault_create_article` or
+  `vault_update_article`: omit to preserve, send a list to replace, `[]` to
+  clear. Resolve discovery results to an exact `vaultId` before writing;
+  aliases may collide across projects. For portable links use
+  `[[Actual article path|Alias]]`, not an alias as the target. Alias changes
+  do not rename files or rewrite backlinks.
 - Read the current article and retain its `contentHash` before update/link/delete.
 - Prefer MCP create/update/link tools so format, graph, index, and embeddings
   update together.
+- Add an Obsidian block ID using `vault_set_block_id` with a reviewed exact
+  line/range `locator`, `blockId` and the current hash. Rename an existing ID
+  with `vault_rename_block` (`blockId`, `newBlockId`), not a raw text replacement,
+  so resolved incoming references are repaired together.
+- Use `vault_rename_heading` for one reviewed H2-H6 section rename; keep
+  `updateIncomingLinks=true` so resolved heading locators and exact title-column
+  citations move atomically. Use `vault_replace_text` only for one exact unique string or an
+  exact `L...` range whose content was just read. Both require the current
+  `contentHash`; neither is a broad find/replace.
 - Do not leave an absolute local path, temporary checkout, or external file as
   the only authority for durable knowledge. When redistribution is permitted,
-  use `vault_store_asset` to preserve source material as an `artifact` or code
+  use `vault_store_asset` for reviewed UTF-8 content or `vault_import_asset` for
+  an existing file to preserve source material as an `artifact` or code
   `example`, then create a normal analysis article with conclusions and a link
   to that asset. Raw asset content is intentionally excluded from ranked search;
   its title, summary, project, kind, and tags remain discoverable.
-- Store only reviewed UTF-8 source material. Never ingest secrets, credentials,
-  private user data, generated bulk output, or binaries. `sourceLabel` records
-  provenance but is not a portable authority.
+- For images, video and other existing files, follow
+  [file import](references/tool-flow.md#file-import) before calling
+  `vault_import_asset`; never send binary content as base64 or copy it directly
+  into managed roots. Never ingest secrets, credentials, private user data or
+  unreviewed bulk output. `sourceLabel` records provenance but is not a portable
+  authority.
 - Treat delete as a guarded move to recoverable trash.
 - Run `vault_migration_plan` or `vault_doctor` before repairs.
 - Do not use broad `vault_doctor_fix` without an inspected plan and authorized
@@ -80,12 +127,12 @@ through to hybrid retrieval; a generic BM25/lexical score is not authoritative.
 
 ## Freshness and fallback
 
-When Markdown was edited outside MCP, call `vault_index` with `embed=true` in
-the current V1. If MCP is unavailable, read/search Markdown directly and state
-that indexed results may be stale. Canonical Markdown always overrides derived
-SQLite, snippets, summaries, and embeddings. After Planner exports a changed
-work-record snapshot, call `vault_index` or restart Vault; V1 does not poll
-Planner files. Vault write tools never advance or edit Planner tasks.
+If an external change is reported, call `vault_index` with `embed=true` in the
+current V1. If MCP is unavailable, preserve the failure report and follow the
+consumer root's `planner_and_vault_rules.md`; do not read/search Markdown as an
+autonomous fallback. After Planner exports a changed work-record snapshot, call
+`vault_index` or restart Vault; V1 does not poll Planner files. Vault write
+tools never advance or edit Planner tasks.
 
 Read [references/tool-flow.md](references/tool-flow.md) for tool routing,
 artifact classes, and recovery behavior when a task mixes code, knowledge, and

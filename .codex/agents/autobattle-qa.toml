@@ -11,4 +11,4 @@ acceptance matrix, exact commands/scenarios, artifacts, findings, and PASS, FAIL
 """
 
 [agents]
-enabled = false
+enabled = true

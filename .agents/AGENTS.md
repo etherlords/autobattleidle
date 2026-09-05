@@ -59,6 +59,34 @@ cycling indefinitely.
 - Luna medium: QA, scripted checks, evidence, and summaries.
 - Luna low: inventory and progress-log summarization.
 - Sol: manager-only fallback for genuinely ambiguous architecture or repeated cross-layer failure.
+## OMP agent discovery and fallback
+
+Current OMP project agents use Markdown profiles in `.omp/agents/*.md`; `.codex/agents/*.toml`
+is not an OMP discovery location. Keep the canonical role mapping:
+
+| Planner role | OMP profile | OMP agent mapper | Default model route |
+| --- | --- | --- | --- |
+| implementation worker | `autobattle_worker` | `task` | `@task` → Luna |
+| independent reviewer | `autobattle_reviewer` | `reviewer` | `@slow` → Luna |
+| acceptance QA | `autobattle_qa` | `task` | `@task` → Luna |
+
+The explicit mapper is `autobattle_worker → task`, `autobattle_reviewer → reviewer`, and
+`autobattle_qa → task`; QA uses the full/browser-capable `task` agent rather than a read-only
+reviewer. Every real delegation or fallback must preserve the receipt's actual actor, agent source,
+profile name, and effective model.
+
+Before the first real delegation after changing profiles or restarting OMP, start a new session from
+the project root without `--resume` or `--continue`, then run a read-only handshake for each profile.
+Verify the task receipt's `agentSource: project`, exact profile name, and `resolvedModel`; wrapper exit
+status alone is insufficient when a handshake agent yields null metadata.
+
+If project profiles are unavailable, use bundled `task` or `reviewer` only as an explicit fallback:
+pass the corresponding worker, reviewer, or QA role instructions in the task prompt, record the
+actual bundled actor and effective model in evidence, and do not claim that a project profile was used.
+Do not advance Planner gates until the fallback ownership and evidence are recorded.
+
+The current profiles intentionally route through Luna. The old TOML Terra settings are not implicitly
+preserved; changing worker or reviewer routing to Terra requires a confirmed OMP alias/model receipt.
 
 ## Task event convention
 
