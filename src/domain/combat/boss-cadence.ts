@@ -14,8 +14,6 @@ const MIN_GAP = Math.min(...bands.map(({ minGap }) => minGap));
 const MAX_GAP = Math.max(...bands.map(({ maxGap }) => maxGap));
 const CADENCE_PERIOD = 16;
 const MAX_BOSS_ORDINAL = Math.floor((MAX_ENCOUNTER - 35) / MAX_GAP) + 1;
-const encounterCache = new Map<number, number>();
-const ordinalCache = new Map<number, number | undefined>();
 
 const assertOrdinal = (ordinal: number): void => {
   if (!Number.isSafeInteger(ordinal) || ordinal < 1)
@@ -83,12 +81,9 @@ export const bossEncounterForOrdinal = (ordinal: number): number => {
   assertOrdinal(ordinal);
   if (ordinal > MAX_BOSS_ORDINAL)
     throw new RangeError("Boss ordinal cannot produce a safe encounter number");
-  const cached = encounterCache.get(ordinal);
-  if (cached !== undefined) return cached;
   const encounter = 35 + bands.reduce((sum, band) => sum + sumBandGaps(band, 2, ordinal), 0);
   if (!Number.isSafeInteger(encounter) || encounter > MAX_ENCOUNTER)
     throw new RangeError("Boss encounter exceeds safe output range");
-  encounterCache.set(ordinal, encounter);
   return encounter;
 };
 
@@ -102,7 +97,6 @@ export const bossOrdinalForEncounter = (
     assertInterval(bossInterval);
     return encounter % bossInterval === 0 ? encounter / bossInterval : undefined;
   }
-  if (ordinalCache.has(encounter)) return ordinalCache.get(encounter);
   let low = 1;
   let high = Math.min(MAX_BOSS_ORDINAL, Math.floor(Math.max(0, encounter - 35) / MIN_GAP) + 2);
   while (low <= high) {
@@ -114,14 +108,10 @@ export const bossOrdinalForEncounter = (
       high = ordinal - 1;
       continue;
     }
-    if (scheduledEncounter === encounter) {
-      ordinalCache.set(encounter, ordinal);
-      return ordinal;
-    }
+    if (scheduledEncounter === encounter) return ordinal;
     if (scheduledEncounter < encounter) low = ordinal + 1;
     else high = ordinal - 1;
   }
-  ordinalCache.set(encounter, undefined);
   return undefined;
 };
 

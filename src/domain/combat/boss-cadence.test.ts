@@ -42,4 +42,18 @@ describe("progression-aware boss cadence", () => {
     expect(bossOrdinalForEncounter(encounter)).toBe(161);
     expect(() => bossEncounterForOrdinal(Number.MAX_SAFE_INTEGER)).toThrow(RangeError);
   });
+  it("reconstructs a bounded long-run schedule independently of call order", () => {
+    const ordinals = Array.from({ length: 3_000 }, (_, index) => index + 1);
+    const encounters = ordinals.map(bossEncounterForOrdinal);
+    expect(encounters.every((encounter, index) => encounter > (encounters[index - 1] ?? 0))).toBe(
+      true,
+    );
+
+    const reversedRoundTrip = [...encounters]
+      .reverse()
+      .map((encounter) => bossOrdinalForEncounter(encounter))
+      .reverse();
+    expect(reversedRoundTrip).toEqual(ordinals);
+    expect(bossOrdinalForEncounter((encounters.at(-1) ?? 0) - 1)).toBeUndefined();
+  });
 });
