@@ -54,22 +54,24 @@ describe("BattleController", () => {
       automaticAttacksPerSecond(initial.player.automaticSpeedLevel),
     );
     expect(rollIndex).toBe(packets.length);
-    expect(outcome.automaticReceipt).toEqual({
+    expect(outcome.automaticReceipt).toMatchObject({
       count: packets.length,
+      source: "automatic",
       units: packets.reduce((total, packet) => total + packet, 0),
     });
+    expect(outcome.automaticReceipt?.cadenceMs).toBeCloseTo(1_000 / 3);
     expect(outcome.automaticOutcome.critical).toBe(true);
     expect(controller.currentUpdate().state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
     expect(controller.dispatch(battleCommands.frame(100))).toBe(false);
   });
-  it("keeps Golden Bug safe from four-packet automatic frames before a manual reward", () => {
+  it("resolves four-packet Golden Bug automatic damage without defeating before manual reward", () => {
     const player = createCombatState({
       automaticSpeedLevel: 1_000,
       damageLevel: 100,
       damage: 100,
       doubleRewardChance: 0,
     }).player;
-    const goldenEnemy = { ...spawnGoldenBug(51, player), health: 1 };
+    const goldenEnemy = spawnGoldenBug(51, player);
     const initial = {
       ...createCombatState(player, 0, true),
       enemy: goldenEnemy,
@@ -89,25 +91,33 @@ describe("BattleController", () => {
     controller.subscribe((event) => events.push(event));
     expect(controller.dispatch(battleCommands.frame(0))).toBe(true);
     const afterAutomatic = controller.currentUpdate();
-    expect(afterAutomatic.state).toMatchObject({
-      enemy: { health: 1 },
-      goldenBug: { id: 50, resumeEncounter: 51 },
-      goldenBugDefeats: 0,
-      coins: 0,
-    });
+    expect(afterAutomatic.state.enemy.health).toBeLessThan(goldenEnemy.maxHealth);
+    expect(afterAutomatic.state.enemy.health).toBeGreaterThan(0);
+    expect(afterAutomatic.state.goldenBug).toEqual({ id: 50, resumeEncounter: 51 });
+    expect(afterAutomatic.state.goldenBugDefeats).toBe(0);
+    expect(afterAutomatic.state.coins).toBe(0);
     expect(afterAutomatic.state.nextAutomaticAttackAtMs).toBeCloseTo(1_000 / 3);
     const automaticEvent = events.at(-1);
     if (automaticEvent?.type !== "frame") throw new Error("Expected automatic frame event");
     expect(automaticEvent.automaticOutcome).toMatchObject({
-      damage: 0,
       defeated: false,
       reward: 0,
     });
+    if (automaticEvent.automaticOutcome?.type !== "hit")
+      throw new Error("Expected automatic hit outcome");
+    expect(automaticEvent.automaticOutcome.damage).toBeGreaterThan(0);
     expect(automaticEvent.automaticReceipt).toMatchObject({
       count: packets.length,
+      source: "automatic",
       units: packets.reduce((total, packet) => total + packet, 0),
     });
-    expect(controller.dispatch(battleCommands.attack("manual"))).toBe(true);
+    expect(automaticEvent.automaticReceipt?.cadenceMs).toBeCloseTo(1_000 / 3);
+    for (
+      let click = 0;
+      click < 1_000 && controller.currentUpdate().state.goldenBug !== null;
+      click += 1
+    )
+      controller.dispatch(battleCommands.attack("manual"));
     expect(controller.currentUpdate().state).toMatchObject({
       goldenBug: null,
       goldenBugDefeats: 1,

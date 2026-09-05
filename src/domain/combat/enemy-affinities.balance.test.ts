@@ -21,11 +21,9 @@ import { COMBAT_BALANCE } from "./balance";
  * ABI-029 balance evidence for the live affinity reward factors. Every probe runs the
  * production selector, production `attack`, and the ABI-020 simulator — no reimplementation.
  *
- * Documented acceptance references:
  * - Canonical current receipt (ABI-029 `MEASURED-REPORT-AFFINITY.json`): the 8h and 24h
- *   checkpoints below are regenerated output under the intentional automatic Golden Bug defense.
- *   Automatic attacks against an active Golden Bug resolve through production `attack` as zero
- *   damage and zero reward, so Golden time/rewards are represented without inflating progression.
+ *   checkpoints below are regenerated output under normal automatic Golden Bug damage. Automatic
+ *   damage is budgeted below the fixed ten-second window, while manual attacks own completion.
  * - ABI-020 economy owner (Vault AUTOBATTLEIDLE-DOC-20260827-A798F2, "Accepted ordinary-balance
  *   simulator"): 48h/49h checkpoint encounters are measured output; currency must stay unsaturated;
  *   the deterministic simulator with the unattended round-robin strategy is the balance proof.
@@ -35,7 +33,7 @@ import { COMBAT_BALANCE } from "./balance";
  *   reject walls > 0, adjacentMedianJump > 2, fivePlusFraction < 0.2, tenPlusFraction < 0.05.
  * - Wall definition (src/domain/progression-simulator.ts:869-875): non-boss, non-Golden,
  *   encounter >= 100, timeToKillMs > 60_000. The canonical ABI-029 3,000-encounter receipt
- *   contains 5 bounded walls under automatic Golden defense; the 24h receipt contains 0.
+ *   contains 5 bounded walls under normal automatic Golden damage; the 24h receipt contains 0.
  */
 
 const ENCOUNTERS = 3_000;
@@ -194,14 +192,13 @@ describe("affinity reward bounds through production attack", () => {
 });
 
 describe("economy pacing and TTK bands against ABI-020/ABI-028 bounds", () => {
-  // Canonical ABI-029 `MEASURED-REPORT-AFFINITY.json` receipt, regenerated after automatic
-  // Golden Bug attacks were intentionally made immune to damage and reward.
+  // Canonical ABI-029 receipt regenerated after restoring normal automatic Golden Bug damage:
+  // the fixed-window nonlethal envelope preserves manual completion while progression timing and
+  // economy receipts change.
   const committed = {
-    8: { coins: 3_831_177_155, walls: 0 },
-    24: { coins: 1_670_906_119_928, encounters: 17_851, walls: 0 },
+    8: { coins: 822_272_520, walls: 0 },
+    24: { coins: 3_133_170_113_340, encounters: 17_851, walls: 0 },
   } as const;
-  // The cadence is judged against the regenerated production receipt: no unbounded economy,
-  // drought, or wall growth is permitted, and exact/event-jump equality remains a separate gate.
 
   it("stays within the stated pacing tolerance of the committed ABI-020 receipt at 24 hours", () => {
     const report = fastForwardProgression(24 * 60 * 60 * 1_000);

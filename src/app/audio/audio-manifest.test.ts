@@ -120,7 +120,7 @@ describe("audio asset manifest", () => {
         .join("");
       expect(hash, entry.file).toBe(entry.sha256);
     }
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await server?.close();

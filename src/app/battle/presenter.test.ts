@@ -145,11 +145,16 @@ describe("battleEventMessages", () => {
       battleVisualCues({
         ...update,
         automaticOutcome: hit(),
-        automaticReceipt: { count: 4, units: 3.4 },
-        previousEnemy: state.enemy,
+        automaticReceipt: { cadenceMs: 333.333, count: 4, source: "automatic", units: 3.4 },
         type: "frame",
       }),
-    ).toEqual([{ kind: "hit", packets: { count: 4, units: 3.4 }, source: "automatic" }]);
+    ).toEqual([
+      {
+        kind: "hit",
+        packets: { cadenceMs: 333.333, count: 4, source: "automatic", units: 3.4 },
+        source: "automatic",
+      },
+    ]);
     expect(
       battleVisualCues({
         ...update,

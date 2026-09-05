@@ -61,7 +61,6 @@ export const COMBAT_FORMULAS = {
   automaticAttacksPerSecondBase: 0.1,
   automaticAttacksPerSecondBonus: 11.9,
   automaticAttacksPerSecondLevelScale: 100,
-  goldenBugAutomaticHitBudgetFactor: 50,
   bossTargetHits: 30,
   bossHealthBaseMultiplier: 10,
   bossHealthIndexLinearMultiplier: 120,

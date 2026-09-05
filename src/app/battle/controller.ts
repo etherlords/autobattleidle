@@ -170,8 +170,10 @@ export class BattleController {
     const hits = outcomes.filter(
       (outcome): outcome is Exclude<AttackEvent, { type: "ignored" }> => outcome.type === "hit",
     );
-    const receipt = {
+    const receipt: AutomaticAttackReceipt = {
+      cadenceMs: resolution.schedule.nextAttackAtMs - this.nowMs,
       count: resolution.schedule.packets.length,
+      source: "automatic",
       units: resolution.schedule.packets.reduce(
         (total, packet) => total + packet.damageMultiplier,
         0,

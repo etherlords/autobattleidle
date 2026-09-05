@@ -9,6 +9,8 @@ import type {
 import type { BattleEvent } from "../../domain/snapshot";
 
 export type AutomaticAttackReceipt = {
+  readonly source: "automatic";
+  readonly cadenceMs: number;
   readonly count: number;
   readonly units: number;
 };

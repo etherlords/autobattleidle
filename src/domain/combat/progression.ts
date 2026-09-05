@@ -14,6 +14,7 @@ import type {
   EnemyGrade,
 } from "./contracts";
 import {
+  automaticAttackPacketMultipliers,
   automaticAttacksPerSecond,
   criticalChanceForLevel,
   damageForLevel,
@@ -320,15 +321,29 @@ export const spawnStarterEnemy = (
   };
 };
 
+const maximumAutomaticGoldenDamage = (player: CombatPlayer): number => {
+  const attacksPerSecond = automaticAttacksPerSecond(player.automaticSpeedLevel);
+  const batched = attacksPerSecond > COMBAT_BALANCE.automaticVisualTickRate;
+  const packets = batched ? automaticAttackPacketMultipliers(attacksPerSecond) : [1];
+  const cadenceMs = batched
+    ? 1_000 / COMBAT_BALANCE.automaticVisualTickRate
+    : 1_000 / attacksPerSecond;
+  const attackFrames = Math.ceil(COMBAT_BALANCE.goldenBugWindowMs / cadenceMs);
+  const damage = damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1));
+  const criticalPacketDamage = packets.reduce(
+    (total, multiplier) =>
+      total + Math.round(damage * COMBAT_FORMULAS.criticalDamageMultiplier * multiplier),
+    0,
+  );
+  return attackFrames * criticalPacketDamage;
+};
+
 export const goldenBugHealth = (player: CombatPlayer): number =>
   Math.min(
     Number.MAX_SAFE_INTEGER,
     Math.max(
       COMBAT_FORMULAS.minimumDamage,
-      Math.ceil(
-        COMBAT_FORMULAS.goldenBugAutomaticHitBudgetFactor *
-          Math.sqrt(automaticAttacksPerSecond(player.automaticSpeedLevel)),
-      ) * damageForLevel(player.damageLevel ?? Math.max(0, player.damage - 1)),
+      maximumAutomaticGoldenDamage(player) + COMBAT_FORMULAS.minimumDamage,
     ),
   );
 

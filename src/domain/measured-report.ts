@@ -67,18 +67,22 @@ const run = (
 
 let cachedMeasuredReport: Record<string, unknown> | undefined;
 
-/**
- * The report's high-APS manual probe is a deterministic fixture, not a balance
- * change: its command-only multiplier keeps a 10Hz click sequence within the
- * existing ten-second Golden Bug window.
- */
-const HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER = 1.75;
-
+/* eslint-disable complexity -- preserves the production packet/event sequence in one measured scenario. */
 const goldenBugOutcome = (
   player: CombatPlayer,
   manualIntervalMs: number | null,
-  manualDamageMultiplier = 1, // eslint-disable-next-line complexity -- preserves the production packet/event sequence in one measured scenario.
-) => {
+  automaticEnabled = true,
+): {
+  readonly automaticEnabled: boolean;
+  readonly manualIntervalMs: number | null;
+  readonly packets: number;
+  readonly damage: number;
+  readonly defeatsGoldenBug: boolean;
+  readonly escaped: boolean;
+  readonly manualClicks: number;
+  readonly reward: number;
+  readonly state: { readonly coins: number; readonly goldenBugDefeats: number };
+} => {
   let state: CombatState = {
     ...createCombatState(player, 0, true),
     enemy: spawnGoldenBug(2_001, player),
@@ -86,7 +90,7 @@ const goldenBugOutcome = (
     nextAutomaticAttackAtMs: 0,
   };
   const events: Extract<AttackEvent, { readonly type: "hit" }>[] = [];
-  let nextAutomaticAtMs = 0;
+  let nextAutomaticAtMs = automaticEnabled ? 0 : Infinity;
   let nextManualAtMs = manualIntervalMs === null ? Infinity : 0;
   let manualClicks = 0;
   while (state.goldenBug !== null && Math.min(nextAutomaticAtMs, nextManualAtMs) < 10_000) {
@@ -103,7 +107,7 @@ const goldenBugOutcome = (
       const result = attack(state, {
         atMs,
         automaticBatch: packet.automaticBatch,
-        damageMultiplier: automatic ? packet.damageMultiplier : manualDamageMultiplier,
+        damageMultiplier: packet.damageMultiplier,
         enemyId: state.enemy.id,
         rolls: {
           critical: 0.99,
@@ -123,15 +127,18 @@ const goldenBugOutcome = (
   const escaped = state.goldenBug !== null;
   if (escaped) state = expireGoldenBug(state);
   return {
-    packets: events.length,
+    automaticEnabled,
     damage: events.reduce((total, event) => total + event.damage, 0),
     defeatsGoldenBug: events.some((event) => event.defeated),
     escaped,
     manualClicks,
+    manualIntervalMs,
+    packets: events.length,
     reward: events.reduce((total, event) => total + event.reward, 0),
     state: { coins: state.coins, goldenBugDefeats: state.goldenBugDefeats },
   };
 };
+/* eslint-enable complexity */
 
 const outcomes = (report: ReturnType<typeof fastForwardProgression>) => {
   const total = (values: readonly number[]): number =>
@@ -219,11 +226,8 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
   const golden = spawnGoldenBug(2_001, endgameStart.player);
   const highApsPlayer = { ...endgameStart.player, automaticSpeedLevel: 1_000 };
   const highApsGoldenAutoOnly = goldenBugOutcome(highApsPlayer, null);
-  const highApsGoldenManualPlusAutomatic = goldenBugOutcome(
-    highApsPlayer,
-    100,
-    HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER,
-  );
+  const highApsGoldenManualOnly = goldenBugOutcome(highApsPlayer, 100, false);
+  const highApsGoldenManualPlusAutomatic = goldenBugOutcome(highApsPlayer, 50);
   const bossTtk = bossTtkStages();
   const report = {
     acceptedHealth: {
@@ -327,10 +331,12 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
       automaticOnly: {
         ...highApsGoldenAutoOnly,
       },
+      manualOnly: {
+        ...highApsGoldenManualOnly,
+      },
       manualPlusAutomatic: {
         ...highApsGoldenManualPlusAutomatic,
       },
-      manualDamageMultiplier: HIGH_APS_GOLDEN_BUG_MANUAL_DAMAGE_MULTIPLIER,
       health: spawnGoldenBug(2_001, highApsPlayer).maxHealth,
     },
     realTimeBands: hours.map((hours) => {
