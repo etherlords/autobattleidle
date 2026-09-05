@@ -185,6 +185,9 @@ const riggedBody = (
   };
   // Body-owned sockets keep profile identity separate from semantic placement.
   const layout = socketLayouts[family];
+  const bodyAnchor = new THREE.Group();
+  bodyAnchor.name = `enemy-body-anchor-${family}`;
+  rig.add(bodyAnchor);
   const top = socket("top", head, 0, 0.16, 0);
   // The overhead socket belongs to the deforming rig, not a particular head.
   const overhead = socket("overhead", rig, 0, layout.topY, 0);
@@ -333,7 +336,7 @@ const riggedBody = (
     },
     commands,
     undefined,
-    { pose, head, top, overhead, front, left, right, flank, orbit, combat },
+    { pose, head, top, overhead, front, left, right, flank, orbit, combat, body: bodyAnchor },
   );
 };
 

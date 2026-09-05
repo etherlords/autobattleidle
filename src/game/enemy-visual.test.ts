@@ -7,14 +7,12 @@ import {
   enemyBodyFactories,
   enemyVisualSpec,
   stableEnemySeed,
-  type EnemyVisual,
   type EnemyVisualInput,
 } from "./enemy-visual";
 import { component } from "./enemy-visual/components";
 import { enemyVisualTransforms } from "./enemy-visual/config";
 import { profileCueScale } from "./enemy-visual/spec";
 import {
-  bossGeometryProfileForSeed,
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
@@ -22,6 +20,22 @@ import {
 } from "./enemy-visual/decorators";
 import { observeResourceDisposal, resourceCounts } from "../debug/visual-lab/resource-ledger";
 import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enemy";
+
+vi.mock("three/addons/loaders/GLTFLoader.js", () => {
+  class DeterministicGLTFLoader {
+    load(_url: string, onLoad: (gltf: { readonly scene: THREE.Group }) => void): void {
+      const scene = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.6, 1.2, 1.4),
+        new THREE.MeshStandardMaterial(),
+      );
+      body.name = "deterministic-loaded-body";
+      scene.add(body);
+      queueMicrotask(() => onLoad({ scene }));
+    }
+  }
+  return { GLTFLoader: DeterministicGLTFLoader };
+});
 
 const meshCount = (visual: ReturnType<typeof createEnemyVisual>): number => {
   let count = 0;
@@ -440,7 +454,6 @@ const assertBossTopEnvelope = (input: EnemyVisualInput): void => {
   expect(envelope.min.y, caseLabel).toBeGreaterThan(headBounds.min.y - 0.2);
   visual.dispose();
 };
-
 describe("enemy visual factory", () => {
   it("selects a compact metallic non-color Golden Bug composition and disposes it", () => {
     const visual = createEnemyVisual({
@@ -1500,41 +1513,21 @@ describe("enemy visual factory", () => {
     }
   });
 
-  it("keeps boss-only geometry on bosses and off ordinary families", () => {
-    for (let level = 1; level <= 120; level += 1) {
-      const ordinary = createEnemyVisual({ grade: "normal", level, modifier: null });
-      expect(ordinary.group.getObjectByName("boss-geometry-crystal-crown")).toBeUndefined();
-      expect(ordinary.group.getObjectByName("boss-geometry-orbital-runes")).toBeUndefined();
-      expect(ordinary.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
-      ordinary.dispose();
+  it("keeps production boss bodies free of floating geometry and attached semantic treatments", () => {
+    for (const input of [
+      { grade: "boss", level: 105, modifier: null },
+      { grade: "boss", level: 141, modifier: null },
+    ] as const) {
+      const visual = createEnemyVisual(input);
+      expect(visual.group.getObjectByName("boss-geometry-crystal-crown")).toBeUndefined();
+      expect(visual.group.getObjectByName("boss-geometry-orbital-runes")).toBeUndefined();
+      expect(visual.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
+      expect(visual.group.getObjectByName("semantic-surface-scratches")).toBeDefined();
+      expect(visual.group.getObjectByName("surface-affinity-mark")).toBeDefined();
+      visual.dispose();
     }
-    const hydraInput = { grade: "boss", level: 105, modifier: null } as const;
-    const hydra = createEnemyVisual(hydraInput);
-    const selectedHydraProfile = bossGeometryProfileForSeed(
-      "boss-hydra",
-      stableEnemySeed(hydraInput),
-      hydraInput.level,
-    );
-    const crown = hydra.group.getObjectByName("boss-geometry-crystal-crown");
-    const spines = hydra.group.getObjectByName("boss-geometry-elemental-spines");
-    expect(crown !== undefined || spines !== undefined).toBe(true);
-    if (selectedHydraProfile === "crystal-crown") {
-      expect(crown).toBeDefined();
-      expect(crown?.children).toHaveLength(3);
-    } else {
-      expect(spines).toBeDefined();
-      expect(spines?.children).toHaveLength(18);
-    }
-    hydra.dispose();
-    const colossusInput = { grade: "boss", level: 141, modifier: null } as const;
-    const colossus = createEnemyVisual(colossusInput);
-    const runes = colossus.group.getObjectByName("boss-geometry-orbital-runes");
-    expect(runes).toBeDefined();
-    expect(runes?.children).toHaveLength(3);
-    colossus.dispose();
   });
-
-  it("disposes affinity cues and boss geometry back to baseline resource counts", () => {
+  it("disposes affinity cues and production semantic treatments back to baseline resource counts", () => {
     const parent = new THREE.Group();
     const baseline = resourceCounts(parent);
     const visual = createEnemyVisual({ grade: "boss", level: 35, modifier: "armor" });
@@ -1560,23 +1553,6 @@ describe("enemy visual factory", () => {
     expect(cue?.position).toEqual(position);
     expect(cue?.rotation.toArray()).toEqual(rotation?.toArray());
     visual.dispose();
-  });
-  it("honors native reduced motion for production boss orbital runes", () => {
-    vi.stubGlobal("window", {
-      matchMedia: () => ({ matches: true }),
-    });
-    let visual: EnemyVisual | undefined;
-    try {
-      visual = createEnemyVisual({ grade: "boss", level: 141, modifier: null });
-      const runes = visual.group.getObjectByName("boss-geometry-orbital-runes");
-      if (runes === undefined) throw new Error("Expected orbital runes");
-      const rotations = runes.children.map((rune) => rune.rotation.toArray());
-      for (let frame = 0; frame < 10; frame += 1) visual.tick();
-      expect(runes.children.map((rune) => rune.rotation.toArray())).toEqual(rotations);
-    } finally {
-      visual?.dispose();
-      vi.unstubAllGlobals();
-    }
   });
 
   it("wires semantic surfaces into production composition only", () => {
@@ -1697,6 +1673,77 @@ describe("enemy visual factory", () => {
     } finally {
       drake.dispose();
       mantis.dispose();
+    }
+  });
+  it("keeps semantic decal geometry body-local and non-empty for every shipped family", () => {
+    const inputs = findCueInputs(() => true);
+    expect(inputs).toHaveLength(33);
+    for (const input of inputs) {
+      const visual = createEnemyVisual(input);
+      const body = visual.group.getObjectByName(`enemy-body-${visual.spec.body}`);
+      const anchor = visual.group.getObjectByName(`enemy-body-anchor-${visual.spec.body}`);
+      const scratches = visual.group.getObjectByName("surface-scratch-0");
+      const plate = visual.group.getObjectByName("surface-shell-plate-left-0");
+      const affinity = visual.group.getObjectByName("surface-affinity-mark");
+      if (
+        !(body instanceof THREE.Mesh) ||
+        anchor === undefined ||
+        !(scratches instanceof THREE.Mesh) ||
+        !(affinity instanceof THREE.Mesh)
+      )
+        throw new Error(`Expected body-local decals for ${visual.spec.body}`);
+      expect(cueAncestors(scratches).map((node) => node.name)).toContain(anchor.name);
+      expect(cueAncestors(affinity).map((node) => node.name)).toContain(anchor.name);
+      expect(scratches.geometry.getAttribute("position").count, visual.spec.body).toBeGreaterThan(
+        0,
+      );
+      expect(affinity.geometry.getAttribute("position").count, visual.spec.body).toBeGreaterThan(0);
+      if (plate instanceof THREE.Mesh) {
+        expect(cueAncestors(plate).map((node) => node.name)).toContain(anchor.name);
+        expect(plate.geometry.getAttribute("position").count, visual.spec.body).toBeGreaterThan(0);
+      }
+      visual.dispose();
+    }
+  });
+  it("refreshes Catbug and Goose decals onto the loaded GLB body", async () => {
+    for (const [level, family] of [
+      [70, "boss-catbug"],
+      [175, "boss-goose-hydra"],
+    ] as const) {
+      const unit = new EnemyUnitFactory().create({ grade: "boss", level, modifier: null });
+      const fallbackBody = unit.view.group.getObjectByName(`enemy-body-${family}`);
+      const fallbackDecal = unit.view.group.getObjectByName("surface-affinity-mark");
+      if (!(fallbackBody instanceof THREE.Mesh) || !(fallbackDecal instanceof THREE.Mesh))
+        throw new Error(`Expected fallback ${family} body and semantic decal`);
+      const fallbackDecalGeometry = fallbackDecal.geometry;
+      let fallbackGeometryDisposals = 0;
+      fallbackBody.geometry.addEventListener("dispose", () => {
+        fallbackGeometryDisposals += 1;
+      });
+      try {
+        const ready = unit.enemyView.assetReady();
+        expect(ready).toBeDefined();
+        await ready;
+        const anchor = unit.view.group.getObjectByName(`enemy-body-anchor-${family}`);
+        const body = unit.view.group.getObjectByName(`enemy-body-${family}`);
+        const decal = unit.view.group.getObjectByName("surface-affinity-mark");
+        if (!(body instanceof THREE.Mesh) || anchor === undefined || !(decal instanceof THREE.Mesh))
+          throw new Error(`Expected loaded ${family} body and semantic decal`);
+        const pose = unit.view.group.getObjectByName(`enemy-pose-${family}`);
+        if (pose === undefined) throw new Error(`Expected loaded ${family} pose`);
+        expect(pose.userData.gltfStatus).toBe("ready");
+        expect(fallbackGeometryDisposals).toBe(1);
+        expect(fallbackBody.parent).toBeNull();
+        expect(body.parent).toBeDefined();
+        expect(body.parent?.parent).toBe(anchor);
+        expect(decal.parent?.parent).toBe(anchor);
+        expect(cueAncestors(decal)).toContain(anchor);
+        const loadedGeometry = decal.geometry.getAttribute("position");
+        expect(loadedGeometry.count).toBeGreaterThan(0);
+        expect(decal.geometry).not.toBe(fallbackDecalGeometry);
+      } finally {
+        unit.dispose();
+      }
     }
   });
 

@@ -23,6 +23,7 @@ import {
   LAB_FAMILIES,
   LAB_GRADES,
   LAB_MODIFIERS,
+  LAB_VARIANTS,
   reachableLabCases,
   reconcileLabFamily,
   toggleGoldenLabCase,
@@ -32,6 +33,7 @@ import { parseLabCase, serializeLabCase, type LabView, type LabViewport } from "
 import {
   advanceLabRecipe,
   attachLabRecipe,
+  compositionModeForLabRecipe,
   LAB_RECIPES,
   type LabRecipe,
   validateLabRecipe,
@@ -163,7 +165,7 @@ class VisualLab {
     );
     const variant = select(
       "Variant",
-      ["0", "1", "2"].map((value) => ({ label: value, value })),
+      LAB_VARIANTS.map((value) => ({ label: String(value), value: String(value) })),
     );
     const view = select(
       "View",
@@ -461,8 +463,7 @@ class VisualLab {
           reducedMotion: this.current.reducedMotion,
         },
         {
-          compositionMode:
-            this.current.recipe === "production" ? "production" : "legacy/no-overlay",
+          compositionMode: compositionModeForLabRecipe(this.current.recipe),
         },
       );
       this.unit = enemy;
@@ -659,11 +660,13 @@ class VisualLab {
         ? ` | player level ${this.current.playerLevel} milestone ${this.unit instanceof LabPlayerEvolution ? this.unit.identity.milestoneLevel : this.current.playerLevel}`
         : "";
     const composition =
-      this.current.subject === "enemy" ? compositionReceiptForCase(this.current) : undefined;
+      this.current.subject === "enemy"
+        ? compositionReceiptForCase(this.current, compositionModeForLabRecipe(this.current.recipe))
+        : undefined;
     const enemyReceipt =
       composition === undefined
         ? ""
-        : ` | input ${JSON.stringify(composition.input)} seed ${composition.seed} identity ${composition.family}/body-${composition.bodyVariant}/${composition.affinity} grade ${composition.grade} modifier ${composition.modifierCue ?? "none"} palette ${composition.spec.affinity.palette.core}/${composition.spec.affinity.palette.accent} cue ${composition.spec.affinity.cue} reward ×${composition.spec.affinity.rewardMultiplier} geometry ${composition.geometryProfiles.join(",")}`;
+        : ` | mode ${composition.compositionMode} | input ${JSON.stringify(composition.input)} seed ${composition.seed} identity ${composition.family}/body-${composition.bodyVariant}/${composition.affinity} grade ${composition.grade} modifier ${composition.modifierCue ?? "none"} palette ${composition.spec.affinity.palette.core}/${composition.spec.affinity.palette.accent} cue ${composition.spec.affinity.cue} reward ×${composition.spec.affinity.rewardMultiplier} geometry ${composition.geometryProfiles.join(",")}`;
     this.receipt.textContent = `case ${serializeLabCase(this.current)}${enemyReceipt}${playerDetail} | live ${resourceReceipt(live)} | effects ${this.effects.size}/${MAX_ACTIVE_EFFECTS} | matrix ${allLabCases().length}${last}`;
     const correction: string[] = [];
     if (this.current.correction !== undefined)

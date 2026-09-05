@@ -586,9 +586,10 @@ describe("persistence boundary", () => {
   it("round-trips the post-160 seeded cadence save without schema migration", () => {
     const loaded = decodeSave(v4Post160CadenceFixture, fallback(), 100);
     expect(loaded.enemy).toMatchObject({
-      encounter: bossEncounterForOrdinal(161),
+      encounter: v4Post160CadenceFixture.enemy.encounter,
       grade: "boss",
     });
+    expect(bossEncounterForOrdinal(161)).toBeGreaterThan(v4Post160CadenceFixture.enemy.encounter);
     const reloaded = decodeSave(JSON.parse(encodeSave(loaded)), fallback(), 200);
     expect(reloaded).toEqual({
       ...loaded,

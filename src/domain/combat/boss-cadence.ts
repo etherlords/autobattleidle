@@ -11,7 +11,11 @@ export type BossCadenceBand = {
 
 const bands = BOSS_CADENCE_BALANCE.bands as readonly BossCadenceBand[];
 const MIN_GAP = Math.min(...bands.map(({ minGap }) => minGap));
-const MAX_BOSS_ORDINAL = Math.floor((MAX_ENCOUNTER - 35) / 70) * 2 + 1;
+const MAX_GAP = Math.max(...bands.map(({ maxGap }) => maxGap));
+const CADENCE_PERIOD = 16;
+const MAX_BOSS_ORDINAL = Math.floor((MAX_ENCOUNTER - 35) / MAX_GAP) + 1;
+const encounterCache = new Map<number, number>();
+const ordinalCache = new Map<number, number | undefined>();
 
 const assertOrdinal = (ordinal: number): void => {
   if (!Number.isSafeInteger(ordinal) || ordinal < 1)
@@ -25,10 +29,9 @@ const assertInterval = (bossInterval: number): void => {
   if (!Number.isSafeInteger(bossInterval) || bossInterval < 2)
     throw new RangeError("Boss interval must be a safe integer of at least two");
 };
-
 /** Small integer mixer: no runtime RNG or persisted seed is needed for this schedule. */
-const seededOffset = (ordinal: number, band: BossCadenceBand): number => {
-  let mixed = (BOSS_CADENCE_BALANCE.seed ^ Math.imul(ordinal, 0x45d9f3b)) >>> 0;
+const seededOffset = (offset: number, band: BossCadenceBand): number => {
+  let mixed = (BOSS_CADENCE_BALANCE.seed ^ Math.imul(offset + 1, 0x45d9f3b)) >>> 0;
   for (const character of band.id) mixed = (Math.imul(mixed, 33) + character.charCodeAt(0)) >>> 0;
   return mixed >>> 0;
 };
@@ -40,30 +43,52 @@ export const bossCadenceBandForOrdinal = (ordinal: number): BossCadenceBand => {
   return band;
 };
 
+const gapForBandOffset = (offset: number, band: BossCadenceBand): number =>
+  band.minGap + (seededOffset(offset % CADENCE_PERIOD, band) % (band.maxGap - band.minGap + 1));
+const bandPeriodTotals = bands.map((band) => {
+  let total = 0;
+  for (let offset = 0; offset < CADENCE_PERIOD; offset += 1)
+    total += gapForBandOffset(offset, band);
+  return total;
+});
+
 /**
- * Each seeded pair sums to the historical 70-encounter budget while alternating 34/36 gaps.
- * This gives visible progression-aware variation without introducing reward droughts or long-run
- * drift. The first boss remains at encounter 35 for historical save compatibility.
+ * Each boss gap is an independent seeded draw from its progression band's full envelope.
+ * The first gap remains 35 for historical compatibility; later gaps intentionally do not
+ * complement one another, so the schedule is perceptibly different from fixed-35 cadence.
  */
 export const bossGapForOrdinal = (ordinal: number): number => {
   assertOrdinal(ordinal);
   if (ordinal === 1) return 35;
   const band = bossCadenceBandForOrdinal(ordinal);
-  const pairOffset = ordinal % 2 === 0 ? 34 : 36;
-  const cycle = Math.floor((ordinal - 2) / 2) + 1;
-  return seededOffset(cycle, band) % 2 === 0 ? pairOffset : 70 - pairOffset;
+  return gapForBandOffset(ordinal - band.firstBoss, band);
 };
+
+const sumBandGaps = (band: BossCadenceBand, firstOrdinal: number, lastOrdinal: number): number => {
+  const first = Math.max(firstOrdinal, band.firstBoss);
+  const last = Math.min(lastOrdinal, band.lastBoss);
+  if (first > last) return 0;
+  const count = last - first + 1;
+  const periodTotal = bandPeriodTotals[bands.indexOf(band)] ?? 0;
+  const fullPeriods = Math.floor(count / CADENCE_PERIOD);
+  const remainder = count % CADENCE_PERIOD;
+  let remainderTotal = 0;
+  for (let offset = 0; offset < remainder; offset += 1)
+    remainderTotal += gapForBandOffset(offset + (first - band.firstBoss), band);
+  return fullPeriods * periodTotal + remainderTotal;
+};
+
 /** Returns the encounter number for a one-based boss ordinal with safe-number output proof. */
 export const bossEncounterForOrdinal = (ordinal: number): number => {
   assertOrdinal(ordinal);
   if (ordinal > MAX_BOSS_ORDINAL)
     throw new RangeError("Boss ordinal cannot produce a safe encounter number");
-  const gapCount = ordinal - 1;
-  const completePairs = Math.floor(gapCount / 2);
-  const remainder = gapCount % 2;
-  const encounter = 35 + completePairs * 70 + (remainder === 0 ? 0 : bossGapForOrdinal(ordinal));
+  const cached = encounterCache.get(ordinal);
+  if (cached !== undefined) return cached;
+  const encounter = 35 + bands.reduce((sum, band) => sum + sumBandGaps(band, 2, ordinal), 0);
   if (!Number.isSafeInteger(encounter) || encounter > MAX_ENCOUNTER)
     throw new RangeError("Boss encounter exceeds safe output range");
+  encounterCache.set(ordinal, encounter);
   return encounter;
 };
 
@@ -77,15 +102,26 @@ export const bossOrdinalForEncounter = (
     assertInterval(bossInterval);
     return encounter % bossInterval === 0 ? encounter / bossInterval : undefined;
   }
+  if (ordinalCache.has(encounter)) return ordinalCache.get(encounter);
   let low = 1;
   let high = Math.min(MAX_BOSS_ORDINAL, Math.floor(Math.max(0, encounter - 35) / MIN_GAP) + 2);
   while (low <= high) {
     const ordinal = Math.floor((low + high) / 2);
-    const scheduledEncounter = bossEncounterForOrdinal(ordinal);
-    if (scheduledEncounter === encounter) return ordinal;
+    let scheduledEncounter: number;
+    try {
+      scheduledEncounter = bossEncounterForOrdinal(ordinal);
+    } catch {
+      high = ordinal - 1;
+      continue;
+    }
+    if (scheduledEncounter === encounter) {
+      ordinalCache.set(encounter, ordinal);
+      return ordinal;
+    }
     if (scheduledEncounter < encounter) low = ordinal + 1;
     else high = ordinal - 1;
   }
+  ordinalCache.set(encounter, undefined);
   return undefined;
 };
 

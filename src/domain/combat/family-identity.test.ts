@@ -35,15 +35,15 @@ describe("enemy family identity", () => {
     ]);
     expect(families.map(({ label }) => label).sort()).toEqual([
       "Ash Beetle",
+      "Ash Catbug",
       "Ash Wisp",
-      "Cinder Colossus",
-      "Gilded Catbug",
+      "Gilded Colossus",
       "Ice Evil Catbug",
-      "Ice Goose Hydra",
-      "Ice Hydra",
       "Ice Mantis",
       "Magma Brute",
       "Tide Sentinel",
+      "Toxic Goose Hydra",
+      "Verdant Hydra",
       "Volt Drake",
     ]);
     expect(

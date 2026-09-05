@@ -14,16 +14,16 @@ export const COMBAT_BALANCE = {
 } as const;
 /**
  * Boss cadence is encounter-derived rather than save-state-derived. Each band keeps an
- * explicit bounded window; the seeded patterns below make the chosen gap reproducible from
- * the boss ordinal while allowing progression to breathe as the run advances.
+ * explicit progression window and independent seeded draws; it does not preserve fixed-35
+ * pair budgets, so local boss spacing remains visibly different from the historical schedule.
  */
 export const BOSS_CADENCE_BALANCE = {
   seed: 0x39_2026,
   bands: [
-    { id: "early", firstBoss: 1, lastBoss: 3, minGap: 34, maxGap: 36 },
-    { id: "mid", firstBoss: 4, lastBoss: 12, minGap: 34, maxGap: 36 },
-    { id: "late", firstBoss: 13, lastBoss: 32, minGap: 34, maxGap: 36 },
-    { id: "long-run", firstBoss: 33, lastBoss: Number.POSITIVE_INFINITY, minGap: 34, maxGap: 36 },
+    { id: "early", firstBoss: 1, lastBoss: 3, minGap: 28, maxGap: 42 },
+    { id: "mid", firstBoss: 4, lastBoss: 11, minGap: 24, maxGap: 46 },
+    { id: "late", firstBoss: 12, lastBoss: 31, minGap: 26, maxGap: 44 },
+    { id: "long-run", firstBoss: 32, lastBoss: Number.POSITIVE_INFINITY, minGap: 28, maxGap: 42 },
   ],
 } as const;
 /**

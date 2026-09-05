@@ -2,7 +2,17 @@ import * as THREE from "three";
 
 export type EnemyVisualLayer = "body" | "grade" | "modifier" | "decoration";
 export type EnemyVisualAnchor =
-  "pose" | "head" | "top" | "overhead" | "front" | "left" | "right" | "flank" | "orbit" | "combat";
+  | "pose"
+  | "head"
+  | "top"
+  | "overhead"
+  | "front"
+  | "left"
+  | "right"
+  | "flank"
+  | "orbit"
+  | "combat"
+  | "body";
 export type EnemyVisualCommand = "spawn" | "hit" | "critical" | "death";
 export type EnemyVisualComponent = {
   readonly key: string;
@@ -14,6 +24,7 @@ export type EnemyVisualComponent = {
   readonly commands?: Partial<Readonly<Record<EnemyVisualCommand, () => void>>>;
   readonly onAttach?: () => void;
   readonly assetReady?: Promise<void>;
+  readonly refresh?: (body: THREE.Mesh) => void;
   readonly dispose?: () => void;
 };
 

@@ -13,12 +13,15 @@ import { enemyBodyFactories } from "../../game/enemy-visual/bodies";
 import { ENEMY_VISUAL_GRADES, type EnemyVisualInput } from "../../game/enemy-visual/spec";
 import {
   enemyVisualCompositionReceipt,
+  type EnemyVisualCompositionMode,
   type EnemyVisualCompositionReceipt,
 } from "../../game/enemy-visual/receipt";
+import { compositionModeForLabRecipe, type LabRecipe } from "./recipes";
 
 export const LAB_FAMILIES = Object.keys(enemyBodyFactories) as readonly EnemyFamily[];
 export const LAB_GRADES = ENEMY_VISUAL_GRADES;
 export const LAB_AFFINITIES = ENEMY_AFFINITY_IDS;
+export const LAB_VARIANTS = [0, 1, 2] as const;
 export const LAB_MODIFIERS = [
   null,
   ...(Object.keys(ENEMY_MODIFIERS) as EliteModifier[]),
@@ -56,18 +59,42 @@ const DEFAULT_CASE: LabCase = {
   goldenBug: false,
 };
 
-const matches = (candidate: EnemyVisualInput, labCase: LabCase): boolean => {
-  const identity = selectEnemyFamilyIdentity(candidate);
-  return (
-    identity.affinity === labCase.affinity &&
-    identity.family === labCase.family &&
-    identity.variant === labCase.variant
-  );
-};
 const LAB_INPUT_SEARCH_LIMIT = 2_000;
 const INPUT_CACHE = new Map<string, EnemyVisualInput | null>();
+const PRIMED_INPUT_COHORTS = new Set<string>();
 const inputCacheKey = (labCase: LabCase): string =>
   `${labCase.affinity}:${labCase.family}:${labCase.grade}:${labCase.modifier ?? "none"}:${labCase.variant}`;
+const inputCohortKey = (grade: EnemyGrade, modifier: EnemyPresentationModifier): string =>
+  `${grade}:${modifier ?? "none"}`;
+
+/**
+ * Resolve one grade/modifier cohort in a single deterministic scan. The lab asks for every
+ * affinity against the same selectable body/variant matrix; indexing the production selector
+ * once avoids repeating the same level walk for each affinity while preserving first-match order.
+ */
+const primeInputCohort = (grade: EnemyGrade, modifier: EnemyPresentationModifier): void => {
+  const cohort = inputCohortKey(grade, modifier);
+  if (PRIMED_INPUT_COHORTS.has(cohort)) return;
+  PRIMED_INPUT_COHORTS.add(cohort);
+  const unresolved = new Set(
+    LAB_FAMILIES.flatMap((family) =>
+      LAB_AFFINITIES.flatMap((affinity) =>
+        LAB_VARIANTS.map(
+          (variant) => `${affinity}:${family}:${grade}:${modifier ?? "none"}:${variant}`,
+        ),
+      ),
+    ),
+  );
+  for (let level = 1; level <= LAB_INPUT_SEARCH_LIMIT && unresolved.size > 0; level += 1) {
+    const candidate: EnemyVisualInput = { grade, level, modifier };
+    const identity = selectEnemyFamilyIdentity(candidate);
+    const key = `${identity.affinity}:${identity.family}:${grade}:${modifier ?? "none"}:${identity.variant}`;
+    if (!unresolved.has(key)) continue;
+    INPUT_CACHE.set(key, candidate);
+    unresolved.delete(key);
+  }
+  unresolved.forEach((key) => INPUT_CACHE.set(key, null));
+};
 
 export const inputForCase = (labCase: LabCase): EnemyVisualInput => {
   if (labCase.goldenBug) {
@@ -82,40 +109,31 @@ export const inputForCase = (labCase: LabCase): EnemyVisualInput => {
     return { grade: "normal", level: 1, modifier: null, goldenBug: true };
   }
   const key = inputCacheKey(labCase);
+  primeInputCohort(labCase.grade, labCase.modifier);
   const cached = INPUT_CACHE.get(key);
-  if (cached !== undefined) {
-    if (cached === null)
-      throw new RangeError(
-        `No production input for ${labCase.affinity}:${labCase.family}:${labCase.grade}:${labCase.modifier}`,
-      );
-    return cached;
-  }
-  for (let level = 1; level <= LAB_INPUT_SEARCH_LIMIT; level += 1) {
-    const candidate: EnemyVisualInput = {
-      grade: labCase.grade,
-      level,
-      modifier: labCase.modifier,
-    };
-    if (matches(candidate, labCase)) {
-      INPUT_CACHE.set(key, candidate);
-      return candidate;
-    }
-  }
-  INPUT_CACHE.set(key, null);
-  throw new RangeError(
-    `No production input for ${labCase.affinity}:${labCase.family}:${labCase.grade}:${labCase.modifier}`,
-  );
+  if (cached === undefined || cached === null)
+    throw new RangeError(
+      `No production input for ${labCase.affinity}:${labCase.family}:${labCase.grade}:${labCase.modifier}`,
+    );
+  return cached;
 };
 
 /** Visual Lab uses the production input resolver, so its receipt cannot drift from gameplay. */
-export const compositionReceiptForCase = (labCase: LabCase): EnemyVisualCompositionReceipt =>
-  enemyVisualCompositionReceipt(inputForCase(labCase));
+export const compositionReceiptForCase = (
+  labCase: LabCase & { readonly recipe?: LabRecipe },
+  compositionMode?: EnemyVisualCompositionMode,
+): EnemyVisualCompositionReceipt => {
+  const selectedMode =
+    compositionMode ??
+    (labCase.recipe === undefined ? "production" : compositionModeForLabRecipe(labCase.recipe));
+  return enemyVisualCompositionReceipt(inputForCase(labCase), selectedMode);
+};
 
 export const LAB_CASES: readonly LabCase[] = (() => {
   const baseCandidates = LAB_FAMILIES.flatMap((family) =>
     LAB_GRADES.flatMap((grade) =>
       LAB_MODIFIERS.flatMap((modifier) =>
-        ([0, 1, 2] as const).map((variant) => ({
+        LAB_VARIANTS.map((variant) => ({
           family,
           grade,
           modifier,

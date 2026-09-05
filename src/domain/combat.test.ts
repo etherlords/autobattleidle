@@ -269,7 +269,9 @@ describe("endless combat progression", () => {
     }).player;
     const normal = spawnEnemy(1_999, 0, undefined, player);
     const veteran = spawnEnemy(2_000, 0, undefined, player);
-    const elite = spawnEnemy(2_001, 0.34, undefined, player);
+    let eliteEncounter = 2_001;
+    while (spawnEnemy(eliteEncounter, 0.34).grade !== "elite") eliteEncounter += 1;
+    const elite = spawnEnemy(eliteEncounter, 0.34, undefined, player);
     const boss = spawnEnemy(bossEncounterForOrdinal(60), 0, undefined, player);
     const golden = spawnGoldenBug(2_001, player);
     expect(normal.maxHealth).toBe(damageForLevel(10_000));
@@ -960,11 +962,11 @@ describe("endless combat progression", () => {
       ["endgameStart", 10_000, 36_364],
       ["endgame", 36_365, Number.MAX_SAFE_INTEGER],
     ]);
-    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(36_366);
+    expect(ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame).toBe(36_365);
     const endgameSnapshot = stageReference.playerSnapshots.find(
       ({ encounter }) => encounter === ORDINARY_TTK_STAGE_PROBE_ENCOUNTERS.endgame,
     );
-    expect(stageReference.bosses.some(({ encounter }) => encounter < 36_366)).toBe(true);
+    expect(stageReference.bosses.some(({ encounter }) => encounter < 36_365)).toBe(true);
     expect(endgameSnapshot).toEqual(
       expect.objectContaining({
         player: expect.objectContaining({ damageLevel: expect.any(Number) }),

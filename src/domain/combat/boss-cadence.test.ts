@@ -18,6 +18,9 @@ describe("progression-aware boss cadence", () => {
       expect(gap).toBeLessThanOrEqual(band.maxGap);
     });
     expect(gaps.some((gap) => gap !== 35)).toBe(true);
+    expect(Math.min(...gaps)).toBeLessThanOrEqual(32);
+    expect(Math.max(...gaps)).toBeGreaterThanOrEqual(38);
+    expect(gaps.slice(1).some((gap, index) => gap + (gaps[index] ?? 0) !== 70)).toBe(true);
   });
 
   it("varies the first three seeded gaps within every declared envelope", () => {

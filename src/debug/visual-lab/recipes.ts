@@ -1,49 +1,84 @@
 import * as THREE from "three";
 
 import type { EnemyFamily } from "../../domain/combat";
+import type { EnemyVisualCompositionMode } from "../../game/units/enemy";
 import { buildBossGeometryRecipe } from "../../game/enemy-visual/decorators/boss-geometry-decorator";
 
 export const LAB_RECIPES = [
   "production",
   "legacy/no-overlay",
+  "scratches",
+  "plates",
+  "affinity",
+  "all",
   "socket-probe",
   "crystal-crown",
   "orbital-runes",
   "elemental-spines",
-] as const;
+] as const satisfies readonly LabRecipe[];
 export type LabRecipe =
   | "production"
   | "legacy/no-overlay"
+  | "scratches"
+  | "plates"
+  | "affinity"
+  | "all"
   | "socket-probe"
   | "crystal-crown"
   | "orbital-runes"
   | "elemental-spines";
+export const LAB_RECIPE_ALIASES = ["new/surface-treatments"] as const;
+export type LabRecipeAlias = "new/surface-treatments";
+export type LabRecipeInput = LabRecipe | LabRecipeAlias;
+export const LAB_RECIPE_INPUTS = [...LAB_RECIPES, ...LAB_RECIPE_ALIASES] as const;
 export const BOSS_ONLY_LAB_RECIPES = [
   "crystal-crown",
   "orbital-runes",
   "elemental-spines",
 ] as const satisfies readonly LabRecipe[];
+const SEMANTIC_LAB_RECIPES: readonly LabRecipe[] = [
+  "production",
+  "legacy/no-overlay",
+  "scratches",
+  "plates",
+  "affinity",
+  "all",
+  "socket-probe",
+];
+const BOSS_FAMILIES: readonly EnemyFamily[] = [
+  "boss-hydra",
+  "boss-colossus",
+  "boss-catbug",
+  "boss-evil-catbug",
+  "boss-goose-hydra",
+];
 export type LabRecipeValidation = {
   readonly valid: boolean;
   readonly reason?: string;
 };
 export const validateLabRecipe = (recipe: LabRecipe, family: EnemyFamily): LabRecipeValidation => {
-  if (recipe === "production" || recipe === "legacy/no-overlay" || recipe === "socket-probe")
-    return { valid: true };
-  if (
-    family !== "boss-hydra" &&
-    family !== "boss-colossus" &&
-    family !== "boss-catbug" &&
-    family !== "boss-evil-catbug" &&
-    family !== "boss-goose-hydra"
-  )
+  if (SEMANTIC_LAB_RECIPES.includes(recipe)) return { valid: true };
+  if (!BOSS_FAMILIES.includes(family))
     return {
       valid: false,
       reason: `${recipe} is boss-only; select a boss family before attaching it`,
     };
   return { valid: true };
 };
-export const normalizeLabRecipe = (recipe: LabRecipe, _boss: boolean): LabRecipe => recipe;
+export const normalizeLabRecipe = (recipe: LabRecipeInput, _boss: boolean): LabRecipe =>
+  recipe === "new/surface-treatments" ? "all" : recipe;
+
+export const compositionModeForLabRecipe = (recipe: LabRecipe): EnemyVisualCompositionMode => {
+  if (
+    recipe === "legacy/no-overlay" ||
+    recipe === "scratches" ||
+    recipe === "plates" ||
+    recipe === "affinity" ||
+    recipe === "all"
+  )
+    return recipe;
+  return "production";
+};
 
 type CandidateAnchor = "overhead" | "orbit" | "top";
 type CandidateRecipe = {
@@ -175,7 +210,19 @@ const fitSpines = (
 };
 
 const recipes: Readonly<
-  Record<Exclude<LabRecipe, "production" | "legacy/no-overlay" | "socket-probe">, CandidateRecipe>
+  Record<
+    Exclude<
+      LabRecipe,
+      | "production"
+      | "legacy/no-overlay"
+      | "scratches"
+      | "plates"
+      | "affinity"
+      | "all"
+      | "socket-probe"
+    >,
+    CandidateRecipe
+  >
 > = {
   "crystal-crown": {
     anchor: "overhead",
@@ -209,7 +256,15 @@ const bossBody = (unit: THREE.Object3D): THREE.Mesh | undefined => {
 };
 
 export const attachLabRecipe = (recipe: LabRecipe, unit: THREE.Object3D): (() => void) => {
-  if (recipe === "production" || recipe === "legacy/no-overlay") return () => undefined;
+  if (
+    recipe === "production" ||
+    recipe === "legacy/no-overlay" ||
+    recipe === "scratches" ||
+    recipe === "plates" ||
+    recipe === "affinity" ||
+    recipe === "all"
+  )
+    return () => undefined;
   if (recipe === "socket-probe") {
     const marker = new THREE.Mesh(
       new THREE.OctahedronGeometry(0.12),

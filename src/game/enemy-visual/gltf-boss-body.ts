@@ -204,6 +204,10 @@ const augmentFallbackWithGltf = (
   });
   const fallbackBody = legacyMeshes.find((mesh) => mesh.name.startsWith("enemy-body-"));
   if (fallbackBody !== undefined) fallbackBody.name = `enemy-body-${family}`;
+  const rig = root.getObjectByName(`enemy-rig-${family}`);
+  if (rig === undefined) return fallback;
+  const bodyAnchor = fallback.anchors?.body;
+  if (!(bodyAnchor instanceof THREE.Group)) return fallback;
   let instance: THREE.Group | undefined;
   let disposed = false;
   const assetReady: Promise<void> = sourceScene(asset.url)
@@ -226,7 +230,8 @@ const augmentFallbackWithGltf = (
           named = true;
         }
       });
-      root.add(instance);
+      bodyAnchor.add(instance);
+      bodyAnchor.userData.refreshSemanticSurfaces?.();
       root.userData.gltfStatus = "ready";
       root.visible = true;
     })
@@ -239,6 +244,7 @@ const augmentFallbackWithGltf = (
     ...fallback,
     key: `body-${family}`,
     assetReady,
+    anchors: { ...fallback.anchors, body: bodyAnchor },
     dispose: () => {
       disposed = true;
       fallback.dispose?.();
@@ -264,6 +270,9 @@ export const gltfBossBody = (
   const rig = new THREE.Group();
   rig.name = `enemy-rig-${family}`;
   pose.add(rig);
+  const bodyAnchor = new THREE.Group();
+  bodyAnchor.name = `enemy-body-anchor-${family}`;
+  rig.add(bodyAnchor);
   const head = socket(family, "head", rig, new THREE.Vector3(0, asset.topY - 0.14, 0));
   const top = socket(family, "top", head, new THREE.Vector3(0, 0.14, 0));
   const overhead = socket(family, "overhead", rig, new THREE.Vector3(0, asset.topY, 0));
@@ -301,7 +310,8 @@ export const gltfBossBody = (
           named = true;
         }
       });
-      rig.add(instance);
+      bodyAnchor.add(instance);
+      bodyAnchor.userData.refreshSemanticSurfaces?.();
       pose.userData.gltfStatus = "ready";
     })
     .catch(() => {
@@ -317,7 +327,7 @@ export const gltfBossBody = (
     { position: pose.position.clone(), rotation: pose.rotation.clone(), scale: pose.scale.clone() },
   ];
   let command: "spawn" | "hit" | "critical" | "death" | undefined;
-  let frames = 0;
+  let remainingFrames = 0;
   let phase = 0;
   let captured:
     { position: THREE.Vector3; rotation: THREE.Euler; scale: THREE.Vector3 } | undefined;
@@ -341,12 +351,12 @@ export const gltfBossBody = (
       scale: pose.scale.clone(),
     };
     command = next;
-    frames = enemyVisualAnimation.commandFrames[next];
+    remainingFrames = enemyVisualAnimation.commandFrames[next];
     rig.userData.lastCommand = next;
   };
   const advance = (): void => {
     const total = enemyVisualAnimation.commandFrames[command ?? "hit"];
-    const progress = (total - frames) / (total - 1);
+    const progress = (total - remainingFrames) / (total - 1);
     if (captured !== undefined) {
       residual = {
         position: captured.position.clone().sub(pose.position),
@@ -387,8 +397,8 @@ export const gltfBossBody = (
       pose.position.y -= 0.2 * progress;
       pose.rotation.z += 0.3 * progress;
     }
-    frames -= 1;
-    if (frames === 0)
+    remainingFrames -= 1;
+    if (remainingFrames === 0)
       residual = {
         position: new THREE.Vector3(),
         rotation: new THREE.Euler(),
@@ -402,8 +412,8 @@ export const gltfBossBody = (
     {
       [`body-${family}-motion`]: () => {
         if (reducedMotion) {
-          frames = Math.max(0, frames - 1);
-          if (frames === 0)
+          remainingFrames = Math.max(0, remainingFrames - 1);
+          if (remainingFrames === 0)
             residual = {
               position: new THREE.Vector3(),
               rotation: new THREE.Euler(),
@@ -413,7 +423,7 @@ export const gltfBossBody = (
         }
         phase += enemyVisualAnimation.idleRadians;
         reset();
-        if (frames > 0) advance();
+        if (remainingFrames > 0) advance();
       },
     },
     {
@@ -423,7 +433,7 @@ export const gltfBossBody = (
       death: () => start("death"),
     },
     undefined,
-    { pose, head, top, overhead, front, left, right, flank, orbit, combat },
+    { pose, head, top, overhead, front, left, right, flank, orbit, combat, body: bodyAnchor },
   );
   return {
     ...componentBase,

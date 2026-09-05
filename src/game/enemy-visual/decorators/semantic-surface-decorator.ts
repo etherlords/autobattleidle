@@ -1,10 +1,12 @@
 import * as THREE from "three";
+import { DecalGeometry } from "three/addons/geometries/DecalGeometry.js";
 
 import type { EnemyViewBuilder } from "../builder";
 import { component, type EnemyVisualComponent } from "../components";
 import type { BodyFamily, EnemyVisualProfile } from "../spec";
 
 export type SemanticSurfaceTreatment = "scratches" | "shell-plates" | "affinity-mark";
+export type SemanticSurfaceMode = "none" | "scratches" | "plates" | "affinity" | "all";
 
 type SurfacePalette = Readonly<{
   readonly core: string;
@@ -25,14 +27,15 @@ type AcquiredAffinityTexture = Readonly<{
 const TEXTURE_SIZE = 24;
 const MAX_TEXTURE_CACHE_ENTRIES = 8;
 const textureCache = new Map<string, TextureEntry>();
-const shellPlateFamilies: ReadonlySet<BodyFamily> = new Set([
-  "beetle",
-  "brute",
-  "sentinel",
-  "drake",
-  "boss-colossus",
-  "boss-catbug",
-]);
+const shellPlateFamilies: Readonly<Record<string, true>> = {
+  beetle: true,
+  brute: true,
+  sentinel: true,
+  drake: true,
+  "boss-colossus": true,
+  "boss-catbug": true,
+  "boss-goose-hydra": true,
+};
 const authoredScratchOffsets = [
   [-0.16, 0.18, -0.28],
   [-0.05, 0.02, 0.24],
@@ -173,129 +176,312 @@ const disposeGeneratedNodes = (nodes: readonly THREE.Object3D[]): void => {
   geometries.forEach((geometry) => geometry.dispose());
   materials.forEach((material) => material.dispose());
 };
-type SurfaceFace = "front" | "flank" | "left" | "right";
-const surfaceRotationY = (family: BodyFamily, face: SurfaceFace): number => {
-  if (face === "left") return -Math.PI / 2;
-  if (face === "flank" || face === "right" || family === "drake") return Math.PI / 2;
-  return 0;
+type SurfaceFace = "front" | "left" | "right" | "flank";
+type SurfacePatch = Readonly<{
+  readonly center: THREE.Vector3;
+  readonly normal: THREE.Vector3;
+  readonly size: THREE.Vector3;
+}>;
+
+const bodyBounds = (body: THREE.Mesh): THREE.Box3 => {
+  body.geometry.computeBoundingBox();
+  if (body.geometry.boundingBox === null) throw new Error(`Expected bounds for ${body.name}`);
+  return body.geometry.boundingBox.clone();
+};
+
+const sideFace = (face: SurfaceFace): boolean =>
+  face === "left" || face === "right" || face === "flank";
+
+const faceNormal = (body: THREE.Mesh, face: SurfaceFace): THREE.Vector3 => {
+  if (face === "left") return new THREE.Vector3(-1, 0, 0);
+  if (sideFace(face) || (face === "front" && body.name.endsWith("drake")))
+    return new THREE.Vector3(1, 0, 0);
+  return new THREE.Vector3(0, 0, 1);
+};
+
+const patchForFace = (
+  body: THREE.Mesh,
+  face: SurfaceFace,
+  tangentU: number,
+  tangentV: number,
+  widthRatio: number,
+  heightRatio: number,
+): SurfacePatch => {
+  const bounds = bodyBounds(body);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+  const side = sideFace(face);
+  const drakeFront = face === "front" && body.name.endsWith("drake");
+  const normal = faceNormal(body, face);
+  const tangent = side || drakeFront ? size.z : size.x;
+  const height = size.y;
+  const depthAxis = side || drakeFront ? size.x : size.z;
+  const depth = Math.max(0.04, Math.min(0.18, Math.max(size.x, size.y, size.z) * 0.12));
+  center.addScaledVector(normal, Math.max(0.01, depthAxis * 0.5) - depth * 0.35);
+  if (side || drakeFront) center.z += tangent * tangentU;
+  else center.x += tangent * tangentU;
+  center.y += height * tangentV;
+  return {
+    center,
+    normal,
+    size: new THREE.Vector3(tangent * widthRatio, height * heightRatio, depth),
+  };
+};
+const createBodyDecal = (
+  body: THREE.Mesh,
+  parent: THREE.Object3D,
+  name: string,
+  patch: SurfacePatch,
+  material: THREE.MeshStandardMaterial,
+): THREE.Mesh => {
+  body.updateWorldMatrix(true, false);
+  parent.updateWorldMatrix(true, false);
+  const localNormal = patch.normal.clone().normalize();
+  const pose = parent.parent?.parent ?? parent.parent;
+  const poseWorldQuaternion =
+    pose?.getWorldQuaternion(new THREE.Quaternion()) ?? new THREE.Quaternion();
+  const worldNormal = localNormal.clone().applyQuaternion(poseWorldQuaternion).normalize();
+  const worldOrientation = new THREE.Quaternion().setFromUnitVectors(
+    new THREE.Vector3(0, 0, 1),
+    worldNormal,
+  );
+  let worldCenter = patch.center.clone().applyMatrix4(body.matrixWorld);
+  const bodyBoundsWorld = new THREE.Box3().setFromObject(body);
+  const rayDistance = bodyBoundsWorld.getSize(new THREE.Vector3()).length() * 2;
+  const hit = new THREE.Raycaster(
+    worldCenter.clone().addScaledVector(worldNormal, rayDistance),
+    worldNormal.clone().negate(),
+  ).intersectObject(body, false)[0];
+  if (hit !== undefined)
+    worldCenter = hit.point.clone().addScaledVector(worldNormal, patch.size.z * 0.12);
+  const geometry = new DecalGeometry(
+    body,
+    worldCenter,
+    new THREE.Euler().setFromQuaternion(worldOrientation),
+    patch.size,
+  );
+  const inverse = parent.matrixWorld.clone().invert();
+  const normalMatrix = new THREE.Matrix3().getNormalMatrix(inverse);
+  const parentWorldQuaternion = parent.getWorldQuaternion(new THREE.Quaternion());
+  const parentOrientation = parentWorldQuaternion.clone().invert().multiply(worldOrientation);
+  const positions = geometry.getAttribute("position");
+  for (let index = 0; index < positions.count; index += 1)
+    positions.setXYZ(
+      index,
+      ...new THREE.Vector3(positions.getX(index), positions.getY(index), positions.getZ(index))
+        .applyMatrix4(inverse)
+        .toArray(),
+    );
+  const normals = geometry.getAttribute("normal");
+  if (normals !== undefined)
+    for (let index = 0; index < normals.count; index += 1)
+      normals.setXYZ(
+        index,
+        ...new THREE.Vector3(normals.getX(index), normals.getY(index), normals.getZ(index))
+          .applyNormalMatrix(normalMatrix)
+          .normalize()
+          .toArray(),
+      );
+  positions.needsUpdate = true;
+  if (normals !== undefined) normals.needsUpdate = true;
+  const node = new THREE.Mesh(geometry, material);
+  node.name = name;
+  node.quaternion.copy(parentOrientation);
+  return node;
 };
 
 const surfaceComponent = (
   key: string,
-  anchor: "front" | "left" | "right" | "flank",
   nodes: readonly THREE.Object3D[],
-  dispose?: () => void,
+  dispose: () => void,
+  refresh: (body: THREE.Mesh) => void,
 ): EnemyVisualComponent => ({
-  ...component(key, "decoration", nodes, undefined, undefined, anchor),
-  ...(dispose === undefined ? {} : { dispose }),
+  ...component(key, "decoration", nodes, undefined, undefined, "body"),
+  dispose,
+  refresh,
 });
+const clearSurfaceChildren = (group: THREE.Group): void => {
+  [...group.children].forEach((child) => disposeGeneratedNodes([child]));
+};
 
 const scratches = (
-  family: BodyFamily,
+  body: THREE.Mesh,
+  parent: THREE.Object3D,
   palette: SurfacePalette,
   profile: EnemyVisualProfile,
 ): EnemyVisualComponent => {
   const group = new THREE.Group();
   group.name = "semantic-surface-scratches";
-  group.rotation.y = surfaceRotationY(family, "front");
-  authoredScratchOffsets.forEach(([x, y, rotation], index) => {
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.19 + profile.variant * 0.012, 0.035, 1, 1),
-      markMaterial(palette.accent, palette.emissive),
-    );
-    mesh.name = `surface-scratch-${index}`;
-    mesh.position.set(x, y, 0.022);
-    mesh.rotation.z = rotation;
-    group.add(mesh);
-  });
+  const populate = (target: THREE.Mesh): void => {
+    authoredScratchOffsets.forEach(([x, y, rotation], index) => {
+      const mark = createBodyDecal(
+        target,
+        parent,
+        `surface-scratch-${index}`,
+        patchForFace(target, "front", x * 1.3, y * 1.4, 0.22 + profile.variant * 0.015, 0.045),
+        markMaterial(palette.accent, palette.emissive),
+      );
+      mark.rotateZ(rotation);
+      group.add(mark);
+    });
+  };
+  populate(body);
   let disposed = false;
-  return surfaceComponent("semantic-surface-scratches", "front", [group], () => {
-    if (disposed) return;
-    disposed = true;
-    disposeGeneratedNodes([group]);
-  });
+  const refresh = (target: THREE.Mesh): void => {
+    clearSurfaceChildren(group);
+    populate(target);
+  };
+  return surfaceComponent(
+    "semantic-surface-scratches",
+    [group],
+    () => {
+      if (disposed) return;
+      disposed = true;
+      clearSurfaceChildren(group);
+      group.removeFromParent();
+    },
+    refresh,
+  );
 };
 
 const shellPlates = (
-  family: BodyFamily,
+  body: THREE.Mesh,
+  parent: THREE.Object3D,
   palette: SurfacePalette,
   profile: EnemyVisualProfile,
 ): EnemyVisualComponent[] =>
   (["left", "right"] as const).map((anchor) => {
     const group = new THREE.Group();
     group.name = `semantic-surface-shell-plates-${anchor}`;
-    authoredPlateOffsets.forEach(([x, y, rotation], index) => {
-      const plate = new THREE.Mesh(
-        new THREE.BoxGeometry(0.25 + profile.variant * 0.01, 0.16, 0.035),
-        markMaterial(palette.core, palette.emissive),
-      );
-      plate.name = `surface-shell-plate-${anchor}-${index}`;
-      plate.position.set((anchor === "left" ? -1 : 1) * x, y, 0.035);
-      plate.rotation.set(0, surfaceRotationY(family, anchor), rotation);
-      group.add(plate);
-    });
+    const populate = (target: THREE.Mesh): void => {
+      authoredPlateOffsets.forEach(([x, y, rotation], index) => {
+        const plate = createBodyDecal(
+          target,
+          parent,
+          `surface-shell-plate-${anchor}-${index}`,
+          patchForFace(
+            target,
+            anchor,
+            (anchor === "left" ? -1 : 1) * x * 1.4,
+            y * 1.5,
+            0.3 + profile.variant * 0.012,
+            0.18,
+          ),
+          markMaterial(palette.core, palette.emissive),
+        );
+        plate.rotateZ(rotation);
+        group.add(plate);
+      });
+    };
+    populate(body);
     let disposed = false;
-    return surfaceComponent(`semantic-surface-shell-plates-${anchor}`, anchor, [group], () => {
-      if (disposed) return;
-      disposed = true;
-      disposeGeneratedNodes([group]);
-    });
+    const refresh = (target: THREE.Mesh): void => {
+      clearSurfaceChildren(group);
+      populate(target);
+    };
+    return surfaceComponent(
+      `semantic-surface-shell-plates-${anchor}`,
+      [group],
+      () => {
+        if (disposed) return;
+        disposed = true;
+        disposeGeneratedNodes([group]);
+      },
+      refresh,
+    );
   });
 
 const affinityMark = (
-  family: BodyFamily,
+  body: THREE.Mesh,
+  parent: THREE.Object3D,
   palette: SurfacePalette,
   profile: EnemyVisualProfile,
 ): EnemyVisualComponent => {
   const acquired = acquireAffinityTexture(palette, profile);
-  const material = new THREE.MeshStandardMaterial({
-    ...(acquired.texture === undefined ? {} : { map: acquired.texture }),
-    color: acquired.texture === undefined ? palette.accent : "#ffffff",
-    emissive: palette.emissive,
-    emissiveIntensity: 0.8,
-    metalness: 0.15,
-    roughness: 0.42,
-    transparent: true,
-    opacity: acquired.texture === undefined ? 0.32 : 0.94,
-    depthWrite: false,
-    polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1,
-  });
-  const mark = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.34, 1, 1), material);
-  mark.name = "surface-affinity-mark";
-  mark.position.set(0, 0.04, 0.04);
-  mark.rotation.y = surfaceRotationY(family, "flank");
+  const group = new THREE.Group();
+  group.name = "semantic-surface-affinity-mark";
+  const populate = (target: THREE.Mesh): void => {
+    const material = new THREE.MeshStandardMaterial({
+      ...(acquired.texture === undefined ? {} : { map: acquired.texture }),
+      color: acquired.texture === undefined ? palette.accent : "#ffffff",
+      emissive: palette.emissive,
+      emissiveIntensity: 0.8,
+      metalness: 0.15,
+      roughness: 0.42,
+      transparent: true,
+      opacity: acquired.texture === undefined ? 0.32 : 0.94,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+    });
+    group.add(
+      createBodyDecal(
+        target,
+        parent,
+        "surface-affinity-mark",
+        patchForFace(target, "flank", 0, 0.04, 0.42 + profile.variant * 0.02, 0.42),
+        material,
+      ),
+    );
+  };
+  populate(body);
   let disposed = false;
-  return surfaceComponent("semantic-surface-affinity-mark", "flank", [mark], () => {
-    if (disposed) return;
-    disposed = true;
-    disposeGeneratedNodes([mark]);
-    if (acquired.key === undefined) return;
-    releaseAffinityTexture(acquired.key);
-  });
+  const refresh = (target: THREE.Mesh): void => {
+    clearSurfaceChildren(group);
+    populate(target);
+  };
+  return surfaceComponent(
+    "semantic-surface-affinity-mark",
+    [group],
+    () => {
+      if (disposed) return;
+      disposed = true;
+      clearSurfaceChildren(group);
+      group.removeFromParent();
+      if (acquired.key !== undefined) releaseAffinityTexture(acquired.key);
+    },
+    refresh,
+  );
 };
 
 export const semanticSurfaceTreatmentsForFamily = (
   family: BodyFamily,
 ): readonly SemanticSurfaceTreatment[] =>
-  shellPlateFamilies.has(family)
+  shellPlateFamilies[family] === true
     ? ["scratches", "shell-plates", "affinity-mark"]
     : ["scratches", "affinity-mark"];
-
 export const decorateSemanticSurfaces = (
   family: BodyFamily,
   palette: SurfacePalette,
   profile: EnemyVisualProfile,
+  body: THREE.Mesh,
+  parent: THREE.Object3D = body,
+  mode: SemanticSurfaceMode = "all",
 ): readonly EnemyVisualComponent[] => {
+  if (mode === "none") return [];
   const treatments = semanticSurfaceTreatmentsForFamily(family);
+  if (mode === "scratches") return [scratches(body, parent, palette, profile)];
+  if (mode === "affinity") return [affinityMark(body, parent, palette, profile)];
+  if (mode === "plates")
+    return treatments.includes("shell-plates") ? shellPlates(body, parent, palette, profile) : [];
   const components: EnemyVisualComponent[] = [
-    scratches(family, palette, profile),
-    affinityMark(family, palette, profile),
+    scratches(body, parent, palette, profile),
+    affinityMark(body, parent, palette, profile),
   ];
   if (treatments.includes("shell-plates"))
-    components.splice(1, 0, ...shellPlates(family, palette, profile));
+    components.splice(1, 0, ...shellPlates(body, parent, palette, profile));
   return components;
+};
+
+const bodyMeshForAnchor = (anchor: THREE.Object3D): THREE.Mesh | undefined => {
+  if (anchor instanceof THREE.Mesh) return anchor;
+  let body: THREE.Mesh | undefined;
+  anchor.parent?.traverse((node) => {
+    if (body === undefined && node instanceof THREE.Mesh && node.name.startsWith("enemy-body-"))
+      body = node;
+  });
+  return body;
 };
 
 export class SemanticSurfaceDecorator {
@@ -303,11 +489,27 @@ export class SemanticSurfaceDecorator {
     private readonly family: BodyFamily,
     private readonly palette: SurfacePalette,
     private readonly profile: EnemyVisualProfile,
+    private readonly mode: SemanticSurfaceMode = "all",
   ) {}
 
   attach(builder: EnemyViewBuilder): void {
-    decorateSemanticSurfaces(this.family, this.palette, this.profile).forEach((surface) =>
-      builder.add(surface),
+    const anchor = builder.anchorNode("body");
+    const body = anchor === undefined ? undefined : bodyMeshForAnchor(anchor);
+    if (anchor === undefined || body === undefined)
+      throw new Error(`Semantic surfaces require a mesh body for ${this.family}`);
+    const surfaces = decorateSemanticSurfaces(
+      this.family,
+      this.palette,
+      this.profile,
+      body,
+      anchor,
+      this.mode,
     );
+    surfaces.forEach((surface) => builder.add(surface));
+    anchor.userData.refreshSemanticSurfaces = (): void => {
+      const loadedBody = bodyMeshForAnchor(anchor);
+      if (loadedBody === undefined) return;
+      surfaces.forEach((surface) => surface.refresh?.(loadedBody));
+    };
   }
 }

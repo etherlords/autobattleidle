@@ -220,12 +220,12 @@ export const buildMeasuredReport = (): Record<string, unknown> => {
       },
       ordinaryTargetHits: { elite: 10, normal: 1, veteran: 5 },
     },
-    automaticOnlyWalls: run(null, undefined, 3_000, { eventJump: true }).telemetry.walls,
-    bossGaps: bosses
-      .slice(1)
-      .map((boss, index) => boss.encounter - (bosses[index]?.encounter ?? 0)),
+    bossGaps: firstTenGaps.slice(1),
     cadence: {
-      bossGapBounds: referenceTelemetry.bossGapBounds,
+      bossGapBounds: {
+        min: Math.min(...firstTenGaps),
+        max: Math.max(...firstTenGaps),
+      },
       firstThreeGaps: bosses.slice(0, 3).map(({ gap }) => gap),
       firstTenGaps,
       fortyEightHourGaps,

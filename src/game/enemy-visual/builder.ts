@@ -67,6 +67,9 @@ export class EnemyViewBuilder {
     );
     return this;
   }
+  anchorNode(anchor: EnemyVisualAnchor): THREE.Object3D | undefined {
+    return this.anchors.get(anchor);
+  }
 
   build(): EnemyViewBuild {
     this.assertOpen();

@@ -103,6 +103,7 @@ describe("visual lab cases", () => {
     });
     expect(parseLabCase("?recipe=socket-probe").recipe).toBe("socket-probe");
     expect(parseLabCase("?recipe=unbounded").recipe).toBe("production");
+    expect(parseLabCase("?recipe=new%2Fsurface-treatments").recipe).toBe("all");
     expect(parseLabCase("?recipe=crystal-crown")).toMatchObject({
       recipe: "crystal-crown",
       correction: { requested: "?recipe=crystal-crown" },
@@ -145,11 +146,35 @@ describe("visual lab cases", () => {
     expect(LAB_RECIPES).toEqual([
       "production",
       "legacy/no-overlay",
+      "scratches",
+      "plates",
+      "affinity",
+      "all",
       "socket-probe",
       "crystal-crown",
       "orbital-runes",
       "elemental-spines",
     ]);
+  });
+  it("keeps explicit semantic surface mode and deterministic body variant in the URL receipt", () => {
+    const parsed = parseLabCase(
+      "?family=beetle&grade=normal&modifier=none&affinity=cinder&variant=2&recipe=all",
+    );
+    expect(parsed.recipe).toBe("all");
+    expect(parsed.variant).toBe(2);
+    expect(parsed.correction?.canonical).toContain("recipe=all");
+    const receipt = compositionReceiptForCase(parsed);
+    expect(receipt.compositionMode).toBe("all");
+    expect(receipt.body).toBe("beetle");
+    expect(receipt.bodyVariant).toBe(2);
+    const roundTrip = parseLabCase(serializeLabCase(parsed));
+    expect(roundTrip).toMatchObject({
+      recipe: "all",
+      variant: 2,
+      family: "beetle",
+      affinity: "cinder",
+    });
+    expect(roundTrip.correction).toBeUndefined();
   });
 
   it("keeps every selectable composition reachable across all affinities", () => {
@@ -201,6 +226,29 @@ describe("visual lab cases", () => {
     detach();
     unit.dispose();
     expect(resourceCounts(parent)).toEqual(baseline);
+  });
+  it("keeps production bosses semantic-only while legacy geometry stays explicit in the lab", () => {
+    const boss = allLabCases().find(
+      (candidate) => candidate.family === "boss-colossus" && candidate.grade === "boss",
+    );
+    if (boss === undefined) throw new Error("Expected Colossus case");
+    const unit = UNIT_FACTORIES.enemy.create(inputForCase(boss));
+    const parent = new THREE.Group();
+    unit.dispatchEnemy({ type: "spawn", parent });
+    expect(unit.view.group.getObjectByName("semantic-surface-scratches")).toBeDefined();
+    expect(unit.view.group.getObjectByName("surface-affinity-mark")).toBeDefined();
+    expect(unit.view.group.getObjectByName("boss-geometry-orbital-runes")).toBeUndefined();
+    expect(unit.view.group.getObjectByName("boss-geometry-elemental-spines")).toBeUndefined();
+    unit.dispose();
+
+    for (const recipe of ["orbital-runes", "elemental-spines"] as const) {
+      const candidateUnit = UNIT_FACTORIES.enemy.create(inputForCase(boss));
+      candidateUnit.dispatchEnemy({ type: "spawn", parent });
+      const detach = attachLabRecipe(recipe, candidateUnit.view.group);
+      expect(candidateUnit.view.group.getObjectByName(`lab-recipe-${recipe}`)).toBeDefined();
+      detach();
+      candidateUnit.dispose();
+    }
   });
 
   it("attaches bounded boss recipes across Hydra and Colossus motions and disposes them exactly", () => {

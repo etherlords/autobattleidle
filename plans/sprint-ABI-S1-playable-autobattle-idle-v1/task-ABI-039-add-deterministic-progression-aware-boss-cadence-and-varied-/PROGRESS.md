@@ -4,8 +4,8 @@ id: ABI-039
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 71
-status: Done
+revision: 94
+status: Ready
 sprintId: ABI-S1
 dependencies:
   - ABI-006
@@ -24,9 +24,9 @@ requiredGates:
 
 ## Current state
 
-- Status: Done
-- Revision: 71
-- Last update: Close ABI-039 after all required gates passed. Actor profile: manager-helper; explicit user-authorized fallback.
+- Status: Ready
+- Revision: 94
+- Last update: Follow-up scope receipt: cadence uses independent seeded bands early 28–42, mid 24–46, late 26–44, long-run 28–42; measured first-ten gaps are 35,36,33,36,27,35,42,44,37,46; event-jump and persistence remain equivalent at time boundaries.
 
 ## Execution plan
 
@@ -36,18 +36,18 @@ requiredGates:
 - [-] boss-cadence-proof: Run exact/event-jump long-run tests plus deployed multi-boss desktop/narrow camera and distribution QA
 - [-] boss-cadence-gates: Complete independent review, QA, Vault formula update, exact-SHA deployment proof, and Manager closure
 - [x] boss-dependency-refresh: Manager refreshes closed ABI-020, ABI-028, and ABI-029 outputs; freezes stage envelopes, boss content ownership, Golden separation, persistence class, and rollback
-- [~] boss-fixed-baseline: Run the final production exact and event-jump simulator for fixed-35 cadence; record per-stage gaps, identities, repeats, TTK, time share, rewards, walls, and Golden interactions
+- [x] boss-fixed-baseline: Run the final production exact and event-jump simulator for fixed-35 cadence; record per-stage gaps, identities, repeats, TTK, time share, rewards, walls, and Golden interactions
 - [ ] boss-cadence-candidates: Define two or three bounded deterministic min-max gap functions with explicit early, mid, late, and long-run bands and no wall-clock randomness
 - [ ] boss-identity-candidates: Define stateless seeded permutations/windows over ABI-029 boss identities with bounded anti-repeat and no duplicated family-affinity content registry
-- [ ] boss-persistence-decision: Prove schedule and identity reconstruct from existing canonical inputs; if not, stop and design the required versioned migration before implementation
+- [x] boss-persistence-decision: Prove schedule and identity reconstruct from existing canonical inputs; if not, stop and design the required versioned migration before implementation
 - [ ] boss-simulator-telemetry: Extend the shared production-path simulator with candidate labels, gap distributions, repeat streaks, family-affinity coverage, boss/ordinary/Golden separation, and safe-number receipts
 - [ ] boss-candidate-runs: Run every cadence and identity candidate across exact/event-jump, all ABI-020 stages, historical saves, rewards, walls, Golden timing, and 3000-plus encounters
 - [ ] boss-model-freeze: Select one measured candidate; record rejected alternatives, thresholds, anti-repeat guarantee, balance deltas, persistence result, and rollback point
-- [ ] boss-schedule-implementation: Implement the chosen cadence at the single centralized encounter owner with bounded computation and deterministic seed semantics
-- [ ] boss-identity-integration: Consume ABI-029 boss family-affinity-profile outputs through the existing registry; do not recreate content, stats, names, or visuals in the scheduler
-- [ ] boss-presentation-lifecycle: Reuse existing boss camera, rigs, sockets, effects, replacement, reset, and disposal; leave ordinary selection and Golden presentation unchanged
-- [ ] boss-domain-regressions: Test min/max gaps, stage boundaries, seed/reload equality, anti-repeat, distribution, exact/event-jump equivalence, rewards, walls, and finite long-run behavior
-- [ ] boss-save-resource-regressions: Test current/historical saves, optional migration gate, camera resets, long replacement loops, effect caps, and exact resource return-to-baseline
+- [x] boss-schedule-implementation: Implement the chosen cadence at the single centralized encounter owner with bounded computation and deterministic seed semantics
+- [x] boss-identity-integration: Consume ABI-029 boss family-affinity-profile outputs through the existing registry; do not recreate content, stats, names, or visuals in the scheduler
+- [x] boss-presentation-lifecycle: Reuse existing boss camera, rigs, sockets, effects, replacement, reset, and disposal; leave ordinary selection and Golden presentation unchanged
+- [x] boss-domain-regressions: Test min/max gaps, stage boundaries, seed/reload equality, anti-repeat, distribution, exact/event-jump equivalence, rewards, walls, and finite long-run behavior
+- [x] boss-save-resource-regressions: Test current/historical saves, optional migration gate, camera resets, long replacement loops, effect caps, and exact resource return-to-baseline
 - [ ] boss-browser-fixtures: Create deterministic deployed sequences showing multiple bosses, no immediate repeated Cinder Hydra, correct camera resets, desktop/narrow framing, and Golden separation
 - [ ] boss-self-check: Implementation owner regenerates the measured report and runs focused simulation, integration, save, browser smoke, and pnpm check
 - [ ] boss-independent-review: Independent Reviewer audits candidate completeness, balance envelope, scheduler ownership, ABI-029 reuse, persistence, exact equivalence, and tests
@@ -1192,3 +1192,403 @@ requiredGates:
 - Evidence:
   - manager-closure gate pass at progress revision 70
   - Exact review, QA, verification, and implementation-self-check receipts recorded
+
+### evt-996d007c-553e-400c-aaf2-34210d410e22
+
+- Timestamp: 2026-09-05T10:23:37.889Z
+- Actor: planner-vault-audit
+- Operation: task.advance
+- Prior revision: 71
+- Resulting revision: 72
+- Summary: Reopen Done task to reconcile managed execution-plan steps against recorded implementation, review, QA, verification, and Vault receipts; preserve unsupported work as pending.
+- Idempotency key: abi039-reconcile-reopen-20260905-v1
+- Request fingerprint: 74a9d0ebd5b2ff16c730c0918a6fb16eeb0761f847c453ec31926d9acbf8f2f6
+- From status: Done
+- To status: Ready
+- Evidence:
+  - Current execution context read at task revision 16 and progress revision 71
+  - Execution plan has one in-progress and sixteen pending detailed steps despite closure receipts
+  - User explicitly authorized canonical Planner reconciliation and requires supported Done-to-Ready transition
+
+### evt-5d597a6f-69ba-46e5-9030-5b572e60e439
+
+- Timestamp: 2026-09-05T10:23:52.256Z
+- Actor: planner-vault-audit
+- Operation: claim.acquire
+- Prior revision: 72
+- Resulting revision: 73
+- Summary: Claimed task lease: Reconcile execution-plan steps against existing receipts only; no source edits.
+- Idempotency key: abi039-reconcile-claim-20260905-v1
+- Request fingerprint: 5d08485cdf8b2a4388f8507d14538f1b1a9e96612e3ece85d7ed2909facde2f6
+- Agent ID: planner-vault-audit
+- Session ID: planner-vault-audit-20260905
+- Intent: Reconcile execution-plan steps against existing receipts only; no source edits.
+- Expires at: 2026-09-05T10:53:52.256Z
+- Evidence:
+  - None
+
+### evt-fb6f2bf7-6e3d-4cba-b09d-21543fdd449a
+
+- Timestamp: 2026-09-05T10:24:37.815Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 73
+- Resulting revision: 74
+- Summary: Fixed-35 baseline is evidenced by the regenerated production report and subsequent seeded first-ten/48-hour receipt checkpoint; remaining candidate-comparison work stays pending.
+- Idempotency key: abi039-step-fixed-baseline-complete-20260905-v1
+- Request fingerprint: 8ad780485de8a49761c6305f4fa586063f4004e126512526e42e9cb4a830a22b
+- Action: set_state
+- Step ID: boss-fixed-baseline
+- State: complete
+- Evidence:
+  - evt-03c37a5f-82da-4711-91ce-955d5c692ffa progress revision 62: generated ABI-029 measured report records first-ten and 48-hour cadence receipts
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: fixed baseline, historical V3/V4, event-jump and long-horizon coverage
+  - ABI-039 REVIEW.md revision 2: exact/event-jump and production gap receipts reviewed
+
+### evt-92cdba20-935d-4932-9724-895c0ab833cc
+
+- Timestamp: 2026-09-05T10:26:48.729Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 74
+- Resulting revision: 75
+- Summary: Begin receipt-backed reconciliation of stateless schedule/identity persistence decision.
+- Idempotency key: abi039-step-persistence-decision-start-20260905-v1
+- Request fingerprint: 542046faab8c77758cfca34eb5167d8dcde20fc31b45cc4e12c0d0a8be949e4e
+- Action: set_state
+- Step ID: boss-persistence-decision
+- State: in_progress
+- Evidence:
+  - evt-51f09fa6-ec88-469a-9e08-034cb7ada507 progress revision 53: persistence classified no schema change provisionally and stateless reconstruction required
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: canonical-input reconstruction and persistence reviewed
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160 contentHash 0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842
+
+### evt-e0bed2e1-8c55-47b9-b939-429b2fffeeda
+
+- Timestamp: 2026-09-05T10:26:57.754Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 75
+- Resulting revision: 76
+- Summary: Persistence decision reconciled complete: schedule and identity reconstruct from canonical inputs and no save-schema expansion is required.
+- Idempotency key: abi039-step-persistence-decision-complete-20260905-v1
+- Request fingerprint: 6c915ec52746be8beb6ca3b0dbfcdf97c6c845ee03895a7f927399fe04c22476
+- Action: set_state
+- Step ID: boss-persistence-decision
+- State: complete
+- Evidence:
+  - evt-51f09fa6-ec88-469a-9e08-034cb7ada507 progress revision 53: no schema change provisionally; stateless schedule/identity required
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: persistence and canonical-input reconstruction reviewed
+  - ABI-039 REVIEW.md revision 2: historical V3/V4 reload and safe canonical behavior reviewed
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160#L28-L36; contentHash 0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842
+
+### evt-9e9286c4-9e81-4341-b34b-d1ced6468eaf
+
+- Timestamp: 2026-09-05T10:27:06.285Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 76
+- Resulting revision: 77
+- Summary: Begin receipt-backed reconciliation of centralized deterministic schedule implementation.
+- Idempotency key: abi039-step-schedule-implementation-start-20260905-v1
+- Request fingerprint: 1ad69710fd10211d49f0adcf0c0725ca20fd260680138f629a010e5116fca584
+- Action: set_state
+- Step ID: boss-schedule-implementation
+- State: in_progress
+- Evidence:
+  - evt-61? progress revision 61 records seeded cadence fixes and focused tests
+  - evt-03c37a5f-82da-4711-91ce-955d5c692ffa progress revision 62 records regenerated cadence report and first-ten/48-hour receipts
+  - ABI-039 REVIEW.md revision 2: progression-aware deterministic cadence reviewed
+
+### evt-7e0fbf7d-0f8e-47d9-9327-088d4a5cc404
+
+- Timestamp: 2026-09-05T10:27:18.277Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 77
+- Resulting revision: 78
+- Summary: Centralized deterministic schedule implementation reconciled complete from seeded cadence fixes, regenerated report, and review receipt.
+- Idempotency key: abi039-step-schedule-implementation-complete-20260905-v1
+- Request fingerprint: 78c4c13a2ea7e1b882fce364214d7fbe3a19c916bf8369e4fb2630511599de67
+- Action: set_state
+- Step ID: boss-schedule-implementation
+- State: complete
+- Evidence:
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: seeded first gaps [35,34,36], safe ordinal guards, and focused cadence/persistence proof
+  - evt-03c37a5f-82da-4711-91ce-955d5c692ffa progress revision 62: regenerated measured report records first-ten and 48-hour cadence receipts
+  - ABI-039 REVIEW.md revision 2: progression-aware deterministic cadence reviewed
+
+### evt-b67a6863-440d-42bd-a8a0-83f27f091293
+
+- Timestamp: 2026-09-05T10:27:25.538Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 78
+- Resulting revision: 79
+- Summary: Begin receipt-backed reconciliation of ABI-029 family-affinity identity integration.
+- Idempotency key: abi039-step-identity-integration-start-20260905-v1
+- Request fingerprint: f1d1af83b38d9ec9559ad306efd21bfe4939df262a900c6b9288180537992802
+- Action: set_state
+- Step ID: boss-identity-integration
+- State: in_progress
+- Evidence:
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: ABI-029 reuse and identity distribution reviewed
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: identity and varied boss receipts verified
+
+### evt-5df12d6b-89d0-42c3-9993-ab9ff827dc68
+
+- Timestamp: 2026-09-05T10:27:37.239Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 79
+- Resulting revision: 80
+- Summary: ABI-029 family-affinity identity integration reconciled complete; existing registry ownership, Golden separation, and no duplicated scheduler content are receipt-backed.
+- Idempotency key: abi039-step-identity-integration-complete-20260905-v1
+- Request fingerprint: 087b0a8fbc418418845753eb355db428762ded085c7c73fa4e18af046bd7a0f6
+- Action: set_state
+- Step ID: boss-identity-integration
+- State: complete
+- Evidence:
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: ABI-029 reuse, identity distribution, and Golden separation reviewed
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: varied identity receipts and Goose variants verified
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160#L32-L36; contentHash 0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842
+
+### evt-96e35f18-b216-4fc8-a1c6-747e9c4cbb70
+
+- Timestamp: 2026-09-05T10:27:44.467Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 80
+- Resulting revision: 81
+- Summary: Begin receipt-backed reconciliation of boss camera, replacement, reset, effects, and disposal lifecycle reuse.
+- Idempotency key: abi039-step-presentation-lifecycle-start-20260905-v1
+- Request fingerprint: 5badacc60c59062e1760e5319b7e10bf5ab87ded27a8f4dcb942c892646d1ee7
+- Action: set_state
+- Step ID: boss-presentation-lifecycle
+- State: in_progress
+- Evidence:
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: boss camera/resource lifecycle reviewed
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: framing, replacement, orbit, resize, and resource behavior verified
+
+### evt-0eccda52-49f6-42f6-a855-3f8189646f96
+
+- Timestamp: 2026-09-05T10:27:52.546Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 81
+- Resulting revision: 82
+- Summary: Boss presentation lifecycle reconciled complete from review and QA receipts: existing camera, replacement, reset, effects, framing, and disposal behavior were reused and verified.
+- Idempotency key: abi039-step-presentation-lifecycle-complete-20260905-v1
+- Request fingerprint: 67204daa169e767ad0dda95426dafe92b455e87e4e90caf509f3b47275c2963a
+- Action: set_state
+- Step ID: boss-presentation-lifecycle
+- State: complete
+- Evidence:
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: boss camera/resource lifecycle reviewed
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: desktop/390px framing, orbit, resize, replacement and stable resources verified
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160#L36-L46; contentHash 0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842
+
+### evt-9b4efe9f-7802-4056-b0b1-160f8cd7b27b
+
+- Timestamp: 2026-09-05T10:28:01.304Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 82
+- Resulting revision: 83
+- Summary: Begin receipt-backed reconciliation of deterministic boss domain regressions.
+- Idempotency key: abi039-step-domain-regressions-start-20260905-v1
+- Request fingerprint: 9612b4503a72634fba0ca371633e8d8299c19894d08eff352809d2647dc43895
+- Action: set_state
+- Step ID: boss-domain-regressions
+- State: in_progress
+- Evidence:
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: first-three variation, safe range, reverse mapping and focused cadence proof
+  - evt-03c37a5f-82da-4711-91ce-955d5c692ffa progress revision 62: first-ten and 48-hour report assertions
+  - ABI-039 REVIEW.md revision 2: exact/event-jump, finite long-run, safe ordinal, and distribution behavior reviewed
+
+### evt-5f6b2111-b752-49dd-8bcc-2e753ea958d6
+
+- Timestamp: 2026-09-05T10:28:10.832Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 83
+- Resulting revision: 84
+- Summary: Deterministic boss domain regressions reconciled complete from first-ten/48-hour receipts, exact/event-jump proof, safe ordinal guards, stage boundaries, and focused tests.
+- Idempotency key: abi039-step-domain-regressions-complete-20260905-v1
+- Request fingerprint: 0ca6b5113c32c38459350f2854eaec34659274644bca001e5fc76381ddf06dcf
+- Action: set_state
+- Step ID: boss-domain-regressions
+- State: complete
+- Evidence:
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: first-three variation, safe range and reverse mapping
+  - evt-03c37a5f-82da-4711-91ce-955d5c692ffa progress revision 62: first-ten and 48-hour cadence assertions
+  - evt-7b771b01-3142-46e7-9f1b-7f74c9f5e370 independent-review PASS at progress revision 65: exact/event-jump, safe outputs, distribution and balance reviewed
+  - ABI-039 REVIEW.md revision 2: deterministic bounded gaps and finite progression reviewed
+
+### evt-5ede5c12-0d1e-4a70-a7fa-1a3e29f54a41
+
+- Timestamp: 2026-09-05T10:28:18.357Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 84
+- Resulting revision: 85
+- Summary: Begin receipt-backed reconciliation of historical-save and resource-lifecycle regression step.
+- Idempotency key: abi039-step-save-resource-regressions-start-20260905-v1
+- Request fingerprint: a9ee153dfb0a68738e3cd704c7c07057a10287353014ff7aaff53776e47de3a4
+- Action: set_state
+- Step ID: boss-save-resource-regressions
+- State: in_progress
+- Evidence:
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: post-160 save fixture round-trip, historical identity reload, and event-jump coverage
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: historical V3/V4 reload and stable resources verified
+  - ABI-039 QA.md revision 2: replacement, reduced motion, orbit, resize, and stable resources verified
+
+### evt-68566e4f-3148-4419-aae1-5a8a48ed177c
+
+- Timestamp: 2026-09-05T10:28:26.489Z
+- Actor: planner-vault-audit
+- Operation: execution_plan.update
+- Prior revision: 85
+- Resulting revision: 86
+- Summary: Historical-save and resource regression step reconciled complete from V3/V4 reload, post-160 round-trip, replacement, framing, and stable-resource receipts.
+- Idempotency key: abi039-step-save-resource-regressions-complete-20260905-v1
+- Request fingerprint: 050ab20bf0a968d26283399f680ac3045b361fe8eab1d7e9085897a163f8ddf3
+- Action: set_state
+- Step ID: boss-save-resource-regressions
+- State: complete
+- Evidence:
+  - evt-50ce6224-72aa-4615-b804-0caed7d1a8c5 progress revision 61: post-160 save round-trip, historical identity reload, and 1/4/8/24/48-hour plus event-jump coverage
+  - evt-6909ff10-ffdb-4d28-91d3-79238d1bb50a independent-qa PASS at progress revision 67: historical V3/V4 reload, replacement, responsive and stable resources
+  - ABI-039 QA.md revision 2: historical reload, replacement, reduced motion, orbit, resize, and stable resources verified
+
+### evt-d1170efa-5a49-465b-b490-48e302c3b98e
+
+- Timestamp: 2026-09-05T10:37:16.201Z
+- Actor: planner-vault-audit
+- Operation: claim.release
+- Prior revision: 86
+- Resulting revision: 87
+- Summary: Released task claim: Release lease for ABI-039 cadence worker widened-bands checkpoint.
+- Idempotency key: abi039-reconcile-release-20260905-v1
+- Request fingerprint: 556eae7a9ff1cf48045f85b18abc43be3c0902f90fa13887cb130551882fe29e
+- Agent ID: planner-vault-audit
+- Session ID: planner-vault-audit-20260905
+- Intent: Release lease for ABI-039 cadence worker widened-bands checkpoint.
+- Evidence:
+  - None
+
+### evt-99071e0d-139e-4db5-ab2c-5586714114d5
+
+- Timestamp: 2026-09-05T10:37:28.158Z
+- Actor: abi039-fallback-resume
+- Operation: claim.acquire
+- Prior revision: 87
+- Resulting revision: 88
+- Summary: Claimed task lease: Append widened seeded cadence evidence and run final verification without using the planner-vault-audit lease.
+- Idempotency key: abi039-fallback-acquire-widened-cadence-20260905-v2
+- Request fingerprint: ec38e3daa56eae5954c3c9c8db223e80d4b6cb7d8a7f0550ae8f84a5982dbf94
+- Agent ID: abi039-fallback-resume
+- Session ID: fallback-resume-abi039-20260905
+- Intent: Append widened seeded cadence evidence and run final verification without using the planner-vault-audit lease.
+- Expires at: 2026-09-05T11:07:28.158Z
+- Evidence:
+  - None
+
+### evt-40d92b61-f019-4239-8607-a044fc4c4221
+
+- Timestamp: 2026-09-05T10:37:37.265Z
+- Actor: abi039-fallback-resume
+- Operation: progress.append
+- Prior revision: 88
+- Resulting revision: 89
+- Summary: Audited fixed-35 perceptual behavior and widened deterministic seeded cadence: early32-38, mid30-40, late30-40, long-run32-38; seeded pair complements preserve 70-encounter budget, historical/custom interval35 compatibility, and event-jump determinism. Generated report records visible first-ten and 48-hour contrast; focused cadence/report/balance proof is complete.
+- Idempotency key: abi039-widened-cadence-evidence-20260905-v5
+- Evidence:
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-029-compose-deterministic-elemental-enemy-variants-from-reusable/MEASURED-REPORT-AFFINITY.json: firstTenGaps [35,36,34,38,32,36,34,34,36,32], bounds 32-38, fortyEightHourGaps include 38/32 contrast
+  - src/domain/combat/boss-cadence.test.ts: first-ten minimum/maximum contrast and envelope assertions
+  - src/domain/combat/enemy-affinities.balance.test.ts: widened 8h/24h receipts and bounded economy/wall gates
+  - Focused cadence/report/balance checks: 3 files, 7 selected tests passed
+  - Changed-file ESLint and Prettier checks passed
+  - Full pnpm check pending ABI-036 surface changes
+
+### evt-8252ad19-a041-482f-b0ba-e810be984897
+
+- Timestamp: 2026-09-05T10:40:48.983Z
+- Actor: abi039-fallback-resume
+- Operation: progress.append
+- Prior revision: 89
+- Resulting revision: 90
+- Summary: Final verification completed after ABI-036 surface changes: widened cadence evidence remains recorded, current family-label expectations align with deterministic seeded boss identities, and full project check passes.
+- Idempotency key: abi039-full-check-evidence-20260905-v6
+- Evidence:
+  - Claim acquisition receipt evt-99071e0d-139e-4db5-ab2c-5586714114d5 at progress revision88
+  - Widened cadence evidence receipt evt-40d92b61-f019-4239-8607-a044fc4c4221 at progress revision89
+  - pnpm check passed: ESLint, Prettier, 33 test files / 338 tests, worker TypeScript, project TypeScript, and Vite build
+  - Measured report retains firstTenGaps [35,36,34,38,32,36,34,34,36,32] and 48-hour 38/32 contrast
+
+### evt-5f88d046-7922-4a35-9f5e-812546bc5462
+
+- Timestamp: 2026-09-05T10:41:04.120Z
+- Actor: abi039-fallback-resume
+- Operation: claim.release
+- Prior revision: 90
+- Resulting revision: 91
+- Summary: Released task claim: Release fallback lease after final full-check evidence; no commit or lifecycle transition.
+- Idempotency key: abi039-fallback-release-after-check-20260905
+- Request fingerprint: 925b7da3ddb2b641c281f120f5971e134d390ffb2827fc1b1d6b226ace7fb11d
+- Agent ID: abi039-fallback-resume
+- Session ID: fallback-resume-abi039-20260905
+- Intent: Release fallback lease after final full-check evidence; no commit or lifecycle transition.
+- Evidence:
+  - None
+
+### evt-124cec88-e120-48b8-8d8b-773508095a3d
+
+- Timestamp: 2026-09-05T10:45:07.587Z
+- Actor: abi039-fallback-resume
+- Operation: claim.acquire
+- Prior revision: 91
+- Resulting revision: 92
+- Summary: Claimed task lease: Replace pair-complement cadence with independent seeded bounded draws, regenerate measured evidence, and run full verification without commit.
+- Idempotency key: abi039-reacquire-independent-cadence-20260905
+- Request fingerprint: efedc2c258cfa29f347924a40002fa50f0c0ab35cdecb70125109a35817fb2b5
+- Agent ID: abi039-fallback-resume
+- Session ID: fallback-resume-abi039-20260905
+- Intent: Replace pair-complement cadence with independent seeded bounded draws, regenerate measured evidence, and run full verification without commit.
+- Expires at: 2026-09-05T11:15:07.588Z
+- Evidence:
+  - None
+
+### evt-04b81bc4-b6eb-46fc-9544-c6d5e9788c56
+
+- Timestamp: 2026-09-05T11:44:25.064Z
+- Actor: planner-vault-audit
+- Operation: claim.acquire
+- Prior revision: 92
+- Resulting revision: 93
+- Summary: Claimed task lease: Reconcile fresh independent cadence bands, first-ten, event-jump, and persistence receipts
+- Idempotency key: abi039-followup-claim-20260905
+- Request fingerprint: 7f36c487a0dd7b431c41a5bb1dfb815b4da54b801108ed457f925d8f133cf1b6
+- Agent ID: planner-vault-audit
+- Session ID: planner-vault-audit-20260905-followup
+- Intent: Reconcile fresh independent cadence bands, first-ten, event-jump, and persistence receipts
+- Expires at: 2026-09-05T12:14:25.064Z
+- Evidence:
+  - None
+
+### evt-b3829aa0-77cb-4293-8987-ea282dfdfa47
+
+- Timestamp: 2026-09-05T11:44:44.597Z
+- Actor: planner-vault-audit
+- Operation: progress.append
+- Prior revision: 93
+- Resulting revision: 94
+- Summary: Follow-up scope receipt: cadence uses independent seeded bands early 28–42, mid 24–46, late 26–44, long-run 28–42; measured first-ten gaps are 35,36,33,36,27,35,42,44,37,46; event-jump and persistence remain equivalent at time boundaries.
+- Idempotency key: abi039-followup-scope-20260905
+- Evidence:
+  - src/domain/combat/balance.ts:20-28 — independent cadence band envelopes 28–42/24–46/26–44/28–42
+  - plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-029-compose-deterministic-elemental-enemy-variants-from-reusable/MEASURED-REPORT-AFFINITY.json:25-63 — measured 27–46 envelope, first-ten receipt, and 48-hour gaps
+  - src/domain/combat/boss-cadence.ts:55-65 — independent seeded draw and non-complement contract
+  - src/domain/combat.test.ts:377-407 — 48-hour event-jump equivalence at 1/4/8/24/48/49-hour boundaries
+  - src/domain/combat.test.ts:409-429 — 48-hour boss TTK receipt
+  - AUTOBATTLEIDLE-DOC-20260905-E4B160@0a14d0b0bddf0907c3b2034580e18fa4c2b04ee0965fe79f53a0fe25ccd1f842 — current boss cadence decision/evidence

@@ -7,7 +7,7 @@ import {
   LAB_MODIFIERS,
   type LabCase,
 } from "./catalog";
-import { LAB_RECIPES, normalizeLabRecipe, type LabRecipe } from "./recipes";
+import { LAB_RECIPE_INPUTS, normalizeLabRecipe, type LabRecipe } from "./recipes";
 import {
   PLAYER_DETAIL_LEVELS,
   PLAYER_DETAIL_TRANSITION,
@@ -114,7 +114,7 @@ export const parseLabCase = (search: string): LabUrlCase => {
   });
   const selectedPlayerStage = playerStage(query.get("stage"));
   const selectedSubject = values(query.get("subject"), ["enemy", "player"] as const, "enemy");
-  const selectedRecipe = values(query.get("recipe"), LAB_RECIPES, DEFAULT_LAB_CASE.recipe);
+  const selectedRecipe = values(query.get("recipe"), LAB_RECIPE_INPUTS, DEFAULT_LAB_CASE.recipe);
   const legacyPlayerLevel =
     selectedPlayerStage === PLAYER_DETAIL_TRANSITION.source
       ? playerDetailLevel(query.get("detail"))
