@@ -180,6 +180,46 @@ const socket = (
   parent.add(node);
   return node;
 };
+const fitGooseHydraSockets = (
+  rig: THREE.Object3D,
+  orbit: THREE.Object3D,
+  instance: THREE.Object3D,
+  headAnchor: THREE.Object3D | undefined,
+): void => {
+  instance.updateWorldMatrix(true, true);
+  const bounds = new THREE.Box3().setFromObject(instance);
+  if (bounds.isEmpty()) return;
+  const size = bounds.getSize(new THREE.Vector3());
+  const center = bounds.getCenter(new THREE.Vector3());
+  const halfWidth = Math.max(0.1, size.x * 0.5);
+  const halfDepth = Math.max(0.1, size.z * 0.5);
+  const bodyY = bounds.min.y + size.y * 0.35;
+  const local = (position: THREE.Vector3): THREE.Vector3 => rig.worldToLocal(position);
+  const setSocket = (name: string, position: THREE.Vector3): void => {
+    const socket = rig.getObjectByName(name);
+    if (socket !== undefined) socket.position.copy(local(position));
+  };
+  const familyPrefix = "enemy-socket-boss-goose-hydra-";
+  const flankCueCenter = THREE.MathUtils.clamp(
+    center.z + 0.55,
+    bounds.min.z + 0.3,
+    bounds.max.z - 0.3,
+  );
+  setSocket(`${familyPrefix}left`, new THREE.Vector3(bounds.min.x - 0.03, bodyY, center.z));
+  setSocket(`${familyPrefix}right`, new THREE.Vector3(bounds.max.x + 0.03, bodyY, center.z));
+  setSocket(
+    `${familyPrefix}flank`,
+    new THREE.Vector3(bounds.max.x + 0.03, bodyY, flankCueCenter - 0.55),
+  );
+  setSocket(`${familyPrefix}front`, new THREE.Vector3(center.x, bodyY, bounds.max.z + 0.03));
+  setSocket(`${familyPrefix}overhead`, new THREE.Vector3(center.x, bounds.max.y, center.z));
+  setSocket(`${familyPrefix}combat`, new THREE.Vector3(center.x, bodyY, bounds.max.z + 0.08));
+  if (headAnchor !== undefined) {
+    headAnchor.position.copy(local(new THREE.Vector3(center.x, bounds.max.y - 0.28, center.z)));
+  }
+  orbit.position.copy(local(center));
+  orbit.userData.bodyRadius = Math.max(0.05, Math.max(halfWidth, halfDepth) + 0.08 - 0.24);
+};
 
 const augmentFallbackWithGltf = (
   family: GltfBossFamily,
@@ -208,6 +248,9 @@ const augmentFallbackWithGltf = (
   if (rig === undefined) return fallback;
   const bodyAnchor = fallback.anchors?.body;
   if (!(bodyAnchor instanceof THREE.Group)) return fallback;
+  const headAnchor = family === "boss-goose-hydra" ? fallback.anchors?.head : undefined;
+  const preservedAnchorMeshes = new Set<THREE.Mesh>();
+  if (headAnchor instanceof THREE.Mesh) preservedAnchorMeshes.add(headAnchor);
   let instance: THREE.Group | undefined;
   let disposed = false;
   const assetReady: Promise<void> = sourceScene(asset.url)
@@ -220,6 +263,10 @@ const augmentFallbackWithGltf = (
         (Number.isFinite(fallbackBounds.min.y) ? fallbackBounds.min.y : 0) -
         sourceBounds.min.y * asset.scale;
       legacyMeshes.forEach((mesh) => {
+        if (preservedAnchorMeshes.has(mesh)) {
+          mesh.visible = false;
+          return;
+        }
         mesh.removeFromParent();
         disposeResources(mesh);
       });
@@ -227,10 +274,13 @@ const augmentFallbackWithGltf = (
       instance.traverse((child) => {
         if (!named && child instanceof THREE.Mesh) {
           child.name = `enemy-body-${family}`;
+          child.userData.semanticSurfaceGuard = family === "boss-goose-hydra";
           named = true;
         }
       });
       bodyAnchor.add(instance);
+      if (family === "boss-goose-hydra")
+        fitGooseHydraSockets(rig, fallback.anchors?.orbit ?? rig, instance, headAnchor);
       bodyAnchor.userData.refreshSemanticSurfaces?.();
       root.userData.gltfStatus = "ready";
       root.visible = true;
@@ -244,10 +294,14 @@ const augmentFallbackWithGltf = (
     ...fallback,
     key: `body-${family}`,
     assetReady,
-    anchors: { ...fallback.anchors, body: bodyAnchor },
     dispose: () => {
+      if (disposed) return;
       disposed = true;
       fallback.dispose?.();
+      preservedAnchorMeshes.forEach((mesh) => {
+        mesh.removeFromParent();
+        disposeResources(mesh);
+      });
       if (instance !== undefined) {
         instance.removeFromParent();
         disposeResources(instance);
@@ -307,6 +361,7 @@ export const gltfBossBody = (
       instance.traverse((child) => {
         if (!named && child instanceof THREE.Mesh) {
           child.name = `enemy-body-${family}`;
+          child.userData.semanticSurfaceGuard = family === "boss-goose-hydra";
           named = true;
         }
       });

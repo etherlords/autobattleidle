@@ -227,12 +227,61 @@ const patchForFace = (
     size: new THREE.Vector3(tangent * widthRatio, height * heightRatio, depth),
   };
 };
+const suppressDetachedDecal = (
+  body: THREE.Mesh,
+  node: THREE.Mesh,
+  geometry: THREE.BufferGeometry,
+  positions: THREE.BufferAttribute | THREE.InterleavedBufferAttribute,
+  bodyBoundsWorld: THREE.Box3,
+  nodeWorldMatrix: THREE.Matrix4,
+): void => {
+  if (body.userData.semanticSurfaceGuard !== true) return;
+  const proximityLimit = Math.max(
+    0.04,
+    Math.min(0.12, bodyBoundsWorld.getSize(new THREE.Vector3()).length() * 0.06),
+  );
+  const probeDistance = 0.01;
+  const bodyRaycaster = new THREE.Raycaster();
+  const vertex = new THREE.Vector3();
+  const worldVertex = new THREE.Vector3();
+  const directions = [
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(-1, 0, 0),
+    new THREE.Vector3(0, 1, 0),
+    new THREE.Vector3(0, -1, 0),
+    new THREE.Vector3(0, 0, 1),
+    new THREE.Vector3(0, 0, -1),
+  ] as const;
+  let detached = false;
+  for (let index = 0; index < positions.count && !detached; index += 1) {
+    vertex.fromBufferAttribute(positions, index);
+    worldVertex.copy(vertex).applyMatrix4(nodeWorldMatrix);
+    const nearBody = directions.some((direction) => {
+      bodyRaycaster.set(
+        worldVertex.clone().addScaledVector(direction, probeDistance),
+        direction.clone().negate(),
+      );
+      const hit = bodyRaycaster.intersectObject(body, false)[0];
+      return hit !== undefined && hit.distance <= proximityLimit + probeDistance;
+    });
+    detached = !nearBody;
+  }
+  if (!detached) return;
+  geometry.dispose();
+  node.geometry = new THREE.BufferGeometry().setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute([], 3),
+  );
+  node.visible = false;
+  node.userData.semanticSurfaceSuppressed = true;
+};
 const createBodyDecal = (
   body: THREE.Mesh,
   parent: THREE.Object3D,
   name: string,
   patch: SurfacePatch,
   material: THREE.MeshStandardMaterial,
+  roll = 0,
 ): THREE.Mesh => {
   body.updateWorldMatrix(true, false);
   parent.updateWorldMatrix(true, false);
@@ -241,10 +290,9 @@ const createBodyDecal = (
   const poseWorldQuaternion =
     pose?.getWorldQuaternion(new THREE.Quaternion()) ?? new THREE.Quaternion();
   const worldNormal = localNormal.clone().applyQuaternion(poseWorldQuaternion).normalize();
-  const worldOrientation = new THREE.Quaternion().setFromUnitVectors(
-    new THREE.Vector3(0, 0, 1),
-    worldNormal,
-  );
+  const worldOrientation = new THREE.Quaternion()
+    .setFromUnitVectors(new THREE.Vector3(0, 0, 1), worldNormal)
+    .multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), roll));
   let worldCenter = patch.center.clone().applyMatrix4(body.matrixWorld);
   const bodyBoundsWorld = new THREE.Box3().setFromObject(body);
   const rayDistance = bodyBoundsWorld.getSize(new THREE.Vector3()).length() * 2;
@@ -290,9 +338,11 @@ const createBodyDecal = (
   const node = new THREE.Mesh(geometry, material);
   node.name = name;
   node.quaternion.copy(parentOrientation);
+  node.updateMatrix();
+  const nodeWorldMatrix = parent.matrixWorld.clone().multiply(node.matrix);
+  suppressDetachedDecal(body, node, geometry, positions, bodyBoundsWorld, nodeWorldMatrix);
   return node;
 };
-
 const surfaceComponent = (
   key: string,
   nodes: readonly THREE.Object3D[],
@@ -323,8 +373,8 @@ const scratches = (
         `surface-scratch-${index}`,
         patchForFace(target, "front", x * 1.3, y * 1.4, 0.22 + profile.variant * 0.015, 0.045),
         markMaterial(palette.accent, palette.emissive),
+        rotation,
       );
-      mark.rotateZ(rotation);
       group.add(mark);
     });
   };
@@ -371,8 +421,8 @@ const shellPlates = (
             0.18,
           ),
           markMaterial(palette.core, palette.emissive),
+          rotation,
         );
-        plate.rotateZ(rotation);
         group.add(plate);
       });
     };

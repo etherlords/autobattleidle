@@ -23,13 +23,14 @@ import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enem
 
 vi.mock("three/addons/loaders/GLTFLoader.js", () => {
   class DeterministicGLTFLoader {
-    load(_url: string, onLoad: (gltf: { readonly scene: THREE.Group }) => void): void {
+    load(url: string, onLoad: (gltf: { readonly scene: THREE.Group }) => void): void {
       const scene = new THREE.Group();
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(1.6, 1.2, 1.4),
-        new THREE.MeshStandardMaterial(),
-      );
+      const geometry = url.includes("goose")
+        ? new THREE.IcosahedronGeometry(0.9, 2)
+        : new THREE.BoxGeometry(1.6, 1.2, 1.4);
+      const body = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
       body.name = "deterministic-loaded-body";
+      if (url.includes("goose")) body.scale.set(1.35, 0.95, 0.82);
       scene.add(body);
       queueMicrotask(() => onLoad({ scene }));
     }
@@ -1785,6 +1786,81 @@ describe("enemy visual factory", () => {
       } finally {
         unit.dispose();
       }
+    }
+  });
+
+  it("fits Goose Hydra standalone cues to the loaded body envelope", async () => {
+    const unit = new EnemyUnitFactory().create({ grade: "boss", level: 175, modifier: null });
+    try {
+      const ready = unit.enemyView.assetReady();
+      expect(ready).toBeDefined();
+      await ready;
+      unit.view.group.rotation.set(0.17, -0.13, 0.08);
+      const pose = unit.view.group.getObjectByName("enemy-pose-boss-goose-hydra");
+      const bodyAnchor = unit.view.group.getObjectByName("enemy-body-anchor-boss-goose-hydra");
+      if (pose === undefined || bodyAnchor === undefined)
+        throw new Error("Expected loaded Goose Hydra pose and body anchor");
+      pose.rotation.set(-0.09, 0.12, 0.05);
+      bodyAnchor.position.set(0.06, -0.03, 0.04);
+      unit.view.group.updateMatrixWorld(true);
+      const body = unit.view.group.getObjectByName("enemy-body-boss-goose-hydra");
+      const flank = unit.view.group.getObjectByName("enemy-socket-boss-goose-hydra-flank");
+      const orbit = unit.view.group.getObjectByName("enemy-socket-boss-goose-hydra-orbit");
+      const decals = [
+        unit.view.group.getObjectByName("surface-scratch-0"),
+        unit.view.group.getObjectByName("surface-scratch-1"),
+        unit.view.group.getObjectByName("surface-shell-plate-left-0"),
+        unit.view.group.getObjectByName("surface-affinity-mark"),
+      ];
+      if (
+        !(body instanceof THREE.Mesh) ||
+        flank === undefined ||
+        orbit === undefined ||
+        decals.some((decal) => !(decal instanceof THREE.Mesh))
+      )
+        throw new Error("Expected loaded Goose Hydra body sockets and semantic decals");
+      const bounds = new THREE.Box3().setFromObject(body);
+      const size = bounds.getSize(new THREE.Vector3());
+      const flankPosition = flank.getWorldPosition(new THREE.Vector3());
+      const orbitRadius = Number(orbit.userData.bodyRadius);
+      expect(flankPosition.x).toBeLessThan(bounds.max.x + 0.08);
+      expect(flankPosition.y).toBeGreaterThan(bounds.min.y + 0.2);
+      expect(orbitRadius + 0.24).toBeLessThanOrEqual(Math.max(size.x, size.z) * 0.5 + 0.13);
+
+      const directions = [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(-1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, -1, 0),
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(0, 0, -1),
+      ] as const;
+      const raycaster = new THREE.Raycaster();
+      const position = new THREE.Vector3();
+      const worldPosition = new THREE.Vector3();
+      for (const decal of decals) {
+        if (!(decal instanceof THREE.Mesh)) throw new Error("Expected a Goose semantic decal mesh");
+        const positions = decal.geometry.getAttribute("position");
+        expect(positions.count).toBeGreaterThan(0);
+        for (let index = 0; index < positions.count; index += 1) {
+          position.fromBufferAttribute(positions, index);
+          worldPosition.copy(position).applyMatrix4(decal.matrixWorld);
+          const nearestDistance = Math.min(
+            ...directions.map((direction) => {
+              raycaster.set(
+                worldPosition.clone().addScaledVector(direction, 0.01),
+                direction.clone().negate(),
+              );
+              return (
+                raycaster.intersectObject(body, false)[0]?.distance ?? Number.POSITIVE_INFINITY
+              );
+            }),
+          );
+          expect(nearestDistance).toBeLessThanOrEqual(0.13);
+        }
+      }
+    } finally {
+      unit.dispose();
     }
   });
 
