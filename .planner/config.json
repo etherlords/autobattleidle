@@ -63,6 +63,7 @@
     "ABI-050": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-050-fix-visual-lab-family-selector-reachability-transitions",
     "ABI-051": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-051-verify-and-label-eight-bundled-music-tracks",
     "ABI-052": "plans/backlog/task-ABI-052-add-catbug-and-evil-catbug-glb-bosses",
-    "ABI-053": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-053-preserve-legacy-bosses-and-improve-catbug-glb-presentation"
+    "ABI-053": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-053-preserve-legacy-bosses-and-improve-catbug-glb-presentation",
+    "ABI-054": "plans/sprint-ABI-S1-playable-autobattle-idle-v1/task-ABI-054-repair-floating-goose-hydra-decals-and-decorations"
   }
 }

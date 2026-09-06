@@ -4,8 +4,8 @@ id: ABI-053
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 63
-status: In QA
+revision: 67
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In QA
-- Revision: 63
-- Last update: Review handoff confirmed; independent QA pass is recorded, while deployment verification remains blocked/not-run.
+- Status: Done
+- Revision: 67
+- Last update: Manager closure complete; verification receipt, CI, Pages deployment, and public smoke evidence accepted.
 
 ## Execution plan
 
@@ -1096,3 +1096,77 @@ workspaceProject: autobattleidle
   - Independent review pass evt-d576ed3a-1168-4bbb-aff8-666c4fd5dadb
   - Independent QA pass evt-53134c11-42db-43cc-b24c-7febe26c787e
   - Verification blocked evt-375c22f2-9be9-49d6-a84a-2de28d2c0b12
+
+### evt-a20aa0a6-e6e6-4984-a449-463dbc4d5525
+
+- Timestamp: 2026-09-05T23:45:30.650Z
+- Actor: abi053-deployed-closure
+- Operation: gate.record
+- Prior revision: 63
+- Resulting revision: 64
+- Summary: Pushed commit 0443c6c to main; CI and GitHub Pages succeeded; public deployment smoke passed.
+- Idempotency key: abi053-verification-0443c6c-20260906
+- Request fingerprint: 27b270f3f92b56a391f41ac7981964635b0d61937367b9711e181dac92e929eb
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - git push origin main: d293a8b..0443c6c main -> main
+  - CI run 33999284740 success for SHA 0443c6cfc6911d70895e8c8c720a912b6644aea1: https://github.com/etherlords/autobattleidle/actions/runs/33999284740
+  - Deploy GitHub Pages run 33999284783 success for SHA 0443c6cfc6911d70895e8c8c720a912b6644aea1: https://github.com/etherlords/autobattleidle/actions/runs/33999284783
+  - Pages deployment 6287097090 status success; job receipt https://github.com/etherlords/autobattleidle/actions/runs/33999284783/job/101395145199
+  - Pages environment URL https://etherlords.github.io/autobattleidle/
+  - Browser smoke at https://etherlords.github.io/autobattleidle/ desktop viewport 1365x768: title Etherlords Autobattle Idle; one canvas rendered with Tide Hydra boss and HUD; Continue with sound activated; pointerdown/pointerup on canvas produced Hit: 5,776 damage (manual); no console/page errors observed during 1.2s post-load check; screenshot captured after smoke.
+
+### evt-ee1245e6-aa68-4dfd-bcb2-fb9a63368d8c
+
+- Timestamp: 2026-09-05T23:45:42.610Z
+- Actor: abi053-deployed-closure
+- Operation: task.advance
+- Prior revision: 64
+- Resulting revision: 65
+- Summary: Verification passed after pushing 0443c6c and confirming successful CI, Pages deployment, and public smoke; ready for manager closure.
+- Idempotency key: abi053-ready-for-manager-0443c6c-20260906
+- Request fingerprint: a91c9169bf3d75be3a94b36dfa2a361ca370eb350835d041b54a7ff10d105fbf
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - Verification gate pass evt-a20aa0a6-e6e6-4984-a449-463dbc4d5525 at progress revision 64
+  - CI run 33999284740 success: https://github.com/etherlords/autobattleidle/actions/runs/33999284740
+  - Pages run 33999284783 success: https://github.com/etherlords/autobattleidle/actions/runs/33999284783
+  - Public deployed smoke passed at https://etherlords.github.io/autobattleidle/
+
+### evt-d11a08fc-929a-4b7f-8f69-a626267b0686
+
+- Timestamp: 2026-09-05T23:46:40.217Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 65
+- Resulting revision: 66
+- Summary: Manager closure approved after successful deployed verification and exact verification receipt.
+- Idempotency key: abi053-manager-closure-main-0443c6c-20260906
+- Request fingerprint: e74c000c2fa15aa364edb63eded112debb192ba84258fba9966f66f32c4f6f64
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - Verification gate pass evt-a20aa0a6-e6e6-4984-a449-463dbc4d5525
+  - Task revision 11 confirmed live before closure
+  - CI 33999284740 and GitHub Pages 33999284783 succeeded for 0443c6cfc6911d70895e8c8c720a912b6644aea1
+  - Public smoke passed at https://etherlords.github.io/autobattleidle/
+
+### evt-e49f3e04-83fb-4336-9a99-bd7ff354da13
+
+- Timestamp: 2026-09-05T23:46:48.511Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 66
+- Resulting revision: 67
+- Summary: Manager closure complete; verification receipt, CI, Pages deployment, and public smoke evidence accepted.
+- Idempotency key: abi053-done-main-0443c6c-20260906
+- Request fingerprint: 8d50595d36988f048e8c20e04ab85df3e111455467b3f6df214e6eb86c54a452
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - Manager-closure gate pass evt-d11a08fc-929a-4b7f-8f69-a626267b0686 at progress revision 66
+  - Verification gate pass evt-a20aa0a6-e6e6-4984-a449-463dbc4d5525
+  - CI run 33999284740 success for 0443c6cfc6911d70895e8c8c720a912b6644aea1
+  - GitHub Pages run 33999284783 success and deployed URL https://etherlords.github.io/autobattleidle/

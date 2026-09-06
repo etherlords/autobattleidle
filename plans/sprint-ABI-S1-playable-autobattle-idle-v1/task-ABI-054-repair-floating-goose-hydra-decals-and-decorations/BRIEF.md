@@ -4,8 +4,8 @@ id: ABI-054
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 4
-status: In QA
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -28,7 +28,7 @@ Repair floating Goose Hydra decals and decorations
 
 - Type: bug
 - Priority: high
-- Status: In QA
+- Status: Done
 - Parent: None
 
 ## Acceptance criteria
