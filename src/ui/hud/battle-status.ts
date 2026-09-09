@@ -13,7 +13,11 @@ const modifierLabels = {
 
 export class BattleStatus {
   readonly element = document.createElement("section");
+  private readonly encounterPanel = document.createElement("div");
+  private readonly resourcePanel = document.createElement("div");
+  private readonly statGrid = document.createElement("div");
   private readonly enemy = makeText("h1", "");
+  private readonly encounter = makeText("p", "");
   private readonly health = progress("enemy-health");
   private readonly healthFill = document.createElement("div");
   private readonly healthText = document.createElement("span");
@@ -23,13 +27,19 @@ export class BattleStatus {
   private readonly automaticRow = document.createElement("div");
   private readonly automaticText = makeText("p", "");
   private readonly automaticPause = button("automatic-pause", "⏸");
-  private pauseListener: (() => void) | undefined;
   private readonly coins = makeText("p", "");
-  private readonly armor = makeText("p", "");
   private readonly goldenBug = makeText("p", "");
+  private readonly damage = this.createMetric("Damage");
+  private readonly critical = this.createMetric("Critical chance");
+  private readonly penetration = this.createMetric("Armor penetration");
+  private readonly armor = this.createMetric("Enemy armor");
+  private pauseListener: (() => void) | undefined;
 
   constructor() {
     this.element.className = "hud-status";
+    this.encounterPanel.className = "combat-encounter-panel";
+    this.resourcePanel.className = "combat-resource-panel";
+    this.statGrid.className = "combat-stat-grid";
     this.healthFill.className = "enemy-health-fill";
     this.health.append(this.healthFill, this.healthText);
     this.automaticFill.className = "automatic-progress-fill";
@@ -37,19 +47,19 @@ export class BattleStatus {
     this.automaticRow.className = "automatic-control-row";
     this.automaticRow.append(this.automatic, this.automaticPause);
     this.goldenBug.className = "golden-bug-countdown";
-    this.armor.className = "armor-status";
     this.trackStatus.className = "hud-track-status";
-    this.automaticPause.addEventListener("click", this.togglePause);
-    this.element.append(
-      this.enemy,
-      this.health,
-      this.trackStatus,
-      this.automaticRow,
-      this.automaticText,
-      this.goldenBug,
-      this.armor,
-      this.coins,
+    this.automaticText.className = "automatic-text";
+    this.encounter.className = "combat-encounter";
+    this.statGrid.append(
+      this.damage.element,
+      this.critical.element,
+      this.penetration.element,
+      this.armor.element,
     );
+    this.encounterPanel.append(this.enemy, this.encounter, this.health, this.goldenBug);
+    this.resourcePanel.append(this.coins, this.automaticRow, this.automaticText);
+    this.element.append(this.encounterPanel, this.resourcePanel, this.statGrid, this.trackStatus);
+    this.automaticPause.addEventListener("click", this.togglePause);
   }
 
   onToggleAutomaticPause(listener: () => void): void {
@@ -58,14 +68,19 @@ export class BattleStatus {
   dispose(): void {
     this.automaticPause.removeEventListener("click", this.togglePause);
   }
-
   render(snapshot: BattleSnapshot): void {
     const { automatic, coins, enemy, goldenBug, playerStats } = snapshot;
     const level = formatNumber(enemy.level);
     const health = formatNumber(enemy.health);
     const maxHealth = formatNumber(enemy.maxHealth);
+    const rawArmor = formatNumber(enemy.armor.raw);
+    const effectiveArmor = formatNumber(enemy.armor.effective);
     const formattedCoins = formatNumber(coins);
-    this.enemy.textContent = `${enemy.name} · Level ${level.text} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${modifierLabels[enemy.modifier]}`}`;
+    const formattedDamage = formatNumber(playerStats.damage);
+    const penetration = `${(playerStats.armorPenetration * 100).toFixed(1)}%`;
+    const criticalChance = `${(playerStats.criticalChance * 100).toFixed(1)}%`;
+    this.enemy.textContent = `${enemy.name} · ${enemy.grade}${enemy.modifier === null ? "" : ` · ${modifierLabels[enemy.modifier]}`}`;
+    this.encounter.textContent = `${snapshot.encounter} · Encounter ${level.text}`;
     setProgress(
       this.health,
       `${enemy.name} health ${health.exact} of ${maxHealth.exact}`,
@@ -100,15 +115,36 @@ export class BattleStatus {
       goldenBug === null || goldenBug === undefined
         ? ""
         : `Golden Bug escaping in ${(goldenBug.remainingMs / 1000).toFixed(1)}s`;
-    this.armor.hidden = enemy.armor.raw === 0;
-    if (!this.armor.hidden) {
-      const penetration = `${(playerStats.armorPenetration * 100).toFixed(1)}%`;
-      this.armor.textContent = `Armor: ${enemy.armor.raw} · Effective: ${enemy.armor.effective} · Penetration: ${penetration}`;
-      this.armor.setAttribute(
-        "aria-label",
-        `Armor ${enemy.armor.raw}; effective armor after ${penetration} penetration: ${enemy.armor.effective}`,
-      );
-    }
+    this.damage.value.textContent = formattedDamage.text;
+    this.damage.value.title = formattedDamage.exact;
+    this.damage.value.setAttribute("aria-label", `Damage ${formattedDamage.exact}`);
+    this.critical.value.textContent = criticalChance;
+    this.critical.value.title = `${(playerStats.criticalChance * 100).toFixed(3)}%`;
+    this.critical.value.setAttribute("aria-label", `Critical chance ${this.critical.value.title}`);
+    this.penetration.value.textContent = penetration;
+    this.penetration.value.title = `${(playerStats.armorPenetration * 100).toFixed(3)}%`;
+    this.penetration.value.setAttribute(
+      "aria-label",
+      `Armor penetration ${this.penetration.value.title}`,
+    );
+    this.armor.value.textContent = `${rawArmor.text} raw → ${effectiveArmor.text} effective`;
+    this.armor.value.title = `Raw armor ${rawArmor.exact}; effective armor ${effectiveArmor.exact}; penetration ${penetration}`;
+    this.armor.value.setAttribute("aria-label", this.armor.value.title);
   }
+
+  private createMetric(label: string): {
+    readonly element: HTMLDivElement;
+    readonly value: HTMLElement;
+  } {
+    const element = document.createElement("div");
+    const name = makeText("p", label);
+    const value = makeText("p", "");
+    element.className = "combat-stat";
+    name.className = "combat-stat-label";
+    value.className = "combat-stat-value";
+    element.append(name, value);
+    return { element, value };
+  }
+
   private readonly togglePause = (): void => this.pauseListener?.();
 }

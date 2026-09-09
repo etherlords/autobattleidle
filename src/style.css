@@ -38,20 +38,79 @@ body {
 }
 
 .hud-status {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
+  background: rgb(7 18 31 / 88%);
+  border: 1px solid #4c7797;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  display: grid;
+  gap: 0.45rem 0.75rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(14rem, 0.9fr);
   left: 50%;
+  padding: 0.6rem 0.75rem;
   position: fixed;
   top: 0.75rem;
   transform: translateX(-50%);
   width: min(94vw, 72rem);
 }
+.combat-encounter-panel,
+.combat-resource-panel,
+.combat-stat-grid,
 .hud-track-status {
+  min-width: 0;
+}
+.combat-encounter-panel {
+  grid-column: 1;
+}
+.combat-resource-panel {
+  align-content: start;
+  display: grid;
+  gap: 0.2rem;
+  grid-column: 2;
+}
+.combat-encounter {
   color: #9fd8ff;
   font-size: 0.8rem;
-  margin: 0.25rem 0 0;
-  max-width: calc(100vw - 2rem);
+  margin-top: 0.15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.combat-stat-grid {
+  display: grid;
+  gap: 0.4rem;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.combat-stat {
+  background: rgb(22 39 53 / 72%);
+  border: 1px solid #355d79;
+  border-radius: 0.3rem;
+  min-width: 0;
+  padding: 0.3rem 0.45rem;
+}
+.combat-stat-label,
+.combat-stat-value {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.combat-stat-label {
+  color: #9fd8ff;
+  font-size: 0.7rem;
+}
+.combat-stat-value {
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.hud-track-status {
+  color: #9fd8ff;
+  font-size: 0.75rem;
+  grid-column: 1 / -1;
+  grid-row: 4;
+  margin: 0;
+  max-width: 100%;
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
@@ -59,8 +118,12 @@ body {
   width: 100%;
 }
 .hud-status > .boss-roadmap {
-  align-self: center;
-  width: min(100%, 48rem);
+  grid-column: 1 / -1;
+  grid-row: 3;
+  justify-self: stretch;
+  margin-top: 0;
+  max-width: none;
+  width: 100%;
 }
 .boss-roadmap {
   background: rgb(7 18 31 / 82%);
@@ -70,8 +133,6 @@ body {
   color: #d7ecff;
   display: grid;
   gap: 0.15rem;
-  margin-top: 0.45rem;
-  max-width: 48rem;
   padding: 0.35rem 0.65rem;
   text-align: center;
 }
@@ -85,13 +146,10 @@ body {
 }
 .hud-mute-toggle {
   font: inherit;
-  min-height: 2.25rem;
+  min-height: 2.75rem;
   min-width: 4.5rem;
   pointer-events: auto;
-  position: fixed;
-  right: 0.75rem;
-  top: 0.75rem;
-  z-index: 3;
+  position: static;
 }
 .audio-start-gate {
   align-items: center;
@@ -118,17 +176,35 @@ body {
 .hud-status h1 {
   font-size: clamp(1rem, 3vw, 1.5rem);
   margin: 0;
-  text-align: center;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hud-status p {
   margin: 0;
 }
 
-.armor-status {
-  font-size: 0.875rem;
+.automatic-progress {
+  background: #162735;
+  border: 1px solid #75c7ff;
+  height: 0.65rem;
+  margin-top: 0.2rem;
+  user-select: none;
+  width: 100%;
+}
+.automatic-control-row {
+  align-items: center;
+  display: flex;
+  min-width: 0;
+  width: 100%;
 }
 
+.automatic-control-row .automatic-progress {
+  flex: 1;
+  width: auto;
+}
 .enemy-health {
   background: #25120b;
   border: 1px solid #f8d28b;
@@ -153,24 +229,6 @@ body {
   text-align: center;
   text-shadow: 0 1px 2px #000;
   width: 100%;
-}
-
-.automatic-progress {
-  background: #162735;
-  border: 1px solid #75c7ff;
-  height: 0.65rem;
-  margin-top: 0.4rem;
-  user-select: none;
-  width: clamp(11rem, 40vw, 32rem);
-}
-.automatic-control-row {
-  align-items: center;
-  display: flex;
-  width: clamp(11rem, 40vw, 32rem);
-}
-.automatic-control-row .automatic-progress {
-  flex: 1;
-  width: auto;
 }
 
 .automatic-progress-fill {
@@ -209,7 +267,8 @@ body {
 
 .hud-actions > .upgrades-launcher,
 .hud-actions > .leaderboard-launcher,
-.hud-actions > .audio-settings-launcher {
+.hud-actions > .audio-settings-launcher,
+.hud-actions > .hud-mute-toggle {
   flex: 0 1 auto;
   font: inherit;
   font-weight: 700;
@@ -420,10 +479,49 @@ body {
     white-space: nowrap;
   }
   .hud-status {
+    gap: 0.35rem;
+    grid-template-columns: 1fr;
     left: 0.75rem;
-    right: 6rem;
+    padding: 0.45rem;
+    right: 0.75rem;
     transform: none;
     width: auto;
+  }
+
+  .combat-encounter-panel,
+  .combat-resource-panel,
+  .combat-stat-grid,
+  .hud-track-status,
+  .hud-status > .boss-roadmap {
+    grid-column: 1;
+  }
+
+  .combat-resource-panel {
+    grid-template-columns: minmax(5rem, 0.55fr) minmax(0, 1.45fr);
+  }
+
+  .combat-resource-panel .automatic-control-row,
+  .combat-resource-panel .automatic-text {
+    grid-column: 2;
+  }
+
+  .combat-resource-panel .automatic-control-row {
+    grid-row: 1;
+  }
+  .combat-resource-panel .automatic-text {
+    grid-row: 2;
+  }
+
+  .combat-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .combat-stat {
+    padding-inline: 0.35rem;
+  }
+
+  .combat-stat-value {
+    font-size: 0.8rem;
   }
 
   .leaderboard-tabs button {

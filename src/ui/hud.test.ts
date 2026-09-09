@@ -36,6 +36,15 @@ class FakeElement {
       this.children.push(child);
     }
   }
+  insertBefore(child: FakeElement, before: FakeElement): void {
+    const beforeIndex = this.children.indexOf(before);
+    child.parent = this;
+    if (beforeIndex < 0) {
+      this.children.push(child);
+      return;
+    }
+    this.children.splice(beforeIndex, 0, child);
+  }
 
   dispatch(type: string, detail: Record<string, unknown> = {}): void {
     const event = { preventDefault: () => undefined, ...detail, target: this } as unknown as Event;
@@ -218,9 +227,7 @@ describe("createHud", () => {
         nextBoss: { encounter: 35, family: "boss-evil-catbug", ordinal: 1 },
       },
     });
-    expect(element(host, "boss-roadmap-current").textContent).toBe(
-      "Current: Encounter 34 · veteran",
-    );
+    expect(element(host, "combat-encounter").textContent).toBe("Test · Encounter 34");
     expect(element(host, "boss-roadmap-next").textContent).toContain(
       "Next boss: #1 Evil Catbug · Encounter 35 · 1 encounters remaining",
     );
@@ -398,15 +405,15 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
   });
-  it("reserves the mute toggle column for the HUD heading on narrow screens", () => {
-    expect(stylesheet).toContain(
-      ".hud-status {\n    left: 0.75rem;\n    right: 6rem;\n    transform: none;\n    width: auto;\n  }",
-    );
-  });
-  it("keeps the roadmap inside the fixed status flow", () => {
+  it("keeps the unified status panel narrow-safe and the roadmap in its fixed flow", () => {
+    expect(stylesheet).toContain(".hud-status {\n  background: rgb(7 18 31 / 88%);");
+    expect(stylesheet).toContain("grid-template-columns: minmax(0, 1.35fr) minmax(14rem, 0.9fr);");
+    expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
+    expect(stylesheet).toContain("right: 0.75rem;");
     expect(stylesheet).toContain(".hud-status > .boss-roadmap {");
-    expect(stylesheet).toContain("width: min(100%, 48rem);");
-    expect(stylesheet).toContain("max-width: 48rem;");
+    expect(stylesheet).toContain(
+      "  overflow: hidden;\n  text-align: center;\n  text-overflow: ellipsis;",
+    );
   });
   it("keeps event log border colors tied to their combat source", () => {
     expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');
@@ -447,9 +454,10 @@ describe("createHud", () => {
     hud.reportPersistence("Restored");
     hud.render(snapshot);
 
-    expect(element(host, "hud-status").children.at(0)).toMatchObject({
-      textContent: "Ash Wisp · Level 1 · normal",
+    expect(element(host, "combat-encounter-panel").children.at(0)).toMatchObject({
+      textContent: "Ash Wisp · normal",
     });
+    expect(element(host, "combat-encounter").textContent).toBe("Test · Encounter 1");
     battlefield.dispatch("pointerdown", { button: 0, clientX: 10, isPrimary: true, pointerId: 1 });
     battlefield.dispatch("pointerup", { clientX: 10, isPrimary: true, pointerId: 1 });
     battlefield.dispatch("keydown", { key: "Enter", repeat: false });
@@ -464,21 +472,15 @@ describe("createHud", () => {
     );
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
-    expect(element(host, "hud-status").children[4]?.textContent).toBe(
-      "Automatic attack: 1.00 APS · 0.500s",
-    );
-    expect(element(host, "armor-status").hidden).toBe(true);
+    expect(element(host, "automatic-text").textContent).toBe("Automatic attack: 1.00 APS · 0.500s");
+    expect(element(host, "combat-stat-grid").children).toHaveLength(4);
     hud.render({
       ...snapshot,
       enemy: { ...snapshot.enemy, armor: { effective: 12, raw: 15 }, modifier: "armor" },
     });
-    expect(element(host, "armor-status")).toMatchObject({
-      hidden: false,
-      textContent: "Armor: 15 · Effective: 12 · Penetration: 37.5%",
+    expect(element(host, "combat-stat-grid").children.at(-1)?.children.at(1)).toMatchObject({
+      textContent: "15 raw → 12 effective",
     });
-    expect(element(host, "armor-status").attributes.get("aria-label")).toBe(
-      "Armor 15; effective armor after 37.5% penetration: 12",
-    );
     hud.render(snapshot);
     const automaticPause = element(host, "automatic-pause");
     automaticPause.dispatch("click");
@@ -735,7 +737,7 @@ describe("createHud", () => {
     const trackStatus = element(host, "hud-track-status");
     playlist = { current: "Idle Fantasy", next: "Idle Dawn" };
     for (const listener of listeners) listener("ready");
-    expect(trackStatus.textContent).toBe("♪ Idle Fantasy · Next: Idle Dawn");
+    expect(trackStatus.textContent).toBe("Sound: ready · on · ♪ Idle Fantasy · Next: Idle Dawn");
     launcher.dispatch("click");
     expect(modal.hidden).toBe(false);
     const dialog = element(host, "audio-settings-dialog");

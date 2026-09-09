@@ -28,6 +28,21 @@ export type Hud = {
   reportLeaderboard?(message: string): void;
   dispose(): void;
 };
+const audioStateLabel = (state: string): string => {
+  switch (state) {
+    case "ready":
+      return "ready";
+    case "blocked":
+      return "start required";
+    case "suspended":
+      return "paused";
+    case "error":
+      return "unavailable";
+    default:
+      return "off";
+  }
+};
+
 export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const panel = document.createElement("section");
   panel.className = "hud";
@@ -43,18 +58,26 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const log = new EventLog();
   const actions = document.createElement("div");
   actions.className = "hud-actions";
-  actions.append(dialog.launcher, leaderboard.launcher);
-  status.element.append(roadmap.element);
-  panel.append(status.element, actions, muteToggle, dialog.modal, leaderboard.modal, log.element);
+  actions.append(dialog.launcher, leaderboard.launcher, muteToggle);
+  status.element.insertBefore(roadmap.element, status.trackStatus);
+  panel.append(status.element, actions, dialog.modal, leaderboard.modal, log.element);
   host.append(panel);
   muteToggle.hidden = true;
-  const renderAudioChrome = (): void => {
+  const renderAudioChrome = (stateOverride?: string): void => {
     const service = audioService;
     const playlist = service?.playlist;
-    status.trackStatus.textContent =
-      playlist === null || playlist === undefined
-        ? ""
-        : `♪ ${playlist.current} · Next: ${playlist.next}`;
+    if (service === undefined) {
+      status.trackStatus.textContent = "";
+    } else {
+      const stateName = stateOverride ?? service.currentState;
+      const state = audioStateLabel(stateName);
+      const sound = service.preferences.muted ? "muted" : "on";
+      const track =
+        playlist === null || playlist === undefined
+          ? ""
+          : ` · ♪ ${playlist.current} · Next: ${playlist.next}`;
+      status.trackStatus.textContent = `Sound: ${state} · ${sound}${track}`;
+    }
     if (service !== undefined) {
       const muted = service.preferences.muted;
       muteToggle.textContent = muted ? "Unmute" : "Mute";
