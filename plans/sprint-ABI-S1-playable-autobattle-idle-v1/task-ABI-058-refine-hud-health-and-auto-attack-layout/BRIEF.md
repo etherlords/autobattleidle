@@ -4,8 +4,8 @@ id: ABI-058
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -28,7 +28,7 @@ Refine HUD health and auto-attack layout
 
 - Type: task
 - Priority: high
-- Status: In Progress
+- Status: Done
 - Parent: None
 
 ## Acceptance criteria

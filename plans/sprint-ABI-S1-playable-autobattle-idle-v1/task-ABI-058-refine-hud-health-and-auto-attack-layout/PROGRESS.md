@@ -4,8 +4,8 @@ id: ABI-058
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 20
-status: In Progress
+revision: 26
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In Progress
-- Revision: 20
-- Last update: Independent QA PASS reconciled across desktop and narrow viewport layout, controls, persistence, and console evidence.
+- Status: Done
+- Revision: 26
+- Last update: Manager closure complete: ABI-058 released on main and public deployment verified.
 
 ## Execution plan
 
@@ -378,3 +378,122 @@ workspaceProject: autobattleidle
   - 1280x800, 390x844, 320x700 centered health/external auto geometry with no overflow or overlap
   - canvas input, mute, reload persistence, unchanged save schema, zero console errors
   - Focused tests and build evidence
+
+### evt-69cd3994-1ed0-481e-882f-ad6441e0fe60
+
+- Timestamp: 2026-09-09T21:31:01.539Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: PASS: ABI-058 commit passed CI and Pages deployment; public HUD layout verified at 1280, 390, and 320 widths with centered health, external auto status, preserved controls, input, audio, and no overflow.
+- Idempotency key: ABI-058-verification-public-20260910
+- Request fingerprint: eb9110e233e0b0f78b269941c68be45058220f68b109315242504f8bec2e97dd
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Commit 0f6298aaa367bb8bf46c81b30345ba739f721bdb pushed to main
+  - CI run 34406991917 success: https://github.com/etherlords/autobattleidle/actions/runs/34406991917
+  - Pages run 34406991913 success: https://github.com/etherlords/autobattleidle/actions/runs/34406991913
+  - Public URL https://etherlords.github.io/autobattleidle/ at 1280x800: status x64..1216 y12..261.06; external automatic status x304..976 y336..408.56; centered health/full-width; body 1280x800; automatic-status accessible name present
+  - Public URL at 390x844: status x12..378 y12..301.2; external automatic status x12..378 y354.47..427.03; actions x12..378 y736..832; body 390x844; no overlap/overflow
+  - Public URL at 320x700: status x12..308 y12..322.2; external automatic status x12..308 y312..384.56; actions x12..308 y592..688; body 320x700; no overlap/overflow
+  - Public 390px controls: paused auto attack, focused battlefield Enter changed health 13,473,464 to 13,462,030; mute toggled Unmute sound/muted to Mute sound/on; automatic status and pause ARIA remained present
+  - Public HUD text included encounter/enemy/health, coins, damage, critical chance, armor penetration, raw/effective armor, roadmap, and audio status; no console errors observed
+
+### evt-b5bb9103-58bb-4d8a-9434-8a89466498a7
+
+- Timestamp: 2026-09-09T21:31:09.244Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: Implementation complete with review, QA, and public verification evidence recorded.
+- Idempotency key: ABI-058-in-review-20260910
+- Request fingerprint: ed84d6ce4b17814b558395ceef9e08085a005cb9a04aac6d527776e88c32221e
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-d58d6539-4c8e-497d-920d-1660abe96fa9
+  - evt-06d750b8-d9e9-412d-9ccc-5bd170e45503
+  - evt-69cd3994-1ed0-481e-882f-ad6441e0fe60
+
+### evt-bb99b77a-3dcb-43f8-ac82-098408b7ad9b
+
+- Timestamp: 2026-09-09T21:31:18.734Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: Independent review PASS, independent QA PASS, and public verification PASS are recorded for release sign-off.
+- Idempotency key: ABI-058-in-qa-20260910
+- Request fingerprint: b4a6074f3fa6280746dc8ad690bac982f203583cadb300053dbfe96723e7d31b
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-d58d6539-4c8e-497d-920d-1660abe96fa9
+  - evt-06d750b8-d9e9-412d-9ccc-5bd170e45503
+  - evt-69cd3994-1ed0-481e-882f-ad6441e0fe60
+
+### evt-d7fe7496-7a69-492d-80a3-adf17b505b83
+
+- Timestamp: 2026-09-09T21:31:28.134Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: All implementation, review, QA, and public verification gates PASS; ready for manager closure.
+- Idempotency key: ABI-058-ready-manager-20260910
+- Request fingerprint: 498b94daee0e1c4cb31bc5df689e0d9d46d1f830c9f7d5b209558b7b8daebb96
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-ac6bcc92-179a-4e5f-ab34-a94c19ab52c1
+  - evt-d58d6539-4c8e-497d-920d-1660abe96fa9
+  - evt-06d750b8-d9e9-412d-9ccc-5bd170e45503
+  - evt-69cd3994-1ed0-481e-882f-ad6441e0fe60
+  - 0f6298aaa367bb8bf46c81b30345ba739f721bdb
+  - 34406991917
+  - 34406991913
+
+### evt-acc50a4e-d729-4256-a8eb-d3626e75715e
+
+- Timestamp: 2026-09-09T21:31:38.783Z
+- Actor: abi058-manager-closure
+- Operation: gate.record
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: Manager closure PASS: ABI-058 released on main with successful CI and Pages deployment and verified public HUD at all required viewports.
+- Idempotency key: ABI-058-manager-closure-20260910
+- Request fingerprint: 7790ed0b0729e8dda7ef565651c32270992a16861a9c2df819e2a6c36d290412
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - 0f6298aaa367bb8bf46c81b30345ba739f721bdb
+  - CI success 34406991917
+  - Pages success 34406991913
+  - Public https://etherlords.github.io/autobattleidle/ verified at 1280x800, 390x844, and 320x700
+  - Centered health and external automatic status geometry, preserved controls/input/audio, no overflow or overlap
+  - ABI-059 files and packet remain unstaged
+
+### evt-47b80d42-60b0-4530-9e12-44c4d2ab43f8
+
+- Timestamp: 2026-09-09T21:31:46.803Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: Manager closure complete: ABI-058 released on main and public deployment verified.
+- Idempotency key: ABI-058-done-20260910
+- Request fingerprint: 4531fb8bac0f1a5e14b0aa6f05f5034a285310684255de9931da116ecb095e7a
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-ac6bcc92-179a-4e5f-ab34-a94c19ab52c1
+  - evt-d58d6539-4c8e-497d-920d-1660abe96fa9
+  - evt-06d750b8-d9e9-412d-9ccc-5bd170e45503
+  - evt-69cd3994-1ed0-481e-882f-ad6441e0fe60
+  - evt-acc50a4e-d729-4256-a8eb-d3626e75715e
+  - 0f6298aaa367bb8bf46c81b30345ba739f721bdb
+  - 34406991917
+  - 34406991913
