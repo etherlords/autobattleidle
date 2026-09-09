@@ -4,8 +4,8 @@ id: ABI-059
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: In Progress
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-056
@@ -23,9 +23,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In Progress
-- Revision: 30
-- Last update: Bounded Goose high-detail guard fix retested with visible decals, frame-budget success, lifecycle coverage, and documented cold-load limitation.
+- Status: Done
+- Revision: 36
+- Last update: Manager closure complete: ABI-059 released on main and deployed Goose visual-lab cold/repeat matrix verified with limitation documented.
 
 ## Execution plan
 
@@ -581,3 +581,130 @@ workspaceProject: autobattleidle
   - 8 visible/non-empty decals on 15,405-vertex body
   - 1,009 frames/7s p95 7.1ms, max 7.2ms, zero gaps >16.67ms
   - Cold GLB network/decode remains a documented limitation
+
+### evt-23b45ccc-c3c1-4fc3-84bc-f513481e5b44
+
+- Timestamp: 2026-09-09T22:03:56.846Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: PASS: ABI-059 pushed commit passed CI and Pages; deployed Goose visual lab production cold and loaded-repeat matrix verified with valid live scene, visible decal output evidence, and frame-budget results. Cold network/GLB transfer and decode remains an explicit limitation.
+- Idempotency key: ABI-059-verification-public-20260910
+- Request fingerprint: 2ba0255e9b7f423331ba3b83c8075ac639a15107e8e04f21f09004fba5fc7c61
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Commit 5a0e792abff2c1a5daaa98408a9c83f5d6a69a0a pushed to main
+  - CI run and Pages deployment run for commit completed successfully
+  - Public visual lab URL https://etherlords.github.io/autobattleidle/visual-lab.html?family=boss-goose-hydra&grade=boss&affinity=ice&modifier=none&variant=0&golden=0&motion=0&view=front&viewport=desktop&recipe=production&subject=enemy&stage=1&detail=1000&level=175 loaded corrected canonical Goose Hydra case with live 45 objects/17 meshes/17 geometries/17 materials/4 textures, geometry crystal-crown,elemental-spines
+  - Public cache-disabled cold reload observed goose-hydra.glb transferSize 7,353,148 bytes, encodedBodySize 7,352,848, resource duration 1,240.9ms; live receipt remained valid and body viewport had no console errors
+  - Public loaded repeat after Replay: 1,009 requestAnimationFrame samples over 7s, p95 7.0ms, max 7.1ms, zero samples over 16.67ms; valid live receipt and no console errors
+  - Native QA production cold matrix: cache-disabled GLB 7,768,644 bytes ready in 761ms; body 15,405 vertices and 8 visible non-empty decals
+  - Native QA production repeat matrix: 1,009 frames/7s, p95 7.1ms, max 7.2ms, zero >16.67ms; 8 projections, 0 guard/fallback rays, all decals visible
+  - Synthetic and other-family visual, cancellation/disposal, persistence/schema compatibility, and pnpm check/build PASS per evt-48cdc230
+  - Limitation: cold GLB network/decode remains and is not claimed as zero latency
+
+### evt-54aef71e-6b64-4d92-a45f-5886edccce30
+
+- Timestamp: 2026-09-09T22:04:23.528Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Implementation, high-detail fix, review, QA, and public verification evidence are complete.
+- Idempotency key: ABI-059-in-review-20260910
+- Request fingerprint: 4001c879e9447165001714862f4a96134fe6b38b46cc3d45bfd29839f43e4875
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-f4beb0bc-caac-4eb3-8a62-04c5110e7543
+  - evt-c693a3ac-b543-4a2a-8955-3eccc22b98b5
+  - evt-48cdc230-29ae-42a4-9958-35d6cca1f9eb
+  - evt-23b45ccc-c3c1-4fc3-84bc-f513481e5b44
+  - 5a0e792abff2c1a5daaa98408a9c83f5d6a69a0a
+  - 34410002630
+  - 34410002628
+
+### evt-43d9dfc2-3fe1-44e7-a477-fcc095cca262
+
+- Timestamp: 2026-09-09T22:04:32.912Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Independent review PASS, independent QA PASS, and public verification PASS are recorded for release sign-off.
+- Idempotency key: ABI-059-in-qa-20260910
+- Request fingerprint: 381208ea6c917d749125b2c4e4dbdb7b9808d44bd320add3f5d0181959c73dc5
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-c693a3ac-b543-4a2a-8955-3eccc22b98b5
+  - evt-48cdc230-29ae-42a4-9958-35d6cca1f9eb
+  - evt-23b45ccc-c3c1-4fc3-84bc-f513481e5b44
+
+### evt-472251ff-6265-4503-b0ff-eab8852b548a
+
+- Timestamp: 2026-09-09T22:04:42.447Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: All implementation, high-detail, review, QA, and deployed verification gates PASS; ready for manager closure.
+- Idempotency key: ABI-059-ready-manager-20260910
+- Request fingerprint: 6b80a11a11aea4175c6fd76b9b40b420a28a2f2abb86d9f2577d068bff905737
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-f4beb0bc-caac-4eb3-8a62-04c5110e7543
+  - evt-c693a3ac-b543-4a2a-8955-3eccc22b98b5
+  - evt-48cdc230-29ae-42a4-9958-35d6cca1f9eb
+  - evt-23b45ccc-c3c1-4fc3-84bc-f513481e5b44
+  - 5a0e792abff2c1a5daaa98408a9c83f5d6a69a0a
+  - 34410002630
+  - 34410002628
+
+### evt-e7fd17c5-2fdf-4dde-9497-9e9269c2ed85
+
+- Timestamp: 2026-09-09T22:04:52.571Z
+- Actor: abi059-manager-closure
+- Operation: gate.record
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Manager closure PASS: ABI-059 released on main with successful CI/Pages and deployed Goose cold/repeat visual-lab verification; cold network/decode limitation retained explicitly.
+- Idempotency key: ABI-059-manager-closure-20260910
+- Request fingerprint: 53b5c21690cd8fc55efeedd867a28d911364232a0627093da3f5c307f0821389
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - 5a0e792abff2c1a5daaa98408a9c83f5d6a69a0a
+  - CI success 34410002630
+  - Pages success 34410002628
+  - Public Goose visual lab cold cache-disabled load observed GLB transfer and valid live production receipt
+  - Public loaded repeat 1,009 frames/7s, p95 7.0ms, max 7.1ms, zero >16.67ms
+  - Native QA: 15,405-vertex body, 8 visible decals, 7,768,644-byte cold GLB/761ms ready, repeat p95 7.1ms max 7.2ms zero >16.67ms
+  - Synthetic, other-family, cancellation/disposal, persistence/schema coverage PASS
+  - Known limitation: cold GLB network/decode remains and is not claimed zero latency
+  - No unrelated files staged
+
+### evt-cc57d556-100e-4093-b77d-8f28da12e81b
+
+- Timestamp: 2026-09-09T22:05:00.926Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Manager closure complete: ABI-059 released on main and deployed Goose visual-lab cold/repeat matrix verified with limitation documented.
+- Idempotency key: ABI-059-done-20260910
+- Request fingerprint: 529f7775112ec94fc24c8dbd97949e1897a9982a616d2383573da0031153b337
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-f4beb0bc-caac-4eb3-8a62-04c5110e7543
+  - evt-c693a3ac-b543-4a2a-8955-3eccc22b98b5
+  - evt-48cdc230-29ae-42a4-9958-35d6cca1f9eb
+  - evt-23b45ccc-c3c1-4fc3-84bc-f513481e5b44
+  - evt-e7fd17c5-2fdf-4dde-9497-9e9269c2ed85
+  - 5a0e792abff2c1a5daaa98408a9c83f5d6a69a0a
+  - 34410002630
+  - 34410002628

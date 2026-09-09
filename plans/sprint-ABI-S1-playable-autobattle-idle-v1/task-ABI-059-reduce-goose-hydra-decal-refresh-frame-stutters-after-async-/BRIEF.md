@@ -4,8 +4,8 @@ id: ABI-059
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies:
   - ABI-056
@@ -29,7 +29,7 @@ Reduce Goose Hydra decal refresh frame stutters after async scheduling
 
 - Type: bug
 - Priority: high
-- Status: In Progress
+- Status: Done
 - Parent: None
 
 ## Acceptance criteria
