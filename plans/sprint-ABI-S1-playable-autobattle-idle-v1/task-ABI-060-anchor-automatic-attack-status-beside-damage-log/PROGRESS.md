@@ -4,8 +4,8 @@ id: ABI-060
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 25
-status: Ready for Manager
+revision: 28
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: Ready for Manager
-- Revision: 25
-- Last update: Fresh QA PASS completed across desktop, tablet band, and narrow widths; awaiting deployed public verification and manager closure.
+- Status: Done
+- Revision: 28
+- Last update: ABI-060 released and publicly verified across desktop, tablet, and mobile; manager closure gate PASS.
 
 ## Execution plan
 
@@ -474,3 +474,71 @@ workspaceProject: autobattleidle
 - Evidence:
   - evt-49bca68c-26b6-4fc2-b031-8301feb97843
   - evt-d7ae19d0-f68b-4c80-ae48-9ef2b5dba6f0
+
+### evt-27e84206-6eab-4611-a88d-8c8bc37c4346
+
+- Timestamp: 2026-09-09T22:40:00.578Z
+- Actor: abi057-acceptance-qa
+- Operation: gate.record
+- Prior revision: 25
+- Resulting revision: 26
+- Summary: Fresh final native QA PASS after medium-width repair: full pnpm check/build green; original and 768/800/900 widths all maintain exact auto/log rail width and 8px gap under dense log, with controls, ARIA, input, pause, reload, no overflow, and zero console errors.
+- Idempotency key: abi060-final-medium-repair-qa-20260910
+- Request fingerprint: 92259a84f222b3d8550990473143a2a64264f4582fb092f8415062e84711c3aa
+- Gate: independent-qa
+- Verdict: pass
+- Evidence:
+  - Fresh pnpm check PASS: eslint, Prettier, 33 test files/355 tests, worker TypeScript, tsc build, and Vite production build; only existing Vite chunk-size warning.
+  - 1280x800 dense log: auto x912..1264 width352 y611.7..684.3; event log x912..1264 width352 y692.3..784; actions x16..554.9 y740..784; shared exact width and 8px gap; body 1280x800.
+  - 768x1024 dense log: auto x400..752 width352 y783.7..856.3; event log x400..752 width352 y864.3..956; actions x16..554.9 y964..1008; body 768x1024 no overflow, shared width and 8px gap.
+  - 800x800: auto x432..784 width352 y559.7..632.3; log x432..784 y640.3..732; actions y740..784; body 800x800. 900x800: auto x532..884 width352 y559.7..632.3; log x532..884 y640.3..732; actions y740..784; body 900x800. Both exact shared width and 8px gap.
+  - 390x844: auto x12..378 width366 y535.7..608.3; log x12..378 width366 y616.3..708; actions x16..374 y732..828; body 390x844. 320x700: auto x12..308 width296 y399.4..472; log x12..308 width296 y480..564; actions x16..304 y588..684; body 320x700. All no overflow and 8px gap.
+  - Dense log: three canvas clicks produced Kill +1 coins (manual) and two Hit: 1 damage (manual) entries; log expanded while auto rail kept shared width and 8px separation. Canvas pointer input worked.
+  - Controls/ARIA: pause initially exposed aria Pause auto attack and disabled state when locked; valid isolated save enabled auto and click changed status to paused with aria Resume auto attack. Mute toggled aria Unmute sound/muted to Mute sound/on.
+  - Reload: localStorage keys remained save.v4, audio-track-index, audio-settings; save version remained 4; stable coins, encounter, damage, and automaticUnlocked fields survived reload; audio track unchanged. No schema change.
+  - Browser reload console errors: [].
+
+### evt-f558b591-6f24-48ce-9860-04eb76732f30
+
+- Timestamp: 2026-09-09T22:44:07.335Z
+- Actor: abi060-manager-closure
+- Operation: gate.record
+- Prior revision: 26
+- Resulting revision: 27
+- Summary: Manager closure PASS: released ABI-060 build is green and public Pages verifies the shared automatic-status/event-log rail across desktop, tablet 601–900px, and mobile widths with no overlap or overflow.
+- Idempotency key: ABI-060-manager-closure-pass-20260910
+- Request fingerprint: 0631d84ac721725844ee5ce48a35a8f6e96d7ea6cb89650615bb3a5ecc79b846
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-27e84206-6eab-4611-a88d-8c8bc37c4346
+  - evt-c1f18548-c976-449e-a0ea-8927f4c9640c
+  - Commit c91da8f17d6a8b3a1ef421c6bb415db53e508962 pushed to origin/main
+  - CI run 34413424874 completed success: https://github.com/etherlords/autobattleidle/actions/runs/34413424874
+  - Pages run 34413424856 completed success: https://github.com/etherlords/autobattleidle/actions/runs/34413424856
+  - Public deployed 1280x800: auto/log width 352, shared width, 8px stack gap, no lane/actions overlap, body 1280x800
+  - Public deployed 768x1024: auto/log width 352, shared width, lane/actions 8px gap, no overlap, body 768x1024
+  - Public deployed 800x800: auto/log width 352, shared width, lane/actions 8px gap, no overlap, body 800x800
+  - Public deployed 900x800: auto/log width 352, shared width, lane/actions 8px gap, no overlap, body 900x800
+  - Public deployed 390x844: auto/log width 366, shared width, lane/actions 24px gap, no overlap, body 390x844
+  - Public deployed 320x640: auto/log width 296, shared width, lane/actions 24px gap, no overlap, body 320x640
+  - No unrelated paths staged; pre-existing unrelated dirty files remain unstaged
+
+### evt-91d189c7-a620-43a8-9280-e5952713847c
+
+- Timestamp: 2026-09-09T22:44:13.485Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 27
+- Resulting revision: 28
+- Summary: ABI-060 released and publicly verified across desktop, tablet, and mobile; manager closure gate PASS.
+- Idempotency key: ABI-060-advance-done-20260910
+- Request fingerprint: e2ff5ed7731c90527c94f578c545edb8fdb4be9327a30a3864b1783a8b553a12
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-f558b591-6f24-48ce-9860-04eb76732f30
+  - evt-27e84206-6eab-4611-a88d-8c8bc37c4346
+  - c91da8f17d6a8b3a1ef421c6bb415db53e508962
+  - CI 34413424874 success
+  - Pages 34413424856 success
