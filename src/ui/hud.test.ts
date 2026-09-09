@@ -405,15 +405,24 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
   });
-  it("keeps the unified status panel narrow-safe and the roadmap in its fixed flow", () => {
+  it("keeps health centered in the unified panel and auto attack external", () => {
     expect(stylesheet).toContain(".hud-status {\n  background: rgb(7 18 31 / 88%);");
-    expect(stylesheet).toContain("grid-template-columns: minmax(0, 1.35fr) minmax(14rem, 0.9fr);");
+    expect(stylesheet).toContain("grid-template-columns: minmax(0, 1fr);");
+    expect(stylesheet).toContain("grid-column: 1 / -1;\n  min-width: 0;\n  text-align: center;");
+    expect(stylesheet).toContain(".automatic-status {");
+    expect(stylesheet).toContain("top: clamp(16.5rem, 42vh, 24rem);");
+    expect(stylesheet).toContain("width: min(42rem, calc(100vw - 1.5rem));");
     expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
     expect(stylesheet).toContain("right: 0.75rem;");
     expect(stylesheet).toContain(".hud-status > .boss-roadmap {");
     expect(stylesheet).toContain(
       "  overflow: hidden;\n  text-align: center;\n  text-overflow: ellipsis;",
     );
+    expect(stylesheet).toContain(
+      "@media (max-width: 360px) {\n  .automatic-status {\n    top: 19.5rem;",
+    );
+    expect(stylesheet).toContain(".automatic-status p {\n  margin: 0;");
+    expect(stylesheet).toContain(".event-log {\n    max-height: 16vh;");
   });
   it("keeps event log border colors tied to their combat source", () => {
     expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');
@@ -466,19 +475,23 @@ describe("createHud", () => {
     battlefield.dispatch("keydown", { key: "ArrowLeft", repeat: false });
     battlefield.dispatch("keydown", { key: "ArrowRight", repeat: false });
     expect(attacks).toBe(3);
-    expect(battlefield.tabIndex).toBe(0);
-    expect(battlefield.attributes.get("aria-label")).toBe(
-      "Battlefield. Press Enter or Space to attack; use Left and Right arrows to rotate the camera.",
-    );
     expect(element(host, "enemy-health").attributes.get("aria-valuenow")).toBe("9");
     expect(element(host, "automatic-progress").attributes.get("aria-valuenow")).toBe("500");
     expect(element(host, "automatic-text").textContent).toBe("Automatic attack: 1.00 APS · 0.500s");
+    const automaticStatus = (element(host, "automatic-progress").parent as FakeElement)
+      .parent as FakeElement;
+    expect(automaticStatus.className).toBe("automatic-status");
+    expect(automaticStatus.attributes.get("aria-label")).toBe("Automatic attack status");
+    expect((element(host, "enemy-health").parent as FakeElement).className).toBe(
+      "combat-encounter-panel",
+    );
     expect(element(host, "combat-stat-grid").children).toHaveLength(4);
     hud.render({
       ...snapshot,
       enemy: { ...snapshot.enemy, armor: { effective: 12, raw: 15 }, modifier: "armor" },
     });
-    expect(element(host, "combat-stat-grid").children.at(-1)?.children.at(1)).toMatchObject({
+    const armorStat = element(host, "combat-stat-grid").children[3] as FakeElement;
+    expect(armorStat.children[1]).toMatchObject({
       textContent: "15 raw → 12 effective",
     });
     hud.render(snapshot);

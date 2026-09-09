@@ -60,7 +60,14 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   actions.className = "hud-actions";
   actions.append(dialog.launcher, leaderboard.launcher, muteToggle);
   status.element.insertBefore(roadmap.element, status.trackStatus);
-  panel.append(status.element, actions, dialog.modal, leaderboard.modal, log.element);
+  panel.append(
+    status.element,
+    status.automaticElement,
+    actions,
+    dialog.modal,
+    leaderboard.modal,
+    log.element,
+  );
   host.append(panel);
   muteToggle.hidden = true;
   const renderAudioChrome = (stateOverride?: string): void => {

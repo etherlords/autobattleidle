@@ -15,6 +15,7 @@ export class BattleStatus {
   readonly element = document.createElement("section");
   private readonly encounterPanel = document.createElement("div");
   private readonly resourcePanel = document.createElement("div");
+  readonly automaticElement = document.createElement("section");
   private readonly statGrid = document.createElement("div");
   private readonly enemy = makeText("h1", "");
   private readonly encounter = makeText("p", "");
@@ -39,6 +40,8 @@ export class BattleStatus {
     this.element.className = "hud-status";
     this.encounterPanel.className = "combat-encounter-panel";
     this.resourcePanel.className = "combat-resource-panel";
+    this.automaticElement.className = "automatic-status";
+    this.automaticElement.setAttribute("aria-label", "Automatic attack status");
     this.statGrid.className = "combat-stat-grid";
     this.healthFill.className = "enemy-health-fill";
     this.health.append(this.healthFill, this.healthText);
@@ -57,7 +60,8 @@ export class BattleStatus {
       this.armor.element,
     );
     this.encounterPanel.append(this.enemy, this.encounter, this.health, this.goldenBug);
-    this.resourcePanel.append(this.coins, this.automaticRow, this.automaticText);
+    this.resourcePanel.append(this.coins);
+    this.automaticElement.append(this.automaticRow, this.automaticText);
     this.element.append(this.encounterPanel, this.resourcePanel, this.statGrid, this.trackStatus);
     this.automaticPause.addEventListener("click", this.togglePause);
   }
