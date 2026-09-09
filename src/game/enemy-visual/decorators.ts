@@ -20,9 +20,12 @@ export {
 export {
   clearSemanticSurfaceCache,
   decorateSemanticSurfaces,
+  resetSemanticSurfacePerformanceStats,
   SemanticSurfaceDecorator,
   semanticSurfaceCacheStats,
+  semanticSurfacePerformanceStats,
   semanticSurfaceTreatmentsForFamily,
   type SemanticSurfaceMode,
+  type SemanticSurfacePerformanceStats,
   type SemanticSurfaceTreatment,
 } from "./decorators/semantic-surface-decorator";

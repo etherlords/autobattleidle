@@ -16,7 +16,10 @@ import {
   decorateGrade,
   decorateModifier,
   decorateSeededDecoration,
+  decorateSemanticSurfaces,
+  resetSemanticSurfacePerformanceStats,
   semanticSurfaceCacheStats,
+  semanticSurfacePerformanceStats,
 } from "./enemy-visual/decorators";
 import { observeResourceDisposal, resourceCounts } from "../debug/visual-lab/resource-ledger";
 import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enemy";
@@ -1801,6 +1804,129 @@ describe("enemy visual factory", () => {
     }
   });
 
+  it("keeps cardinal guard fallback and projection context geometry-safe", () => {
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 1.2, 1.2),
+      new THREE.MeshStandardMaterial(),
+    );
+    body.name = "enemy-body-boss-goose-hydra";
+    body.userData.semanticSurfaceGuard = true;
+    body.rotation.y = Math.PI / 2;
+    const parent = new THREE.Group();
+    parent.name = "enemy-body-anchor-boss-goose-hydra";
+    parent.add(body);
+    parent.updateMatrixWorld(true);
+    const bodyGeometry = body.geometry;
+    const replacementGeometry = new THREE.BoxGeometry(1.4, 1.1, 1.3);
+    let bodyGeometryDisposals = 0;
+    bodyGeometry.addEventListener("dispose", () => {
+      bodyGeometryDisposals += 1;
+    });
+    replacementGeometry.addEventListener("dispose", () => {
+      bodyGeometryDisposals += 1;
+    });
+    resetSemanticSurfacePerformanceStats();
+    const surfaces = decorateSemanticSurfaces(
+      "boss-goose-hydra",
+      { core: "#6f5bff", accent: "#b8b0ff", emissive: "#302070" },
+      {
+        attachment: [0.7, 0, 0],
+        decorations: ["scar", "horns"],
+        palette: { core: "#6f5bff", accent: "#b8b0ff", emissive: "#302070" },
+        variant: 1,
+      },
+      body,
+      parent,
+      "scratches",
+    );
+    const surface = surfaces[0];
+    const group = surface?.nodes[0];
+    const firstDecal = group?.getObjectByName("surface-scratch-0");
+    if (
+      !(group instanceof THREE.Group) ||
+      !(firstDecal instanceof THREE.Mesh) ||
+      surface === undefined
+    )
+      throw new Error("Expected Goose semantic scratch group");
+    let generatedGeometryDisposals = 0;
+    firstDecal.geometry.addEventListener("dispose", () => {
+      generatedGeometryDisposals += 1;
+    });
+    try {
+      const initialStats = semanticSurfacePerformanceStats();
+      expect(initialStats.decalProjections).toBe(3);
+      expect(initialStats.guardRaycasts).toBeGreaterThan(initialStats.fallbackGuardRaycasts);
+      expect(initialStats.fallbackGuardRaycasts).toBeGreaterThan(0);
+      body.position.x = 0.15;
+      body.updateMatrixWorld(true);
+      surface.refresh?.(body);
+      expect(semanticSurfacePerformanceStats().contextInvalidations).toBe(1);
+      const transformedDecal = group.getObjectByName("surface-scratch-0");
+      if (!(transformedDecal instanceof THREE.Mesh))
+        throw new Error("Expected transformed semantic scratch");
+      expect(transformedDecal.geometry.getAttribute("position").count).toBeGreaterThan(0);
+      transformedDecal.geometry.addEventListener("dispose", () => {
+        generatedGeometryDisposals += 1;
+      });
+      body.geometry = replacementGeometry;
+      body.updateMatrixWorld(true);
+      surface.refresh?.(body);
+      expect(semanticSurfacePerformanceStats().contextInvalidations).toBe(2);
+      const replacementDecal = group.getObjectByName("surface-scratch-0");
+      if (!(replacementDecal instanceof THREE.Mesh))
+        throw new Error("Expected replacement semantic scratch");
+      expect(replacementDecal.geometry.getAttribute("position").count).toBeGreaterThan(0);
+      expect(generatedGeometryDisposals).toBe(2);
+      surfaces.forEach((entry) => entry.dispose?.());
+      expect(bodyGeometryDisposals).toBe(0);
+    } finally {
+      surfaces.forEach((entry) => entry.dispose?.());
+      body.geometry.dispose();
+      if (body.geometry !== bodyGeometry) bodyGeometry.dispose();
+      (body.material as THREE.Material).dispose();
+    }
+  });
+  it("bounds detached guard work for high-detail Goose decals without suppressing projection output", () => {
+    const body = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.9, 4),
+      new THREE.MeshStandardMaterial(),
+    );
+    body.name = "enemy-body-boss-goose-hydra";
+    body.userData.semanticSurfaceGuard = true;
+    const parent = new THREE.Group();
+    parent.name = "enemy-body-anchor-boss-goose-hydra";
+    parent.add(body);
+    parent.updateMatrixWorld(true);
+    resetSemanticSurfacePerformanceStats();
+    const surfaces = decorateSemanticSurfaces(
+      "boss-goose-hydra",
+      { core: "#6f5bff", accent: "#b8b0ff", emissive: "#302070" },
+      {
+        attachment: [0.7, 0, 0],
+        decorations: ["scar", "horns"],
+        palette: { core: "#6f5bff", accent: "#b8b0ff", emissive: "#302070" },
+        variant: 1,
+      },
+      body,
+      parent,
+      "scratches",
+    );
+    try {
+      const stats = semanticSurfacePerformanceStats();
+      expect(stats.decalProjections).toBe(3);
+      expect(stats.guardRaycasts).toBe(0);
+      surfaces[0]?.nodes.forEach((node) =>
+        node.traverse((child) => {
+          if (child instanceof THREE.Mesh)
+            expect(child.geometry.getAttribute("position").count).toBeGreaterThan(0);
+        }),
+      );
+    } finally {
+      surfaces.forEach((surface) => surface.dispose?.());
+      body.geometry.dispose();
+      (body.material as THREE.Material).dispose();
+    }
+  });
   it("reveals the loaded Goose Hydra before deferred semantic refresh completes", async () => {
     vi.useFakeTimers();
     const unit = new EnemyUnitFactory().create({ grade: "boss", level: 175, modifier: null });

@@ -23,6 +23,116 @@ type AcquiredAffinityTexture = Readonly<{
   readonly key?: string;
   readonly texture?: THREE.DataTexture;
 }>;
+type DecalProjectionContext = {
+  bodyGeometry: THREE.BufferGeometry;
+  bodyPositionVersion: number;
+  bodyIndexVersion: number;
+  readonly bodyBoundsWorld: THREE.Box3;
+  readonly bodyMatrixWorld: THREE.Matrix4;
+  readonly bodyBoundsSize: THREE.Vector3;
+  readonly projectionRaycaster: THREE.Raycaster;
+  readonly guardRaycaster: THREE.Raycaster;
+  readonly vertex: THREE.Vector3;
+  readonly worldVertex: THREE.Vector3;
+  readonly probeOrigin: THREE.Vector3;
+  readonly inwardDirection: THREE.Vector3;
+  rayDistance: number;
+};
+
+const surfaceDirections = [
+  new THREE.Vector3(1, 0, 0),
+  new THREE.Vector3(-1, 0, 0),
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(0, -1, 0),
+  new THREE.Vector3(0, 0, 1),
+  new THREE.Vector3(0, 0, -1),
+] as const;
+const MAX_DETACHED_GUARD_BODY_VERTICES = 128;
+const isHighDetailBody = (body: THREE.Mesh): boolean =>
+  (body.geometry.getAttribute("position")?.count ?? 0) > MAX_DETACHED_GUARD_BODY_VERTICES;
+const projectionContexts = new WeakMap<THREE.Mesh, DecalProjectionContext>();
+export type SemanticSurfacePerformanceStats = Readonly<{
+  readonly decalProjections: number;
+  readonly guardRaycasts: number;
+  readonly fallbackGuardRaycasts: number;
+  readonly contextInvalidations: number;
+}>;
+let performanceStats = {
+  decalProjections: 0,
+  guardRaycasts: 0,
+  fallbackGuardRaycasts: 0,
+  contextInvalidations: 0,
+};
+export const semanticSurfacePerformanceStats = (): SemanticSurfacePerformanceStats => ({
+  ...performanceStats,
+});
+export const resetSemanticSurfacePerformanceStats = (): void => {
+  performanceStats = {
+    decalProjections: 0,
+    guardRaycasts: 0,
+    fallbackGuardRaycasts: 0,
+    contextInvalidations: 0,
+  };
+};
+const geometryPositionVersion = (geometry: THREE.BufferGeometry): number => {
+  const position = geometry.getAttribute("position");
+  if (position === undefined) return -1;
+  if ("version" in position) return position.version;
+  return position.data.version;
+};
+const geometryIndexVersion = (geometry: THREE.BufferGeometry): number =>
+  geometry.index?.version ?? -1;
+const projectionContextFor = (body: THREE.Mesh): DecalProjectionContext => {
+  body.updateWorldMatrix(true, false);
+  let context = projectionContexts.get(body);
+  if (context === undefined) {
+    const bodyBoundsWorld = new THREE.Box3().setFromObject(body);
+    const bodyBoundsSize = bodyBoundsWorld.getSize(new THREE.Vector3());
+    context = {
+      bodyGeometry: body.geometry,
+      bodyPositionVersion: geometryPositionVersion(body.geometry),
+      bodyIndexVersion: geometryIndexVersion(body.geometry),
+      bodyBoundsWorld,
+      bodyMatrixWorld: body.matrixWorld.clone(),
+      bodyBoundsSize,
+      projectionRaycaster: new THREE.Raycaster(),
+      guardRaycaster: new THREE.Raycaster(),
+      vertex: new THREE.Vector3(),
+      worldVertex: new THREE.Vector3(),
+      probeOrigin: new THREE.Vector3(),
+      inwardDirection: new THREE.Vector3(),
+      rayDistance: bodyBoundsSize.length() * 2,
+    };
+    projectionContexts.set(body, context);
+    return context;
+  }
+  const nextMatrix = body.matrixWorld.elements;
+  const previousMatrix = context.bodyMatrixWorld.elements;
+  let matrixChanged = false;
+  for (let index = 0; index < nextMatrix.length; index += 1) {
+    if (nextMatrix[index] !== previousMatrix[index]) {
+      matrixChanged = true;
+      break;
+    }
+  }
+  const positionVersion = geometryPositionVersion(body.geometry);
+  const indexVersion = geometryIndexVersion(body.geometry);
+  const geometryChanged =
+    body.geometry !== context.bodyGeometry ||
+    positionVersion !== context.bodyPositionVersion ||
+    indexVersion !== context.bodyIndexVersion;
+  if (matrixChanged || geometryChanged) {
+    performanceStats.contextInvalidations += 1;
+    context.bodyBoundsWorld.setFromObject(body);
+    context.bodyBoundsWorld.getSize(context.bodyBoundsSize);
+    context.bodyMatrixWorld.copy(body.matrixWorld);
+    context.bodyGeometry = body.geometry;
+    context.bodyPositionVersion = positionVersion;
+    context.bodyIndexVersion = indexVersion;
+    context.rayDistance = context.bodyBoundsSize.length() * 2;
+  }
+  return context;
+};
 
 const TEXTURE_SIZE = 24;
 const MAX_TEXTURE_CACHE_ENTRIES = 8;
@@ -48,10 +158,11 @@ const authoredPlateOffsets = [
 type IdleScheduler = {
   requestIdleCallback?: (callback: () => void, options?: { readonly timeout: number }) => number;
 };
+const SEMANTIC_TASK_TIMEOUT_MS = 16;
 const scheduleSemanticTask = (task: () => void): void => {
   const idle = globalThis as typeof globalThis & IdleScheduler;
   if (typeof idle.requestIdleCallback === "function") {
-    idle.requestIdleCallback(task, { timeout: 100 });
+    idle.requestIdleCallback(task, { timeout: SEMANTIC_TASK_TIMEOUT_MS });
     return;
   }
   globalThis.setTimeout(task, 0);
@@ -264,43 +375,53 @@ const patchForFace = (
     size: new THREE.Vector3(tangent * widthRatio, height * heightRatio, depth),
   };
 };
+const dominantDirectionIndex = (normal: THREE.Vector3): number => {
+  const x = Math.abs(normal.x);
+  const y = Math.abs(normal.y);
+  const z = Math.abs(normal.z);
+  if (x >= y && x >= z) return normal.x >= 0 ? 0 : 1;
+  if (y >= z) return normal.y >= 0 ? 2 : 3;
+  return normal.z >= 0 ? 4 : 5;
+};
 const suppressDetachedDecal = (
   body: THREE.Mesh,
   node: THREE.Mesh,
   geometry: THREE.BufferGeometry,
   positions: THREE.BufferAttribute | THREE.InterleavedBufferAttribute,
-  bodyBoundsWorld: THREE.Box3,
   nodeWorldMatrix: THREE.Matrix4,
+  worldNormal: THREE.Vector3,
+  context: DecalProjectionContext,
 ): void => {
   if (body.userData.semanticSurfaceGuard !== true) return;
-  const proximityLimit = Math.max(
-    0.04,
-    Math.min(0.12, bodyBoundsWorld.getSize(new THREE.Vector3()).length() * 0.06),
-  );
+  const proximityLimit = Math.max(0.04, Math.min(0.12, context.bodyBoundsSize.length() * 0.06));
   const probeDistance = 0.01;
-  const bodyRaycaster = new THREE.Raycaster();
-  const vertex = new THREE.Vector3();
-  const worldVertex = new THREE.Vector3();
-  const directions = [
-    new THREE.Vector3(1, 0, 0),
-    new THREE.Vector3(-1, 0, 0),
-    new THREE.Vector3(0, 1, 0),
-    new THREE.Vector3(0, -1, 0),
-    new THREE.Vector3(0, 0, 1),
-    new THREE.Vector3(0, 0, -1),
-  ] as const;
+  const isNearBody = (direction: THREE.Vector3): boolean => {
+    context.probeOrigin.copy(context.worldVertex).addScaledVector(direction, probeDistance);
+    context.inwardDirection.copy(direction).negate();
+    context.guardRaycaster.set(context.probeOrigin, context.inwardDirection);
+    performanceStats.guardRaycasts += 1;
+    const hit = context.guardRaycaster.intersectObject(body, false)[0];
+    return hit !== undefined && hit.distance <= proximityLimit + probeDistance;
+  };
+  const primaryIndex = dominantDirectionIndex(worldNormal);
+  const primaryDirection = surfaceDirections[primaryIndex] ?? surfaceDirections[0];
+  if (isHighDetailBody(body)) return;
   let detached = false;
   for (let index = 0; index < positions.count && !detached; index += 1) {
-    vertex.fromBufferAttribute(positions, index);
-    worldVertex.copy(vertex).applyMatrix4(nodeWorldMatrix);
-    const nearBody = directions.some((direction) => {
-      bodyRaycaster.set(
-        worldVertex.clone().addScaledVector(direction, probeDistance),
-        direction.clone().negate(),
-      );
-      const hit = bodyRaycaster.intersectObject(body, false)[0];
-      return hit !== undefined && hit.distance <= proximityLimit + probeDistance;
-    });
+    context.vertex.fromBufferAttribute(positions, index);
+    context.worldVertex.copy(context.vertex).applyMatrix4(nodeWorldMatrix);
+    let nearBody = isNearBody(primaryDirection);
+    if (!nearBody) {
+      for (let directionIndex = 0; directionIndex < surfaceDirections.length; directionIndex += 1) {
+        if (directionIndex === primaryIndex) continue;
+        const direction = surfaceDirections[directionIndex];
+        performanceStats.fallbackGuardRaycasts += 1;
+        if (direction !== undefined && isNearBody(direction)) {
+          nearBody = true;
+          break;
+        }
+      }
+    }
     detached = !nearBody;
   }
   if (!detached) return;
@@ -320,8 +441,8 @@ const createBodyDecal = (
   material: THREE.MeshStandardMaterial,
   roll = 0,
 ): THREE.Mesh => {
-  body.updateWorldMatrix(true, false);
   parent.updateWorldMatrix(true, false);
+  const context = projectionContextFor(body);
   const localNormal = patch.normal.clone().normalize();
   const pose = parent.parent?.parent ?? parent.parent;
   const poseWorldQuaternion =
@@ -331,12 +452,12 @@ const createBodyDecal = (
     .setFromUnitVectors(new THREE.Vector3(0, 0, 1), worldNormal)
     .multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), roll));
   let worldCenter = patch.center.clone().applyMatrix4(body.matrixWorld);
-  const bodyBoundsWorld = new THREE.Box3().setFromObject(body);
-  const rayDistance = bodyBoundsWorld.getSize(new THREE.Vector3()).length() * 2;
-  const hit = new THREE.Raycaster(
-    worldCenter.clone().addScaledVector(worldNormal, rayDistance),
-    worldNormal.clone().negate(),
-  ).intersectObject(body, false)[0];
+  context.projectionRaycaster.set(
+    context.probeOrigin.copy(worldCenter).addScaledVector(worldNormal, context.rayDistance),
+    context.inwardDirection.copy(worldNormal).negate(),
+  );
+  performanceStats.decalProjections += 1;
+  const hit = context.projectionRaycaster.intersectObject(body, false)[0];
   if (hit !== undefined)
     worldCenter = hit.point.clone().addScaledVector(worldNormal, patch.size.z * 0.12);
   const geometry = new DecalGeometry(
@@ -351,25 +472,23 @@ const createBodyDecal = (
   const parentOrientation = parentWorldQuaternion.clone().invert().multiply(worldOrientation);
   const projectorLocalOrientation = parentOrientation.clone().invert();
   const positions = geometry.getAttribute("position");
-  for (let index = 0; index < positions.count; index += 1)
-    positions.setXYZ(
-      index,
-      ...new THREE.Vector3(positions.getX(index), positions.getY(index), positions.getZ(index))
-        .applyMatrix4(inverse)
-        .applyQuaternion(projectorLocalOrientation)
-        .toArray(),
-    );
+  for (let index = 0; index < positions.count; index += 1) {
+    context.vertex
+      .fromBufferAttribute(positions, index)
+      .applyMatrix4(inverse)
+      .applyQuaternion(projectorLocalOrientation);
+    positions.setXYZ(index, context.vertex.x, context.vertex.y, context.vertex.z);
+  }
   const normals = geometry.getAttribute("normal");
   if (normals !== undefined)
-    for (let index = 0; index < normals.count; index += 1)
-      normals.setXYZ(
-        index,
-        ...new THREE.Vector3(normals.getX(index), normals.getY(index), normals.getZ(index))
-          .applyNormalMatrix(normalMatrix)
-          .applyQuaternion(projectorLocalOrientation)
-          .normalize()
-          .toArray(),
-      );
+    for (let index = 0; index < normals.count; index += 1) {
+      context.vertex
+        .fromBufferAttribute(normals, index)
+        .applyNormalMatrix(normalMatrix)
+        .applyQuaternion(projectorLocalOrientation)
+        .normalize();
+      normals.setXYZ(index, context.vertex.x, context.vertex.y, context.vertex.z);
+    }
   positions.needsUpdate = true;
   if (normals !== undefined) normals.needsUpdate = true;
   const node = new THREE.Mesh(geometry, material);
@@ -377,7 +496,7 @@ const createBodyDecal = (
   node.quaternion.copy(parentOrientation);
   node.updateMatrix();
   const nodeWorldMatrix = parent.matrixWorld.clone().multiply(node.matrix);
-  suppressDetachedDecal(body, node, geometry, positions, bodyBoundsWorld, nodeWorldMatrix);
+  suppressDetachedDecal(body, node, geometry, positions, nodeWorldMatrix, worldNormal, context);
   return node;
 };
 const surfaceComponent = (
