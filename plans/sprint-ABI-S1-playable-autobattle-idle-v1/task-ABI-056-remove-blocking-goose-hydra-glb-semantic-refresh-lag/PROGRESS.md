@@ -4,8 +4,8 @@ id: ABI-056
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 17
-status: In Progress
+revision: 25
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In Progress
-- Revision: 17
-- Last update: Local integration proof complete: authored Goose body appears before deferred semantic completion; Catbug replacement disposal is exact; reload retains Goose identity and live-resource counts with clean console.
+- Status: Done
+- Revision: 25
+- Last update: ABI-056 Done: all required gates pass, coherent closure commit is pushed, CI and Pages deployments succeed, and public desktop/narrow Goose Hydra behavior is verified.
 
 ## Execution plan
 
@@ -32,7 +32,7 @@ workspaceProject: autobattleidle
 - [x] implement: Defer or chunk Goose semantic refresh without weakening lifecycle guards
 - [x] unit-proof: Run focused unit proof for refresh lifecycle and disposal
 - [x] integration-proof: Run local boss transition and replacement integration proof
-- [ ] deployed-proof: Run deployed Pages network/main-thread and responsive visual proof
+- [x] deployed-proof: Run deployed Pages network/main-thread and responsive visual proof
 
 ## Events
 
@@ -324,3 +324,155 @@ workspaceProject: autobattleidle
   - evt-682eaad1-5c37-4a4d-a171-f9e49192f23c
   - local visual lab fresh GLB timing 7,768,644 bytes, 36 ms fetch; early Goose 46 objects/18 meshes; completion 47/19 after ~6 s
   - replacement disposal receipts 36/36 and 42/42
+
+### evt-d9f5f05c-7a1f-42a9-be30-48cc260a2246
+
+- Timestamp: 2026-09-09T18:48:56.818Z
+- Actor: gltf-loading-lag-investigator
+- Operation: execution_plan.update
+- Prior revision: 17
+- Resulting revision: 18
+- Summary: Starting deployed-proof readback after CI and Pages success for public Goose Hydra desktop and narrow timing evidence.
+- Idempotency key: abi056-plan-deployed-proof-start-20260909
+- Request fingerprint: 5684e92a396f2fd87e2150609b571a2eca65b48a1340fea5e3f69ead63baea0f
+- Action: set_state
+- Step ID: deployed-proof
+- State: in_progress
+- Evidence:
+  - CI run 34390914986 success
+  - Pages run 34390915115 success
+  - https://etherlords.github.io/autobattleidle/visual-lab.html
+
+### evt-dcab0294-4a18-4b83-8656-0b8b24ae6dfa
+
+- Timestamp: 2026-09-09T18:49:09.503Z
+- Actor: gltf-loading-lag-investigator
+- Operation: execution_plan.update
+- Prior revision: 18
+- Resulting revision: 19
+- Summary: Public Pages proof complete: production Goose Hydra loaded at desktop and narrow visual-lab cases; authored body/resource counts preceded final deferred semantic counts and replacement disposal remained exact; console/page errors were empty.
+- Idempotency key: abi056-plan-deployed-proof-complete-20260909
+- Request fingerprint: 71106e501867cf7844ebff4a645c5a100c14e7362941bc40207955d467314e69
+- Action: set_state
+- Step ID: deployed-proof
+- State: complete
+- Evidence:
+  - CI 34390914986 success; Deploy GitHub Pages 34390915115 success
+  - https://etherlords.github.io/autobattleidle/visual-lab.html?affinity=cinder&family=boss-goose-hydra&grade=boss&modifier=none&variant=0&golden=0&motion=0&view=orbit&viewport=desktop&recipe=production&subject=enemy&stage=1&detail=1000&level=1
+  - Desktop samples: 128ms live 44/16, 177ms 44/16 with renderer 6/4, 506ms 45/17, 1103ms 46/18, 7001ms 47/19; body resources appeared before deferred semantic completion
+  - Narrow URL rendered 487x850 canvas at viewport=narrow with Goose identity and production recipe; last disposal 42/42
+
+### evt-205e0b88-bbdc-4977-8a6b-70165d399453
+
+- Timestamp: 2026-09-09T18:49:17.998Z
+- Actor: abi056-release-closure
+- Operation: gate.record
+- Prior revision: 19
+- Resulting revision: 20
+- Summary: Verification PASS: managed plan readback is complete; CI and Pages succeeded for the closure commit; public Goose Hydra desktop transition showed body resources before deferred semantic completion, and narrow production case rendered with exact replacement disposal.
+- Idempotency key: abi056-verification-pass-20260909
+- Request fingerprint: 7f4b0a0189baf7fbbea92c812592af29fbbe51bbdf4e63754d54573bf96de458
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - evt-dcab0294-4a18-4b83-8656-0b8b24ae6dfa
+  - CI run 34390914986 success
+  - Deploy GitHub Pages run 34390915115 success
+  - Public desktop URL and timing samples recorded in deployed-proof evidence
+  - Public narrow URL rendered 487x850 canvas with boss-goose-hydra production identity
+
+### evt-831c5fc2-d5b8-43a6-bc94-95a17d746b9c
+
+- Timestamp: 2026-09-09T18:50:08.179Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 20
+- Resulting revision: 21
+- Summary: Manager closure PASS: ABI-056 verification is complete, commit is pushed, CI and Pages succeeded, and only ABI-056 code/tests plus packet files were staged; unrelated ABI-055, planner metadata, screenshots, and artifacts were excluded.
+- Idempotency key: abi056-manager-closure-main-20260909
+- Request fingerprint: 37a47e61b10c05316f9b2b3b0d1da7e2bacefbe30b54a3f766d198260d6f0ce9
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - evt-205e0b88-bbdc-4977-8a6b-70165d399453
+  - commit 7ca6a7f8e88ff7802ebf5b345ab073ed6f299b20
+  - CI run 34390914986 success
+  - Deploy GitHub Pages run 34390915115 success
+  - public Goose Hydra desktop and narrow evidence recorded in deployed proof
+
+### evt-fdaafd00-ebb4-4ba1-956e-63a3709037f2
+
+- Timestamp: 2026-09-09T18:50:26.984Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 21
+- Resulting revision: 22
+- Summary: All implementation, review, QA, and verification evidence is present; moving ABI-056 through the required high-assurance closure path.
+- Idempotency key: abi056-status-review-main-20260909
+- Request fingerprint: c96f74b155f89c8f48e9a88cd6f542ae4279e78d1029cd45ca6c0cc793c03827
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-a2a8306e-c9f5-42b5-9ddf-beaaeca33b92
+  - evt-e2e03eb5-91a5-4544-920e-45ef12fafd6c
+  - evt-682eaad1-5c37-4a4d-a171-f9e49192f23c
+  - evt-205e0b88-bbdc-4977-8a6b-70165d399453
+  - evt-831c5fc2-d5b8-43a6-bc94-95a17d746b9c
+
+### evt-b1199004-a24b-4fb8-b934-e4cdbd5b22fc
+
+- Timestamp: 2026-09-09T18:50:34.607Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 22
+- Resulting revision: 23
+- Summary: Independent review and verification gates are passed; moving ABI-056 through the required QA status before manager-ready closure.
+- Idempotency key: abi056-status-qa-main-20260909
+- Request fingerprint: ec4c5e18782fca3757702f4f5b6e4fdc255af3a9bdc7f288a151b385da864739
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-e2e03eb5-91a5-4544-920e-45ef12fafd6c
+  - evt-682eaad1-5c37-4a4d-a171-f9e49192f23c
+  - evt-205e0b88-bbdc-4977-8a6b-70165d399453
+
+### evt-0043d1fd-1099-4b4b-98dc-c3e5907f903b
+
+- Timestamp: 2026-09-09T18:50:44.452Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 23
+- Resulting revision: 24
+- Summary: Acceptance QA, public deployment verification, and manager-closure gate are passed; ABI-056 is ready for final Done transition.
+- Idempotency key: abi056-status-ready-manager-main-20260909
+- Request fingerprint: fcce0273685150768860fd5e6deb74f006ad68a4209c74b657e3f1f50aab4798
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-682eaad1-5c37-4a4d-a171-f9e49192f23c
+  - evt-205e0b88-bbdc-4977-8a6b-70165d399453
+  - evt-831c5fc2-d5b8-43a6-bc94-95a17d746b9c
+  - CI 34390914986 success
+  - Pages 34390915115 success
+
+### evt-eedf7878-41fd-4fa1-9f57-8146ce12ddca
+
+- Timestamp: 2026-09-09T18:50:54.354Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 24
+- Resulting revision: 25
+- Summary: ABI-056 Done: all required gates pass, coherent closure commit is pushed, CI and Pages deployments succeed, and public desktop/narrow Goose Hydra behavior is verified.
+- Idempotency key: abi056-status-done-main-20260909
+- Request fingerprint: 03180cafcf4f36b55325a361a3c7f4fdc38b2e7fe5a58b4b8aa175ddc455ee21
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-a2a8306e-c9f5-42b5-9ddf-beaaeca33b92
+  - evt-e2e03eb5-91a5-4544-920e-45ef12fafd6c
+  - evt-682eaad1-5c37-4a4d-a171-f9e49192f23c
+  - evt-205e0b88-bbdc-4977-8a6b-70165d399453
+  - evt-831c5fc2-d5b8-43a6-bc94-95a17d746b9c
+  - commit 7ca6a7f8e88ff7802ebf5b345ab073ed6f299b20
+  - CI run 34390914986 success
+  - Pages run 34390915115 success

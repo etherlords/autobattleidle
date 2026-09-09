@@ -4,8 +4,8 @@ id: ABI-056
 artifact: brief
 project: ABI
 profile: high-assurance
-revision: 2
-status: In Progress
+revision: 6
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -28,7 +28,7 @@ Remove blocking Goose Hydra GLB semantic refresh lag
 
 - Type: bug
 - Priority: high
-- Status: In Progress
+- Status: Done
 - Parent: None
 
 ## Acceptance criteria
