@@ -731,6 +731,12 @@ describe("startApplication", () => {
     if (attack === undefined || upgrade === undefined || reset === undefined) {
       throw new Error("Expected HUD handlers");
     }
+    expect(lastSnapshot().roadmap?.nextBoss).toMatchObject({
+      encounter: 35,
+      family: "boss-evil-catbug",
+      ordinal: 1,
+    });
+    expect(lastSnapshot().roadmap?.encountersRemaining).toBe(34);
     expect(lastSnapshot().upgrades.map((upgrade) => upgrade.disabledReason)).toEqual([
       null,
       "Need 45 coins",

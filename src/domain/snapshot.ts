@@ -2,6 +2,7 @@ import {
   armorPenetrationForLevel,
   automaticAttacksPerSecond,
   automaticInterval,
+  bossRoadmapTargetForEncounter,
   criticalChanceForLevel,
   damageForLevel,
   doubleRewardChanceForLevel,
@@ -55,6 +56,15 @@ export type BattleEnemySnapshot = {
   readonly seed?: number;
   readonly variant?: 0 | 1 | 2;
 };
+export type BattleRoadmapSnapshot = {
+  readonly nextBoss: {
+    readonly encounter: number;
+    readonly family: EnemyFamily;
+    readonly ordinal: number;
+  } | null;
+  readonly encountersRemaining: number | null;
+};
+
 export type BattleSnapshot = {
   readonly automatic: {
     readonly intervalMs: number;
@@ -65,6 +75,7 @@ export type BattleSnapshot = {
   readonly coins: number;
   readonly encounter: string;
   readonly enemy: BattleEnemySnapshot;
+  readonly roadmap?: BattleRoadmapSnapshot;
   readonly goldenBug?: { readonly remainingMs: number } | null;
   readonly playerStats: {
     readonly armorPenetration: number;
@@ -84,6 +95,19 @@ const remainingAutomaticMs = (
   override: number | undefined,
 ): number =>
   override ?? (state.automaticUnlocked ? Math.max(0, state.nextAutomaticAttackAtMs - nowMs) : 0);
+const roadmapSnapshotForEncounter = (encounter: number): BattleRoadmapSnapshot => {
+  const target = bossRoadmapTargetForEncounter(encounter);
+  if (target === null) return { encountersRemaining: null, nextBoss: null };
+  const identity = selectEnemyFamilyIdentity({
+    grade: "boss",
+    level: target.encounter,
+    modifier: null,
+  });
+  return {
+    encountersRemaining: target.encountersRemaining,
+    nextBoss: { encounter: target.encounter, family: identity.family, ordinal: target.ordinal },
+  };
+};
 
 export const createBattleSnapshot = (
   state: CombatState,
@@ -101,6 +125,7 @@ export const createBattleSnapshot = (
     level: state.enemy.encounter,
     modifier: state.enemy.modifier,
   });
+  const roadmap = roadmapSnapshotForEncounter(state.enemy.encounter);
   return {
     automatic: {
       intervalMs: automaticInterval(state.enemy, state.player),
@@ -136,6 +161,7 @@ export const createBattleSnapshot = (
               goldenBugRemainingMs ?? COMBAT_BALANCE.goldenBugWindowMs,
             ),
           },
+    roadmap,
     playerStats: {
       armorPenetration: armorPenetrationForLevel(state.player.armorPenetrationLevel ?? 0),
       automaticAttacksPerSecond: automaticAttacksPerSecond(state.player.automaticSpeedLevel ?? 0),

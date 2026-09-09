@@ -3,8 +3,8 @@ import type { BattleSnapshot } from "../domain/snapshot";
 import type { AudioSettingsPort } from "./hud/audio-settings";
 import { button } from "./hud/elements";
 import { BattleStatus } from "./hud/battle-status";
+import { BossRoadmap } from "./hud/boss-roadmap";
 import { EventLog } from "./hud/event-log";
-
 import { UpgradeDialog } from "./hud/upgrade-dialog";
 import { LeaderboardDialog } from "./hud/leaderboard-dialog";
 import { AudioSettingsDialog } from "./hud/audio-settings";
@@ -33,6 +33,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   panel.className = "hud";
   panel.setAttribute("aria-label", "Battle status");
   const status = new BattleStatus();
+  const roadmap = new BossRoadmap();
   const muteToggle = button("hud-mute-toggle", "Mute");
   const dialog = new UpgradeDialog();
   let audioSettings: AudioSettingsDialog | undefined;
@@ -43,6 +44,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   const actions = document.createElement("div");
   actions.className = "hud-actions";
   actions.append(dialog.launcher, leaderboard.launcher);
+  status.element.append(roadmap.element);
   panel.append(status.element, actions, muteToggle, dialog.modal, leaderboard.modal, log.element);
   host.append(panel);
   muteToggle.hidden = true;
@@ -145,10 +147,10 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
     listeners.add(listener);
     return () => listeners.delete(listener);
   };
-
   return {
     render: (snapshot) => {
       status.render(snapshot);
+      roadmap.render(snapshot);
       dialog.render(snapshot);
       log.render(snapshot.events);
     },
@@ -205,6 +207,7 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
       document.removeEventListener("keydown", toggleUpgradeShortcut);
       dialog.dispose();
       status.dispose();
+      roadmap.dispose();
       leaderboard.dispose();
       panel.remove();
     },

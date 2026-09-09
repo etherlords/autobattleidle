@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { attack, createCombatState, effectiveArmor, spawnEnemy, spawnGoldenBug } from "./combat";
+import {
+  attack,
+  bossEncounterForOrdinal,
+  createCombatState,
+  effectiveArmor,
+  spawnEnemy,
+  spawnGoldenBug,
+} from "./combat";
 import { createBattleSnapshot } from "./snapshot";
 import { enemyVisualSpec } from "../game/enemy-visual/spec";
 import { decodeSave, encodeSave } from "../persistence/persistence-boundary";
@@ -28,6 +35,19 @@ describe("battle snapshots", () => {
       name: "Golden Bug",
       variant: 0,
     });
+  });
+  it("includes a cadence-derived next boss target without save-state fields", () => {
+    const state = createCombatState();
+    const snapshot = createBattleSnapshot(state, 0, [], []);
+    expect(snapshot.roadmap).toEqual({
+      encountersRemaining: bossEncounterForOrdinal(1) - state.enemy.encounter,
+      nextBoss: {
+        encounter: bossEncounterForOrdinal(1),
+        family: "boss-evil-catbug",
+        ordinal: 1,
+      },
+    });
+    expect(JSON.stringify(snapshot)).not.toContain("roadmapTarget");
   });
 
   it("keeps saved presentation names paired with rendered bodies without saving a name", () => {

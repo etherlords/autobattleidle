@@ -17,8 +17,10 @@ export {
   bossEncounterForOrdinal,
   bossGapForOrdinal,
   bossOrdinalForEncounter,
+  bossRoadmapTargetForEncounter,
   isBossEncounter,
 } from "./combat/boss-cadence";
+export type { BossRoadmapTarget } from "./combat/boss-cadence";
 export { ENEMY_MODIFIERS } from "./combat/enemy-modifiers/enemy-modifier-registry";
 export { ENEMY_AFFINITIES, ENEMY_AFFINITY_IDS } from "./combat/enemy-affinities";
 export {

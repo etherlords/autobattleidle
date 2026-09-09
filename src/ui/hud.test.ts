@@ -204,6 +204,33 @@ describe("createHud", () => {
     expect(element(host, "golden-bug-countdown").textContent).toContain("9.9s");
     hud.dispose();
   });
+  it("renders the read-only current encounter and next boss roadmap", () => {
+    const document = new FakeDocument();
+    Object.defineProperty(globalThis, "document", { configurable: true, value: document });
+    const host = document.createElement();
+    const battlefield = document.createElement();
+    const hud = createHud(host as unknown as HTMLElement, battlefield as unknown as HTMLElement);
+    hud.render({
+      ...snapshot,
+      enemy: { ...snapshot.enemy, grade: "veteran", level: 34 },
+      roadmap: {
+        encountersRemaining: 1,
+        nextBoss: { encounter: 35, family: "boss-evil-catbug", ordinal: 1 },
+      },
+    });
+    expect(element(host, "boss-roadmap-current").textContent).toBe(
+      "Current: Encounter 34 · veteran",
+    );
+    expect(element(host, "boss-roadmap-next").textContent).toContain(
+      "Next boss: #1 Evil Catbug · Encounter 35 · 1 encounters remaining",
+    );
+    expect(element(host, "hud-track-status").textContent).toBe("");
+    const roadmap = element(host, "boss-roadmap");
+    const status = element(host, "hud-status");
+    expect(roadmap.parent).toBe(status);
+    expect(roadmap.attributes.get("aria-label")).toBe("Goals and boss roadmap");
+    hud.dispose();
+  });
   it("keeps upgrade and leaderboard dialogs mutually isolated", () => {
     const document = new FakeDocument();
     Object.defineProperty(globalThis, "document", { configurable: true, value: document });
@@ -375,6 +402,11 @@ describe("createHud", () => {
     expect(stylesheet).toContain(
       ".hud-status {\n    left: 0.75rem;\n    right: 6rem;\n    transform: none;\n    width: auto;\n  }",
     );
+  });
+  it("keeps the roadmap inside the fixed status flow", () => {
+    expect(stylesheet).toContain(".hud-status > .boss-roadmap {");
+    expect(stylesheet).toContain("width: min(100%, 48rem);");
+    expect(stylesheet).toContain("max-width: 48rem;");
   });
   it("keeps event log border colors tied to their combat source", () => {
     expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');

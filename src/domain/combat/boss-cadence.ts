@@ -126,3 +126,34 @@ export const bossCadenceGapForEncounter = (
   if (ordinal === undefined) return undefined;
   return bossInterval === undefined ? bossGapForOrdinal(ordinal) : bossInterval;
 };
+export type BossRoadmapTarget = {
+  readonly ordinal: number;
+  readonly encounter: number;
+  readonly encountersRemaining: number;
+};
+
+const firstBossOrdinalAtOrAfter = (encounter: number): number | undefined => {
+  let low = 1;
+  let high = Math.min(MAX_BOSS_ORDINAL, Math.floor(Math.max(0, encounter - 35) / MIN_GAP) + 2);
+  while (low < high) {
+    const ordinal = Math.floor((low + high) / 2);
+    if (bossEncounterForOrdinal(ordinal) < encounter) low = ordinal + 1;
+    else high = ordinal;
+  }
+  return low > MAX_BOSS_ORDINAL ? undefined : low;
+};
+
+export const bossRoadmapTargetForEncounter = (encounter: number): BossRoadmapTarget | null => {
+  assertEncounter(encounter);
+  const currentOrdinal = bossOrdinalForEncounter(encounter);
+  let ordinal: number | undefined;
+  if (currentOrdinal === undefined) ordinal = firstBossOrdinalAtOrAfter(encounter);
+  else if (currentOrdinal < MAX_BOSS_ORDINAL) ordinal = currentOrdinal + 1;
+  if (ordinal === undefined) return null;
+  const bossEncounter = bossEncounterForOrdinal(ordinal);
+  return {
+    encounter: bossEncounter,
+    encountersRemaining: bossEncounter - encounter,
+    ordinal,
+  };
+};

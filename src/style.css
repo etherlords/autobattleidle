@@ -58,6 +58,31 @@ body {
   white-space: nowrap;
   width: 100%;
 }
+.hud-status > .boss-roadmap {
+  align-self: center;
+  width: min(100%, 48rem);
+}
+.boss-roadmap {
+  background: rgb(7 18 31 / 82%);
+  border: 1px solid #4c7797;
+  border-radius: 0.35rem;
+  box-sizing: border-box;
+  color: #d7ecff;
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.45rem;
+  max-width: 48rem;
+  padding: 0.35rem 0.65rem;
+  text-align: center;
+}
+.boss-roadmap p {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin: 0;
+}
+.boss-roadmap-next {
+  color: #9fd8ff;
+}
 .hud-mute-toggle {
   font: inherit;
   min-height: 2.25rem;

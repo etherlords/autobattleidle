@@ -5,6 +5,7 @@ import {
   bossEncounterForOrdinal,
   bossGapForOrdinal,
   bossOrdinalForEncounter,
+  bossRoadmapTargetForEncounter,
 } from "./boss-cadence";
 
 describe("progression-aware boss cadence", () => {
@@ -41,6 +42,22 @@ describe("progression-aware boss cadence", () => {
     expect(encounter).toBeGreaterThan(0);
     expect(bossOrdinalForEncounter(encounter)).toBe(161);
     expect(() => bossEncounterForOrdinal(Number.MAX_SAFE_INTEGER)).toThrow(RangeError);
+  });
+  it("projects the next boss and remaining encounters at cadence boundaries", () => {
+    const first = bossEncounterForOrdinal(1);
+    const second = bossEncounterForOrdinal(2);
+    expect(bossRoadmapTargetForEncounter(1)).toEqual({
+      encounter: first,
+      encountersRemaining: first - 1,
+      ordinal: 1,
+    });
+    expect(bossRoadmapTargetForEncounter(first)).toEqual({
+      encounter: second,
+      encountersRemaining: second - first,
+      ordinal: 2,
+    });
+    expect(bossRoadmapTargetForEncounter(second - 1)?.ordinal).toBe(2);
+    expect(bossRoadmapTargetForEncounter(second - 1)?.encountersRemaining).toBe(1);
   });
   it("reconstructs a bounded long-run schedule independently of call order", () => {
     const ordinals = Array.from({ length: 3_000 }, (_, index) => index + 1);
