@@ -45,6 +45,43 @@ const authoredPlateOffsets = [
   [-0.12, 0.1, -0.18],
   [0.1, -0.08, 0.2],
 ] as const;
+type IdleScheduler = {
+  requestIdleCallback?: (callback: () => void, options?: { readonly timeout: number }) => number;
+};
+const scheduleSemanticTask = (task: () => void): void => {
+  const idle = globalThis as typeof globalThis & IdleScheduler;
+  if (typeof idle.requestIdleCallback === "function") {
+    idle.requestIdleCallback(task, { timeout: 100 });
+    return;
+  }
+  globalThis.setTimeout(task, 0);
+};
+const chunkedRefresh = (
+  target: THREE.Mesh,
+  clear: () => void,
+  create: (target: THREE.Mesh, index: number) => void,
+  count: number,
+  isDisposed: () => boolean,
+): Promise<void> => {
+  clear();
+  return new Promise((resolve) => {
+    let index = 0;
+    const step = (): void => {
+      if (isDisposed()) {
+        resolve();
+        return;
+      }
+      create(target, index);
+      index += 1;
+      if (index >= count) {
+        resolve();
+        return;
+      }
+      scheduleSemanticTask(step);
+    };
+    scheduleSemanticTask(step);
+  });
+};
 
 const hexChannel = (value: string, shift: number): number => {
   const parsed = Number.parseInt(value.replace("#", ""), 16);
@@ -348,10 +385,12 @@ const surfaceComponent = (
   nodes: readonly THREE.Object3D[],
   dispose: () => void,
   refresh: (body: THREE.Mesh) => void,
+  refreshAsync?: (body: THREE.Mesh) => Promise<void>,
 ): EnemyVisualComponent => ({
   ...component(key, "decoration", nodes, undefined, undefined, "body"),
   dispose,
   refresh,
+  ...(refreshAsync === undefined ? {} : { refreshAsync }),
 });
 const clearSurfaceChildren = (group: THREE.Group): void => {
   [...group.children].forEach((child) => disposeGeneratedNodes([child]));
@@ -365,18 +404,23 @@ const scratches = (
 ): EnemyVisualComponent => {
   const group = new THREE.Group();
   group.name = "semantic-surface-scratches";
-  const populate = (target: THREE.Mesh): void => {
-    authoredScratchOffsets.forEach(([x, y, rotation], index) => {
-      const mark = createBodyDecal(
+  const createMark = (target: THREE.Mesh, index: number): void => {
+    const offset = authoredScratchOffsets[index];
+    if (offset === undefined) return;
+    const [x, y, rotation] = offset;
+    group.add(
+      createBodyDecal(
         target,
         parent,
         `surface-scratch-${index}`,
         patchForFace(target, "front", x * 1.3, y * 1.4, 0.22 + profile.variant * 0.015, 0.045),
         markMaterial(palette.accent, palette.emissive),
         rotation,
-      );
-      group.add(mark);
-    });
+      ),
+    );
+  };
+  const populate = (target: THREE.Mesh): void => {
+    authoredScratchOffsets.forEach((_, index) => createMark(target, index));
   };
   populate(body);
   let disposed = false;
@@ -384,6 +428,14 @@ const scratches = (
     clearSurfaceChildren(group);
     populate(target);
   };
+  const refreshAsync = (target: THREE.Mesh): Promise<void> =>
+    chunkedRefresh(
+      target,
+      () => clearSurfaceChildren(group),
+      createMark,
+      authoredScratchOffsets.length,
+      () => disposed,
+    );
   return surfaceComponent(
     "semantic-surface-scratches",
     [group],
@@ -394,6 +446,7 @@ const scratches = (
       group.removeFromParent();
     },
     refresh,
+    refreshAsync,
   );
 };
 
@@ -406,9 +459,12 @@ const shellPlates = (
   (["left", "right"] as const).map((anchor) => {
     const group = new THREE.Group();
     group.name = `semantic-surface-shell-plates-${anchor}`;
-    const populate = (target: THREE.Mesh): void => {
-      authoredPlateOffsets.forEach(([x, y, rotation], index) => {
-        const plate = createBodyDecal(
+    const createPlate = (target: THREE.Mesh, index: number): void => {
+      const offset = authoredPlateOffsets[index];
+      if (offset === undefined) return;
+      const [x, y, rotation] = offset;
+      group.add(
+        createBodyDecal(
           target,
           parent,
           `surface-shell-plate-${anchor}-${index}`,
@@ -422,9 +478,11 @@ const shellPlates = (
           ),
           markMaterial(palette.core, palette.emissive),
           rotation,
-        );
-        group.add(plate);
-      });
+        ),
+      );
+    };
+    const populate = (target: THREE.Mesh): void => {
+      authoredPlateOffsets.forEach((_, index) => createPlate(target, index));
     };
     populate(body);
     let disposed = false;
@@ -432,6 +490,14 @@ const shellPlates = (
       clearSurfaceChildren(group);
       populate(target);
     };
+    const refreshAsync = (target: THREE.Mesh): Promise<void> =>
+      chunkedRefresh(
+        target,
+        () => clearSurfaceChildren(group),
+        createPlate,
+        authoredPlateOffsets.length,
+        () => disposed,
+      );
     return surfaceComponent(
       `semantic-surface-shell-plates-${anchor}`,
       [group],
@@ -441,6 +507,7 @@ const shellPlates = (
         disposeGeneratedNodes([group]);
       },
       refresh,
+      refreshAsync,
     );
   });
 
@@ -453,8 +520,8 @@ const affinityMark = (
   const acquired = acquireAffinityTexture(palette, profile);
   const group = new THREE.Group();
   group.name = "semantic-surface-affinity-mark";
-  const populate = (target: THREE.Mesh): void => {
-    const material = new THREE.MeshStandardMaterial({
+  const createMarkMaterial = (): THREE.MeshStandardMaterial =>
+    new THREE.MeshStandardMaterial({
       ...(acquired.texture === undefined ? {} : { map: acquired.texture }),
       color: acquired.texture === undefined ? palette.accent : "#ffffff",
       emissive: palette.emissive,
@@ -468,15 +535,19 @@ const affinityMark = (
       polygonOffsetFactor: -2,
       polygonOffsetUnits: -2,
     });
+  const createMark = (target: THREE.Mesh): void => {
     group.add(
       createBodyDecal(
         target,
         parent,
         "surface-affinity-mark",
         patchForFace(target, "flank", 0, 0.04, 0.42 + profile.variant * 0.02, 0.42),
-        material,
+        createMarkMaterial(),
       ),
     );
+  };
+  const populate = (target: THREE.Mesh): void => {
+    createMark(target);
   };
   populate(body);
   let disposed = false;
@@ -484,6 +555,14 @@ const affinityMark = (
     clearSurfaceChildren(group);
     populate(target);
   };
+  const refreshAsync = (target: THREE.Mesh): Promise<void> =>
+    chunkedRefresh(
+      target,
+      () => clearSurfaceChildren(group),
+      (nextTarget) => createMark(nextTarget),
+      1,
+      () => disposed,
+    );
   return surfaceComponent(
     "semantic-surface-affinity-mark",
     [group],
@@ -495,6 +574,7 @@ const affinityMark = (
       if (acquired.key !== undefined) releaseAffinityTexture(acquired.key);
     },
     refresh,
+    refreshAsync,
   );
 };
 
@@ -559,10 +639,18 @@ export class SemanticSurfaceDecorator {
       this.mode,
     );
     surfaces.forEach((surface) => builder.add(surface));
-    anchor.userData.refreshSemanticSurfaces = (): void => {
+    anchor.userData.refreshSemanticSurfaces = async (): Promise<void> => {
       const loadedBody = bodyMeshForAnchor(anchor);
-      if (loadedBody === undefined) return;
-      surfaces.forEach((surface) => surface.refresh?.(loadedBody));
+      if (loadedBody === undefined || anchor.userData.semanticSurfaceRefreshCancelled === true)
+        return;
+      surfaces.forEach((surface) => surface.nodes.forEach((node) => (node.visible = false)));
+      for (const surface of surfaces) {
+        if (anchor.userData.semanticSurfaceRefreshCancelled === true) return;
+        if (surface.refreshAsync !== undefined) await surface.refreshAsync(loadedBody);
+        else surface.refresh?.(loadedBody);
+        if (anchor.userData.semanticSurfaceRefreshCancelled === true) return;
+        surface.nodes.forEach((node) => (node.visible = true));
+      }
     };
   }
 }

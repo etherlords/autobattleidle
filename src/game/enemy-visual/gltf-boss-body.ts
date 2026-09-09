@@ -248,13 +248,14 @@ const augmentFallbackWithGltf = (
   if (rig === undefined) return fallback;
   const bodyAnchor = fallback.anchors?.body;
   if (!(bodyAnchor instanceof THREE.Group)) return fallback;
+  bodyAnchor.userData.semanticSurfaceRefreshCancelled = false;
   const headAnchor = family === "boss-goose-hydra" ? fallback.anchors?.head : undefined;
   const preservedAnchorMeshes = new Set<THREE.Mesh>();
   if (headAnchor instanceof THREE.Mesh) preservedAnchorMeshes.add(headAnchor);
   let instance: THREE.Group | undefined;
   let disposed = false;
   const assetReady: Promise<void> = sourceScene(asset.url)
-    .then((source) => {
+    .then(async (source) => {
       if (disposed) return;
       instance = cloneResources(source, asset);
       const sourceBounds = new THREE.Box3().setFromObject(instance);
@@ -281,13 +282,16 @@ const augmentFallbackWithGltf = (
       bodyAnchor.add(instance);
       if (family === "boss-goose-hydra")
         fitGooseHydraSockets(rig, fallback.anchors?.orbit ?? rig, instance, headAnchor);
-      bodyAnchor.userData.refreshSemanticSurfaces?.();
+      const refreshPromise = bodyAnchor.userData.refreshSemanticSurfaces?.();
+      if (disposed) return;
       root.userData.gltfStatus = "ready";
       root.visible = true;
+      await refreshPromise;
+      if (disposed) return;
     })
     .catch(() => {
+      if (disposed) return;
       root.userData.gltfStatus = "error";
-      // Keep the family-specific placeholder hidden when its authored asset is unavailable.
       // Never expose the legacy Colossus/Hydra loading geometry for a rejected GLB.
     });
   return {
@@ -297,6 +301,7 @@ const augmentFallbackWithGltf = (
     dispose: () => {
       if (disposed) return;
       disposed = true;
+      bodyAnchor.userData.semanticSurfaceRefreshCancelled = true;
       fallback.dispose?.();
       preservedAnchorMeshes.forEach((mesh) => {
         mesh.removeFromParent();
@@ -370,8 +375,8 @@ export const gltfBossBody = (
       pose.userData.gltfStatus = "ready";
     })
     .catch(() => {
+      if (disposed) return;
       pose.userData.gltfStatus = "error";
-      // A failed optional asset load leaves the lifecycle intact without a procedural substitute.
     });
 
   const reducedMotion =

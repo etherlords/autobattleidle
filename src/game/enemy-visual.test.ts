@@ -20,10 +20,22 @@ import {
 } from "./enemy-visual/decorators";
 import { observeResourceDisposal, resourceCounts } from "../debug/visual-lab/resource-ledger";
 import { EnemyUnitBuilder, EnemyUnitFactory, type EnemyUnit } from "./units/enemy";
+import { clearGltfBossCache } from "./enemy-visual/gltf-boss-body";
+
+let rejectGltfLoad = false;
 
 vi.mock("three/addons/loaders/GLTFLoader.js", () => {
   class DeterministicGLTFLoader {
-    load(url: string, onLoad: (gltf: { readonly scene: THREE.Group }) => void): void {
+    load(
+      url: string,
+      onLoad: (gltf: { readonly scene: THREE.Group }) => void,
+      _onProgress?: (event: ProgressEvent<EventTarget>) => void,
+      onError?: (error: unknown) => void,
+    ): void {
+      if (rejectGltfLoad) {
+        queueMicrotask(() => onError?.(new Error("deterministic GLTF rejection")));
+        return;
+      }
       const scene = new THREE.Group();
       const geometry = url.includes("goose")
         ? new THREE.IcosahedronGeometry(0.9, 2)
@@ -1786,6 +1798,85 @@ describe("enemy visual factory", () => {
       } finally {
         unit.dispose();
       }
+    }
+  });
+
+  it("reveals the loaded Goose Hydra before deferred semantic refresh completes", async () => {
+    vi.useFakeTimers();
+    const unit = new EnemyUnitFactory().create({ grade: "boss", level: 175, modifier: null });
+    const pose = unit.view.group.getObjectByName("enemy-pose-boss-goose-hydra");
+    const body = unit.view.group.getObjectByName("enemy-body-boss-goose-hydra");
+    const ready = unit.enemyView.assetReady();
+    if (pose === undefined || !(body instanceof THREE.Mesh) || ready === undefined)
+      throw new Error("Expected Goose Hydra load state");
+    let readySettled = false;
+    void ready.then(() => {
+      readySettled = true;
+    });
+    try {
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(readySettled).toBe(false);
+      expect(pose.userData.gltfStatus).toBe("ready");
+      expect(pose.visible).toBe(true);
+      expect(body.parent).toBeDefined();
+      expect(unit.view.group.getObjectByName("semantic-surface-scratches")?.visible).toBe(false);
+      expect(unit.view.group.getObjectByName("semantic-surface-shell-plates-left")?.visible).toBe(
+        false,
+      );
+      expect(unit.view.group.getObjectByName("semantic-surface-affinity-mark")?.visible).toBe(
+        false,
+      );
+      await vi.runAllTimersAsync();
+      await ready;
+      expect(readySettled).toBe(true);
+      expect(unit.view.group.getObjectByName("surface-scratch-0")).toBeDefined();
+      expect(unit.view.group.getObjectByName("surface-shell-plate-left-0")).toBeDefined();
+      expect(unit.view.group.getObjectByName("surface-affinity-mark")).toBeDefined();
+    } finally {
+      unit.dispose();
+      vi.useRealTimers();
+    }
+  });
+
+  it("cancels deferred Goose semantic refresh when the unit is disposed", async () => {
+    vi.useFakeTimers();
+    const unit = new EnemyUnitFactory().create({ grade: "boss", level: 175, modifier: null });
+    const pose = unit.view.group.getObjectByName("enemy-pose-boss-goose-hydra");
+    const ready = unit.enemyView.assetReady();
+    if (pose === undefined || ready === undefined)
+      throw new Error("Expected Goose Hydra load state");
+    try {
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(pose.visible).toBe(true);
+      unit.dispose();
+      await vi.runAllTimersAsync();
+      await ready;
+      expect(pose.visible).toBe(true);
+      expect(unit.view.group.getObjectByName("enemy-body-boss-goose-hydra")).toBeUndefined();
+    } finally {
+      unit.dispose();
+      vi.useRealTimers();
+    }
+  });
+  it("does not publish a rejection status after disposal", async () => {
+    clearGltfBossCache();
+    rejectGltfLoad = true;
+    const unit = new EnemyUnitFactory().create({ grade: "boss", level: 175, modifier: null });
+    const pose = unit.view.group.getObjectByName("enemy-pose-boss-goose-hydra");
+    const ready = unit.enemyView.assetReady();
+    if (pose === undefined || ready === undefined)
+      throw new Error("Expected Goose Hydra load state");
+    try {
+      unit.dispose();
+      rejectGltfLoad = false;
+      await ready;
+      expect(pose.userData.gltfStatus).toBe("loading");
+    } finally {
+      rejectGltfLoad = false;
+      clearGltfBossCache();
+      unit.dispose();
     }
   });
 

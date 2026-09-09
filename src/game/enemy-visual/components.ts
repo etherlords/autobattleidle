@@ -25,6 +25,7 @@ export type EnemyVisualComponent = {
   readonly onAttach?: () => void;
   readonly assetReady?: Promise<void>;
   readonly refresh?: (body: THREE.Mesh) => void;
+  readonly refreshAsync?: (body: THREE.Mesh) => Promise<void>;
   readonly dispose?: () => void;
 };
 
