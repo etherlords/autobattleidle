@@ -4,8 +4,8 @@ id: ABI-057
 artifact: progress
 project: ABI
 profile: high-assurance
-revision: 30
-status: In Progress
+revision: 36
+status: Done
 sprintId: ABI-S1
 dependencies: []
 parentId: null
@@ -22,9 +22,9 @@ workspaceProject: autobattleidle
 
 ## Current state
 
-- Status: In Progress
-- Revision: 30
-- Last update: Independent QA PASS reconciled across desktop and narrow browser viewports with controls, reload, save-schema, and pnpm check evidence.
+- Status: Done
+- Revision: 36
+- Last update: Manager closure complete: ABI-057 released on main and public deployment verified.
 
 ## Execution plan
 
@@ -564,3 +564,121 @@ workspaceProject: autobattleidle
   - 1280x800, 390x844, 320x700 no-overflow/no-overlap measurements
   - battlefield click, mute, auto APS/cooldown/pause, reload persistence, unchanged save schema
   - pnpm check: 33 files/353 tests
+
+### evt-05e0c383-2ab0-4e98-9797-6e4402ad5a1e
+
+- Timestamp: 2026-09-09T20:24:48.533Z
+- Actor: Main
+- Operation: gate.record
+- Prior revision: 30
+- Resulting revision: 31
+- Summary: PASS: pushed ABI-057 commit passed CI and GitHub Pages deployment; public HUD smoke verified at desktop and narrow viewports with controls and no overflow.
+- Idempotency key: ABI-057-verification-public-20260910
+- Request fingerprint: 9aaaa64be38f5751958d933d3bb6d5a742567d4f3960e2fce1b8fe29e2e573aa
+- Gate: verification
+- Verdict: pass
+- Evidence:
+  - Commit 30aa3ba2e607ec1d75f2ee96030a4f3b773ecb7d pushed to main
+  - CI run 34400567279 success: https://github.com/etherlords/autobattleidle/actions/runs/34400567279
+  - Pages run 34400567418 success: https://github.com/etherlords/autobattleidle/actions/runs/34400567418
+  - Public URL https://etherlords.github.io/autobattleidle/ desktop 1280x800: unified status panel rendered encounter/enemy/health/coins/automatic APS+cooldown/pause/damage/critical/armor raw+effective/penetration/roadmap/audio; body 1280x800 with no overlap
+  - Public URL 390x844: HUD status x12..378 y12..357.39, actions x12..378 y736..832, mute x12..116.41 y788..832, pause x337.81..369.81 y101.78..133.78; body 390x844 no overflow; Enter changed health 13,945,737 to 13,934,267; mute changed Mute sound/on to Unmute sound/muted
+  - Public URL 320x700: HUD status x12..308 y12..367.39, actions x12..308 y592..688, mute x12..116.41 y644..688, pause x267.81..299.81 y106.78..138.78; body 320x700 no overflow; unified panel content visible
+  - Public smoke console errors: none observed after reload
+
+### evt-b94ad5ed-3f56-4f35-8488-ba6edf7933bc
+
+- Timestamp: 2026-09-09T20:25:10.045Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 31
+- Resulting revision: 32
+- Summary: Implementation complete; review, QA, and public verification evidence are recorded.
+- Idempotency key: ABI-057-in-review-20260910
+- Request fingerprint: c0443e7a1bb44aa8af467db6ac70d2dbbdddaa5df85242b77555950bdcfab16e
+- From status: In Progress
+- To status: In Review
+- Evidence:
+  - evt-bae27676-d629-4095-91c7-0cd7ce95bfd9
+  - evt-a092b1bb-a9a0-4fdf-bef7-7d932f4cf9a5
+  - evt-05e0c383-2ab0-4e98-9797-6e4402ad5a1e
+
+### evt-345e5556-8e10-4922-9fd0-b17e61b1ca00
+
+- Timestamp: 2026-09-09T20:25:18.516Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 32
+- Resulting revision: 33
+- Summary: Independent review PASS reconciled; independent QA and verification evidence are complete for release sign-off.
+- Idempotency key: ABI-057-in-qa-20260910
+- Request fingerprint: 4f24a8fe0edc10b339f35ec44892cf855a4e16b80568e0a981345ad58e9ddf7c
+- From status: In Review
+- To status: In QA
+- Evidence:
+  - evt-bae27676-d629-4095-91c7-0cd7ce95bfd9
+  - evt-a092b1bb-a9a0-4fdf-bef7-7d932f4cf9a5
+  - evt-05e0c383-2ab0-4e98-9797-6e4402ad5a1e
+
+### evt-a2ae68bc-3934-4d70-8b8b-ec9a5fa3f08b
+
+- Timestamp: 2026-09-09T20:25:26.676Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 33
+- Resulting revision: 34
+- Summary: All implementation and release gates PASS; CI and Pages succeeded and public desktop/390/320 smoke is green.
+- Idempotency key: ABI-057-ready-manager-20260910
+- Request fingerprint: 07b8dbc66542ba4a2bda227b2e8b4b6cf72e8b2e2e66870ed4282b1b5ef3d296
+- From status: In QA
+- To status: Ready for Manager
+- Evidence:
+  - evt-6035e5f3-5d8b-4316-8c31-f35a0cfec9e3
+  - evt-bae27676-d629-4095-91c7-0cd7ce95bfd9
+  - evt-a092b1bb-a9a0-4fdf-bef7-7d932f4cf9a5
+  - evt-05e0c383-2ab0-4e98-9797-6e4402ad5a1e
+  - 30aa3ba2e607ec1d75f2ee96030a4f3b773ecb7d
+  - 34400567279
+  - 34400567418
+
+### evt-4cc84d9e-4fb1-4402-ac65-e52e7d6811de
+
+- Timestamp: 2026-09-09T20:25:49.549Z
+- Actor: abi057-manager-closure
+- Operation: gate.record
+- Prior revision: 34
+- Resulting revision: 35
+- Summary: Manager closure PASS: ABI-057 is released on main with successful CI/Pages deployment and verified public HUD behavior at all required viewports.
+- Idempotency key: ABI-057-manager-closure-20260910
+- Request fingerprint: dbc42f7edfb1f3f0da9d787dfff9502d0ddd2ef489095c50093c7a5930682fda
+- Gate: manager-closure
+- Verdict: pass
+- Evidence:
+  - 30aa3ba2e607ec1d75f2ee96030a4f3b773ecb7d
+  - CI success 34400567279
+  - Pages success 34400567418
+  - Public https://etherlords.github.io/autobattleidle/ verified at 1280x800, 390x844, 320x700
+  - Public 390px Enter attack changed health and mute toggled sound state; required HUD values, controls, no-overflow/no-overlap geometry observed
+  - No GLB performance or artifact files included
+
+### evt-40e40e6b-5f1c-46d2-8a29-7dc5a3c0f9d2
+
+- Timestamp: 2026-09-09T20:25:57.140Z
+- Actor: Main
+- Operation: task.advance
+- Prior revision: 35
+- Resulting revision: 36
+- Summary: Manager closure complete: ABI-057 released on main and public deployment verified.
+- Idempotency key: ABI-057-done-20260910
+- Request fingerprint: a05a1e7da352d7014004caf6b4d8e034a7668450839dee13c828cca6b3c1d176
+- From status: Ready for Manager
+- To status: Done
+- Evidence:
+  - evt-6035e5f3-5d8b-4316-8c31-f35a0cfec9e3
+  - evt-bae27676-d629-4095-91c7-0cd7ce95bfd9
+  - evt-a092b1bb-a9a0-4fdf-bef7-7d932f4cf9a5
+  - evt-05e0c383-2ab0-4e98-9797-6e4402ad5a1e
+  - evt-4cc84d9e-4fb1-4402-ac65-e52e7d6811de
+  - 30aa3ba2e607ec1d75f2ee96030a4f3b773ecb7d
+  - 34400567279
+  - 34400567418
