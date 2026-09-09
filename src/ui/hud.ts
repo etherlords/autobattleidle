@@ -56,18 +56,14 @@ export const createHud = (host: HTMLElement, battlefield: HTMLElement): Hud => {
   let unsubscribeAudioState: (() => void) | undefined;
   const leaderboard = new LeaderboardDialog();
   const log = new EventLog();
+  const logLane = document.createElement("div");
+  logLane.className = "hud-log-lane";
+  logLane.append(status.automaticElement, log.element);
   const actions = document.createElement("div");
   actions.className = "hud-actions";
   actions.append(dialog.launcher, leaderboard.launcher, muteToggle);
   status.element.insertBefore(roadmap.element, status.trackStatus);
-  panel.append(
-    status.element,
-    status.automaticElement,
-    actions,
-    dialog.modal,
-    leaderboard.modal,
-    log.element,
-  );
+  panel.append(status.element, actions, dialog.modal, leaderboard.modal, logLane);
   host.append(panel);
   muteToggle.hidden = true;
   const renderAudioChrome = (stateOverride?: string): void => {

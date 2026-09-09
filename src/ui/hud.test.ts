@@ -405,24 +405,32 @@ describe("createHud", () => {
     expect(stylesheet).toContain(".leaderboard-current {");
     expect(stylesheet).toContain(".leaderboard-entries th,");
   });
-  it("keeps health centered in the unified panel and auto attack external", () => {
+  it("keeps health centered and auto attack in the damage-log lane", () => {
     expect(stylesheet).toContain(".hud-status {\n  background: rgb(7 18 31 / 88%);");
     expect(stylesheet).toContain("grid-template-columns: minmax(0, 1fr);");
     expect(stylesheet).toContain("grid-column: 1 / -1;\n  min-width: 0;\n  text-align: center;");
+    expect(stylesheet).toContain(".hud-log-lane {");
+    expect(stylesheet).toContain("bottom: 1rem;");
+    expect(stylesheet).toContain("box-sizing: border-box;\n  display: grid;");
+    expect(stylesheet).toContain("right: 1rem;");
+    expect(stylesheet).toContain("width: min(22rem, calc(100vw - 2rem));");
+    expect(stylesheet).toContain(
+      "@media (min-width: 601px) and (max-width: 900px) {\n  .hud-log-lane {\n    bottom: 4.25rem;",
+    );
     expect(stylesheet).toContain(".automatic-status {");
-    expect(stylesheet).toContain("top: clamp(16.5rem, 42vh, 24rem);");
-    expect(stylesheet).toContain("width: min(42rem, calc(100vw - 1.5rem));");
-    expect(stylesheet).toContain("grid-template-columns: repeat(2, minmax(0, 1fr));");
-    expect(stylesheet).toContain("right: 0.75rem;");
+    expect(stylesheet).toContain("position: static;");
+    expect(stylesheet).toContain(".event-log {\n  background: rgb(3 9 15 / 86%);");
+    expect(stylesheet).toContain("  box-sizing: border-box;\n  list-style: none;");
+    expect(stylesheet).toContain("  max-width: none;\n  overflow: auto;");
+    expect(stylesheet).toContain("  position: static;\n  width: 100%;");
     expect(stylesheet).toContain(".hud-status > .boss-roadmap {");
     expect(stylesheet).toContain(
       "  overflow: hidden;\n  text-align: center;\n  text-overflow: ellipsis;",
     );
     expect(stylesheet).toContain(
-      "@media (max-width: 360px) {\n  .automatic-status {\n    top: 19.5rem;",
+      "@media (max-width: 600px) {\n  .hud-log-lane {\n    bottom: 8.5rem;",
     );
-    expect(stylesheet).toContain(".automatic-status p {\n  margin: 0;");
-    expect(stylesheet).toContain(".event-log {\n    max-height: 16vh;");
+    expect(stylesheet).toContain(".event-log {\n    max-height: 12vh;");
   });
   it("keeps event log border colors tied to their combat source", () => {
     expect(stylesheet).not.toContain(':not([data-kind="hit"]):not([data-kind="critical"])');
@@ -480,6 +488,9 @@ describe("createHud", () => {
     expect(element(host, "automatic-text").textContent).toBe("Automatic attack: 1.00 APS · 0.500s");
     const automaticStatus = (element(host, "automatic-progress").parent as FakeElement)
       .parent as FakeElement;
+    const logLane = automaticStatus.parent as FakeElement;
+    expect(logLane.className).toBe("hud-log-lane");
+    expect((element(host, "event-log").parent as FakeElement).className).toBe("hud-log-lane");
     expect(automaticStatus.className).toBe("automatic-status");
     expect(automaticStatus.attributes.get("aria-label")).toBe("Automatic attack status");
     expect((element(host, "enemy-health").parent as FakeElement).className).toBe(
